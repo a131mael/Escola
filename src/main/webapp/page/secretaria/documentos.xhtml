@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none">
+			<br />
+
+			<h:panelGrid id="panelFerramentas" columns="1" style="margin-top: -30px; margin-left:-20px">
+				
+				<p:tooltip for="boletim" value="Boletim" position="top" />
+				<p:tooltip for="negativoDebito" value="Negativo Debito"
+					position="top" />
+				<p:tooltip for="contrato" value="Contrato" position="top" />
+				<p:tooltip for="atestadoVaga" value="Atestado de Vaga"
+					position="top" />
+				<p:tooltip for="atestadoFrequencia" value="Atestado de Frequencia"
+					position="top" />
+				<p:tooltip for="atestadoMatricula" value="Atestado e Matricula"
+					position="top" />
+				
+				<p:commandButton id="boletim" ajax="false"
+					value="Modelo Boletim"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					icon="ui-icon-bookmark">
+					<p:fileDownload value="#{alunoController.imprimirContratoAdonai()}" />
+				</p:commandButton>
+				<p:commandButton id="negativoDebito"
+					value="Modelo Negativo de Débito" 
+					ajax="false"
+					icon="ui-icon-pencil"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					>
+					<p:fileDownload value="#{alunoController.imprimirNegativoDebito()}" />
+				</p:commandButton>
+				<p:commandButton id="contrato"
+					value="Modelo Contrato" 
+					icon="ui-icon-pencil" ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					>
+					<p:fileDownload value="#{alunoController.imprimirContrato()}" />
+				</p:commandButton>
+				<p:commandButton id="atestadoVaga"
+					value="Modelo Atestado de Vaga" 
+					icon="ui-icon-pencil"
+					ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+					>
+					<p:fileDownload value="#{alunoController.imprimirAtestadoVaga()}" />
+				</p:commandButton>
+				<p:commandButton id="atestadoMatricula" 
+					value="Modelo Atestado de Matricula"
+					icon="ui-icon-pencil"
+					ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+					>
+					<p:fileDownload
+						value="#{alunoController.imprimirAtestadoMatricula()}" />
+				</p:commandButton>
+				<p:commandButton id="atestadoFrequencia"
+					value="Modelo Atestado de Frequencia" 
+					icon="ui-icon-pencil"
+					ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+					>
+					<p:fileDownload
+						value="#{alunoController.imprimirAtestadoFrequencia()}" />
+				</p:commandButton>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none">
+			<br />
+			<h:selectOneRadio value="#{contrato.tipo}" style="width:100%" rendered="false">
+				<f:selectItem itemValue="1" itemLabel="Ida e Volta" />
+				<f:selectItem itemValue="2" itemLabel="Somente IDA" />
+				<f:selectItem itemValue="3" itemLabel="Somente Volta" />
+			</h:selectOneRadio> 
+			<h:panelGrid columns="1" width="100%;width:80%" styleClass="alinharTopo">
+				<h:panelGrid border="1" style="width:80%">
+					<h:outputLabel value="Contratante" style="border:0px" />
+					<h:panelGrid columns="2" title="Contratante" border="0">
+
+						<h:outputText value="Nome: " />
+						<h:inputText value="#{contratoFretamento.contratanteNome}"
+							style="font-size: 15px" />
+
+						<h:outputText value="CPF: " />
+						<h:inputText value="#{contratoFretamento.contratanteCPF}"
+							style="font-size: 15px" />
+
+						<h:outputText value="RG: " />
+						<h:inputText value="#{contratoFretamento.contratanteRG}"
+							style="font-size: 15px" />
+
+						<h:outputText value="Endereço: " />
+						<h:inputText value="#{contratoFretamento.contratanteEndereco}"
+							style="font-size: 15px" />
+
+					</h:panelGrid>
+
+					<h:panelGrid border="0" style="height:100%;width:100% ">
+						<h:outputLabel value="Dados Gerais" style="border:0px" />
+						<h:panelGrid columns="2" title="Contratante" border="0">
+
+							<h:outputText value="Origem: " />
+							<h:inputText value="#{contratoFretamento.origem}"
+								style="font-size: 15px" />
+
+							<h:outputText value="Destino: " />
+							<h:inputText value="#{contratoFretamento.destino}"
+								style="font-size: 15px" />
+
+							<h:outputText value="Onibus 46 Lugares com ar e banheiro: " />
+							<h:selectBooleanCheckbox value="#{contratoFretamento.carro1}" /> 
+							
+							<h:outputText value="Onibus 42 Lugares: " />
+							<h:selectBooleanCheckbox value="#{contratoFretamento.carro2}" /> 
+							
+							<h:outputText value="Micro onibus 22 Lugares: " />
+							<h:selectBooleanCheckbox value="#{contratoFretamento.carro3}" /> 
+							
+							<h:outputText value="Micro onibus 18 Lugares com ar: " />
+							<h:selectBooleanCheckbox value="#{contratoFretamento.carro4}" /> 
+							
+							<h:outputText value="Ducato : " />
+							<h:selectBooleanCheckbox value="#{contratoFretamento.carro5}" /> 
+							
+							<h:outputText value="Data e Hora saida: " />
+							<h:inputText value="#{contratoFretamento.horario1}"	style="font-size: 15px" />
+ 
+							<h:outputText value="Data e Hora Retorno: " />
+							<h:inputText value="#{contratoFretamento.horario2}"	style="font-size: 15px" />
+
+							<h:outputText value="Valor Integral: " />
+							<h:inputText value="#{contratoFretamento.valorTotal}"	style="font-size: 15px" />
+							
+
+						</h:panelGrid>
+					</h:panelGrid>
+
+				</h:panelGrid>
+
+			</h:panelGrid>
+			<h:panelGrid border="1" style="width:80%" rendered="false">
+				<h:outputLabel value="Dados Gerais" style="border:0px" />
+				<h:panelGrid columns="2" title="Contratante" border="0">
+
+					<h:outputText value="Horario 1: " />
+					<h:inputText value="#{contrato.horario1}" style="font-size: 15px" />
+
+					<h:outputText value="Horario 2: " />
+					<h:inputText value="#{contrato.horario2}" style="font-size: 15px" />
+
+					<h:outputText value="Mês  1º parcela: " />
+					<h:inputText value="#{contrato.mes1}" style="font-size: 15px" />
+
+					<h:outputText value="Mês ultima parcela: " />
+					<h:inputText value="#{contrato.mes2}" style="font-size: 15px" />
+
+					<h:outputText value="Quantidade de parcelas: " />
+					<h:inputText value="#{contrato.parcelas}" style="font-size: 15px" />
+
+					<h:outputText value="Valor Parcela: " />
+					<h:inputText value="#{contrato.valorTotal}" style="font-size: 15px" />
+
+				</h:panelGrid>
+			</h:panelGrid>
+
+			<h:commandButton id="Imprimir" style="alinharFooter"
+				action="#{contratoController.imprimirContratoFretamento()}" value="Imprimir"
+				styleClass="alinharFooter" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

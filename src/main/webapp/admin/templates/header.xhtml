@@ -1,0 +1,640 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <f:view contentType="text/html;" locale="#{LocaleMB.currentLocale}"> 
+
+        <p:growl id="messages"
+                 autoUpdate="true" 
+                 life="60000" />
+
+        #{TempoExecucaoMB.iniciar()}
+
+        <p:dialog modal="true" widgetVar="statusDialog" header="Aguarde..."  
+                  styleClass="dialogPreloader"
+                  id="dialogPreloader"
+                  draggable="false"  position="center" closable="false" resizable="false" >  
+            <h:panelGroup styleClass="preloader" layout="block">
+
+            </h:panelGroup>
+        </p:dialog>
+
+        <p:ajaxStatus onstart="
+                      $('button').css('cursor','progress');
+                      $('a').css('cursor','progress');
+                      statusDialog.show();"
+                      oncomplete="statusDialog.hide();
+                      $('button').css('cursor','pointer');
+                      $('a').css('cursor','pointer');"
+                      onerror="statusDialog.hide();
+                      $('button').css('cursor','pointer');
+                      $('a').css('cursor','pointer');"
+                      />  
+
+        <h:form id="form-menu"  prependId="false">
+            #{TempoProcessamentoMB.inicio()}
+            <p:megaMenu styleClass="menuprincipal">
+                <p:menuitem value="" 
+                            style="cursor: text;"
+                            styleClass="item-thothcare"
+                            icon="ui-icon-thothcare" />
+
+                <p:menuitem value="Dashboard" 
+                            styleClass="item-menu"
+                            url="/admin/dashboard/" 
+                            icon="fa fa-dashboard" />
+
+                <p:submenu label="#{bundle['menu.Recepcao']}" 
+                           styleClass="drop-menu"
+                           icon="fa fa-recepcao"
+                           rendered="#{AutenticacaoMB.hasPermission('Medico:read') 
+                                       or AutenticacaoMB.hasPermission('PlanoCooperado:read')
+                                       or AutenticacaoMB.hasPermission('ServicoMedico:read')
+                                       or AutenticacaoMB.hasPermission('PessoaJuridica:read')
+                                       or AutenticacaoMB.hasPermission('Recepcao:read')}">
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Cadastros']}"
+                                   styleClass="sub-menu"
+                                   rendered="#{AutenticacaoMB.hasPermission('Recepcao:read')
+                                               and ((AutenticacaoMB.hasPermission('Medico:read'))
+                                               or AutenticacaoMB.hasPermission('PlanoCooperado:read')
+                                               or AutenticacaoMB.hasPermission('ServicoMedico:read')
+                                               or AutenticacaoMB.hasPermission('PessoaJuridica:read')
+                                               or AutenticacaoMB.hasPermission('Clinica:read')
+                                               or AutenticacaoMB.hasPermission('MotivoDevolucao:read')
+                                               )}">
+
+                            <p:menuitem value="#{bundle['menu.Cooperado']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/cooperado/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Medico:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.GrupoMedico']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/grupo-medico/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Medico:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.PlanoCooperado']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/plano-cooperado/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('PlanoCooperado:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.ServicoMedico']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/servico-medico/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('ServicoMedico:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.PessoaJuridica']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/pessoa-juridica/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('PessoaJuridica:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.Consignado']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/consignado/"
+                                        rendered="#{AutenticacaoMB.hasPermission('Consignado:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.TetoRepasse']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/teto-repasse/" 
+                                        rendered="#{AutenticacaoMB.isMaster()}" />
+
+                            <p:menuitem value="#{bundle['menu.Clinicas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/clinicas/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Clinica:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.MotivoDevolucao']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/recepcao/motivo-devolucao/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('MotivoDevolucao:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.GrupoLancamentos']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/grupo-lancamento/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Desconto:read') }"/>
+
+                        </p:submenu>
+                    </p:column>
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Gerenciar']}"
+                                   styleClass="sub-menu">
+
+                            <p:menuitem value="#{bundle['menu.protocolarGuia']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/recepcao/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Recepcao:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.guiasCanceladas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/recepcao/guias-canceladas" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Recepcao:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.guiasDevolvidas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/recepcao/guias-devolvidas" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Recepcao:read')}"/>
+
+                            <p:menuitem value="#{bundle['Gerador-etiquetas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/recepcao/gerador-etiquetas/index.xhtml" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Recepcao:read')}"/>
+
+
+                            <p:menuitem value="#{bundle['menu.PlanoCooperadoCobranca']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/plano-cooperado-cobranca/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('PlanoCooperado:read')}"/>
+
+
+                            <p:menuitem value="#{bundle['menu.EstornoINSS']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/pagamento-desconto/" />
+
+                            <p:menuitem value="#{bundle['menu.UsuarioExtranet']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/recepcao/usuarios-extranet/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('UsuarioExtranet:read')}"/>
+
+                            <p:menuitem value="Solicitações" 
+                                        styleClass="item-submenu"
+                                        url="/admin/recepcao/solicitacoes/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('UsuarioExtranet:read')}"/>
+
+                        </p:submenu>
+                    </p:column>
+
+                </p:submenu>
+
+                <p:submenu label="#{bundle['Convenio']}" 
+                           styleClass="drop-menu"
+                           icon="fa fa-convenio"
+                           rendered="#{AutenticacaoMB.hasPermission('Convenio:read') 
+                                       and (AutenticacaoMB.hasPermission('TabelaProcedimento:read')
+                                       or AutenticacaoMB.hasPermission('Procedimento:read')
+                                       or AutenticacaoMB.hasPermission('Feriado:read'))}">
+                    <p:column>
+                        <p:submenu label="#{bundle['Gerenciar']}"
+                                   styleClass="sub-menu">
+
+                            <p:menuitem value="#{bundle['menu.Convenios']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/convenios/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Convenio:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.Tabelas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/tabelas/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('TabelaProcedimento:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.Procedimentos']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/procedimentos/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Procedimento:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.Feriados']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/feriados/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Feriado:read')}"/>
+
+                        </p:submenu>
+                    </p:column>
+                </p:submenu> 
+
+                <p:submenu label="#{bundle['menu.Operacional']}" 
+                           styleClass="drop-menu"
+                           icon="fa fa-operacional"
+                           rendered="#{AutenticacaoMB.hasPermission('TipoGlosa:read') 
+                                       or  AutenticacaoMB.hasPermission('Operacional:read')
+                                       or AutenticacaoMB.hasPermission('Lote:read')}">
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Cadastros']}"
+                                   styleClass="sub-menu"
+                                   rendered="#{AutenticacaoMB.hasPermission('Operacional:read')
+                                               and(AutenticacaoMB.hasPermission('Paciente:read')
+                                               or AutenticacaoMB.hasPermission('TipoGlosa:read')   
+                                               or AutenticacaoMB.hasPermission('GrupoTipoGlosa:read'))}">
+
+                            <p:menuitem value="#{bundle['menu.DadosCadastrais']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/pacientes/" 
+                                        rendered="false"/>
+
+                            <p:menuitem value="#{bundle['menu.TiposGlosa']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/tipo-glosa/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('TipoGlosa:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.GrupoTiposGlosa']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/tipo-glosa/grupo" 
+                                        rendered="#{AutenticacaoMB.hasPermission('GrupoTipoGlosa:read')}"/>
+
+                        </p:submenu>
+                    </p:column>
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Gerenciar']}"
+                                   styleClass="sub-menu"
+                                   rendered="#{AutenticacaoMB.hasPermission('Operacional:read')
+                                               or AutenticacaoMB.hasPermission('Lote:read')}">
+
+                            <p:menuitem value="#{bundle['menu.Guias']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/operacional/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Operacional:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.GuiassemLote']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/operacional/guias-sem-lote/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Operacional:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.GuiasLiberadas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/operacional/guias-liberadas/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Operacional:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.GuiasExternas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/operacional/guias-externas/" 
+                                        rendered="false"/>
+
+                            <p:menuitem value="#{bundle['menu.Lotes']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/lotes/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Lote:read')}"/>
+
+                            <p:menuitem value="Cobrancas" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/cobrancas/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Lote:read')}"/>
+
+                        </p:submenu>
+                    </p:column>
+
+                </p:submenu>
+
+                <p:submenu label="#{bundle['menu.Auditoria']}" 
+                           styleClass="drop-menu"
+                           icon="fa fa-auditoria" 
+                           rendered="#{AutenticacaoMB.hasPermission('Importacao:read') 
+                                       or AutenticacaoMB.hasPermission('Auditoria:read')
+                                       or AutenticacaoMB.hasPermission('Revisao:read')}">
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Gerenciar']}"
+                                   styleClass="sub-menu">
+
+                            <p:menuitem value="#{bundle['menu.TISS']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/importacao-tiss/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Importacao:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.ImportacaoDemonstrativosUnimed']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/importacao-demonstrativos-unimed/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Importacao:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.RelacaoDemonstrativosUnimed']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/relacao-demonstrativos-unimed/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Importacao:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.CsvAmil']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/importacao-csv/amil/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Importacao:read')}"/>
+
+
+                            <p:menuitem value="#{bundle['Revisao']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/auditoria/revisao" />
+
+                            <p:menuitem value="#{bundle['menu.AcaoDivergenciaGuia']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/auditoria/acao-divergencia/index.xhtml" 
+                                        rendered="#{AutenticacaoMB.isMaster()}" />
+
+                            <p:menuitem value="Cobranças" 
+                                        styleClass="item-submenu"
+                                        url="/admin/auditoria/cobrancas/index.xhtml" 
+                                        rendered="#{AutenticacaoMB.isMaster()}" />
+
+                        </p:submenu>
+                    </p:column>
+
+                </p:submenu>
+
+                <p:submenu label="#{bundle['menu.Financeiro']}" 
+                           styleClass="drop-menu"
+                           icon="fa fa-financeiro"
+                           rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') 
+                                       or AutenticacaoMB.hasPermission('Desconto:read')}">
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Movimentacoes']}"
+                                   styleClass="sub-menu" 
+                                   rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') }">
+
+                            <p:menuitem value="#{bundle['menu.ContasAPagar']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/movimentacao/index.xhtml?tipoMovimentacao=1&amp;classificacaoMovimentacao=0" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') }"/>
+
+                            <p:menuitem value="#{bundle['menu.ContasAReceber']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/movimentacao/index-cobranca.xhtml?tipoMovimentacao=0&amp;classificacaoMovimentacao=0" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') }"/>
+
+                            <p:menuitem value="#{bundle['menu.ContasRepasse']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/movimentacao/index-repasse.xhtml?tipoMovimentacao=1&amp;classificacaoMovimentacao=1" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') }"/>
+
+                            <p:menuitem value="#{bundle['menu.Todas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/movimentacao/index.xhtml" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') }"/>
+                        </p:submenu>
+
+                        <p:submenu label="#{bundle['menu.Ferramentas']}" 
+                                   styleClass="drop-menu"
+                                   icon="ui-icon-financeiro"
+                                   rendered="#{AutenticacaoMB.hasPermission('Financeiro:read')
+                                               or AutenticacaoMB.hasPermission('Gfip:read')}" >
+
+                            <p:menuitem value="#{bundle['menu.RepasseCooperado']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/repasse-cooperado/" />
+
+
+                            <p:menuitem value="#{bundle['menu.PagamentoConsignado']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/pagamento-consignado/" />
+
+                            <p:menuitem value="#{bundle['menu.PagamentoPlanos']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/plano-cooperado/" />
+
+                            <p:menuitem value="#{bundle['menu.GFIP']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/emissao-gfip/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Gfip:read') }"/>
+
+                            <p:menuitem value="#{bundle['menu.DIRF']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/dirf/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Dirf:read') }"/>
+                        </p:submenu>
+                    </p:column>
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Cadastros']}"
+                                   styleClass="sub-menu">
+
+                            <p:menuitem value="#{bundle['menu.Bancos']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/banco/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Banco:read') }"/>
+
+                            <p:menuitem value="#{bundle['menu.Contas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/conta/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') }"/>
+
+                            <p:menuitem value="#{bundle['menu.PlanoContas']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/plano-conta/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') }"/>
+
+
+                            <p:menuitem value="#{bundle['menu.Envolvidos']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/envolvido/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Financeiro:read') }"/>
+
+                            <p:menuitem value="#{bundle['menu.CreditoDebito']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/credito-debito-programado/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('CreditoDebitoProgramado:read') }"/>
+
+                        </p:submenu>
+                    </p:column>
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Gerenciar']}"
+                                   styleClass="sub-menu"
+                                   rendered="#{AutenticacaoMB.hasPermission('Gerenciar:read')}">
+
+                            <p:menuitem value="#{bundle['menu.GrupoMovimentacao']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/grupo-movimentacao/" />
+
+                            <p:menuitem value="#{bundle['menu.Padrao']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/configuracao/padrao/" />
+
+
+                            <p:menuitem value="#{bundle['gerenciar.capitalSocial.distribicaoSobras']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/capital-social/" />
+
+                        </p:submenu>
+                    </p:column>
+
+                </p:submenu>
+
+                <p:submenu label="#{bundle['menu.Gerencia']}" 
+                           styleClass="drop-menu"
+                           icon="fa fa-gerencia"
+                           rendered="#{AutenticacaoMB.hasPermission('Gerenciar:read')}">
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Cadastros']}"
+                                   styleClass="sub-menu"
+                                   rendered="#{AutenticacaoMB.hasPermission('LocalizacaoGuia:read')
+                                               or AutenticacaoMB.hasPermission('StatusLote:read')
+                                               or AutenticacaoMB.hasPermission('StatusGlosaIndividual:read')
+                                               or AutenticacaoMB.hasPermission('StatusGlosaLote:read')
+                                               or AutenticacaoMB.hasPermission('Usuario:read')
+                                               or AutenticacaoMB.hasPermission('Permissao:read')
+                                               or AutenticacaoMB.hasPermission('AlertaRevisaoGuia:read')
+                                               or AutenticacaoMB.hasPermission('SideBar:read')}" >
+
+                            <p:menuitem value="#{bundle['menu.Localizacao']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/localizacao-guia/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('LocalizacaoGuia:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.StatusLote']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/status-lote/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('StatusLote:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.StatusIndividual']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/status-glosa-individual/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('StatusGlosaIndividual:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.StatusGlosaLote']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/status-glosa-lote/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('StatusGlosaLote:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.Usuarios']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/usuarios/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Usuario:read')}"/>
+                            <p:menuitem value="#{bundle['menu.GruposUsuario']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/grupos/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Grupo:read')}"/> 
+                            <p:menuitem value="#{bundle['menu.PermissoesUsuario']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/permissoes/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Permissao:read')}"/> 
+
+                            <p:menuitem value="#{bundle['menu.AlertaRevisaoGuia']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/alerta-revisao-guia/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('AlertaRevisaoGuia:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.StatusImportacao']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/status-importacao/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('StatusImportacao:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.LimiteFaturamento']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/financeiro/cadastros/limite-faturamento/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Convenio:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.Sidebar']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/sidebar/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('SideBar:read')}"/>
+
+                        </p:submenu>
+                    </p:column>
+
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.Gerenciar']}"
+                                   styleClass="sub-menu">
+
+                            <p:menuitem value="Consultar Boletins" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/guias/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Gerenciar:read')}"/>
+
+                            <p:menuitem value="Consultar Cobrancas" 
+                                        styleClass="item-submenu"
+                                        url="/admin/gerenciar/cobrancas/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Gerenciar:read')}"/>
+
+
+                            <p:menuitem value="#{bundle['menu.Arquivos']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/cadastros/arquivos/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Arquivo:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.Configuracoes']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/gerenciar/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Gerenciar:read')}"/>
+
+                            <p:menuitem value="#{bundle['menu.ControleCooperados']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/controle-cooperado/" 
+                                        rendered="#{AutenticacaoMB.isMaster()}"/>
+
+                        </p:submenu>
+                    </p:column>
+
+                </p:submenu>
+
+                <p:submenu label="#{bundle['menu.Relatorios']}" 
+                           styleClass="drop-menu"
+                           icon="fa fa-relatorios"
+                           rendered="#{AutenticacaoMB.hasPermission('Relatorios:read')}">
+                    <p:column > 
+                        <p:submenu label="#{bundle['relatorios.relatorio']}"
+                                   styleClass="sub-menu">
+                            <p:menuitem value="#{bundle['relatorios.relatorio']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/relatorios/" 
+                                        /> 
+
+                        </p:submenu>
+
+                    </p:column>
+                    
+                </p:submenu> 
+
+                <p:submenu label="#{bundle['menu.Ferramentas']}" 
+                           styleClass="drop-menu"
+                           icon="fa fa-ferramentas"
+                           rendered="true">
+                    <p:column>
+                        <p:submenu label="#{bundle['menu.CentralAjuda']}"
+                                   styleClass="sub-menu">
+                            <p:menuitem value="#{bundle['menu.Faq']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/ferramentas/ajuda/faq/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Faq:update')}"/>
+
+                            <p:menuitem value="Informações e Noticias Extranet" 
+                                        styleClass="item-submenu"
+                                        url="/admin/ferramentas/ajuda/informacoes-extranet/" 
+                                        rendered="#{AutenticacaoMB.hasPermission('Faq:update')}"/>
+
+                            <p:menuitem value="#{bundle['menu.Ajuda']}" 
+                                        styleClass="item-submenu"
+                                        url="/admin/ferramentas/ajuda/faq/lista.xhtml" />
+                        </p:submenu>
+                    </p:column>
+                </p:submenu> 
+
+                <p:menuitem value="#{bundle['menu.Sair']}" 
+                            styleClass="item-menu"
+                            icon="fa fa-sair"
+                            ajax="false"
+                            action="#{AutenticacaoMB.sair()}"
+                            immediate="true"/>
+
+            </p:megaMenu> 
+        </h:form>
+
+
+
+        <!--Dialog setor financeiro sobre cobranca -->
+        <h:form prependId="false" rendered="#{NotificacaoFaturaAbertaMB.checarFaturasASerImpressas()}">
+            <p:dialog widgetVar="dlgCobrancaAFaturar"  appendToBody="true"
+                      resizable="false" position="right bottom"
+                      style="right:5%!important; bottom: 5% !important; z-index: 9999!important;position: fixed;
+                      top:auto !important; left: auto!important;"
+                      id="dlgCobrancaAFaturar" width="230"
+                      header="#{bundle['CobrancaAFaturar']}">
+
+                <p> 
+                    <a href="#{facesContext.externalContext.requestContextPath}/admin/financeiro/cadastros/movimentacao/index-cobranca.xhtml?tipoMovimentacao=0&mp;classificacaoMovimentacao=0&mp;semFatura=1">
+                        Existem #{NotificacaoFaturaAbertaMB.quantidade} cobranças aguardando emissão da fatura.
+                    </a>
+                </p>
+
+            </p:dialog> 
+
+            <script type="text/javascript">
+                $(function() {
+                    dlgCobrancaAFaturar.show();
+                });
+            </script>
+        </h:form>
+    </f:view>
+</ui:composition>

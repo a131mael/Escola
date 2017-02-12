@@ -1,0 +1,134 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none">
+
+			<h:panelGrid columns="8" style="margin-top: -30px;">
+				<h:commandButton action="#{professorController.adicionarNovo()}" value="Adicionar" />
+<!-- 				<h:commandLink>
+					<p:graphicImage name="/gfx/excel.png" />
+					<p:dataExporter type="xls" target="tbl" fileName="professores"
+						pageOnly="true" />
+				</h:commandLink>
+
+				<h:commandLink rendered="false">
+					<p:graphicImage name="/gfx/pdf.png" />
+					<p:dataExporter type="pdf" target="tbl" fileName="professores"
+						pageOnly="true" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/gfx/csv.png" />
+					<p:dataExporter type="csv" target="tbl" fileName="professores"
+						pageOnly="true" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/gfx/xml.png" />
+					<p:dataExporter type="xml" target="tbl" fileName="professores"
+						pageOnly="true" />
+				</h:commandLink> -->
+			</h:panelGrid>
+
+
+			<h:panelGrid width="90%">
+				<p:dataTable id="tbl" var="professorTab"
+					value="#{professorController.professores}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+					paginator="true" style="margin-bottom:20px; width:100%"
+					paginatorPosition="bottom">
+
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tbl" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+					
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Ações" />
+						</f:facet>
+						<table style="border:none">
+							<tr style="border:none">
+								<td style="border:none">
+									<p:commandButton icon="ui-icon-pencil" action="#{professorController.editar(professorTab.id)}" />
+								</td >
+								
+							</tr>
+						</table>
+					</p:column>
+					
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{professorTab.id}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{professorTab.nome}" />
+					</p:column>
+
+					<!-- <p:column>
+						<f:facet name="header">
+							<h:outputText value="Turmas" />
+						</f:facet>
+						<h:outputText value="#{alunoTab.serie.name}" />
+					</p:column>
+ -->
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Telefone 1" />
+						</f:facet>
+						<h:outputText value="#{professorTab.telefone1}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Telefone 2" />
+						</f:facet>
+						<h:outputText value="#{professorTab.telefone2}" />
+					</p:column>
+					
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Remover" />
+						</f:facet>
+						
+							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{professorController.remover(professorTab.id)}" >
+								
+							</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

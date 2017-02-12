@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none" >
+
+			<h:panelGrid columns="8" style="margin-top: -30px;">
+				<h:commandButton action="#{turmaController.adicionarNovo()}" value="Adicionar" 
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+			</h:panelGrid>
+
+			<h:panelGrid width="90%" style="border: none !important">
+				<p:dataTable id="tbl" var="alunoTab"
+					value="#{turmaController.turmas}"
+					paginator="true" style="margin-bottom:20px; width:100%"
+					paginatorPosition="bottom">
+
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tbl" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+					
+					<p:column style="width:8%">
+						<f:facet name="header">
+							<h:outputText value="Ações" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-search"  action="#{turmaController.editar(alunoTab.id)}" rendered="#{!authController.isTeacher()}"/>
+						<p:commandButton icon="ui-icon-search"  action="#{turmaController.editar(alunoTab.id)}" actionListener="#{turmaController.verificarTodosAlunosTemAvaliacao(alunoTab.id)}" rendered="#{authController.isTeacher()}"/>
+						
+					</p:column>
+					
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Id" />
+						</f:facet>
+						<h:outputText value="#{alunoTab.id}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{alunoTab.nome}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Turma" />
+						</f:facet>
+						<h:outputText value="#{alunoTab.serie.name}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Periodo" />
+						</f:facet>
+						<h:outputText value="#{alunoTab.periodo.name}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Qtade Alunos" />
+						</f:facet>
+						<h:outputText value="#{turmaController.totalAlunos}" />
+					</p:column>
+					
+					<p:column style="width:10%" 
+							  rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+						<f:facet name="header">
+							<h:outputText value="Remover" />
+						</f:facet>
+						
+							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{turmaController.remover(alunoTab.id)}" >
+								
+							</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,162 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none" prependId="false">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px; margin: -30px">
+				<h:panelGrid border="1" style="width:100%">
+					<center>Turma</center>
+					<h:panelGrid columns="2" title="Contratante" border="0">
+
+						<h:outputLabel for="nome" value="Nome: " />
+						<h:inputText id="nome" value="#{turma.nome}"
+							style="font-size: 15px; width:280px"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+						<h:outputLabel for="serie" value="Serie:" />
+						<p:selectOneMenu id="serie" style="width: 256px;"
+							value="#{turma.serie}"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}">
+							<f:selectItem itemLabel="Todas" />
+							<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+							<p:ajax event="change" update="pickListAlunos" process="@this"
+								listener="#{turmaController.montarPickListAluno}" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Periodo:" />
+						<p:selectOneMenu style="width: 256px;" value="#{turma.periodo}"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}">
+							<f:selectItem itemLabel="Todas" />
+							<f:selectItems value="#{CombosEspeciaisMB.getPeriodos()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+							<p:ajax event="change" process="@this" update="pickListAlunos"
+								listener="#{turmaController.montarPickListAluno}" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Disciplina:"
+							rendered="#{authController.hasPermission(authController.professor)}" />
+						<p:selectOneMenu style="width: 256px;"
+							value="#{turmaController.disciplinaSelecionada}"
+							rendered="#{authController.hasPermission(authController.professor)}">
+							<f:selectItem itemLabel="Todas" />
+							<f:selectItems value="#{CombosEspeciaisMB.getDisciplinas()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+
+							<p:ajax event="change" process="@this" update="panelNotas" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Bimestre"
+							rendered="#{authController.hasPermission(authController.professor)}" />
+
+						<p:selectOneMenu style="width: 256px;"
+							value="#{turmaController.bimestreSelecionado}"
+							rendered="#{authController.hasPermission(authController.professor)}">
+							<f:selectItem itemLabel="Todos" />
+							<f:selectItems value="#{CombosEspeciaisMB.getBimestres()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+							<p:ajax event="change" process="@this" update="panelNotas" />
+						</p:selectOneMenu>
+
+
+						<h:outputLabel for="pickList" value="Professor:"
+							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+						<p:pickList id="pickList" value="#{turmaController.professores}"
+							var="plProfessor" itemValue="#{plProfessor}"
+							converter="converterProfessor"
+							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+
+							<f:facet name="sourceCaption">Todos Professores</f:facet>
+							<f:facet name="targetCaption">Professores desta turma</f:facet>
+
+							<p:column style="width:80%;">
+								<h:outputText value="#{plProfessor.nome}" />
+							</p:column>
+
+							<p:column style="width:20%;">
+								<h:outputText value="#{plProfessor.especialidade.name}" />
+							</p:column>
+
+						</p:pickList>
+
+						<h:outputLabel for="pickListAlunos" value="Alunos:"
+							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+						<p:pickList id="pickListAlunos" value="#{turmaController.alunos}"
+							var="plAluno" itemValue="#{plAluno}" converter="converterAluno"
+							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+
+							<f:facet name="sourceCaption">Alunos</f:facet>
+							<f:facet name="targetCaption">Alunos desta turma</f:facet>
+
+							<p:column style="width:80%;">
+								<h:outputText value="#{plAluno.nomeAluno}" />
+							</p:column>
+
+						</p:pickList>
+
+					</h:panelGrid>
+					<h:panelGrid id="panelNotas">
+						<h:outputLabel value="Portugues" />
+						<p:dataGrid
+							value="#{avaliacaoController.getAvaliacoes(null,turma.serie,turmfaController.bimestreSelecionado)}"
+							var="avaliacao2">
+							<h:outputLabel value="aa" />
+
+							<p:dataGrid value="#{turmaController.alunos.target}"
+								var="alunoTab2">
+								<p:dataGrid var="avaliacaoAlunoTab2" varStatus="alunAva2"
+									value="#{turmaController.getAlunoAvaliacoes(alunoTab2.id,null, null,turmaController.bimestreSelecionado,turma.serie)}">
+
+
+									<p:column headerText="Id">	
+									<p:inputNumber value="#{avaliacaoAlunoTab2.nota}">
+										<p:ajax process="@this" listener="#{turmaController.saveAvaliacaoAluno(avaliacaoAlunoTab2.id,avaliacaoAlunoTab2.nota)}" event="change"/>
+									</p:inputNumber>
+									</p:column>
+								
+								</p:dataGrid>
+
+
+
+							</p:dataGrid>
+
+
+						</p:dataGrid>
+
+
+
+
+
+
+					</h:panelGrid>
+
+
+
+
+				</h:panelGrid>
+				<table>
+					<tr>
+						<td><h:commandButton id="voltarButtom"
+								action="#{turmaController.voltar()}" value="Voltar" /></td>
+
+						<td><h:commandButton id="salvarButtom"
+								style="margin-left:690px !important"
+								action="#{turmaController.salvar()}" value="Salvar" /></td>
+					</tr>
+
+				</table>
+
+			</h:panelGrid>
+
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

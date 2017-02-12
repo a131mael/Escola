@@ -1,0 +1,708 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content" rendered="#{authController.hasPermission(authController.professor)}">
+		<h:form style="width:100%; border:none">
+		
+		<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+				
+			<p:tabView>
+	        	<p:tab title="Aluno" >
+	        	
+	        	<h:panelGrid columns="2">
+					
+					
+					<h:panelGrid columns="2"  border="0">
+
+						<h:outputLabel for="name" value="Nome(*): "
+									   style="font-size: 13px; width:180px" />
+						<p:inputText id="nome" title="" value="#{aluno.nomeAluno}"
+							           style="font-size: 13px; width:160px" disabled="#{authController.hasPermission(authController.professor)}"/>
+						
+						<h:outputLabel value="Série "
+									   style="font-size: 13px; width:180px" />
+						<p:selectOneMenu id="serie" style="width: 145px;"
+										 value="#{aluno.serie}"
+										 disabled="#{authController.hasPermission(authController.professor)}">
+							<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+							<p:ajax event="change" process="@this" />
+						</p:selectOneMenu>
+						
+						<h:outputLabel value="Periodo: "
+									   style="font-size: 13px; width:180px" />
+						<p:selectOneMenu id="periodo" style="width: 145px;"
+										 value="#{aluno.periodo}"
+										 disabled="#{authController.hasPermission(authController.professor)}">
+							<f:selectItems value="#{CombosEspeciaisMB.getPeriodos()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+							<p:ajax event="change" process="@this" />
+						</p:selectOneMenu>
+						
+						<h:outputLabel value="Nascimento: "
+							style="font-size: 13px; width:180px" />
+						<p:calendar  value="#{aluno.dataNascimento}" pattern="dd/MM/yyyy"
+							mask="true" style="font-size: 15px; width:280px !important" 
+							disabled="#{authController.hasPermission(authController.professor)}"/>
+							
+						<h:outputLabel value="Administrar Paracetamol?: " style="font-size: 13px; width:170px" />
+						<h:selectBooleanCheckbox value="#{aluno.administrarParacetamol}" 
+						disabled="#{authController.hasPermission(authController.professor)}"/>
+						
+						
+						<h:outputLabel value="Disciplina:" style="font-size: 13px; width:180px" 
+							rendered="#{authController.hasPermission(authController.professor)}" />
+						<p:selectOneMenu style="width: 145px;"
+							value="#{alunoController.disciplinaSel}"
+							rendered="#{authController.hasPermission(authController.professor)}">
+							<f:selectItem itemLabel="Todas" />
+							<f:selectItems value="#{CombosEspeciaisMB.getDisciplinas()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+
+							<p:ajax event="change" process="@this" update="@form" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Bimestre:" style="font-size: 13px; width:180px" 
+							rendered="#{authController.hasPermission(authController.professor)}" />
+
+						<p:selectOneMenu style="width: 145px;"
+							value="#{alunoController.bimestreSel}"
+							rendered="#{authController.hasPermission(authController.professor)}">
+							<f:selectItem itemLabel="Todos" />
+							<f:selectItems value="#{CombosEspeciaisMB.getBimestres()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+							<p:ajax event="change" process="@this"
+								listener="#{alunoController.popularAlunoAvaliacao(aluno)}"
+								update="@form" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+					
+						        	
+		        	<h:panelGrid columns="2" style="align:left">
+		        		<h:panelGrid columns="2">
+		        			<h:outputLabel value="Medias 1º Bimestre" style="width:100%"/>
+		        			<h:outputText value="" style="width:100%"/>
+		        			
+		        			<h:outputText value="Português:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.portugues,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Matemática:" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.matematica,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="História:" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.historia,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Inglês:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.ingles,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Ed. Fisica:" style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.EDFisica,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Geografia:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.geografia,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Ciências:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.ciencias,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Formação Crist.:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.formacaoCrista,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Artes:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.artes,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        		</h:panelGrid>
+		        		
+		        		<h:panelGrid columns="2">
+							<h:outputLabel value="Medias 2º Bimestre" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Português:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.portugues,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Matemática:" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.matematica,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="História:" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.historia,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Inglês:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.ingles,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Ed. Fisica:" style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.EDFisica,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Geografia:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.geografia,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Ciências:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.ciencias,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Formação Crist.:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.formacaoCrista,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Artes:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.artes,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			        		
+		        		</h:panelGrid>
+		        	
+		        	<h:panelGrid columns="2">
+							<h:outputLabel value="Medias 3º Bimestre" style="width:100%"/>
+		        			<h:outputText value="" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Português:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.portugues,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Matemática:" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.matematica,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="História:" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.historia,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Inglês:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.ingles,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Ed. Fisica:" style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.EDFisica,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Geografia:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.geografia,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Ciências:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.ciencias,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Formação Crist.:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.formacaoCrista,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Artes:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.artes,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        						  	        		
+		        		</h:panelGrid>
+		        		
+		        		<h:panelGrid columns="2">
+							<h:outputLabel value="Medias 4º Bimestre" style="width:100%"/>
+		        			<h:outputText value="" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Português:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.portugues,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Matemática:" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.matematica,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="História:" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.historia,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Inglês:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.ingles,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Ed. Fisica:" style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.EDFisica,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Geografia:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.geografia,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			
+		        			<h:outputText value="Ciências:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.ciencias,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Formação Crist.:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.formacaoCrista,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left; font-size:11px"/>
+		        			
+		        			<h:outputText value="Artes:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.artes,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>		        		
+		        		</h:panelGrid>
+									        	
+		        	</h:panelGrid>
+	        	</h:panelGrid>
+				<p:separator style="width:100%;" />
+					
+			<h:panelGrid style="border:none">
+												
+		        	
+		        	<h:panelGrid rendered="#{alunoController.renderDisciplina(0)}">
+							<h:outputLabel value="Portugues" />
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoPortugues().keySet()}"
+								var="mapAlunoAva">
+								<p:column>
+									<p:dataTable value="#{mapAlunoAva}" var="alun">
+										<p:column>
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoPortugues().get(alun)}"
+												var="alunoAva" sortBy="#{alunoAva.avaliacao.nome}">
+
+												<p:column>
+													<h:outputLabel value="#{alunoAva.avaliacao.nome}" />
+													<p:inputText value="#{alunoAva.nota}">
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAva)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+
+						</h:panelGrid>
+				
+						<h:panelGrid rendered="#{alunoController.renderDisciplina(3)}">
+							<!-- INGLES -->
+							<h:outputLabel value="Inglês" />
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoIngles().keySet()}"
+								var="mapAlunoAvaIngles"
+								styleClass="removerCabecalhoTabela">
+								<p:column style="border:none !importante">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" style="border:none !importante" 
+												styleClass="removerCabecalhoTabela">
+										
+										<p:column style="border:none !importante">
+											<p:dataTable
+												styleClass="removerCabecalhoTabela"
+												value="#{alunoController.getAlunoAvaliacaoIngles().get(alunIngles)}"
+												var="alunoAvaIngles"
+												sortBy="#{alunoAvaIngles.avaliacao.bimestre}"
+												style="border:none !importante">
+
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" style="border:none !importante; "/>
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" style="border:none !importante"/>
+													<p:inputText value="#{alunoAvaIngles.nota}" 
+																 style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda"  >
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+
+						<h:panelGrid rendered="#{alunoController.renderDisciplina(1)}">
+							<!-- Matematica -->
+							<h:outputLabel value="Matematica" />
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoMatematica().keySet()}"
+								var="mapAlunoAvaIngles">
+								<p:column>
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
+										<p:column>
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoMatematica().get(alunIngles)}"
+												var="alunoAvaIngles"
+												sortBy="#{alunoAvaIngles.avaliacao.nome}">
+
+												<p:column>
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
+													<p:inputText value="#{alunoAvaIngles.nota}">
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+
+						<h:panelGrid rendered="#{alunoController.renderDisciplina(2)}">
+							<!-- Historia -->
+							<h:outputLabel value="História" />
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoHistoria().keySet()}"
+								var="mapAlunoAvaIngles">
+								<p:column>
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
+										<p:column>
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoHistoria().get(alunIngles)}"
+												var="alunoAvaIngles"
+												sortBy="#{alunoAvaIngles.avaliacao.nome}">
+
+												<p:column>
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
+													<p:inputText value="#{alunoAvaIngles.nota}">
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+						
+						
+						<h:panelGrid rendered="#{alunoController.renderDisciplina(5)}">
+							<!-- Geografia -->
+							<h:outputLabel value="Geografia" />
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoGeografia().keySet()}"
+								var="mapAlunoAvaIngles">
+								<p:column>
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
+										<p:column>
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoGeografia().get(alunIngles)}"
+												var="alunoAvaIngles"
+												sortBy="#{alunoAvaIngles.avaliacao.nome}">
+
+												<p:column>
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
+													<p:inputText value="#{alunoAvaIngles.nota}">
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+						
+						
+						
+ 							<h:panelGrid rendered="#{alunoController.renderDisciplina(6)}">
+							<!-- Ciencias -->
+							<h:outputLabel value="Ciências" />
+							
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoCiencias().keySet()}"
+								var="mapAlunoAvaIngles">
+								<p:column>
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
+										<p:column>
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoCiencias().get(alunIngles)}"
+												var="alunoAvaIngles"
+												sortBy="#{alunoAvaIngles.avaliacao.nome}">
+
+												<p:column>
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
+													<p:inputText value="#{alunoAvaIngles.nota}">
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+						
+
+						<h:panelGrid rendered="#{alunoController.renderDisciplina(7)}">
+							<!-- Formacao Crista -->
+							<h:outputLabel value="Formação Cristã" />
+							
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoFormacaoCrista().keySet()}"
+								var="mapAlunoAvaIngles">
+								<p:column>
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
+										<p:column>
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoFormacaoCrista().get(alunIngles)}"
+												var="alunoAvaIngles"
+												sortBy="#{alunoAvaIngles.avaliacao.nome}">
+
+												<p:column>
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
+													<p:inputText value="#{alunoAvaIngles.nota}">
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+
+
+						<h:panelGrid rendered="#{alunoController.renderDisciplina(8)}">
+							<!-- Artes -->
+							<h:outputLabel value="Artes" />
+							
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoArtes().keySet()}"
+								var="mapAlunoAvaIngles">
+								<p:column>
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
+										<p:column>
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoArtes().get(alunIngles)}"
+												var="alunoAvaIngles"
+												sortBy="#{alunoAvaIngles.avaliacao.nome}">
+
+												<p:column>
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
+													<p:inputText value="#{alunoAvaIngles.nota}">
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+
+
+						<h:panelGrid rendered="#{alunoController.renderDisciplina(4)}">
+							<!-- ED Fisica -->
+							<h:outputLabel value="Educação Fisica" />
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoEDFisica().keySet()}"
+								var="mapAlunoAvaIngles">
+								<p:column>
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
+										<p:column>
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoEDFisica().get(alunIngles)}"
+												var="alunoAvaIngles"
+												sortBy="#{alunoAvaIngles.avaliacao.nome}">
+
+												<p:column>
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
+													<p:inputText value="#{alunoAvaIngles.nota}">
+														<p:ajax event="change"
+															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+		        	
+		        	
+		        	
+		        	
+					</h:panelGrid>
+	        	
+	        	</p:tab>
+	        	<p:tab title="Dados Pai do Aluno">
+	        		<h:panelGrid columns="2"  border="0">
+
+						<h:outputLabel value="Nome Pai: "
+									   style="font-size: 13px; width:180px" />
+						<h:inputText title="" value="#{aluno.nomePaiAluno}"
+							           style="font-size: 15px; width:280px" 
+									   disabled="#{authController.hasPermission(authController.professor)}"/>
+
+						<h:outputLabel value="Nome AVÔ Paterno: "
+									   style="font-size: 13px; width:180px" />
+						<h:inputText title="" value="#{aluno.nomeAvoPaternoPai}"
+							           style="font-size: 15px; width:280px" 
+							           disabled="#{authController.hasPermission(authController.professor)}"/>
+							           
+						<h:outputLabel value="Nome AVÓ Paterno: "
+									   style="font-size: 13px; width:180px" />
+						<h:inputText title="" value="#{aluno.nomeAvoPaternoPai}"
+							           style="font-size: 15px; width:280px" 
+							           disabled="#{authController.hasPermission(authController.professor)}"/>
+									
+					</h:panelGrid>
+	        	
+	        	</p:tab>
+	        	<p:tab title="Dados Mãe do Aluno">
+	        		<h:panelGrid columns="2"  border="0">
+
+						<h:outputLabel value="Nome MÃE: "
+									   style="font-size: 13px; width:180px" />
+						<h:inputText title="" value="#{aluno.nomeMaeAluno}"
+							           style="font-size: 15px; width:280px" 
+							           disabled="#{authController.hasPermission(authController.professor)}"/>
+
+						<h:outputLabel value="Nome AVÔ Materno: "
+									   style="font-size: 13px; width:180px" />
+						<h:inputText title="" value="#{aluno.nomeAvoPaternoMae}"
+							           style="font-size: 15px; width:280px" 
+							           disabled="#{authController.hasPermission(authController.professor)}"/>
+							           
+						<h:outputLabel value="Nome AVÓ Materno: "
+									   style="font-size: 13px; width:180px" />
+						<h:inputText title="" value="#{aluno.nomeAvoPaternoMae}"
+							           style="font-size: 15px; width:280px" 
+							           disabled="#{authController.hasPermission(authController.professor)}"/>
+						
+					</h:panelGrid>
+	        	
+	        	</p:tab>
+	        		        	
+	        	<p:tab title="Histórico">
+	        		<h:panelGrid columns="2"  border="0">
+		        		<h:outputLabel value="Escola: "
+							style="font-size: 13px; width:120px" />
+						<p:inputText value="#{historicoAluno.escola}"
+							style="font-size: 15px; width:175px">
+						</p:inputText>
+						
+						<h:outputLabel value="Ano: "
+							style="font-size: 13px; width:120px" />
+						<p:inputText value="#{historicoAluno.ano}"
+							style="font-size: 15px; width:175px">
+						</p:inputText>
+						
+	        		</h:panelGrid>
+	        		<h:panelGrid columns="4" width="50%">
+							<h:outputLabel value="Portugues: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaPortugues}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Matematica: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaMatematica}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="História: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaHistoria}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Geografia: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaGeografia}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Artes: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaArtes}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Ciências: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaCiencias}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Ed. Fisica: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaEdFisica}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Inglês: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaIngles}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="For. Cristã: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaformacaoCrista}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+						</h:panelGrid>
+						
+ 
+	        	</p:tab>
+				<p:tab title="Observações">
+	        		<h:panelGrid columns="2"  border="0">	
+						<h:outputLabel value="Observação "
+							style="font-size: 13px; width:80px" />
+						<p:inputTextarea value="#{aluno.observacaoProfessores}"
+						style="font-size: 12px; width:580px; height:280px !important" >
+						
+						</p:inputTextarea>
+						
+	        		</h:panelGrid>
+ 
+	        	</p:tab>
+	        	
+	        </p:tabView>
+		
+		</h:panelGrid>
+			
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{alunoController.voltar()}" value="Voltar"/>
+			
+
+			<h:commandButton id="salvarButtom" style="margin-left:690px !important"
+				action="#{alunoController.salvar()}" value="Salvar"	/>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			function start() {
+			    PF('statusDialog').show();
+			}
+			 
+			function stop() {
+			    PF('statusDialog').hide();
+			}
+		</script>
+		
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" 
+				draggable="false" closable="false" resizable="false">
+    		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
+		</p:dialog>
+	
+		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+
+			<h:panelGrid id="panelFerramentas" columns="17" style="margin-top: -30px; margin-left:-20px">
+				<p:tooltip  for="boletim" value="Boletim" position="top"/> 
+				 <p:tooltip  for="editar" value="Editar" position="top"/>
+				<p:tooltip  for="negativoDebito" value="Negativo Debito" position="top"/>
+				<p:tooltip  for="contrato" value="Contrato" position="top"/>
+				<p:tooltip  for="atestadoFrequencia" value="Atestado de Frequencia" position="top"/>
+			
+				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
+				<p:separator style=" height:25px;" />
+				<p:commandButton id="boletim" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 icon="ui-icon-bookmark"  
+								 disabled="#{!alunoController.alunoSelecionado}">
+								 <p:fileDownload value="#{alunoController.imprimirContratoAdonai()}" />
+								 </p:commandButton>
+				<p:commandButton id="negativoDebito"  ajax="false" icon="ui-icon-pencil" 
+								 onclick="PrimeFaces.monitorDownload(start, stop);"
+								  disabled="#{!alunoController.alunoSelecionado}">
+								  	<p:fileDownload value="#{alunoController.imprimirNegativoDebito()}" />
+								  </p:commandButton>
+				<p:commandButton id="contrato" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  
+								disabled="#{!alunoController.alunoSelecionado}">
+						<p:fileDownload value="#{alunoController.imprimirContrato()}" />
+				</p:commandButton>
+				<p:commandButton id="atestadoFrequencia" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 disabled="#{!alunoController.alunoSelecionado}">
+								<p:fileDownload value="#{alunoController.imprimirAtestadoFrequencia()}" />
+				</p:commandButton> 
+			</h:panelGrid>
+
+			<h:panelGrid width="98%">
+				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="#Nenhum registro encontrado"
+                             selectionMode="single" 
+                             selection="#{alunoController.aluno}"
+                             rowKey="#{professorTab.id}"
+                             filterEvent="enter" 
+                             lazy="true" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="20"
+                          
+  							 id="tbl" var="professorTab"
+							 value="#{alunoController.lazyDataModelUltimoAnoLetivo}"
+							 >
+   <!-- rowsPerPageTemplate="25,50,100" -->
+   
+   					<p:ajax event="rowSelect"  update="panelFerramentas" />
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tbl" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+					<p:column style="width:7%; text-align:center;" filterBy="#{professorTab.codigo}"
+                              styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              sortBy="#{professorTab.codigo}" 
+                              headerText="Código ">
+						<h:outputText value="#{professorTab.codigo}" />
+					</p:column>
+
+					<p:column filterBy="#{professorTab.nomeAluno}"
+                              sortBy="#{professorTab.nomeAluno}" 
+                              style="text-align:center;"
+                              styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Nome ">
+						<h:outputText value="#{professorTab.nomeAluno}" />
+					</p:column>
+
+					<p:column filterBy="#{professorTab.periodo}"
+                              sortBy="#{professorTab.periodo}" 
+                              style="text-align:center;width:8%"
+                              styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Periodo "
+                              filterOptions="#{CombosEspeciaisMB.periodosSelectIItem}">
+						<h:outputText value="#{professorTab.periodo.name}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.serie}"
+                              sortBy="#{professorTab.serie}" 
+                              style="text-align: center;width:10%;"
+                              styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Série "
+                              filterOptions="#{CombosEspeciaisMB.seriesSelectIItem}">
+						<h:outputText value="#{professorTab.serie.name}" />
+					</p:column>	
+
+					<p:column style="text-align: center; width:8%" 
+					styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}">
+						<f:facet name="header">
+							<h:outputText value="Remover" />
+						</f:facet>
+						
+							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{alunoController.remover(professorTab.id)}" >
+								
+							</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

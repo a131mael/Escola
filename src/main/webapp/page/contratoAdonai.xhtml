@@ -1,0 +1,108 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none">
+			<br />
+			<h:panelGrid columns="1" width="100%;width:80%"
+				styleClass="alinharTopo">
+				<h:panelGrid border="1" style="width:80%">
+					<h:outputLabel value="Responsável Financeiro" style="border:0px" />
+					<h:panelGrid columns="2" title="Contratante" border="0">
+
+						<h:outputText value="Nome: " />
+						<h:inputText value="#{contratoAdonai.contratanteNome}"
+							style="font-size: 15px" />
+
+						<h:outputText value="CPF: " />
+						<h:inputText value="#{contratoAdonai.contratanteCPF}"
+							style="font-size: 15px" />
+
+						<h:outputText value="RG: " />
+						<h:inputText value="#{contratoAdonai.contratanteRG}"
+							style="font-size: 15px" />
+
+						<!-- <h:outputText value="Rua: " />
+						<h:inputText value="{contratoAdonai.contratanteRua}"
+							style="font-size: 15px" />
+ -->
+					</h:panelGrid>
+
+					<h:panelGrid border="0" style="height:100%;width:100% ">
+						<h:outputLabel value="Contrato" style="border:0px" />
+						<h:panelGrid columns="2" title="Contratante" border="0">
+
+					<h:selectOneRadio value="#{contratoAdonai.serie}" style="width:100%">
+						<f:selectItem itemValue="1" itemLabel="Maternal I" />
+						<f:selectItem itemValue="2" itemLabel="Jardim I" />
+						<f:selectItem itemValue="3" itemLabel="Jardim II" />
+						<f:selectItem itemValue="4" itemLabel="Pré" />
+						<f:selectItem itemValue="5" itemLabel="1º Ano" />
+						<f:selectItem itemValue="6" itemLabel="2º Ano" />
+						<f:selectItem itemValue="7" itemLabel="3º Ano" />
+						<f:selectItem itemValue="8" itemLabel="4º Ano" />
+						<f:selectItem itemValue="9" itemLabel="5º Ano" />
+						
+					</h:selectOneRadio> 
+
+						<h:outputText value="Anuidade: " />
+							<h:inputText value="#{contratoAdonai.anuidade}"
+								style="font-size: 15px" />
+
+							<h:outputText value="Nº Parcelas " />
+							<h:inputText value="#{contratoAdonai.numeroParcelas}"
+								style="font-size: 15px" />
+
+							<h:outputText value="Valor mensal: " />
+							<h:inputText value="#{contratoAdonai.valorMensal}"
+								style="font-size: 15px" />
+
+ 							<h:outputText value="Meses a pagar: " />
+							<h:inputText value="#{contratoAdonai.mesesAPagar}"
+								style="font-size: 15px" />
+ 							
+ 
+						</h:panelGrid>
+					</h:panelGrid>
+
+
+				</h:panelGrid>
+
+
+
+			</h:panelGrid>
+			<h:panelGrid border="1" style="width:80%">
+				<h:outputLabel value="Dados Gerais" style="border:0px" />
+				<h:panelGrid columns="2" title="Contratante" border="0">
+
+					<h:outputText value="Horario 1: " />
+					<h:inputText value="#{contratoAdonai.horario1}" style="font-size: 15px" />
+
+					<h:outputText value="Horario 2: " />
+					<h:inputText value="#{contratoAdonai.horario2}" style="font-size: 15px" />
+
+					<!-- <h:outputText value="Mês  1º parcela: " />
+					<h:inputText value="{contratoAdonai.mes1}" style="font-size: 15px" />
+
+					<h:outputText value="Mês ultima parcela: " />
+					<h:inputText value="{contratoAdonai.mes2}" style="font-size: 15px" />
+
+					<h:outputText value="Quantidade de parcelas: " />
+					<h:inputText value="{contratoAdonai.parcelas}" style="font-size: 15px" /> -->
+
+					<h:outputText value="Valor Parcela: " />
+					<h:inputText value="#{contratoAdonai.valorTotal}" style="font-size: 15px" />
+
+				</h:panelGrid>
+			</h:panelGrid>
+
+			<h:commandButton id="Imprimir" style="alinharFooter"
+				action="#{contratoController.imprimirContratoAdonai()}" value="Imprimir"
+				styleClass="alinharFooter" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

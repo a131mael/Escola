@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <f:view contentType="text/html;" locale="#{LocaleMB.currentLocale}">  
+        <style>.ui-dialog .ui-dialog-content {padding: .5em 0;}.diol-rem span{border-top:1px solid #ccc;}.diol-rem span:first-child{border-top:none;}</style>
+        <h:form prependId="false">
+            <p:toolbar styleClass="toolbar-padrao">
+                <p:toolbarGroup align="left">
+                    <h:panelGrid columns="30"
+                                 columnClasses="1,2,3,4,5,6,cl-exato"
+                                 cellpadding="2"
+                                 cellspacing="0"
+                                 >
+
+                        <ui:insert name="toolbar-extra-function-first-position">
+                            <!-- aqui podem ser adicionadas extensoes que serao exibidas somente no inicio do toolbar -->
+                        </ui:insert>
+
+                        <ui:insert name="toolbar-default-function-add-button" rendered="#{botaoAdicionarVisivel}">
+                            <p:commandButton onclick="window.location='./multi-form.xhtml'"
+                                             styleClass="bt-adicionar bt-azul"
+                                             icon="ui-icon-fff ui-icon-plus" 
+                                             rendered="#{!naoExibirBotaoAdicionar}"
+                                             label="Adicionar"
+                                             title="Adicionar"/>
+                        </ui:insert>
+
+                        <ui:insert name="toolbar-extra-function-after-plus">
+                            <!-- aqui podem ser adicionadas extensoes que serao exibidas somente no inicio do toolbar -->
+                        </ui:insert>
+
+                        <p:spacer style="width: 10px;" rendered="#{!naoExibirBotaoRemover}"/>
+
+                        <ui:insert name="toolbar-default-function-remove-button">
+                            <p:commandButton id="pgRemover"
+                                styleClass="bt-disabled bt-excluir bt-vermelho"
+                                             onclick="dlgRemove.show();"
+                                             disabled="#{selectedIds == '[]'}"
+                                             icon="ui-icon-fff ui-icon-trash" 
+                                             rendered="#{!naoExibirBotaoRemover}"
+                                             title="Remover"/>
+                        </ui:insert>
+
+                        <p:spacer style="width: 10px;" rendered="#{!naoExibirComboBusca}"/>
+
+                        <p:spacer style="width: 10px;" rendered="#{!naoExibirComboBusca}"/>
+                        
+                        <ui:insert name="toolbar-default-function-search">
+                            <h:selectOneMenu value="#{mb.opcaoBuscaSelecionada}" rendered="#{!naoExibirComboBusca}">
+                                <f:selectItem itemLabel="#{bundle.opcaoBuscaLike}" itemValue="#{'like'}"/>
+                                <f:selectItem itemLabel="#{bundle.opcaoBuscaEqual}" itemValue="#{'equal'}"/>
+                                <f:selectItem itemLabel="#{bundle.opcaoBuscaIn}" itemValue="#{'in'}" />
+                                <p:ajax global="false"  update="pgToolbar" process="pgToolbar" 
+                                        listener="#{mb.carregaOpcoesBusca(mb.opcaoBuscaSelecionada)}"/>
+                            </h:selectOneMenu>
+
+                            <h:panelGroup style="color: #636262;font-size: 13px;font-weight: normal;text-shadow: none;" rendered="#{!naoExibirComboBusca}"> 
+                                <h:outputText value="#{mb.textoBusca}" /> <br />
+
+                            </h:panelGroup>
+                        </ui:insert>
+
+                        <ui:insert name="toolbar-default-function-visibleColumns">
+
+                            <p:selectCheckboxMenu label="#{bundle['cadastros.colunaVisivel.selecionarColunas']}" 
+                                                  id="selecaoColunasSimples" rendered="#{paginaSelecionada != null}"
+                                                  styleClass="input_p"
+                                                  style="float: left"
+                                                  converter="Converters"
+                                                  value="#{ColunaVisivelMB.colunasSelecionadasUsuarioPagina}">
+
+                                <f:selectItems value="#{CombosEspeciaisMB.getComboColunasVisiveisSomenteAtributoMultiSelect(paginaSelecionada)}" />
+                                <p:ajax event="change" process="@this" listener="#{ColunaVisivelMB.salvarColunasSelecionadas(paginaSelecionada)}"
+                                        update="dataTable, messages"
+                                        />
+                                <f:param name="paginaSelecionada" value="#{paginaSelecionada}" />
+
+                            </p:selectCheckboxMenu> 
+
+                            <input name="paginaSelecionada" type="hidden" value="#{paginaSelecionada}" />
+
+                            <p:remoteCommand autoRun="true" update="selecaoColunasSimples" process="paginaSelecionada"  >
+                                <f:param name="paginaSelecionada" value="#{paginaSelecionada}" />
+                            </p:remoteCommand>
+                        </ui:insert>
+
+                        <ui:insert name="toolbar-extra-function-last-position">
+                            <!-- aqui podem ser adicionadas extensoes que serao exibidas somente no final do toolbar -->
+                        </ui:insert>
+
+                    </h:panelGrid>
+                </p:toolbarGroup> 
+            </p:toolbar>
+
+            <p:dialog id="dlgObject" 
+                      widgetVar="dlgRemove"
+                      style="background-color: rgb(235, 234, 234);"
+                      header="#{bundle.Desejaexcluirestesitens}?">
+                <div style="margin:0 10px;" class="diol-rem">
+                    <ui:repeat value="#{selectedObjects}"
+                               var="rso">
+                        <h:outputText value="#{rso.toString()}" style="padding:5px 0; display: block;" />
+                    </ui:repeat>
+
+                </div>
+                <div class="width100" style="margin-top: 10px; border-top: 1px solid #b3b2b2;box-shadow: 0px 1px 0px #fff inset;background-color: #ebeaea; padding: 5px 0;">
+
+                    <p:commandButton value="#{bundle.Confirmar}" 
+                                     icon="ui-icon-fff ui-icon-check"
+                                     style="float: right"
+                                     styleClass="bt-confirmar bt-verde"
+                                     update="@all,dataTable,1 formFeriado,messages,pgRemover"
+                                     ajax="true"  
+                                     actionListener="#{mb.removeObjects()}"
+                                     oncomplete="dlgRemove.hide();" >
+                        
+                        <f:param name="ids" value="#{selectedIds}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{bundle.Cancelar}"
+                                     icon="ui-icon-fff ui-icon-close"
+                                     styleClass="bt-cancelar bt-vermelho"
+                                     style="float: right"
+                                     onclick="dlgRemove.hide();" />
+
+                </div>
+            </p:dialog>
+
+        </h:form> 
+    </f:view>
+</ui:composition>

@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.professor)}">
+
+			<h:panelGrid width="98%" style="margin-top: -20px;">
+				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="Nenhum registro encontrado"
+                             filterEvent="enter" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="20"
+  							 id="tbl" var="professorTab"
+							 value="#{professorController.alunosDoProfessor}"
+							 >
+   
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tbl" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+					
+					<p:column style="width:7%; text-align:center;" 
+                              headerText="Editar ">
+							 <p:tooltip  for="editar" value="Editar" position="top"/>
+							<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.visualizar(professorTab)}"	alt="Editar" />
+					
+					</p:column>
+					
+					
+					<p:column filterBy="#{professorTab.nomeAluno}"
+                              sortBy="#{professorTab.nomeAluno}" 
+                              style="text-align:center;"
+                              headerText="Nome ">
+						<h:outputText value="#{professorTab.nomeAluno}" />
+					</p:column>
+
+					<p:column filterBy="#{professorTab.periodo}"
+                              sortBy="#{professorTab.periodo}" 
+                              style="text-align:center;width:8%"
+                              headerText="Periodo "
+                              filterOptions="#{CombosEspeciaisMB.periodosSelectIItem}">
+						<h:outputText value="#{professorTab.periodo.name}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.serie}"
+                              sortBy="#{professorTab.serie}" 
+                              style="text-align: center;width:10%;"
+                              headerText="Série "
+                              filterOptions="#{CombosEspeciaisMB.seriesSelectIItem}">
+						<h:outputText value="#{professorTab.serie.name}" />
+					</p:column>	
+					
+					<p:column filterBy="#{professorTab.dataNascimento}"
+                              sortBy="#{professorTab.dataNascimento}" 
+                              style="text-align: center;width:10%;"
+                              headerText="Aniversario ">
+						<h:outputText value="#{professorTab.dataNascimento}" >
+						<f:convertDateTime  dateStyle="medium"/>		
+						</h:outputText>
+					</p:column>	
+					
+					
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

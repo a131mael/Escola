@@ -1,0 +1,381 @@
+body{ color:#375577 !important; line-height: 13px !important;}
+.ui-state-default, .ui-widget-content .ui-state-default{font-family: Arial,Helvetica,sans-serif !important}
+#main{ margin: 0;}
+.ui-widget{ font-family: Arial,sans-serif; font-size: 12px!important}
+ul, li{ list-style: none; margin: 0; padding: 0;}
+.guiaConsulta li{ float: left; margin-top: 1%; width: 902px!important;}
+h1{ font-family: Arial, sans-serif !important; float: left; margin-top: 22px; font-size:29px;}
+h2{ font-family: Arial, sans-serif !important; font-size:26px !important; margin-top: 23px}
+h3{}
+h4{ font-family: Arial, sans-serif !important; float: left; font-size:16px; margin:20px 5px 0 0;}
+.guia_consulta .ui-widget-content .ui-state-default.input-numero-guia{
+    font-size: 18px!important;
+    border: 1px solid #375577!important;
+    float: right;
+    height: 32px;
+    margin-top: 6px;
+    width: 205px;}
+.ui-inputfield{font-family: Arial, sans-serif !important; font-size: 13px!important;}
+.guia_consulta input, .guia_consulta textarea{ color:#375577 !important;}
+.guia_consulta .ui-state-default, .guia_consulta .ui-widget-content .ui-state-default{font-weight: bold !important; padding-left: 6px;border: none !important; width: 100%;}
+.guia_consulta .ui-state-default.ui-state-error, .guia_consulta .ui-widget-content .ui-state-default.ui-state-error{background-image: url("../images/erro.png") !important; background-position:5px center !important; background-repeat: no-repeat; }
+.guia_consulta .ui-state-default.ui-state-error.ui-state-focus, .guia_consulta .ui-widget-content .ui-state-default.ui-state-error.ui-state-focus{background-image: none !important; background-position:0 !important; background-repeat: no-repeat; }
+.ui-inputfield.ui-state-focus, .ui-widget-content .ui-inputfield.ui-state-focus, .ui-widget-header .ui-inputfield.ui-state-focus{ background-color: #f6f9fc!important}
+.widht100{float: left; width: 100%;}
+.bt_guias{color: #CCC!important;box-shadow: none!important;margin-right: 0;height: 25px;outline: 1px solid #375577;}
+.bt_guias .ui-button-text{ color: #444!important;}
+.marginTop05{margin-top:-1px;}
+.guia_consulta{
+    float: left;
+    padding: 0.5%;
+}
+
+.guia_consulta_li>.ui-widget-content{
+    border: none;
+    padding: 0;
+}
+.guia_consulta_li button{
+    width: 82px !important;
+}
+.guia_consulta_li button .ui-button-text{
+    color: darkslategray;
+    text-shadow: none;
+}
+/*.guia_consulta_li button.ui-state-hover .ui-button-text{
+    color: #333;
+}*/
+.guia_consulta .ui-button-text-icon-left .ui-button-text{color: FFF;text-shadow: none;font-family: Arial, sans-serif !important;}
+.ui-panel .ui-panel-titlebar{
+    background: #e2e1e1 !important;
+    border-bottom: 1px solid #e2e1e1;
+    margin: 0;
+}
+.ui-panel .ui-panel-title{
+    color: #606060;
+    font-family: Arial, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+    text-shadow: none !important;
+}
+.ui-panel .ui-panel-content{
+    background-color: transparent !important;
+    font-family: Arial, sans-serif !important;
+    margin: 0;
+    padding: 0;
+    color: #375577;
+}
+.ui-panel .ui-panel-content span{color: #375577;
+}
+.box_guia_col3{
+    float: left;
+    height: 100px;
+    width: 33%;
+}
+/*.item-obrigatorio .ui-panel.ui-widget, .item-obrigatorio .ui-panel.ui-widget input{ background-color: #f2f2f2;}
+.item-obrigatorio .ui-panel.ui-widget input.ui-inputfield{ box-shadow: 0 1px 0 #f2f2f2 !important; color: #2b2b2b!important; text-shadow: none;}*/
+.box_guia_01{ float: left; width: 20%;}
+.box_guia_02{}
+.box_guia_03{ float: left; width: 25%;}
+.box_guia_04{ float: left; width: 20%;}
+.box_guia_05{ float: left; width: 48%;}
+.box_guia_06{ float: left; width: 33%;}
+.box_guia_07{ float: left; width: 19%;}
+.box_guia_08{ float: left; width: 60%;}
+.box_guia_09{ float: left; width: 40%;}
+.box_guia_10{ float: left; width: 30%;}
+.box_guia_11{ float: left; width: 55%;}
+.box_guia_12{ float: left; width: 15%;}
+.box_guia_13{ float: left; width: 30%;}
+.box_guia_14{ float: left; width: 55%;}
+.box_guia_15{ float: left; width: 15%;}
+.box_guia_16{ float: left; width: 30%;}
+.box_guia_17{ float: left; width: 55%;}
+.box_guia_18{ float: left; width: 15%;}
+.box_guia_19{ float: left; width: 30%;}
+.box_guia_20{ float: left; width: 26%;}
+.box_guia_21{ float: left; width: 29%;}
+.box_guia_22{ float: left; width: 15%;}
+.box_guia_36{ background-color: #cbd9e9; border:1px solid #375577; padding-bottom: 1px; margin-top: 10px;}
+.box_guia_38{ background-color: #cbd9e9; border:1px solid #375577; float: left; margin-top: 5px; padding-bottom: 3px; width: 49%;}
+
+.box_guia_37 .ui-selectonemenu .ui-selectonemenu-trigger{
+    width: auto;
+}
+
+.guia_consulta .box_guia_37 .ui-selectonemenu{
+    padding-left: 0px;    
+}
+
+.table-exames-realizados{ float: left; border: 1px solid #a4a3a3; padding-bottom: 0.5%; background-color: #f9f9f9;}
+.tit_table-exames-realizados td .ui-panel .ui-panel-content{ font-size: 11px !important;}
+.cont_table-exames-realizados td .ui-widget-content .ui-state-default{ font-size: 11px !important; padding: 0;}
+.tit_table-exames-realizados td .ui-widget-content{ background-color: #f2f2f2; border-left: none;}
+.tit_table-exames-realizados td:first-child .ui-panel.ui-widget-content, .cont_table-exames-realizados td:first-child .ui-panel.ui-widget-content{ border-left: 1px solid #a4a3a3;}
+.cont_table-exames-realizados td .ui-widget-content{border-left: none;border-top: none;}
+
+.box_guia_35{ float: left; font-weight: bold; text-align: right; text-transform: uppercase; width: 100%;}
+.box_guia_35 .ui-widget-content{ height: 35px;}
+.ui-widget-content .box_guia_36 textarea{ border: 1px solid #a4a3a3 !important;}
+.ui-panel .ui-panel-footer{ margin: 0; padding: 0!important;background-color: transparent!important; border:0!important; float: left;}
+
+.valorguia{margin-top: 10px;display: inline-block;}
+/*
+.box_guia_36{ float: left; margin-left: 0.5%; width: 49.5%;}
+.box_guia_37{ float: left; margin-left: 0.5%; width: 49.5%;}
+*/
+
+.box_guia_36 .ui-panel.ui-widget input.ui-inputfield{ width: 27px!important;}
+.box_guia_35 .ui-panel.ui-widget input.ui-inputfield{ float: right; font-weight: bold!important; margin-top: 1px; width: 100px !important;}
+
+/* Menu  */
+
+.ui-menubar .ui-menuitem-link {
+    color: #FFFFFF;
+    font-family: 'RobotoCondensed',Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    text-align: center;
+    height: 50px;
+    box-shadow: 1px 0 0 #747474;
+}
+a.item-menu .ui-menuitem-text{
+    color:#FFF;
+}
+.bBlue {  
+    border: 1px solid #3e76af !important; box-shadow: 0 1px 2px 0 #66b2d2 inset !important; -webkit-box-shadow: 0 1px 2px 0 #66b2d2 inset !important; -moz-box-shadow: 0 1px 2px 0 #66b2d2 inset !important;
+    background: #27486c !important;
+    background: -moz-linear-gradient(top,  #27486c 0%, #27486c 100%) !important;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#27486c), color-stop(100%,#27486c)) !important;
+    background: -webkit-linear-gradient(top,  #27486c 0%,#27486c 100%) !important;
+    background: -o-linear-gradient(top,  #27486c 0%,#27486c 100%) !important;
+    background: -ms-linear-gradient(top,  #27486c 0%,#27486c 100%) !important;
+    background: linear-gradient(top,  #27486c 0%,#27486c 100%) !important;
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#27486c', endColorstr='#27486c',GradientType=0 ) !important;
+    color: #FFF !important;
+}
+.bBlue:hover { opacity: 0.95 !important; filter: alpha(opacity=95) !important; -webkit-transition: opacity 0.2s ease-in-out !important; -moz-transition: opacity 0.2s ease-in-out !important; transition: opacity 0.2s ease-in-out !important; }
+.ui-widget-content .bBlue .ui-icon{background-image: url("../images/ui-icons_ffffff_256x240.png") !important;}
+
+.navbar-inner:before, .navbar-inner:after, .row-fluid:before, .row-fluid:after  {
+    display: table;
+    line-height: 0;
+    content: "";
+}
+.navbar-inner:after, .row-fluid:after {
+    clear: both;
+}
+.navbar {}
+.navbar-inner {  padding-left: 3px; position: relative;
+}
+.navbar-inner h6 { font-size: 13px !important; margin: 0; padding: 9px 14px 3px 0; display: block; float: left; color: #375577; font-family: Arial, sans-serif !important; font-weight: bold; text-transform: uppercase; }
+
+.row-fluid {
+    width: 100%;
+}
+.row-fluid .ui-panel.ui-widget-content{ border:1px solid #375577; padding: 0; padding-bottom: 1px; background-color: #cbd9e9;}
+.row-fluid .ui-panel.ui-widget-content input{ background-color: #cbd9e9; box-shadow: none !important;}
+.row-fluid .item-obrigatorio .ui-panel.ui-widget-content{ background-color: #FFF;}
+.row-fluid .item-obrigatorio .ui-panel.ui-widget-content input{ background-color: #FFF;}
+.obrig{
+    font-family: Arial, sans-serif !important;
+    display: block;
+}
+.item-obrigatorio .obrig{ color: #375577;}
+.obrig em{
+    font-style: normal;
+    width: 30px;
+    height: 20px;
+    padding-top: 6px;
+    display: inline-block;
+    text-align: center;
+}
+.obrig .txt_obrig{
+    padding-top: 6px;
+}
+.box_busca ul li{
+    margin-top: 0;
+}
+.ui-autocomplete-panel .ui-autocomplete-list-item {
+    border: 0px none;
+    cursor: pointer;
+    font-weight: normal;
+    margin: 1px 0;
+    padding: 3px 2%;
+    width: 96%;
+}
+.ui-autocomplete-panel .ui-autocomplete-list{
+    margin: 0;
+    padding: 0;
+}
+.acoes_grid .ui-widget-header{ background-color: #FFF; border-bottom: none; padding: 5px 0;}
+
+.ui-autocomplete-panel {
+    overflow: nome;
+}
+
+.row-fluid .box_guia_03 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_04 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_06 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_07 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_09 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_11 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_12 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_14 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_15 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_17 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_18 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_20 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_21 .ui-panel.ui-widget-content,
+.row-fluid .box_guia_22 .ui-panel.ui-widget-content{ border-left:none;}
+
+
+/*
+*/
+.box_guia_04 input, .box_guia_07 input{ background-image: url("../images/guia/input-6.png")!important; letter-spacing: 19px; background-repeat: no-repeat!important; background-position: left bottom !important; padding-left: 13px!important; padding-right: 0!important;}
+.box_guia_05 input, .guia_consulta .box_guia_05 .ui-widget-content .ui-state-default.ui-state-error.ui-state-focus{ background-image: url("../images/guia/input-5.png")!important; letter-spacing: 13px; background-repeat: no-repeat!important; background-position: left bottom !important; padding-left: 11px!important; padding-right: 0!important;}
+.box_guia_09 input{ background-image: url("../images/guia/input-8.png")!important; letter-spacing: 16px; background-repeat: no-repeat!important; background-position: left bottom !important; padding-left: 14px!important; padding-right: 0!important;}
+.box_guia_10 input, .box_guia_13 input, .box_guia_16 input, .guia_consulta .box_guia_10 .ui-widget-content .ui-state-default.ui-state-error.ui-state-focus{ background-image: url("../images/guia/input-9.png")!important; letter-spacing: 10px; background-repeat: no-repeat!important; background-position: bottom !important; padding-left: 13px!important;padding-right: 0!important;}
+.row-fluid .box_guia_36 textarea{background-color: #cbd9e9; background-image: url("../images/guia/linha_textarea.png")!important; background-position: top; line-height: 34px; box-shadow: none !important;}
+.guia_consulta .box_guia_38 .ui-state-default.data_38{ background-color: #cbd9e9;background-image: url("../images/guia/input-38.png")!important; letter-spacing: 12px; background-repeat: no-repeat!important; background-position: left bottom !important; border: 1px solid #375577!important; border-top: none !important;box-shadow: none !important; margin-left: 10px;padding-right: 0!important; padding-left: 7px!important; width: 124px;}
+.guia_consulta .box_guia_38 .ui-state-default.ass_38{ background-color: #cbd9e9; border-bottom: 1px solid #375577!important; box-shadow: none !important; margin-left: 10px; width: 290px;}
+.guia_consulta .box_guia_38 .ui-state-default.data_38.ui-state-focus, .guia_consulta .box_guia_38 .ui-state-default.ass_38.ui-state-focus{ background-color: #f6f9fc!important}
+.row-fluid .box_guia_05.item-digito .ui-panel.ui-widget-content{background-image: url("../images/guia/bg_obrig.jpg")!important; background-repeat: no-repeat; background-position: 341px top;}
+/*
+
+
+.box_guia_28 input, .box_guia_29 input, .box_guia_30 input, .box_guia_31 input{ background-image: url("../images/guia/input-28.png")!important; letter-spacing: 34px; background-repeat: no-repeat!important; background-position: left bottom !important;padding-left: 25px!important;}
+.box_guia_32 input{ background-image: url("../images/guia/input-32.png")!important; letter-spacing: 27px; background-repeat: no-repeat!important; background-position: left bottom !important;padding-left: 20px!important;}
+.box_guia_33 input{ background-image: url("../images/guia/input-33.png")!important; letter-spacing: 18px; background-repeat: no-repeat!important; background-position: left bottom !important;padding-left: 18px!important;}
+.box_guia_34 input{ background-image: url("../images/guia/input-34.png")!important; letter-spacing: 14px; background-repeat: no-repeat!important; background-position: left bottom !important;padding-left: 13px!important;}
+
+
+.row-fluid .box_guia_34.item-digito .ui-panel.ui-widget-content{background-image: url("../images/guia/bg_obrig.jpg")!important; background-repeat: no-repeat; background-position: 175px top;}
+
+.row-fluid .box_guia_01 .ui-panel.ui-widget-content{ padding-bottom: 5px; float: left;}
+*/
+
+#acNumeroCarteira_input{ letter-spacing: 14px;}
+.inputCPF input{ letter-spacing: 11px;}
+
+.guia_consulta .removerProcedimento td div,
+.guia_consulta .removerProcedimento td div input {background-color: #e2bfbf !important; border: #e2bfbf !important; box-shadow: 0 0 0 !important;}
+
+.selecaoProcedimento .removerProcedimento td div,
+.selecaoProcedimento .removerProcedimento td div input {background-color: #e2bfbf !important; border: #e2bfbf !important; box-shadow: 0 0 0 !important;}
+
+.formulario-box-procedimento{ float: left; width: 100%;}
+.marginT16L0{ margin-left: 0!important; margin-top: 3px;}
+.formulario h2{font-weight: bold!important;font-size: 15px!important;color: #1e4b7c;border-bottom: 1px solid #1e4b7c;padding-bottom: 3px; text-transform: uppercase; margin-top: 5px;}
+.formulario label {
+    display: block;
+    font-size: 14px;
+    color: #2d2d2d;
+}
+.guia_consulta .ui-widget-content .formulario input[type=text],
+.guia_consulta .ui-widget-content .formulario input[type=password],
+.guia_consulta .ui-widget-content .formulario textarea,
+.guia_consulta .ui-widget-content .formulario select {
+    width: 100%;
+    font-size: 12px!important;
+    color: #858585!important;
+    box-shadow: 0 0 0!important;
+    padding: 0 0 0 5px;
+    border: 1px solid #b0aeae!important;
+    display: inline-block;
+    background: #fdfdfd;
+    height: 22px;
+    border-radius: 0!important;
+    font-weight: normal!important;
+    margin-top: 3px;
+}
+.formulario .ui-chkbox-box.ui-widget.ui-corner-all.ui-state-default {
+    border-radius: 0;
+    height: 18px;
+    margin-top: 5px;
+    width: 18px;
+    box-shadow: 0 0 0;
+    background: transparent;
+    border: 1px solid #b0aeae!important;
+    padding: 0;
+}
+.guia_consulta .ui-widget-content .formulario .bt-remover {
+    width: 18px!important;
+    height: 18px;
+    border-radius: 0;
+    margin-top: 0px;
+    background: #3d3e3e!important;
+    box-shadow: 0 0 0!important;
+    color: #fff!important;
+    border: 0!important;
+    font-weight: normal!important;
+    padding-left: 0;
+    margin-right: 0;
+}
+.guia_consulta .ui-widget-content .formulario .bt-remover span{color: #fff;padding: 0 0 0 6px;}
+.list-procedimentos-prod .ui-widget-content{ border: 0;}
+.list-procedimentos-prod li:nth-child(odd){background: #f5f5f5;}
+.list-procedimentos-prod li{background: #fafafa;}
+.list-procedimentos-prod li{float: left;width: 100%!important;padding-bottom: 0;padding-top: 0;border-bottom: 1px solid #b0aeae}
+.list-procedimentos-prod li:last-child{border-bottom: 0}
+.list-procedimentos-prod li label{ margin-top: 2px;}
+.grid12 {
+    width: 99.99999998999999%;
+}
+.grid4 {
+    width: 31.914893614%;
+}
+.grid01 {
+    width: 6.382978723%;
+}
+.grid6 {
+    width: 48.93617020799999%;
+}
+.grid7 {
+    width: 73.93617%;
+}
+.grid3 {
+    width: 22.404255317%;
+}
+.panelBorda0.ui-widget-content {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+}
+.panelBorda0.ui-panel .ui-panel-content {
+    padding: 0;
+}
+.list-procedimentos-prod .ui-widget-content {
+    border: 0;
+}
+.formulario [class*="grid"] {
+    display: block;
+    position: relative;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    margin-left: 2.127659574%;
+}
+.formulario [class*="grid"]:first-child {
+    margin-left: 0;
+}
+.title_procedimentos {
+    background: #f3f3f3;
+    padding: 0;
+    margin-top: 7px;
+    border: 1px solid #375577;
+}
+.title_procedimentos span,
+.tabela-lista-procedimento span{border-left: 1px solid #375577;padding: 7px 8px 5px;float: left;margin-left: 0!important;}
+.title_procedimentos span:first-child,
+.tabela-lista-procedimento span:first-child{border-left: 0;}
+.title_procedimentos span label{font-size: 12px;color: #1e4b7c;}
+.tabela-lista-procedimento{border: 1px solid #375577;float: left;width: 99.7%;border-top: 0;}
+.guia_consulta .ui-widget-content .formulario.formulario-box-procedimento span input,
+.guia_consulta .ui-widget-content .formulario .tabela-lista-procedimento span input{border:0!important;background: #fff!important;}
+.tabela-lista-procedimento .ui-datalist .ui-datalist-empty-message{height: 32px;}
+.text-align-center {
+    text-align: center;
+}

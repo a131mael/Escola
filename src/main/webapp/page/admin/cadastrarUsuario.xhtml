@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content"
+		rendered="#{authController.hasPermission(authController.administrador)}">
+		<h:form style="width:100%; border:none">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+
+				<h:panelGrid columns="2" border="0">
+
+					<h:outputLabel for="name" value="Nome(*): "
+						style="font-size: 13px; width:180px" />
+					<p:inputText id="nome" title="" value="#{usuario.name}"
+						style="font-size: 15px; width:280px" />
+
+					<h:outputLabel value="Login: " style="font-size: 13px; width:180px" />
+					<p:inputText title="" value="#{usuario.login}"
+						style="font-size: 15px; width:280px" />
+
+					<h:outputLabel value="Senha : "
+						style="font-size: 13px; width:180px" />
+					<h:inputText value="#{usuario.senha}"
+						style="font-size: 15px; width:280px" />
+
+
+					<h:outputLabel value="Tipo "
+						style="font-size: 13px; width:180px" />
+					<p:selectOneMenu id="especialidade" style="width: 256px;"
+						value="#{usuario.tipoMembro}">
+						<f:selectItems value="#{CombosEspeciaisMB.getTipoMembro()}"
+							var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+						<p:ajax event="change" process="@this" />
+					</p:selectOneMenu>
+
+
+
+				</h:panelGrid>
+
+			</h:panelGrid>
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{usuarioController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{usuarioController.salvar()}" value="Salvar" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

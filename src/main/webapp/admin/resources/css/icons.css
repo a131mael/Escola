@@ -1,0 +1,22 @@
+.ui-menu .ui-menuitem-link .ui-menuitem-icon.ui-icon.ui-icon-thothcare {
+    background: url("../images/logo-sistema.jpg") !important;
+    height: 53px!important;
+    width: 50px;
+}
+/* [][][][][][][][][][][][][][][][][][]*/
+.fa-dashboard:before{content:"\f0e4"}
+.fa-gerenciar:before{content:"\f085"}
+.fa-convenio:before{content:"\f0f8"}
+.fa-ferramentas:before{content:"\f1cd"}
+.fa-relatorios:before{content:"\f080"}
+.fa-cooperado:before{content:"\f0c0"}
+.fa-financeiro:before{content:"\f155"}
+.fa-sair:before{content:"\f0a9"}
+.fa-auditoria:before{content:"\f002"}
+.fa-recepcao:before{content:"\f01c"}
+.fa-operacional:before{content:"\f11c"}
+.fa-gerencia:before{content:"\f085"}
+.fa-lotes:before{content:"\f1b3"}
+.fa-revisao:before{content:"\f002"}
+.fa-analise:before{content:"\f002"}
+.fa-configuracao:before{content:"\f0ad"}

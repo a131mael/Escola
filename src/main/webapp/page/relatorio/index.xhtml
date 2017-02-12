@@ -1,0 +1,188 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+    PrimeFaces.locales['pt'] = {
+        closeText: 'Fechar',
+        prevText: 'geri',
+        nextText: 'ileri',
+        currentText: 'Hoje',
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+            'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Maio','Jun',
+            'Jul','Ago','Set','Out','Nov','Dez'],
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sabado'],
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'],
+        dayNamesMin: ['D','S','T','Q','Q','S','S'],
+        weekHeader: 'Hf',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: '',
+        month: 'Mes',
+        week: 'Semana',
+        day: 'Dia',
+        allDayText : 'Horas'
+    };
+</script>
+		<h:form style="width:100%; border:none"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+			<p:growl id="messages" showDetail="true" />
+
+
+			<h:panelGrid columns="5" style="margin-top: -10px;">
+				<p:outputLabel value="Turma " />
+				<p:outputLabel value="Manha" />
+				<p:outputLabel value="Tarde" />
+				<p:outputLabel value="Integral" />
+				<p:outputLabel value="Total" />
+
+				<h:outputText   value=" " style="margin-left:20px"/>
+				<h:outputText value="" style="margin-left:20px"/>
+				<h:outputText value="" style="margin-left:20px"/>
+				<h:outputText value="" style="margin-left:20px"/>
+				<h:outputText value="" style="margin-left:20px"/>
+
+				<h:outputText value="Maternal" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.maternal,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.maternal,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.maternal,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.maternal)}" style="margin-left:20px"/>
+				
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+
+
+				<h:outputText value="Jardim_I " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.jardimI,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.jardimI,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.jardimI,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.jardimI)}" style="margin-left:20px"/>
+
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+
+				<h:outputText value="Jardim_II " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.jardimII,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.jardimII,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.jardimII,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.jardimII)}" style="margin-left:20px"/>
+			
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+					
+
+				<h:outputText value="PRÉ " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.pre,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.pre,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.pre,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.pre)}" style="margin-left:20px"/>
+			
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				
+				<h:outputText value="Primeiro " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.primeiro,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.primeiro,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.primeiro,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.primeiro)}" style="margin-left:20px"/>
+				
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+					
+				<h:outputText value="Segundo " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.segundo,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.segundo,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.segundo,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.segundo)}" style="margin-left:20px"/>
+				
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+
+				<h:outputText value="Terceiro " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.terceiro,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.terceiro,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.terceiro,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.terceiro)}" style="margin-left:20px"/>
+				
+
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				
+				<h:outputText value="Quarto " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.quarto,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.quarto,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.quarto,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.quarto)}" style="margin-left:20px"/>
+				
+
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				
+				<h:outputText value="Quinto " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.quinto,relatorioController.manha)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.quinto,relatorioController.tarde)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.quinto,relatorioController.integral)}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.getTotalAlunos(relatorioController.quinto)}" style="margin-left:20px"/>
+				
+
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				<p:outputLabel value=" " />
+				
+				
+				<h:outputText value="Total " style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.totalAlunosManha}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.totalAlunosTarde}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.totalAlunosIntegral}" style="margin-left:20px"/>
+				<h:outputText value="#{relatorioController.totalAlunos}" style="margin-left:20px"/>
+				
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

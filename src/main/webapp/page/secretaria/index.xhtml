@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+			<center>
+				<h1>ADONAI</h1>
+				<div>
+        	    	<p>Escola Adonai do maternal ao fundamental.</p>
+        		</div>
+		
+			</center>
+        	
+			<br />
+			
+			<h:commandButton id="ContratoEscolar" 
+				style="width: 120px;height: 120px; padding-left: 120px"
+				action="#{secretariaController.linkAlunos()}" 
+				value="Alunos"
+				styleClass="alinharFooter " 
+				image="/resources/gfx/icn_mochila.png" />
+				
+				
+			<h:commandButton id="ContratoFretamento" 
+				style="alinharFooter; width: 120px;height: 120px;padding-right: 200px"
+				action="#{secretariaController.linkProfessores()}" 
+				value="Professores"
+				styleClass="alinharDireita" 
+				image="/resources/gfx/icn_professor.png"/>
+				<br/>
+				<br/>
+				<br/>
+					
+			<h:commandButton id="ContratoAdonai" 
+				style="alinharFooter width: 120px;height: 120px;padding-left: 120px"
+				action="#{secretariaController.linkTurmas()}" 
+				value="Turmas"
+				styleClass="alinharFooter" 
+				image="/resources/gfx/sala_de_aula.png"/>	
+
+			<h:commandButton id="calendario" 
+				style="alinharFooter width: 120px;height: 120px;padding-right: 200px"
+				action="#{secretariaController.linkCalendario()}" 
+				value="Turmas"
+				styleClass="alinharDireita" 
+				image="/resources/gfx/calendar.png"/>	
+				<br/>
+
+			<h:commandButton id="recados" 
+				style="alinharFooter width: 120px;height: 120px;padding-left: 120px"
+				action="#{contratoController.irContratoAdonai()}" 
+				value="Turmas"
+				styleClass="alinharFooter" 
+				image="/resources/gfx/recado.png"
+				rendered="false"/>	
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

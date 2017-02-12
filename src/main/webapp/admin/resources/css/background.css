@@ -1,0 +1,6 @@
+html {
+    background: url("../images/background/body.jpg") repeat scroll 0 0 #efefef;
+}
+.wrapper {
+    background: url("../images/background/bg_sidebar.jpg") repeat-y scroll 3px 0 #efefef;
+}

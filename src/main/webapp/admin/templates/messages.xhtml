@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <script type="text/javascript">
+//        $(document).ready(function() {
+//            $("#messages").remove();
+//        });
+    </script>
+    
+    <h:panelGroup rendered="#{AtributoSessao.get('messages-info') != null and AtributoSessao.get('messages-info').length() > 1}">
+        <div class="ui-messages ui-widget" 
+             aria-live="polite">
+            <div class="ui-messages-info ui-corner-all">
+                <span class="ui-messages-info-icon" />
+                <ul>
+                    <li>
+                        <span class="ui-messages-info-summary">
+                            <h:outputText value="#{AtributoSessao.get('messages-info')}"
+                                          escape="false"  />
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div> 
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{AtributoSessao.get('messages-warn') != null and AtributoSessao.get('messages-warn').length() > 1}">
+        <div class="ui-messages ui-widget" 
+             aria-live="polite">
+            <div class="ui-messages-warn ui-corner-all">
+                <span class="ui-messages-warn-icon" />
+                <ul>
+                    <li>
+                        <span class="ui-messages-warn-summary">
+                            <h:outputText value="#{AtributoSessao.get('messages-warn')}"
+                                          escape="false" />
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{AtributoSessao.get('messages-error') != null and AtributoSessao.get('messages-error').length() > 1}">
+        <div class="ui-messages ui-widget" 
+             aria-live="polite">
+            <div class="ui-messages-error ui-corner-all">
+                <span class="ui-messages-error-icon" />
+                <ul>
+                    <li>
+                        <span class="ui-messages-error-summary">
+                            <h:outputText value="#{AtributoSessao.get('messages-error')}"
+                                          escape="false" />
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </h:panelGroup>
+
+</ui:composition>

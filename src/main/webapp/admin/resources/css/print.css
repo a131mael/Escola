@@ -1,0 +1,29 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 05/02/2014, 15:14:41
+    Author     : ezequiel
+*/
+
+.no-print{
+    display: none;
+}
+
+#form-menu{
+    display: none;
+}
+
+.sidebar{
+    display: none;
+}
+
+.footer{
+    display: none;
+}
+
+.wrapper{
+    background: white!important;
+}

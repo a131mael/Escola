@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+    <f:view encoding="ISO-8859-1" contentType="text/html;" locale="#{LocaleMB.currentLocale}">
+        <h:head>         
+            <title>
+                <ui:insert name="title">
+                    <h:outputText value="#{BreadCrumbMB.page}" />
+                </ui:insert>
+            </title>
+            <ui:include src="./css.xhtml" />
+            <ui:include src="./javascript.xhtml" />
+        </h:head>
+        <div id="wrap" style="width:100%">
+            <div class="wrapper">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td colspan="2">
+                            <div id="header">
+                                <ui:insert name="header">
+                                    <ui:include src="./header.xhtml" />
+                                </ui:insert> 
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="52" valign="top" class="sidebar">
+                            <div id="sidebar">
+                                <ui:insert name="sidebar">
+                                    <ui:include src="./sidebar.xhtml" />   
+                                </ui:insert> 
+                            </div>
+                        </td>
+                        <td valign="top">
+                            <div id="nav">
+                                <ui:insert name="nav">
+                                    <ui:include src="./nav.xhtml" />
+                                </ui:insert>
+                            </div>
+                            <div id="main" valign="top">
+                                <ui:insert name="main">
+                                    <ui:include src="./main.xhtml" />
+                                </ui:insert> 
+                            </div>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="footer">
+                <div id="footer">
+                    <ui:insert name="footer">
+                        <ui:include src="./footer.xhtml" />
+                    </ui:insert>   
+                </div>
+            </div>
+        </div>
+    </f:view>
+</ui:composition>

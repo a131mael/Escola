@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>  
+
+        <script language="JavaScript" type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/admin/resources/js/MascaraData.js"/>
+        <script language="JavaScript" type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/admin/resources/js/MascaraHora.js"/>
+        <script language="JavaScript" type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/admin/resources/js/MascaraMoeda.js"/>
+        <script language="JavaScript" type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/admin/resources/js/TargetInput.js"/>
+        <script language="JavaScript" type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/admin/resources/js/MascaraNumeroInteiro.js"/>
+        <script language="JavaScript" type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/admin/resources/js/MascaraTipoiDoenca.js"/>
+        <script language="JavaScript" type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/admin/resources/js/MascaraAlfaNumerico.js"/>
+        <script language="JavaScript" type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/admin/resources/js/jquery.maskedinput.min.js"></script>
+
+        <script type="text/JavaScript">
+            jQuery(function($){  
+                $("input.data:text").mask("99/99/9999");  
+            });
+        </script>
+        <script type="text/JavaScript">
+            /*----------------------------------------------------------------------------
+                Formatação para qualquer mascara
+            -----------------------------------------------------------------------------*/
+            function formatar(src, mask){
+                //                alert('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                var i = src.value.length;
+                var saida = mask.substring(0,1);
+                var texto = mask.substring(i)
+                if (texto.substring(0,1) != saida)
+                {
+                    src.value += texto.substring(0,1);
+                }
+            }
+        </script>
+
+        <script type="text/javascript">
+            PrimeFaces.locales['pt'] = {
+                closeText: 'Fechar',
+                prevText: 'Anterior',
+                nextText: 'Próximo',
+                currentText: 'Começo',
+                monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+                dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                dayNamesMin: ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Só Horas',
+                timeText: 'Tempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Data Atual',
+                ampm: false,
+                month: 'Mês',
+                week: 'Semana',
+                day: 'Dia',
+                allDayText: 'Todo Dia'
+            };
+
+            mascaras();
+
+            function mascaras() {
+                jQuery(function($) {
+                    $("input.cpf:text").attr("alt", "cpf");
+                    
+                    $("input.date:text").attr("alt", "date");
+                    $("input.phone:text").attr("alt", "phone");
+                    $("input.cep:text").attr("alt", "cep");
+                    $("input.cnpj:text").attr("alt", "cnpj");
+                    $("input.time:text").attr("alt", "time");
+                    $("input.dateHour:text").attr("alt", "dateHour");
+                    $("input.dateHourSecond:text").attr("alt", "dateHourSecond");
+                });
+            }
+        </script>
+       
+    </h:head>
+    <h:body>
+
+    </h:body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <f:view contentType="text/html;" locale="#{LocaleMB.currentLocale}"> 
+        <div class="cont_main ficha-pre">
+            <div class="box_resultado_busca" style="width: 99%; margin-top: 0;">
+                <h:form id="form-options-multi-form"
+                        prependId="false"> 
+                    <p:dataGrid columns="4"
+                                value="#{mb.selectedObjects}"
+                                var="se"
+                                rendered="#{mb.selectedObjects.size() > 1}">
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.Itensselecionados}" />
+                        </f:facet>
+                        <p:column id="cse">
+                            <p:commandButton value="#{se.toString()}"
+                                             ajax="false"
+                                             actionListener="#{mb.changeSelectedEntity(se)}"
+                                             update="@form"
+                                             process="@this"
+                                             styleClass="bt-atualizar"
+                                             icon="ui-icon-refresh" />
+                        </p:column>
+                    </p:dataGrid>
+                </h:form> 
+            </div>
+        </div>
+    </f:view>
+</ui:composition>

@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+
+				<p:tabView>
+					<p:tab title="Dados do aluno">
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel for="name" value="Nome(*): "
+								style="font-size: 13px; width:180px" />
+							<h:inputText id="nome" title="" value="#{avaliacao.nome}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Disciplina:" style="font-size: 13px; width:180px" />
+							<p:selectOneMenu style="width: 256px;" value="#{avaliacao.disciplina}">
+								<f:selectItems value="#{CombosEspeciaisMB.getDisciplinas()}"
+									var="country" itemLabel="#{country.name}"
+									itemValue="#{country}" />
+							</p:selectOneMenu>
+
+							<h:outputLabel value="Bimestre:" style="font-size: 13px; width:180px" />
+							<p:selectOneMenu style="width: 256px;" value="#{avaliacao.bimestre}">
+								<f:selectItems value="#{CombosEspeciaisMB.getBimestres()}"
+									var="country" itemLabel="#{country.name}"
+									itemValue="#{country}" />
+							</p:selectOneMenu>
+							
+							<h:outputLabel value="Serie:" style="font-size: 13px; width:180px" />
+							<p:selectOneMenu style="width: 256px;" value="#{avaliacao.serie}">
+								<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
+									var="country" itemLabel="#{country.name}"
+									itemValue="#{country}" />
+							</p:selectOneMenu>
+							
+
+							<h:outputLabel value="Peso: "
+								style="font-size: 13px; width:180px" />
+							<p:inputNumber   title="" value="#{avaliacao.peso}"
+								style="font-size: 15px; width:280px" />
+
+
+							<h:outputLabel value="Data: "
+								style="font-size: 13px; width:180px" />
+							<p:calendar value="#{avaliacao.data}" pattern="dd/MM/yyyy"
+								mask="true" style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Trabalho: "
+								style="font-size: 13px; width:180px" />
+							<h:selectBooleanCheckbox value="#{avaliacao.trabalho}" />
+
+							<h:outputLabel value="Prova: "
+								style="font-size: 13px; width:180px" />
+							<h:selectBooleanCheckbox value="#{avaliacao.prova}" />
+								
+							<h:outputLabel value="Bimestral: "
+								style="font-size: 13px; width:180px" />
+							<h:selectBooleanCheckbox value="#{avaliacao.bimestral}" />
+							
+							<h:outputLabel value="Recuperacao: "
+								style="font-size: 13px; width:180px" />
+							<h:selectBooleanCheckbox value="#{avaliacao.recuperacao}" />
+								
+						</h:panelGrid>
+
+					</p:tab>
+
+				</p:tabView>
+
+			</h:panelGrid>
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{avaliacaoController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{avaliacaoController.salvar()}" value="Salvar" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

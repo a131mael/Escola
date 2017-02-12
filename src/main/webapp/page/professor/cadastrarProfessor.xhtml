@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content"
+		rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		<h:form style="width:100%; border:none">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+
+				<p:tabView>
+					<p:tab title="Dados do Professor">
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel for="name" value="Nome(*): "
+								style="font-size: 13px; width:180px" />
+							<p:inputText id="nome" title="" value="#{professor.nome}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Codigo(*): "
+								style="font-size: 13px; width:180px" />
+							<p:inputText title="" value="#{professor.codigo}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Especialidade "
+								style="font-size: 13px; width:180px" />
+							<p:selectOneMenu id="especialidade" style="width: 256px;"
+								value="#{professor.especialidade}">
+								<f:selectItems value="#{CombosEspeciaisMB.getEspecialidades()}"
+									var="country" itemLabel="#{country.name}"
+									itemValue="#{country}" />
+								<p:ajax event="change" process="@this" />
+							</p:selectOneMenu>
+
+							
+							<h:outputLabel value="Nascimento: "
+								style="font-size: 13px; width:180px" />
+							<p:calendar value="#{professor.nascimento}" pattern="dd/MM/yyyy"
+								mask="true" style="font-size: 15px; width:280px" />
+							
+							
+							<h:outputLabel value="CPF : "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{professor.cpf}" mask="999.999.999-99"
+								style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="RG : "
+								style="font-size: 13px; width:180px" />
+							<h:inputText value="#{professor.rg}"
+								style="font-size: 15px; width:280px" />
+							
+							<h:outputLabel value="Salário: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{professor.salario}"
+								rendered="#{authController.hasPermission(authController.administrador)}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+							
+
+						</h:panelGrid>
+
+					</p:tab>
+					<p:tab title="Contato">
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="Endereço: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{professor.endereco}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+
+							<h:outputLabel value="Telefone Fixo: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{professor.telefone1}"
+								mask="(99)9999-9999" style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="Celuar 1: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{professor.telefone2}"
+								mask="(99) 9 99-999999" style="font-size: 15px; width:275px" />
+							
+							<h:outputLabel value="Celuar 2: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{professor.telefone3}"
+								mask="(99) 9 99-999999" style="font-size: 15px; width:275px" />
+								
+							<h:outputLabel value="Email: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{professor.email}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+								
+							
+						</h:panelGrid>
+
+					</p:tab>
+					<p:tab title="Sistema">
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="Login: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{professor.login}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Senha: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{professor.senha}"
+								style="font-size: 15px; width:280px" />
+
+						</h:panelGrid>
+
+					</p:tab>
+
+				</p:tabView>
+
+			</h:panelGrid>
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{professorController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{professorController.salvar()}" value="Salvar" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

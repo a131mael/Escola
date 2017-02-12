@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none">
+			<br />
+			
+			<h:commandButton id="ContratoEscolar" style="alinharFooter"
+				action="#{contratoController.irContratoEscolar()}" value="Contrato Escolar"
+				styleClass="alinharFooter" />
+				
+				<br/>
+				<br/>
+			<h:commandButton id="ContratoFretamento" style="alinharFooter"
+				action="#{contratoController.irContratoFretamento()}" value="Contrato Fretamento"
+				styleClass="alinharFooter" />
+				
+				<br/>
+				<br/>	
+			<h:commandButton id="ContratoAdonai" style="alinharFooter"
+				action="#{contratoController.irContratoAdonai()}" value="Contrato Adonai"
+				styleClass="alinharFooter" />	
+
+		</h:form>
+	</ui:define>
+</ui:composition>

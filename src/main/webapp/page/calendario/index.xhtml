@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+    PrimeFaces.locales['pt'] = {
+        closeText: 'Fechar',
+        prevText: 'geri',
+        nextText: 'ileri',
+        currentText: 'Hoje',
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+            'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Maio','Jun',
+            'Jul','Ago','Set','Out','Nov','Dez'],
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sabado'],
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'],
+        dayNamesMin: ['D','S','T','Q','Q','S','S'],
+        weekHeader: 'Hf',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: '',
+        month: 'Mes',
+        week: 'Semana',
+        day: 'Dia',
+        allDayText : 'Horas'
+    };
+</script>
+		<h:form style="width:100%; border:none; height:100%"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}">
+
+			<p:growl id="messages" showDetail="true" />
+
+			<p:dialog widgetVar="eventDialog" header="Event Details"
+				showEffect="clip" hideEffect="clip">
+				<h:panelGrid id="eventDetails" columns="2">
+					<p:outputLabel for="title" value="Titles:" />
+					<p:inputText id="title" value="#{calendarioController.event.title}"
+						required="true" />
+
+					<p:outputLabel for="from" value="From:" />
+					<p:calendar id="from" value="#{calendarioController.event.startDate}"
+						timeZone="GMT+2" pattern="dd/MM/yyyy HH:mm" />
+
+					<p:outputLabel for="to" value="To:" />
+					<p:calendar id="to" value="#{calendarioController.event.endDate}"
+						timeZone="GMT+2" pattern="dd/MM/yyyy HH:mm" />
+
+					<p:outputLabel for="allDay" value="All Day:" />
+					<h:selectBooleanCheckbox id="allDay"
+						value="#{calendarioController.event.allDay}" />
+
+					<p:commandButton type="reset" value="Reset" />
+					<p:commandButton id="addButton" value="Save"
+						actionListener="#{calendarioController.event.addEvent}"
+						oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+				</h:panelGrid>
+			</p:dialog>
+
+			<h:panelGrid columns="8" style="margin-top: -30px;">
+				<h:commandButton action="#{calendarioController.adicionarNovo()}"
+					value="Adicionar" />
+
+				<p:commandButton id="toPrint" value="Print" ajax="false" rendered="false">
+					<p:printer target="schedule" />
+				</p:commandButton>
+			</h:panelGrid>
+
+			<h:panelGrid id="panelSche" columnClasses="value" width="98%" style="height:100%">
+				<p:schedule id="schedule" value="#{calendarioController.eventModel}" 
+					locale="pt" widgetVar="myschedule" timeZone="GMT-3"
+					style="width:100%;height:100%">
+
+					 <p:ajax event="dateSelect" listener="#{calendarioController.onDateSelect}"
+						update="eventDetails" oncomplete="PF('eventDialog').show();" />
+					<p:ajax event="eventSelect"
+						listener="#{calendarioController.onEventSelect}" update="eventDetails"
+						oncomplete="PF('eventDialog').show();" />
+					<p:ajax event="eventMove" listener="#{calendarioController.onEventMove}"
+						update="messages" />
+					<p:ajax event="eventResize"
+						listener="#{calendarioController.onEventResize}" update="messages" />
+
+				</p:schedule>
+
+			</h:panelGrid>
+
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

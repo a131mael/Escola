@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,,authController.professor)}">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px; width:92%">
+
+						<h:panelGrid columns="2" title="Evento" border="0">
+
+							<h:outputLabel for="name" value="Nome(*): "
+								style="font-size: 13px; width:180px" />
+							<h:inputText id="nome" title="" value="#{evento.nome}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Descrição: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{evento.descricao}" />
+
+							<h:outputLabel value="Data Inicio: "
+								style="font-size: 13px; width:180px" />							
+							<p:calendar value="#{evento.dataInicio}" pattern="dd/MM/yyyy"
+								mask="true" style="font-size: 15px; width:280px" />
+							
+							<h:outputLabel value="Data Fim: "
+								style="font-size: 13px; width:180px" />							
+							<p:calendar value="#{evento.dataFim}" pattern="dd/MM/yyyy"
+								mask="true" style="font-size: 15px; width:280px" />
+							
+			</h:panelGrid>
+</h:panelGrid>
+			<h:commandButton id="voltarButtom"
+				action="#{calendarioController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{calendarioController.salvar()}" value="Salvar" />
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

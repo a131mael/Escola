@@ -1,0 +1,155 @@
+html {
+background: url("../images/background/body.jpg") repeat scroll 0 0 #efefef;
+font-family: Arial,Helvetica,sans-serif;
+}
+.center {
+    width: 380px;
+    height: 300px;
+    position: absolute;
+    top: 20%;
+    left: 35%;
+}
+.border0,.border0 tr,.border0 td{
+    border: 0;
+    padding: 0;
+}
+.logo-cooperativa {
+    padding:0 0 0 20px;
+}
+.titulo-login{
+    color: #444343;
+    font-size: 24px; 
+    padding: 33px 22px 0 0!important;
+    text-align: right;
+    font-family: 'RobotoCondensed',Arial,Helvetica,sans-serif;
+}
+
+.img-cooperativa {
+    padding: 4px 2px;
+}
+
+.img-healthchess {
+    padding: 4px 13px;
+}
+
+#panelGridLogin {
+    width: 405px;
+}
+
+#panelGridLogin td {
+    border: 1px solid #a4a3a3;
+    height: 50px;
+}
+
+.text-login {
+    font-family: 'RobotoCondensed',Arial,Helvetica,sans-serif;
+    font-size: 20px;
+    color: #666666;
+    text-shadow: none;
+    margin-left: 20px;
+}
+
+.campo-login {
+    background: url("../images/login/input-login.png") no-repeat #fff !important;
+    background-position: 9px 5px !important;
+    
+}
+
+.campo-login:hover {
+      border: 1px solid #aaa9a9 !important;
+}
+
+.campo-login:focus {
+    border: 1px solid #7096ab !important;
+}
+.campo-senha {
+    background: url("../images/login/input-senha.png") no-repeat #fff !important;
+    background-position: 9px 5px !important;
+}
+.campo-senha:hover {
+    border: 1px solid #aaa9a9 !important;
+}
+
+.campo-senha:focus {
+    border: 1px solid #7096ab !important;
+ }
+
+.bt-entrar {
+    font-family: 'RobotoCondensed',Arial,Helvetica,sans-serif !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    color: #fff!important;
+    border-radius: 0;
+    text-shadow: none!important;
+    border: 1px solid #747474!important;
+    background: #737373 linear-gradient(top, #b0b0b0, #737373)!important;
+    background: #737373 -webkit-gradient(linear, left top, left bottom, from(#b0b0b0), to(#737373))!important;
+    background: #737373 -moz-linear-gradient(top, #b0b0b0, #737373)!important;
+    height: 28px;
+    width: 95px;
+    box-shadow: inset 0px 1px 0px #d3d3d3;
+}
+
+.bt-entrar:hover {
+   background: #737373!important;
+   box-shadow: 0 0 0;
+}
+
+#panelGridLogin .td-text-login {
+    background: linear-gradient(bottom, rgb(202,200,200) 7%, rgb(226,226,226) 54%)!important;
+    background: -o-linear-gradient(bottom, rgb(202,200,200) 7%, rgb(226,226,226) 54%)!important;
+    background: -moz-linear-gradient(bottom, rgb(202,200,200) 7%, rgb(226,226,226) 54%)!important;
+    background: -webkit-linear-gradient(bottom, rgb(202,200,200) 7%, rgb(226,226,226) 54%)!important;
+    background: -ms-linear-gradient(bottom, rgb(202,200,200) 7%, rgb(226,226,226) 54%)!important;
+    border-bottom: 1px solid #a4a3 !important;
+}
+
+
+.login-senha-invalido {
+    font-family: 'RobotoCondensed',Arial,Helvetica,sans-serif !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    color: #bd1524!important;
+    vertical-align: middle !important;
+    margin-left: 10px;
+}
+
+#panelGridLogin .td-login {
+    background: #ebeaea ;
+    box-shadow: 0 1px 0 #fff inset;
+    border-top: 1px solid #cfcdcd !important;
+    border-bottom: 1px solid #cfcdcd !important;
+    padding: 17px;
+}  
+
+#panelGridLogin .td-bt-login {
+    background: #ebeaea;
+    box-shadow: 0 1px 0 #fff inset;
+    padding: 17px;
+    
+}  
+#panelGridLogin .td-login input{
+    text-indent: 30px;
+    font-size: 12px !important;
+    font-weight: normal !important;
+    color: #666 !important;
+    vertical-align: middle !important;
+    height: 30px;
+    width: 100%;
+    border: 1px solid #c3c3c3 !important;
+    box-shadow: 0 1px 0 #fff !important;
+    border-radius: 0;
+}
+
+
+/*PRIMEFACES*/
+.ui-panelgrid td {
+    background: url("../images/background/body.jpg") repeat scroll 0 0 #efefef;
+}
+.text-rodape-thothcare{
+    width: 223px;
+    float: left;
+    font-size: 12px;
+    margin-left: 5px;
+    font-family: 'RobotoCondensed',Arial,Helvetica,sans-serif !important;
+}

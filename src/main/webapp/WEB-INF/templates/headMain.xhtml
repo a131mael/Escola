@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:form style="width:100%; border:none !important">
+	<p:growl id="messages" />
+
+	<p:menubar style="width:100%;margin-left: -16px;margin-top: -16px">
+		<p:menuitem value="Alunos" url="../aluno/index.jsf"	icon="ui-icon-pencil" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+
+		<p:menuitem value="Alunos" url="../professor/alunosProfessor.jsf"	icon="ui-icon-pencil" 
+					rendered="#{authController.hasPermission(authController.professor)}"/>
+		
+
+		<p:menuitem value="Professores" url="../professor/index.jsf"
+			icon="ui-icon-search" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+
+		<p:menuitem value="Avaliações" url="../avaliacao/index.jsf"	icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}"/>
+		
+		<p:menuitem value="Turmas" url="../turma/index.jsf"	icon="ui-icon-gear"
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
+
+		<p:menuitem value="Relatórios" url="../relatorio/index.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+
+		<p:menuitem value="Calendario" url="../calendario/index.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}"/>
+
+		<p:submenu label="Secretaria"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		
+				<p:menuitem value="Configuração" url="../secretaria/configuracoes.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+				
+				<p:menuitem value="Ex-Alunos" url="../secretaria/exAlunos.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+				
+				<p:menuitem value="Alunos 2016" url="../secretaria/alunosUltimoAnoLetivo.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+				
+				<p:menuitem value="Documentos" url="../secretaria/documentos.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+					
+				<p:menuitem value="Usuarios" url="../admin/listarUsuarios.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador)}"/>
+					
+				
+		
+		</p:submenu>
+
+		<f:facet name="options">
+			<p:inputText style="margin-right:10px" placeholder="Search" />
+			<h:commandButton type="button" action="#{authController.logout()}"
+				value="Logout" icon="ui-icon-extlink">
+				<p:ajax process="@this" />
+			</h:commandButton>
+		</f:facet>
+	</p:menubar>
+</h:form>
+</html>
