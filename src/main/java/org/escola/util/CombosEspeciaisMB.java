@@ -19,6 +19,7 @@ import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.EspecialidadeEnum;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
+import org.escola.enums.Sexo;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Professor;
 import org.escola.service.ProfessorService;
@@ -88,12 +89,34 @@ public class CombosEspeciaisMB implements Serializable {
 		return items;
 	}
 
+	public ArrayList<SelectItem> getSexoSelectIItem() {
+		ArrayList<SelectItem> items = new ArrayList<SelectItem>();
+		try {
+			 items.add(new SelectItem(null, " "));
+			for (Sexo m : Sexo.values()) {
+				items.add(new SelectItem(m, m.getName()));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return items;
+	}
+
+	
 	
 	public static Serie[] getSeries() {
 
 		return Serie.values();
 	}
 
+	public static Sexo[] getSexo() {
+
+		return Sexo.values();
+	}
+
+	
 	public static PerioddoEnum[] getPeriodos() {
 
 		return PerioddoEnum.values();

@@ -23,11 +23,12 @@
 	
 		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
 
-			<h:panelGrid id="panelFerramentas" columns="17" style="margin-top: -30px; margin-left:-20px">
+			<h:panelGrid id="panelFerramentas" columns="19" style="margin-top: -30px; margin-left:-20px">
 				 <p:tooltip  for="editar" value="Editar" position="top"/>
 				<p:tooltip  for="negativoDebito" value="Negativo Debito" position="top"/>
 				<p:tooltip  for="contrato" value="Contrato" position="top"/>
 				<p:tooltip  for="restaurar" value="Restaurar" position="top"/>
+				<p:tooltip  for="historico" value="Histórico" position="top"/>
 			
 				<p:commandButton id="editar" icon="ui-icon-pencil" update="@form" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
 				
@@ -43,6 +44,13 @@
 								disabled="#{!alunoController.alunoSelecionado}">
 						<p:fileDownload value="#{alunoController.imprimirContrato()}" />
 				</p:commandButton>
+				
+				<p:commandButton id="historico" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 disabled="#{!alunoController.alunoSelecionado}">
+								<p:fileDownload value="#{alunoController.imprimirHistorico()}" />
+				</p:commandButton> 
+				
+				
 			</h:panelGrid>
 
 			<h:panelGrid width="98%">

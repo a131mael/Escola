@@ -22,6 +22,8 @@
 				<p:tooltip for="atestadoMatricula" value="Atestado e Matricula"
 					position="top" />
 				
+				<p:tooltip  for="historico" value="Histórico" position="top"/>
+				
 				<p:commandButton id="boletim" ajax="false"
 					value="Modelo Boletim"
 					onclick="PrimeFaces.monitorDownload(start, stop);"
@@ -66,6 +68,16 @@
 					<p:fileDownload
 						value="#{alunoController.imprimirAtestadoFrequencia()}" />
 				</p:commandButton>
+				
+				<p:commandButton id="historico"
+					value="Histórico" 
+					icon="ui-icon-pencil"
+					ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+					>
+					<p:fileDownload
+						value="#{alunoController.imprimirHistorico()}" />
+				</p:commandButton>
+				
 			</h:panelGrid>
 
 		</h:form>

@@ -206,7 +206,47 @@ public class AlunoService extends Service {
 			user.setDataNascimento(aluno.getDataNascimento());
 			user.setDataMatricula(aluno.getDataMatricula());
 			user.setAdministrarParacetamol(aluno.isAdministrarParacetamol());
+			if(aluno.getRemovido() == null){
+				user.setRemovido(false);
+			}else{
+				user.setRemovido(aluno.getRemovido());
+			}
 			user.setCodigo(aluno.getCodigo());
+			user.setSexo(aluno.getSexo());
+			user.setNomeAvoHPaternoMae(aluno.getNomeAvoHPaternoMae());
+			user.setAnuidade(aluno.getAnuidade() != null ? aluno.getAnuidade():0);
+			user.setBairro(aluno.getBairro());
+			user.setCep(aluno.getCep());
+			user.setCidade(aluno.getCidade());
+			user.setCpfMae(aluno.getCpfMae());
+			user.setCpfPai(aluno.getCpfPai());
+			user.setCpfResponsavel(aluno.getCpfResponsavel());
+			user.setDataMatricula(aluno.getDataMatricula());
+			user.setEmailMae(aluno.getEmailMae());
+			user.setEmailPai(aluno.getEmailPai());
+			user.setEmpresaTrabalhaMae(aluno.getEmpresaTrabalhaMae());
+			user.setEmpresaTrabalhaPai(aluno.getEmpresaTrabalhaPai());
+			user.setLogin(aluno.getLogin());
+			user.setNaturalidadeMae(aluno.getNaturalidadeMae());
+			user.setNaturalidadePai(aluno.getNaturalidadePai());
+			user.setNomeAvoHPaternoMae(aluno.getNomeAvoHPaternoMae());
+			user.setNomeAvoHPaternoPai(aluno.getNomeAvoHPaternoPai());
+			user.setNomeAvoPaternoMae(aluno.getNomeAvoPaternoMae());
+			user.setNomeAvoPaternoPai(aluno.getNomeAvoPaternoPai());
+			user.setNomeMaeAluno(aluno.getNomeMaeAluno());
+			user.setNomePaiAluno(aluno.getNomePaiAluno());
+			user.setNomeResponsavel(aluno.getNomeResponsavel());
+			user.setNumeroParcelas(aluno.getNumeroParcelas());
+			user.setObservacaoProfessores(aluno.getObservacaoProfessores());
+			user.setObservacaoSecretaria(aluno.getObservacaoSecretaria());
+			user.setValorMensal(aluno.getValorMensal());
+			user.setTelefoneResidencialPai(aluno.getTelefoneResidencialPai());
+			user.setRgMae(aluno.getRgMae());
+			user.setRgPai(aluno.getRgPai());
+			user.setSenha(aluno.getSenha());
+			user.setTelefone(aluno.getTelefone());
+			
+			
 			em.persist(user);
 
 			if (user.getDataNascimento() != null) {
@@ -452,7 +492,7 @@ public class AlunoService extends Service {
 			return new ArrayList<>();
 		}
 	}
-
+	
 	public void saveHistorico(HistoricoAluno historico) {
 		log.info("Registering historico do aluno " + historico.getAluno().getNomeAluno());
 		HistoricoAluno ha = null;
@@ -475,6 +515,9 @@ public class AlunoService extends Service {
 		ha.setNotaMatematica(historico.getNotaMatematica());
 		ha.setNotaPortugues(historico.getNotaPortugues());
 		ha.setSerie(historico.getSerie());
+		ha.setEstado(historico.getEstado());
+		ha.setMunicipio(historico.getMunicipio());
+		ha.setFrequencia(historico.getFrequencia());
 
 		em.persist(ha);
 	}

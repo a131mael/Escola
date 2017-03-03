@@ -18,13 +18,13 @@ package org.escola.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -52,7 +52,17 @@ public class HistoricoAluno implements Serializable {
     
     private String escola;
     
+    @Column
     private int ano;
+    
+    @Column
+    private String municipio;
+    
+    @Column
+    private String estado;
+    
+    @Column
+    private String frequencia;
     
     private float notaPortugues;
     
@@ -203,6 +213,30 @@ public class HistoricoAluno implements Serializable {
 
 	public void setNomeAluno(String nomeAluno) {
 		this.nomeAluno = nomeAluno;
+	}
+
+	public String getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public String getFrequencia() {
+		return frequencia;
+	}
+
+	public void setFrequencia(String frequencia) {
+		this.frequencia = frequencia;
 	}
     
 }

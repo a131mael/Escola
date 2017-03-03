@@ -931,6 +931,148 @@ public class AlunoController implements Serializable {
 
 		return trocas;
 	}
+	
+	private HistoricoAluno getHistorico(List<HistoricoAluno> historicos, Serie serie){
+		for(HistoricoAluno historico : historicos){
+			if(historico.getSerie() != null && historico.getSerie().equals(serie)){
+				return historico;
+			}
+		}
+		return null;
+	}
+	
+	public HashMap<String, String> montarHistorico(Aluno aluno) {
+		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
+		String dataExtenso = formatador.format(new Date());
+		
+		DateFormat formatadorNascimento = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale("pt", "BR"));
+		
+		String dtNascimento = aluno.getDataNascimento()!= null ?formatadorNascimento.format(aluno.getDataNascimento()):"";
+
+		List<HistoricoAluno> historicoAlunos = alunoService.getHistoricoAluno(aluno);
+		HistoricoAluno historico1Ano = getHistorico(historicoAlunos, Serie.PRIMEIRO_ANO);
+		HistoricoAluno historico2Ano = getHistorico(historicoAlunos, Serie.SEGUNDO_ANO);
+		HistoricoAluno historico3Ano = getHistorico(historicoAlunos, Serie.TERCEIRO_ANO);
+		HistoricoAluno historico4Ano = getHistorico(historicoAlunos, Serie.QUARTO_ANO);
+		HistoricoAluno historico5Ano = getHistorico(historicoAlunos, Serie.QUINTO_ANO);
+		
+		HashMap<String, String> trocas = new HashMap<>();
+		trocas.put("nomealunoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", aluno.getNomeAluno() + Util.criarEspacos(58 - aluno.getNomeAluno().length()));
+		trocas.put("datanascimento", dtNascimento);
+		trocas.put("naturalidade", aluno.getNacionalidade() + Util.criarEspacos(0));
+		trocas.put("nomepais", aluno.getNomeMaeAluno()!=null?aluno.getNomeMaeAluno():"");
+		trocas.put("dataextenso", dataExtenso);
+		trocas.put("sexo", aluno.getSexo()!=null?aluno.getSexo().getName():"")	;	
+		
+		//ANO
+		trocas.put("a1", historico1Ano!=null?""+historico1Ano.getAno():"");
+		trocas.put("a2", historico2Ano!=null?""+historico2Ano.getAno():"");
+		trocas.put("a3", historico3Ano!=null?""+historico3Ano.getAno():"");
+		trocas.put("a4", historico4Ano!=null?""+historico4Ano.getAno():"");
+		trocas.put("a5", historico5Ano!=null?""+historico5Ano.getAno():"");
+		
+		//Frequencia
+		trocas.put("fb", historico1Ano!=null?historico1Ano.getFrequencia():"");
+		trocas.put("fc", historico2Ano!=null?historico2Ano.getFrequencia():"");
+		trocas.put("fd", historico3Ano!=null?historico3Ano.getFrequencia():"");
+		trocas.put("fg", historico4Ano!=null?historico4Ano.getFrequencia():"");
+		trocas.put("fh", historico5Ano!=null?historico5Ano.getFrequencia():"");
+		
+		//Frequencia
+		trocas.put("aprovado1", historico1Ano!=null?"Aprovado":"");
+		trocas.put("aprovado2", historico2Ano!=null?"Aprovado":"");
+		trocas.put("aprovado3", historico3Ano!=null?"Aprovado":"");
+		trocas.put("aprovao4", historico4Ano!=null?"Aprovado":"");
+		trocas.put("aprovado5", historico5Ano!=null?"Aprovado":"");
+		
+		//ESCOLA
+		trocas.put("e1", historico1Ano!=null?""+historico1Ano.getEscola():"");
+		trocas.put("e2", historico2Ano!=null?""+historico2Ano.getEscola():"");
+		trocas.put("e3", historico3Ano!=null?""+historico3Ano.getEscola():"");
+		trocas.put("e4", historico4Ano!=null?""+historico4Ano.getEscola():"");
+		trocas.put("e5", historico5Ano!=null?""+historico5Ano.getEscola():"");
+		
+		//Municipio
+		trocas.put("m1", historico1Ano!=null?""+historico1Ano.getMunicipio():"");
+		trocas.put("m2", historico2Ano!=null?""+historico2Ano.getMunicipio():"");
+		trocas.put("m3", historico3Ano!=null?""+historico3Ano.getMunicipio():"");
+		trocas.put("m4", historico4Ano!=null?""+historico4Ano.getMunicipio():"");
+		trocas.put("m5", historico5Ano!=null?""+historico5Ano.getMunicipio():"");
+		
+		//Estado
+		trocas.put("es1", historico1Ano!=null?""+historico1Ano.getEstado():"");
+		trocas.put("es2", historico2Ano!=null?""+historico2Ano.getEstado():"");
+		trocas.put("es3", historico3Ano!=null?""+historico3Ano.getEstado():"");
+		trocas.put("es4", historico4Ano!=null?""+historico4Ano.getEstado():"");
+		trocas.put("es5", historico5Ano!=null?""+historico5Ano.getEstado():"");
+		
+		//notar Portugues
+		trocas.put("hp1", historico1Ano!=null?""+historico1Ano.getNotaPortugues():"");
+		trocas.put("hp2", historico2Ano!=null?""+historico2Ano.getNotaPortugues():"");
+		trocas.put("hp3", historico3Ano!=null?""+historico3Ano.getNotaPortugues():"");
+		trocas.put("hp4", historico4Ano!=null?""+historico4Ano.getNotaPortugues():"");
+		trocas.put("hp5", historico5Ano!=null?""+historico5Ano.getNotaPortugues():"");
+		
+		//notar Matematica
+		trocas.put("hm1", historico1Ano!=null?""+historico1Ano.getNotaMatematica():"");
+		trocas.put("hm2", historico2Ano!=null?""+historico2Ano.getNotaMatematica():"");
+		trocas.put("hm3", historico3Ano!=null?""+historico3Ano.getNotaMatematica():"");
+		trocas.put("hm4", historico4Ano!=null?""+historico4Ano.getNotaMatematica():"");
+		trocas.put("hm5", historico5Ano!=null?""+historico5Ano.getNotaMatematica():"");
+		
+		//notar Ciências
+		trocas.put("hc1", historico1Ano!=null?""+historico1Ano.getNotaCiencias():"");
+		trocas.put("hc2", historico2Ano!=null?""+historico2Ano.getNotaCiencias():"");
+		trocas.put("hc3", historico3Ano!=null?""+historico3Ano.getNotaCiencias():"");
+		trocas.put("hc4", historico4Ano!=null?""+historico4Ano.getNotaCiencias():"");
+		trocas.put("hc5", historico5Ano!=null?""+historico5Ano.getNotaCiencias():"");
+				
+		//notar História
+		trocas.put("hh1", historico1Ano!=null?""+historico1Ano.getNotaHistoria():"");
+		trocas.put("hh2", historico2Ano!=null?""+historico2Ano.getNotaHistoria():"");
+		trocas.put("hh3", historico3Ano!=null?""+historico3Ano.getNotaHistoria():"");
+		trocas.put("hh4", historico4Ano!=null?""+historico4Ano.getNotaHistoria():"");
+		trocas.put("hh5", historico5Ano!=null?""+historico5Ano.getNotaHistoria():"");
+				
+		//notar Geografia
+		trocas.put("hg1", historico1Ano!=null?""+historico1Ano.getNotaGeografia():"");
+		trocas.put("hg2", historico2Ano!=null?""+historico2Ano.getNotaGeografia():"");
+		trocas.put("hg3", historico3Ano!=null?""+historico3Ano.getNotaGeografia():"");
+		trocas.put("hg4", historico4Ano!=null?""+historico4Ano.getNotaGeografia():"");
+		trocas.put("hg5", historico5Ano!=null?""+historico5Ano.getNotaGeografia():"");
+						
+		//Ed Fisica
+		trocas.put("he1", historico1Ano!=null?""+historico1Ano.getNotaEdFisica():"");
+		trocas.put("he2", historico2Ano!=null?""+historico2Ano.getNotaEdFisica():"");
+		trocas.put("he3", historico3Ano!=null?""+historico3Ano.getNotaEdFisica():"");
+		trocas.put("he4", historico4Ano!=null?""+historico4Ano.getNotaEdFisica():"");
+		trocas.put("he5", historico5Ano!=null?""+historico5Ano.getNotaEdFisica():"");
+				
+				
+		//notar Artes
+		trocas.put("ha1", historico1Ano!=null?""+historico1Ano.getNotaArtes():"");
+		trocas.put("ha2", historico2Ano!=null?""+historico2Ano.getNotaArtes():"");
+		trocas.put("ha3", historico3Ano!=null?""+historico3Ano.getNotaArtes():"");
+		trocas.put("ha4", historico4Ano!=null?""+historico4Ano.getNotaArtes():"");
+		trocas.put("ha5", historico5Ano!=null?""+historico5Ano.getNotaArtes():"");
+		
+		
+		//notar Inglês
+		trocas.put("hi1", historico1Ano!=null?""+historico1Ano.getNotaIngles():"");
+		trocas.put("hi2", historico2Ano!=null?""+historico2Ano.getNotaIngles():"");
+		trocas.put("hi3", historico3Ano!=null?""+historico3Ano.getNotaIngles():"");
+		trocas.put("hi4", historico4Ano!=null?""+historico4Ano.getNotaIngles():"");
+		trocas.put("hi5", historico5Ano!=null?""+historico5Ano.getNotaIngles():"");
+		
+		//notar Formacao Crista
+		trocas.put("hf1", historico1Ano!=null?""+historico1Ano.getNotaformacaoCrista():"");
+		trocas.put("hf2", historico2Ano!=null?""+historico2Ano.getNotaformacaoCrista():"");
+		trocas.put("hf3", historico3Ano!=null?""+historico3Ano.getNotaformacaoCrista():"");
+		trocas.put("hf4", historico4Ano!=null?""+historico4Ano.getNotaformacaoCrista():"");
+		trocas.put("hf5", historico5Ano!=null?""+historico5Ano.getNotaformacaoCrista():"");
+		
+		return trocas;
+	}
 
 	public HashMap<String, String> montarContrato(Aluno aluno) {
 		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
@@ -966,6 +1108,9 @@ public class AlunoController implements Serializable {
 	}
 
 	public boolean isAlunoSelecionado() {
+		if(aluno == null){
+			return false;
+		}
 		return aluno.getId() != null ? true : false;
 	}
 
@@ -1088,6 +1233,25 @@ public class AlunoController implements Serializable {
 	public StreamedContent imprimirAtestadoVaga() throws IOException {
 		return imprimirAtestadoVaga(aluno);
 	}
+	
+	public StreamedContent imprimirHistorico(Aluno aluno) throws IOException {
+		String nomeArquivo = "";
+		if(aluno != null && aluno.getId() != null){
+			nomeArquivo =aluno.getId() + "k";
+			ImpressoesUtils.imprimirInformacoesAluno(aluno, "historicoEscolar2017.docx", montarHistorico(aluno),nomeArquivo);
+			nomeArquivo +=".doc";
+		}else{
+			nomeArquivo = "historicoEscolar2017.docx";
+		}
+		
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+nomeArquivo;
+		InputStream stream =  new FileInputStream(caminho);
+		return FileDownload.getContentDoc(stream, nomeArquivo);
+	}
+
+	public StreamedContent imprimirHistorico() throws IOException {
+		return imprimirHistorico(aluno);
+	}
 
 	public List<Aluno> getAlunos() {
 
@@ -1108,6 +1272,11 @@ public class AlunoController implements Serializable {
 		aluno = alunoService.findById(idprof);
 		Util.addAtributoSessao("aluno", aluno);
 		return "cadastrar";
+	}
+	
+	public String editarHistorico(HistoricoAluno historicoAluno) {
+		this.historicoAluno = historicoAluno;
+		return "";
 	}
 	
 	public String visualizar(Aluno aluno) {

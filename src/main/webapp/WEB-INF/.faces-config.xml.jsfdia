@@ -167,4 +167,13 @@
  <PROCESS-ITEM NAME="rules:#page#admin#cadastrarUsuario.xhtml"
   PATH="/page/admin/cadastrarUsuario.xhtml" SHAPE="944,120,50,25"
   model-entity="JSFProcessGroup" persistent="true"/>
+ <PROCESS-ITEM NAME="rules:#page#secretaria#exAlunos.xhtml"
+  PATH="/page/secretaria/exAlunos.xhtml" SHAPE="851,311,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#secretaria#exAlunos.xhtml:0" NAME="item"
+   PATH="/page/secretaria/exAlunos.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
 </PROCESS>

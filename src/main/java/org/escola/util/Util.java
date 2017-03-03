@@ -10,6 +10,14 @@ import javax.servlet.http.HttpSession;
 
 public class Util {
 
+	public static String criarEspacos(int quantidade){
+		StringBuilder sb = new StringBuilder();
+		for(int i= 0; i<quantidade; i++){
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+	
 	public static String getRequestParam(String param) {
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
 				.getRequest();

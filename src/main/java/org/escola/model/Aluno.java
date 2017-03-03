@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
+import org.escola.enums.Sexo;
 
 @SuppressWarnings("serial")
 @Entity
@@ -48,6 +49,9 @@ public class Aluno implements Serializable {
     
     @Column
     private int anoLetivo;
+    
+    @Column
+    private Sexo sexo;
     
     @Column
     private Boolean removido;
@@ -724,5 +728,13 @@ public class Aluno implements Serializable {
 
 	public void setRemovido(Boolean removido) {
 		this.removido = removido;
+	}
+
+	public Sexo getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
 	}
 }

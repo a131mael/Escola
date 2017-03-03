@@ -23,7 +23,7 @@
 	
 		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
 
-			<h:panelGrid id="panelFerramentas" columns="17" style="margin-top: -30px; margin-left:-20px">
+			<h:panelGrid id="panelFerramentas" columns="19" style="margin-top: -30px; margin-left:-20px">
 				<p:tooltip  for="adicionar" value="Adicionar um novo Aluno" position="top"/> 
 				<p:tooltip  for="boletim" value="Boletim" position="top"/> 
 				 <p:tooltip  for="editar" value="Editar" position="top"/>
@@ -32,6 +32,7 @@
 				<p:tooltip  for="atestadoVaga" value="Atestado de Vaga" position="top"/>
 				<p:tooltip  for="atestadoFrequencia" value="Atestado de Frequencia" position="top"/>
 				<p:tooltip  for="atestadoMatricula" value="Atestado e Matricula" position="top"/>
+				<p:tooltip  for="historico" value="Histórico" position="top"/>
 			
 				<p:commandButton id="adicionar" icon="ui-icon-plus" action="#{alunoController.adicionarNovo()}" />
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
@@ -61,6 +62,11 @@
 				<p:commandButton id="atestadoFrequencia" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
 								 disabled="#{!alunoController.alunoSelecionado}">
 								<p:fileDownload value="#{alunoController.imprimirAtestadoFrequencia()}" />
+				</p:commandButton>
+				
+				<p:commandButton id="historico" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 disabled="#{!alunoController.alunoSelecionado}">
+								<p:fileDownload value="#{alunoController.imprimirHistorico()}" />
 				</p:commandButton> 
 			</h:panelGrid>
 

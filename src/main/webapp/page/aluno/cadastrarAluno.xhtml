@@ -78,6 +78,15 @@
 							<p:calendar value="#{aluno.dataNascimento}" pattern="dd/MM/yyyy"
 								mask="true" style="font-size: 15px; width:280px" />
 
+							<h:outputLabel value="Sexo: " style="font-size: 13px; width:120px" />
+							<p:selectOneMenu  style="width: 160px;"
+								value="#{aluno.sexo}">
+								<f:selectItems value="#{CombosEspeciaisMB.getSexo()}"
+									var="serie" itemLabel="#{serie.name}"
+									itemValue="#{serie}" />
+								<p:ajax event="change" process="@this" />
+							</p:selectOneMenu>
+
 							<h:outputLabel value="Administrar Paracetamol?: "
 								style="font-size: 13px; width:180px" />
 							<h:selectBooleanCheckbox value="#{aluno.administrarParacetamol}" />
@@ -258,13 +267,13 @@
 
 					</p:tab>
 
-					<p:tab title="Histórico">
+					<p:tab id="tabHistorico" title="Histórico">
 						<h:panelGrid columns="2">
 							<h:commandButton action="#{alunoController.adicionarHistorico(historicoAluno)}"
 								value="Adicionar" />
 						</h:panelGrid>
 
-						<h:panelGrid columns="4" border="0">
+						<h:panelGrid id="panelAddNotas" columns="4" border="0">
 							<h:outputLabel value="Escola: "
 								style="font-size: 13px; width:120px" />
 							<p:inputText value="#{historicoAluno.escola}"
@@ -275,6 +284,17 @@
 							<p:inputText value="#{historicoAluno.ano}"
 								style="font-size: 15px; width:175px">
 							</p:inputText>
+							
+							<h:outputLabel value="Município: " style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.municipio}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Estado: " style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.estado}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
 
 						</h:panelGrid>
 						<h:panelGrid columns="4" width="50%">
@@ -286,6 +306,13 @@
 									itemValue="#{serie}" />
 								<p:ajax event="change" process="@this" />
 							</p:selectOneMenu>
+							
+							<h:outputLabel value="Frequencia: " style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.frequencia}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							
 							<h:outputLabel value="Portugues: "
 								style="font-size: 13px; width:120px" />
 							<p:inputText value="#{historicoAluno.notaPortugues}"
@@ -346,8 +373,12 @@
 									 style="margin-bottom:20px; width:100%"
 									 emptyMessage="Nenhum histórico adicionado"
 									 >
+									 
+									 <p:column style="width:10%" headerText="Editar">
+										<p:commandButton update="@form" icon="ui-icon-pencil" action="#{alunoController.editarHistorico(historicoTab)}" />
+									</p:column>
 						
-									<p:column style="text-align: center;width:10%;" headerText="Escola ">
+									<p:column style="text-align: center;width:10%;" headerText="Escola">
 											<h:outputText value="#{historicoTab.escola}" />
 									</p:column>	
 									
@@ -358,6 +389,15 @@
 									<p:column style="text-align: center;width:10%;" headerText="Serie">
 										<h:outputText value="#{historicoTab.serie.name}" />
 									</p:column>	
+
+									<p:column style="text-align: center;width:10%;" headerText="Município">
+										<h:outputText value="#{historicoTab.municipio}" />
+									</p:column>	
+									
+									<p:column style="text-align: center;width:10%;" headerText="Estado">
+										<h:outputText value="#{historicoTab.estado}" />
+									</p:column>	
+									
 									
 									<p:column style="text-align: center;width:10%;" headerText="remover ">
 										<p:commandButton update="tbl" icon="ui-icon-trash" action="#{alunoController.removerHistorico(historicoTab.id)}" />
