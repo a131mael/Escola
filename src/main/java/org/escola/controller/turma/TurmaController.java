@@ -16,8 +16,13 @@
  */
 package org.escola.controller.turma;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +34,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.escola.auth.AuthController;
+import org.escola.controller.OfficeDOCUtil;
 import org.escola.enums.BimestreEnum;
 import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.PerioddoEnum;
@@ -36,6 +42,7 @@ import org.escola.enums.Serie;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
+import org.escola.model.AlunoTurma;
 import org.escola.model.Avaliacao;
 import org.escola.model.Professor;
 import org.escola.model.Turma;
@@ -43,10 +50,15 @@ import org.escola.service.AlunoService;
 import org.escola.service.AvaliacaoService;
 import org.escola.service.ProfessorService;
 import org.escola.service.TurmaService;
+import org.escola.util.CompactadorZip;
+import org.escola.util.FileDownload;
+import org.escola.util.ImpressoesUtils;
 import org.escola.util.Util;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.StreamedContent;
 
 import javax.inject.Named;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 
 @Named
@@ -215,6 +227,471 @@ public class TurmaController extends AuthController implements Serializable {
 		Util.addAtributoSessao("turma", turma);
 		return "cadastrar";
 	}
+	
+	public  StreamedContent imprimirBoletinsTurma(Long idTurma) throws IOException {
+		turma = turmaService.findById(idTurma);
+		Util.addAtributoSessao("turma", turma);
+		
+		String pasta = ""+System.currentTimeMillis();
+		String caminhoFinalPasta = System.getProperty("java.io.tmpdir") + pasta; 
+		//String caminhoFinalPasta = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+pasta; 
+		CompactadorZip.createDir(caminhoFinalPasta);
+		List<Aluno> alunos= alunoService.findAlunoTurmaBytTurma(idTurma);
+		for(Aluno al :alunos){
+			try {
+				gerarBoletim(al,pasta);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		OfficeDOCUtil.unionDocs2(caminhoFinalPasta, turma.getNome()+".doc");
+		
+		String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+turma.getNome()+".zip";
+		CompactadorZip.compactarParaZip(arquivoSaida, caminhoFinalPasta);
+		
+		
+		InputStream stream =  new FileInputStream(arquivoSaida);
+		return FileDownload.getContentDoc(stream, turma.getNome()+".zip");
+
+		
+	}
+	
+	public void gerarBoletim(Aluno aluno,String pasta) throws IOException {
+		String nomeArquivo = "";
+		if(aluno != null && aluno.getId() != null){
+			
+
+			nomeArquivo =  pasta+ System.getProperty("file.separator") + aluno.getNomeAluno() + "(" + aluno.getId() +")";
+			ImpressoesUtils.imprimirInformacoesAlunoTemp(aluno, "mb1.docx", montarBoletim(aluno), nomeArquivo);
+			nomeArquivo += ".doc";
+		}else{
+			nomeArquivo ="mb1.docx";
+		}
+		
+	}
+	
+	private HashMap<String, String> montarBoletim(Aluno aluno) {
+		Professor prof = alunoService.getProfessor(aluno.getId());
+		HashMap<String, String> trocas = new HashMap<>();
+		trocas.put("#nomeAluno", aluno.getNomeAluno());
+		trocas.put("#nomeProfessor", prof.getNome());
+		trocas.put("#turma", aluno.getSerie().getName());
+		
+		//FALTAS
+		trocas.put("#f1", aluno.getFaltas1Bimestre() != null ?aluno.getFaltas1Bimestre().toString():"");
+		trocas.put("#f2", aluno.getFaltas2Bimestre() != null ?aluno.getFaltas2Bimestre().toString():"");
+		trocas.put("#f3", aluno.getFaltas3Bimestre() != null ?aluno.getFaltas3Bimestre().toString():"");
+		trocas.put("#f4", aluno.getFaltas4Bimestre() != null ?aluno.getFaltas4Bimestre().toString():"");
+
+		float notaPortuguesPrimeiroBimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float notaPortuguesSegundoBimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float notaPortuguesTerceiroBimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float notaPortuguesQuartoBimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float notaPortuguesPrimeiroRec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
+				BimestreEnum.PRIMEIRO_BIMESTRE, true);
+		float notaPortuguesSegundoRec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
+				BimestreEnum.SEGUNDO_BIMESTRE, true);
+		float notaPortuguesTerceiroRec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
+				BimestreEnum.TERCEIRO_BIMESTRE, true);
+		float notaPortuguesQuartoRec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
+				BimestreEnum.QUARTO_BIMESTRE, true);
+		float notaPortuguesRecFinal = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, true, true);
+
+		// PORTUGUES
+		trocas.put("#np1", mostraNotas(notaPortuguesPrimeiroBimestre));
+		trocas.put("#np2", mostraNotas(notaPortuguesSegundoBimestre));
+		trocas.put("#np3", mostraNotas(notaPortuguesTerceiroBimestre));
+		trocas.put("#np4", mostraNotas(notaPortuguesQuartoBimestre));
+
+		// rec
+		trocas.put("#npr1", mostraNotas(notaPortuguesPrimeiroRec));
+		trocas.put("#npr2", mostraNotas(notaPortuguesSegundoRec));
+		trocas.put("#npr3", mostraNotas(notaPortuguesTerceiroRec));
+		trocas.put("#npr4", mostraNotas(notaPortuguesQuartoRec));
+		// mediaFinal
+		trocas.put("#mp1", mostraNotas(maior(notaPortuguesPrimeiroBimestre, notaPortuguesPrimeiroRec)));
+		trocas.put("#mp2", mostraNotas(maior(notaPortuguesSegundoRec, notaPortuguesSegundoBimestre)));
+		trocas.put("#mp3", mostraNotas(maior(notaPortuguesTerceiroRec, notaPortuguesTerceiroBimestre)));
+		trocas.put("#mp4", mostraNotas(maior(notaPortuguesQuartoRec, notaPortuguesQuartoBimestre)));
+		// Final do ano
+		trocas.put("#npF",
+				mostraNotas(media(maior(notaPortuguesPrimeiroBimestre, notaPortuguesPrimeiroRec),
+						maior(notaPortuguesSegundoRec, notaPortuguesSegundoBimestre),
+						maior(notaPortuguesTerceiroRec, notaPortuguesTerceiroBimestre),
+						maior(notaPortuguesQuartoRec, notaPortuguesQuartoBimestre))));
+		trocas.put("#nprf", mostraNotas(notaPortuguesRecFinal));
+
+		// Matematica
+		float notaMTM1Bimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float notaMTM2Bimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float notaMTM3Bimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float notaMTM4Bimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float notaMTM1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, true);
+		float notaMTM2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA,
+				BimestreEnum.SEGUNDO_BIMESTRE, true);
+		float notaMTM3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA,
+				BimestreEnum.TERCEIRO_BIMESTRE, true);
+		float notaMTM4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.QUARTO_BIMESTRE,
+				true);
+		float notaMtmRecFinal = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, true, true);
+
+		trocas.put("#nm1", mostraNotas(notaMTM1Bimestre));
+		trocas.put("#nm2", mostraNotas(notaMTM2Bimestre));
+		trocas.put("#nm3", mostraNotas(notaMTM3Bimestre));
+		trocas.put("#nm4", mostraNotas(notaMTM4Bimestre));
+		// rec
+		trocas.put("#nmr1", mostraNotas(notaMTM1Rec));
+		trocas.put("#nmr2", mostraNotas(notaMTM2Rec));
+		trocas.put("#nmr3", mostraNotas(notaMTM3Rec));
+		trocas.put("#nmr4", mostraNotas(notaMTM4Rec));
+		// mediaFinal
+		trocas.put("#mm1", mostraNotas(maior(notaMTM1Bimestre, notaMTM1Rec)));
+		trocas.put("#mm2", mostraNotas(maior(notaMTM2Bimestre, notaMTM2Rec)));
+		trocas.put("#mm3", mostraNotas(maior(notaMTM3Bimestre, notaMTM3Rec)));
+		trocas.put("#mm4", mostraNotas(maior(notaMTM4Bimestre, notaMTM4Rec)));
+		// Final do ano
+		trocas.put("#nmF", mostraNotas(media(maior(notaMTM1Bimestre, notaMTM1Rec), maior(notaMTM2Bimestre, notaMTM2Rec),
+				maior(notaMTM3Bimestre, notaMTM3Rec), maior(notaMTM4Bimestre, notaMTM4Rec))));
+		trocas.put("#nmrf", mostraNotas(notaMtmRecFinal));
+
+		// Ingles
+		float nota1BimestreIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float nota2BimestreIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float nota3BimestreIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float nota4BimestreIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float nota1RecIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES,
+				BimestreEnum.PRIMEIRO_BIMESTRE, true);
+		float nota2RecIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.SEGUNDO_BIMESTRE,
+				true);
+		float nota3RecIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES,
+				BimestreEnum.TERCEIRO_BIMESTRE, true);
+		float nota4RecIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.QUARTO_BIMESTRE,
+				true);
+		float notaRecFinalIngles = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, true, true);
+
+		trocas.put("#ni1", mostraNotas(nota1BimestreIngles));
+		trocas.put("#ni2", mostraNotas(nota2BimestreIngles));
+		trocas.put("#ni3", mostraNotas(nota3BimestreIngles));
+		trocas.put("#ni4", mostraNotas(nota4BimestreIngles));
+		// rec
+		trocas.put("#nir1", mostraNotas(nota1RecIngles));
+		trocas.put("#nir2", mostraNotas(nota2RecIngles));
+		trocas.put("#nir3", mostraNotas(nota3RecIngles));
+		trocas.put("#nir4", mostraNotas(nota4RecIngles));
+		// mediaFinal
+		trocas.put("#mi1", mostraNotas(maior(nota1RecIngles, nota1BimestreIngles)));
+		trocas.put("#mi2", mostraNotas(maior(nota2RecIngles, nota2BimestreIngles)));
+		trocas.put("#mi3", mostraNotas(maior(nota3RecIngles, nota3BimestreIngles)));
+		trocas.put("#mi4", mostraNotas(maior(nota4RecIngles, nota4BimestreIngles)));
+		// Final do ano
+		trocas.put("#niF",
+				mostraNotas(media(maior(nota1RecIngles, nota1BimestreIngles),
+						maior(nota2RecIngles, nota2BimestreIngles), maior(nota3RecIngles, nota3BimestreIngles),
+						maior(nota4RecIngles, nota4BimestreIngles))));
+		trocas.put("#nirf", mostraNotas(notaRecFinalIngles));
+
+		// EdFisica
+		float nota1BimestreEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float nota2BimestreEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float nota3BimestreEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float nota4BimestreEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float nota1RecEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, true);
+		float nota2RecEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA,
+				BimestreEnum.SEGUNDO_BIMESTRE, true);
+		float nota3RecEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA,
+				BimestreEnum.TERCEIRO_BIMESTRE, true);
+		float nota4RecEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA,
+				BimestreEnum.QUARTO_BIMESTRE, true);
+		float notaRecFinalEdFisica = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, true, true);
+
+		trocas.put("#ne1", mostraNotas(nota1BimestreEdFisica));
+		trocas.put("#ne2", mostraNotas(nota2BimestreEdFisica));
+		trocas.put("#ne3", mostraNotas(nota3BimestreEdFisica));
+		trocas.put("#ne4", mostraNotas(nota4BimestreEdFisica));
+		// rec
+		trocas.put("#ner1", mostraNotas(nota1RecEdFisica));
+		trocas.put("#ner2", mostraNotas(nota2RecEdFisica));
+		trocas.put("#ner3", mostraNotas(nota3RecEdFisica));
+		trocas.put("#ner4", mostraNotas(nota4RecEdFisica));
+		// mediaFinal
+		trocas.put("#me1", mostraNotas(maior(nota1BimestreEdFisica, nota1RecEdFisica)));
+		trocas.put("#me2", mostraNotas(maior(nota2BimestreEdFisica, nota2RecEdFisica)));
+		trocas.put("#me3", mostraNotas(maior(nota3BimestreEdFisica, nota3RecEdFisica)));
+		trocas.put("#me4", mostraNotas(maior(nota4BimestreEdFisica, nota4RecEdFisica)));
+		// Final do ano
+		trocas.put("#neF",
+				mostraNotas(media(maior(nota1BimestreEdFisica, nota1RecEdFisica),
+						maior(nota2BimestreEdFisica, nota2RecEdFisica), maior(nota3BimestreEdFisica, nota3RecEdFisica),
+						maior(nota4BimestreEdFisica, nota4RecEdFisica))));
+		trocas.put("#nerf", mostraNotas(notaRecFinalEdFisica));
+
+		// Geofrafia
+		float nota1BimestreGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float nota2BimestreGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float nota3BimestreGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float nota4BimestreGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float nota1RecGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, true);
+		float nota2RecGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA,
+				BimestreEnum.SEGUNDO_BIMESTRE, true);
+		float nota3RecGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA,
+				BimestreEnum.TERCEIRO_BIMESTRE, true);
+		float nota4RecGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA,
+				BimestreEnum.QUARTO_BIMESTRE, true);
+		float notaRecFinalGeografia = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, true, true);
+
+		trocas.put("#ng1", mostraNotas(nota1BimestreGeografia));
+		trocas.put("#ng2", mostraNotas(nota2BimestreGeografia));
+		trocas.put("#ng3", mostraNotas(nota3BimestreGeografia));
+		trocas.put("#ng4", mostraNotas(nota4BimestreGeografia));
+		// rec
+		trocas.put("#ngr1", mostraNotas(nota1RecGeografia));
+		trocas.put("#ngr2", mostraNotas(nota2RecGeografia));
+		trocas.put("#ngr3", mostraNotas(nota3RecGeografia));
+		trocas.put("#ngr4", mostraNotas(nota4RecGeografia));
+		// mediaFinal
+		trocas.put("#mg1", mostraNotas(maior(nota1RecGeografia, nota1BimestreGeografia)));
+		trocas.put("#mg2", mostraNotas(maior(nota2RecGeografia, nota2BimestreGeografia)));
+		trocas.put("#mg3", mostraNotas(maior(nota3RecGeografia, nota3BimestreGeografia)));
+		trocas.put("#mg4", mostraNotas(maior(nota4RecGeografia, nota4BimestreGeografia)));
+		// Final do ano
+		trocas.put("#ngF",
+				mostraNotas(media(maior(nota1RecGeografia, nota1BimestreGeografia),
+						maior(nota2RecGeografia, nota2BimestreGeografia),
+						maior(nota3RecGeografia, nota3BimestreGeografia),
+						maior(nota4RecGeografia, nota4BimestreGeografia))));
+		trocas.put("#ngrf", mostraNotas(notaRecFinalGeografia));
+
+		// Historia
+		float nota1BimestreHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float nota2BimestreHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float nota3BimestreHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float nota4BimestreHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float nota1RecHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, true);
+		float nota2RecHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA,
+				BimestreEnum.SEGUNDO_BIMESTRE, true);
+		float nota3RecHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA,
+				BimestreEnum.TERCEIRO_BIMESTRE, true);
+		float nota4RecHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA,
+				BimestreEnum.QUARTO_BIMESTRE, true);
+		float notaRecFinalHistoria = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, true, true);
+
+		trocas.put("#nh1", mostraNotas(nota1BimestreHistoria));
+		trocas.put("#nh2", mostraNotas(nota2BimestreHistoria));
+		trocas.put("#nh3", mostraNotas(nota3BimestreHistoria));
+		trocas.put("#nh4", mostraNotas(nota4BimestreHistoria));
+		// rec
+		trocas.put("#nhr1", mostraNotas(nota1RecHistoria));
+		trocas.put("#nhr2", mostraNotas(nota2RecHistoria));
+		trocas.put("#nhr3", mostraNotas(nota3RecHistoria));
+		trocas.put("#nhr4", mostraNotas(nota4RecHistoria));
+		// mediaFinal
+		trocas.put("#mh1", mostraNotas(maior(nota1RecHistoria, nota1BimestreHistoria)));
+		trocas.put("#mh2", mostraNotas(maior(nota2RecHistoria, nota2BimestreHistoria)));
+		trocas.put("#mh3", mostraNotas(maior(nota3RecHistoria, nota3BimestreHistoria)));
+		trocas.put("#mh4", mostraNotas(maior(nota4RecHistoria, nota4BimestreHistoria)));
+		// Final do ano
+		trocas.put("#nhF",
+				mostraNotas(media(maior(nota1RecHistoria, nota1BimestreHistoria),
+						maior(nota2RecHistoria, nota2BimestreHistoria), maior(nota3RecHistoria, nota3BimestreHistoria),
+						maior(nota4RecHistoria, nota4BimestreHistoria))));
+		trocas.put("#nhrf", mostraNotas(notaRecFinalHistoria));
+
+		// Ciencias
+		float nota1BimestreCiencias = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float nota2BimestreCiencias = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float nota3BimestreCiencias = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float nota4BimestreCiencias = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float nota1RecCiencias = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS,
+				BimestreEnum.PRIMEIRO_BIMESTRE, true);
+		float nota2RecCiencias = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS,
+				BimestreEnum.SEGUNDO_BIMESTRE, true);
+		float nota3RecCiencias = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS,
+				BimestreEnum.TERCEIRO_BIMESTRE, true);
+		float nota4RecCiencias = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS,
+				BimestreEnum.QUARTO_BIMESTRE, true);
+		float notaRecFinalCiencia = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, true, true);
+
+		trocas.put("#nc1", mostraNotas(nota1BimestreCiencias));
+		trocas.put("#nc2", mostraNotas(nota2BimestreCiencias));
+		trocas.put("#nc3", mostraNotas(nota3BimestreCiencias));
+		trocas.put("#nc4", mostraNotas(nota4BimestreCiencias));
+		// rec
+		trocas.put("#ncr1", mostraNotas(nota1RecCiencias));
+		trocas.put("#ncr2", mostraNotas(nota2RecCiencias));
+		trocas.put("#ncr3", mostraNotas(nota3RecCiencias));
+		trocas.put("#ncr4", mostraNotas(nota4RecCiencias));
+		// mediaFinal
+		trocas.put("#mc1", mostraNotas(maior(nota1RecCiencias, nota1BimestreCiencias)));
+		trocas.put("#mc2", mostraNotas(maior(nota2RecCiencias, nota2BimestreCiencias)));
+		trocas.put("#mc3", mostraNotas(maior(nota3RecCiencias, nota3BimestreCiencias)));
+		trocas.put("#mc4", mostraNotas(maior(nota4RecCiencias, nota4BimestreCiencias)));
+		// Final do ano
+		trocas.put("#ncF",
+				mostraNotas(media(maior(nota1RecCiencias, nota1BimestreCiencias),
+						maior(nota2RecCiencias, nota2BimestreCiencias), maior(nota3RecCiencias, nota3BimestreCiencias),
+						maior(nota4RecCiencias, nota4BimestreCiencias))));
+		trocas.put("#ncrf", mostraNotas(notaRecFinalHistoria));
+
+		// Formacao Crista
+		float nota1BimestreFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float nota2BimestreFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float nota3BimestreFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float nota4BimestreFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float nota1RecFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA,
+				BimestreEnum.PRIMEIRO_BIMESTRE, true);
+		float nota2RecFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA,
+				BimestreEnum.SEGUNDO_BIMESTRE, true);
+		float nota3RecFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA,
+				BimestreEnum.TERCEIRO_BIMESTRE, true);
+		float nota4RecFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA,
+				BimestreEnum.QUARTO_BIMESTRE, true);
+		float notaRecFinalFormaCrista = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, true, true);
+
+		trocas.put("#nf1", mostraNotas(nota1BimestreFormaCrista));
+		trocas.put("#nf2", mostraNotas(nota2BimestreFormaCrista));
+		trocas.put("#nf3", mostraNotas(nota3BimestreFormaCrista));
+		trocas.put("#nf4", mostraNotas(nota4BimestreFormaCrista));
+		// rec
+		trocas.put("#nfr1", mostraNotas(nota1RecFormaCrista));
+		trocas.put("#nfr2", mostraNotas(nota2RecFormaCrista));
+		trocas.put("#nfr3", mostraNotas(nota3RecFormaCrista));
+		trocas.put("#nfr4", mostraNotas(nota4RecFormaCrista));
+		// mediaFinal
+		trocas.put("#mf1", mostraNotas(maior(nota1RecFormaCrista, nota1BimestreFormaCrista)));
+		trocas.put("#mf2", mostraNotas(maior(nota2RecFormaCrista, nota2BimestreFormaCrista)));
+		trocas.put("#mf3", mostraNotas(maior(nota3RecFormaCrista, nota3BimestreFormaCrista)));
+		trocas.put("#mf4", mostraNotas(maior(nota4RecFormaCrista, nota4BimestreFormaCrista)));
+		// Final do ano
+		trocas.put("#nfF",
+				mostraNotas(media(maior(nota1RecFormaCrista, nota1BimestreFormaCrista),
+						maior(nota2RecFormaCrista, nota2BimestreFormaCrista),
+						maior(nota3RecFormaCrista, nota3BimestreFormaCrista),
+						maior(nota4RecFormaCrista, nota4BimestreFormaCrista))));
+		trocas.put("#nfrf", mostraNotas(notaRecFinalFormaCrista));
+
+		// Artes
+		float nota1BimestreArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float nota2BimestreArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float nota3BimestreArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float nota4BimestreArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float nota1RecArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.PRIMEIRO_BIMESTRE,
+				true);
+		float nota2RecArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.SEGUNDO_BIMESTRE,
+				true);
+		float nota3RecArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.TERCEIRO_BIMESTRE,
+				true);
+		float nota4RecArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.QUARTO_BIMESTRE,
+				true);
+		float notaRecFinalArtes = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, true, true);
+
+		trocas.put("#na1", mostraNotas(nota1BimestreArtes));
+		trocas.put("#na2", mostraNotas(nota2BimestreArtes));
+		trocas.put("#na3", mostraNotas(nota3BimestreArtes));
+		trocas.put("#na4", mostraNotas(nota4BimestreArtes));
+		// rec
+		trocas.put("#nar1", mostraNotas(nota1RecArtes));
+		trocas.put("#nar2", mostraNotas(nota2RecArtes));
+		trocas.put("#nar3", mostraNotas(nota3RecArtes));
+		trocas.put("#nar4", mostraNotas(nota4RecArtes));
+		// mediaFinal
+		trocas.put("#ma1", mostraNotas(maior(nota1RecArtes, nota1BimestreArtes)));
+		trocas.put("#ma2", mostraNotas(maior(nota2RecArtes, nota2BimestreArtes)));
+		trocas.put("#ma3", mostraNotas(maior(nota3RecArtes, nota3BimestreArtes)));
+		trocas.put("#ma4", mostraNotas(maior(nota4RecArtes, nota4BimestreArtes)));
+		// Final do ano
+		trocas.put("#naF",
+				mostraNotas(media(maior(nota1RecArtes, nota1BimestreArtes), maior(nota2RecArtes, nota2BimestreArtes),
+						maior(nota3RecArtes, nota3BimestreArtes), maior(nota4RecArtes, nota4BimestreArtes))));
+		trocas.put("#narf", mostraNotas(notaRecFinalArtes));
+
+		return trocas;
+	}
+
+	private Float maior(Float float1, Float float2) {
+		if(Float.isNaN(float1)){
+			return float2;
+		}
+		if(Float.isNaN(float2)){
+			return float1;
+		}
+		
+		return float1 > float2 ? float1 : float2;
+	}
+
+	private String mostraNotas(Float nota) {
+		if (nota == null || nota == 0 || Float.isNaN(nota)) {
+			return "";
+		} else {
+			DecimalFormat df = new DecimalFormat("0.##");
+			String dx = df.format(nota);
+			
+			dx = dx.replace(",", ".");
+			
+			return String.valueOf((Math.round(Float.parseFloat(dx) / 0.5) * 0.5)) ;
+		}
+	}
+
+	private Float media(Float... notas) {
+		int qtade = 0;
+		float sum = 0;
+		for (Float f : notas) {
+			sum += f;
+			qtade++;
+		}
+		return qtade > 0 ? sum / qtade : 0;
+	}
+
 
 	public String voltar() {
 		return "index";
@@ -238,7 +715,7 @@ public class TurmaController extends AuthController implements Serializable {
 	}
 
 	public String cadastrarNovo() {
-
+		Util.removeAtributoSessao("turma");
 		return "exibir";
 	}
 
@@ -290,6 +767,10 @@ public class TurmaController extends AuthController implements Serializable {
 	public void saveAvaliacaoAluno(AlunoAvaliacao alav) {
 		avaliacaoService.saveAlunoAvaliacao(alav);
 	}
+	
+	public void saveAluno(Aluno aluno) {
+		alunoService.save(aluno);
+	}
 
 	public void saveAvaliacaoAluno(Long idAluAv, Float nota) {
 		avaliacaoService.saveAlunoAvaliacao(idAluAv, nota);
@@ -321,16 +802,16 @@ public class TurmaController extends AuthController implements Serializable {
 		return ordinal== disciplinaSelecionada.ordinal();
 	}
 	public void popularAlunoAvaliacao(){
-			alunoAvaliacaoPortugues = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.PORTUGUES, this.bimestreSelecionado,this.turma.getSerie());
-			alunoAvaliacaoIngles = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.INGLES, this.bimestreSelecionado,this.turma.getSerie());
-			alunoAvaliacaoEDFisica = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.EDUCACAO_FISICA, this.bimestreSelecionado,this.turma.getSerie());
-			alunoAvaliacaoGeografia = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.GEOGRAFIA, this.bimestreSelecionado,this.turma.getSerie());
-			alunoAvaliacaoHistoria = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.HISTORIA, this.bimestreSelecionado,this.turma.getSerie());
-			alunoAvaliacaoMatematica = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.MATEMATICA, this.bimestreSelecionado,this.turma.getSerie());
+			alunoAvaliacaoPortugues = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.PORTUGUES, this.bimestreSelecionado,this.turma.getId());
+			alunoAvaliacaoIngles = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.INGLES, this.bimestreSelecionado,this.turma.getId());
+			alunoAvaliacaoEDFisica = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.EDUCACAO_FISICA, this.bimestreSelecionado,this.turma.getId());
+			alunoAvaliacaoGeografia = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.GEOGRAFIA, this.bimestreSelecionado,this.turma.getId());
+			alunoAvaliacaoHistoria = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.HISTORIA, this.bimestreSelecionado,this.turma.getId());
+			alunoAvaliacaoMatematica = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.MATEMATICA, this.bimestreSelecionado,this.turma.getId());
 			
-			alunoAvaliacaoCiencias = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.CIENCIAS, this.bimestreSelecionado,this.turma.getSerie());
-			alunoAvaliacaoFormacaoCrista = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.FORMACAO_CRISTA, this.bimestreSelecionado,this.turma.getSerie());
-			alunoAvaliacaoArtes = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.ARTES, this.bimestreSelecionado,this.turma.getSerie());
+			alunoAvaliacaoCiencias = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.CIENCIAS, this.bimestreSelecionado,this.turma.getId());
+			alunoAvaliacaoFormacaoCrista = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.FORMACAO_CRISTA, this.bimestreSelecionado,this.turma.getId());
+			alunoAvaliacaoArtes = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.ARTES, this.bimestreSelecionado,this.turma.getId());
 	}
 	
 	public Map<Aluno,List<AlunoAvaliacao>> getAlunoAvaliacaoPortugues() {

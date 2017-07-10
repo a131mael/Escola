@@ -22,6 +22,7 @@ import org.escola.enums.Serie;
 import org.escola.enums.Sexo;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Professor;
+import org.escola.service.ConfiguracaoService;
 import org.escola.service.ProfessorService;
 
 /**
@@ -40,6 +41,9 @@ public class CombosEspeciaisMB implements Serializable {
 
 	@Inject
 	private ProfessorService professorService;
+	
+	@Inject
+	private ConfiguracaoService configuracaoService;
 
 	public ArrayList<SelectItem> getProfessores() {
 		ArrayList<SelectItem> items = new ArrayList<SelectItem>();
@@ -59,6 +63,10 @@ public class CombosEspeciaisMB implements Serializable {
 		return items;
 	}
 	
+	public BimestreEnum getBimestreAtual(){
+		return configuracaoService.findAll().get(0).getBimestre();
+	}
+	
 	public ArrayList<SelectItem> getPeriodosSelectIItem() {
 		ArrayList<SelectItem> items = new ArrayList<SelectItem>();
 		try {
@@ -74,6 +82,38 @@ public class CombosEspeciaisMB implements Serializable {
 		return items;
 	}
 
+	public ArrayList<SelectItem> getBimestreSelectIItem() {
+		ArrayList<SelectItem> items = new ArrayList<SelectItem>();
+		try {
+			 items.add(new SelectItem(null, " "));
+			for (BimestreEnum m : BimestreEnum.values()) {
+				items.add(new SelectItem(m, m.getName()));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return items;
+	}
+
+	
+	public ArrayList<SelectItem> getDisciplinasSelectIItem() {
+		ArrayList<SelectItem> items = new ArrayList<SelectItem>();
+		try {
+			 items.add(new SelectItem(null, " "));
+			for (DisciplinaEnum m : DisciplinaEnum.values()) {
+				items.add(new SelectItem(m, m.getName()));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return items;
+	}
+
+	
 	public ArrayList<SelectItem> getSeriesSelectIItem() {
 		ArrayList<SelectItem> items = new ArrayList<SelectItem>();
 		try {

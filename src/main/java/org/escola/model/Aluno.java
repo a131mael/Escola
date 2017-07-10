@@ -40,194 +40,202 @@ import org.escola.enums.Sexo;
 @SuppressWarnings("serial")
 @Entity
 @XmlRootElement
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "id"))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "id") )
 public class Aluno implements Serializable {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-    
-    @Column
-    private int anoLetivo;
-    
-    @Column
-    private Sexo sexo;
-    
-    @Column
-    private Boolean removido;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    /**DADOS DO ALUNO*/
-    @NotNull
-    @Size(min = 1, max = 250)
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomeAluno;
-    
-    @OneToMany
-    private List<AlunoTurma> alunosTurmas;
-    
-    @OneToMany
-    private List<AlunoAvaliacao> avaliacoes;
-    
-    @Column
-    private String login;
-    
-    @Column
-    private String codigo;
+	@Column
+	private int anoLetivo;
 
-    @OneToOne
-    private Member member;
-    
-    @Column
-    private String senha;
-    
-    @NotNull
-    private Serie serie;
-    
-    @Column
-    private String endereco;
-    
-    @Column
-    private String bairro;
-    
-    @Column
-    private String cep;
-    
-    @Column
-    private String cidade;
-    
-    @NotNull
-    private PerioddoEnum periodo;
-    
-    @Column
-    private Double anuidade;
-    
-    @Column
-    private Integer numeroParcelas;
-    
-    @Column
-    private String nomeResponsavel;
-    
-    @Column
-    private String cpfResponsavel;
-    
-    @Column
-    private double valorMensal;
-    
-    @Column
-    private String telefone;
-    
-    @Column
-    private Date dataMatricula;
+	@Column
+	private Sexo sexo;
 
-    @Column
-    private Date dataNascimento;
-    
-    @Column
-    private String nacionalidade;
-    
-    @Column
-    private boolean administrarParacetamol;
-    
-    /**DADOS DO PAI*/
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomePaiAluno;
-    
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomeAvoPaternoPai;
-    
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomeAvoHPaternoPai;
-    
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String naturalidadePai;
-    
-    @Column
-    private String cpfPai;
-    
-    @Column
-    private String rgPai;
-        
-    @Column
-    private String telefoneCelularPai;
-    
-    @Column
-    private String telefoneResidencialPai;
-    
-    @Column
-    private String emailPai;
-    
-    @Column
-    private String empresaTrabalhaPai;
-    
-    @Column
-    private String telefoneEmpresaTrabalhaPai;
-    
-    /**DADOS DA MAE*/
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomeMaeAluno;
-    
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomeAvoPaternoMae;
-    
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomeAvoHPaternoMae;
-    
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String naturalidadeMae;
-    
-    @Column
-    private String cpfMae;
-    
-    @Column
-    private String rgMae;
-    
-    @Column
-    private String telefoneCelularMae;
-    
-    @Column
-    private String telefoneResidencialMae;
-    
-    @Column
-    private String emailMae;
-    
-    @Column
-    private String empresaTrabalhaMae;
-    
-    @Column
-    private String telefoneEmpresaTrabalhaMae;
-    
-    /*DADOS DE CONTATOS PARA SAIDAS*/
+	@Column
+	private Boolean removido;
 
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomecontatoSaidaEstabelecimento1;
-    @Column
-    private String telefonecontatoSaidaEstabelecimento1;
-    @Column
-    private String telefone2contatoSaidaEstabelecimento1;
-    
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomecontatoSaidaEstabelecimento2;
-    @Column
-    private String telefonecontatoSaidaEstabelecimento2;
-    @Column
-    private String telefone2contatoSaidaEstabelecimento2;
-    
-    @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-    private String nomecontatoSaidaEstabelecimento3;
-    @Column
-    private String telefonecontatoSaidaEstabelecimento3;
-    @Column
-    private String telefone2contatoSaidaEstabelecimento3;
-    
-    @Column
-    private boolean ativo;
-    
-    @Column
-    private String observacaoSecretaria;
+	/** DADOS DO ALUNO */
+	@NotNull
+	@Size(min = 1, max = 250)
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomeAluno;
 
-    @Column
-    private String observacaoProfessores;
-    
+	@OneToMany
+	private List<AlunoTurma> alunosTurmas;
+
+	@OneToMany
+	private List<AlunoAvaliacao> avaliacoes;
+
+	@Column
+	private String login;
+
+	@Column
+	private String codigo;
+
+	@OneToOne
+	private Member member;
+
+	@Column
+	private String senha;
+
+	@NotNull
+	private Serie serie;
+
+	@Column
+	private String endereco;
+
+	@Column
+	private String bairro;
+
+	@Column
+	private String cep;
+
+	@Column
+	private String cidade;
+
+	@NotNull
+	private PerioddoEnum periodo;
+
+	@Column
+	private Double anuidade;
+
+	@Column
+	private Integer numeroParcelas;
+
+	@Column
+	private String nomeResponsavel;
+
+	@Column
+	private String cpfResponsavel;
+
+	@Column
+	private double valorMensal;
+
+	@Column
+	private String telefone;
+
+	@Column
+	private Date dataMatricula;
+
+	@Column
+	private Date dataNascimento;
+
+	@Column
+	private String nacionalidade;
+
+	@Column
+	private boolean administrarParacetamol;
+	@Column
+	private Integer faltas1Bimestre;
+	@Column
+	private Integer faltas2Bimestre;
+	@Column
+	private Integer faltas3Bimestre;
+	@Column
+	private Integer faltas4Bimestre;
+
+	/** DADOS DO PAI */
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomePaiAluno;
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomeAvoPaternoPai;
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomeAvoHPaternoPai;
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String naturalidadePai;
+
+	@Column
+	private String cpfPai;
+
+	@Column
+	private String rgPai;
+
+	@Column
+	private String telefoneCelularPai;
+
+	@Column
+	private String telefoneResidencialPai;
+
+	@Column
+	private String emailPai;
+
+	@Column
+	private String empresaTrabalhaPai;
+
+	@Column
+	private String telefoneEmpresaTrabalhaPai;
+
+	/** DADOS DA MAE */
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomeMaeAluno;
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomeAvoPaternoMae;
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomeAvoHPaternoMae;
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String naturalidadeMae;
+
+	@Column
+	private String cpfMae;
+
+	@Column
+	private String rgMae;
+
+	@Column
+	private String telefoneCelularMae;
+
+	@Column
+	private String telefoneResidencialMae;
+
+	@Column
+	private String emailMae;
+
+	@Column
+	private String empresaTrabalhaMae;
+
+	@Column
+	private String telefoneEmpresaTrabalhaMae;
+
+	/* DADOS DE CONTATOS PARA SAIDAS */
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomecontatoSaidaEstabelecimento1;
+	@Column
+	private String telefonecontatoSaidaEstabelecimento1;
+	@Column
+	private String telefone2contatoSaidaEstabelecimento1;
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomecontatoSaidaEstabelecimento2;
+	@Column
+	private String telefonecontatoSaidaEstabelecimento2;
+	@Column
+	private String telefone2contatoSaidaEstabelecimento2;
+
+	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	private String nomecontatoSaidaEstabelecimento3;
+	@Column
+	private String telefonecontatoSaidaEstabelecimento3;
+	@Column
+	private String telefone2contatoSaidaEstabelecimento3;
+
+	@Column
+	private boolean ativo;
+
+	@Column
+	private String observacaoSecretaria;
+
+	@Column
+	private String observacaoProfessores;
+
 	public Long getId() {
 		return id;
 	}
@@ -235,11 +243,11 @@ public class Aluno implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public Serie getSerie() {
 		return serie;
 	}
-	
+
 	public void setSerie(Serie serie) {
 		this.serie = serie;
 	}
@@ -516,7 +524,6 @@ public class Aluno implements Serializable {
 		this.nacionalidade = nacionalidade;
 	}
 
-
 	public String getTelefone() {
 		return telefone;
 	}
@@ -645,7 +652,6 @@ public class Aluno implements Serializable {
 		this.avaliacoes = avaliacoes;
 	}
 
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -654,12 +660,13 @@ public class Aluno implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		
+
 		Aluno other = (Aluno) obj;
 		if (nomeAluno == null) {
 			if (other.nomeAluno != null)
 				return false;
-		} if (serie == null) {
+		}
+		if (serie == null) {
 			if (other.serie != null)
 				return false;
 		} else if (!periodo.equals(other.periodo))
@@ -669,7 +676,7 @@ public class Aluno implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		
+
 		return true;
 
 	}
@@ -736,5 +743,37 @@ public class Aluno implements Serializable {
 
 	public void setSexo(Sexo sexo) {
 		this.sexo = sexo;
+	}
+
+	public Integer getFaltas1Bimestre() {
+		return faltas1Bimestre;
+	}
+
+	public void setFaltas1Bimestre(Integer faltas1Bimestre) {
+		this.faltas1Bimestre = faltas1Bimestre;
+	}
+
+	public Integer getFaltas4Bimestre() {
+		return faltas4Bimestre;
+	}
+
+	public void setFaltas4Bimestre(Integer faltas4Bimestre) {
+		this.faltas4Bimestre = faltas4Bimestre;
+	}
+
+	public Integer getFaltas3Bimestre() {
+		return faltas3Bimestre;
+	}
+
+	public void setFaltas3Bimestre(Integer faltas3Bimestre) {
+		this.faltas3Bimestre = faltas3Bimestre;
+	}
+
+	public Integer getFaltas2Bimestre() {
+		return faltas2Bimestre;
+	}
+
+	public void setFaltas2Bimestre(Integer faltas2Bimestre) {
+		this.faltas2Bimestre = faltas2Bimestre;
 	}
 }

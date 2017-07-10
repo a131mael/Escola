@@ -24,6 +24,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -59,6 +60,8 @@ public class Turma implements Serializable {
     @OneToMany
     private List<ProfessorTurma> professoresTurma;
     
+    @Transient
+    private int totalAlunos = 0;
     
 	public Serie getSerie() {
 		return serie;
@@ -106,6 +109,14 @@ public class Turma implements Serializable {
 
 	public void setProfessoresTurma(List<ProfessorTurma> professoresTurma) {
 		this.professoresTurma = professoresTurma;
+	}
+
+	public int getTotalAlunos() {
+		return totalAlunos;
+	}
+
+	public void setTotalAlunos(int totalAlunos) {
+		this.totalAlunos = totalAlunos;
 	}
 
     

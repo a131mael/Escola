@@ -25,6 +25,7 @@ import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
 import org.escola.model.Aluno;
+import org.escola.model.AlunoAvaliacao;
 import org.escola.model.AlunoTurma;
 import org.escola.model.Evento;
 import org.escola.model.HistoricoAluno;
@@ -149,6 +150,9 @@ public class AlunoService extends Service {
 		sql.append("SELECT pt from  AlunoTurma pt ");
 		sql.append("where pt.turma.id =   ");
 		sql.append(idTurma);
+		sql.append(" and pt.aluno.removido = ");
+		sql.append(false);
+		
 
 		Query query = em.createQuery(sql.toString());
 
@@ -206,6 +210,11 @@ public class AlunoService extends Service {
 			user.setDataNascimento(aluno.getDataNascimento());
 			user.setDataMatricula(aluno.getDataMatricula());
 			user.setAdministrarParacetamol(aluno.isAdministrarParacetamol());
+			
+			user.setFaltas1Bimestre(aluno.getFaltas1Bimestre());
+			user.setFaltas2Bimestre(aluno.getFaltas2Bimestre());
+			user.setFaltas3Bimestre(aluno.getFaltas3Bimestre());
+			user.setFaltas4Bimestre(aluno.getFaltas4Bimestre());
 			if(aluno.getRemovido() == null){
 				user.setRemovido(false);
 			}else{
@@ -353,7 +362,7 @@ public class AlunoService extends Service {
 
 	public float getNota(Long idAluno, DisciplinaEnum disciplina, BimestreEnum bimestre, boolean recupecacao) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT avg(av.nota) from  AlunoAvaliacao av ");
+		sql.append("SELECT av from  AlunoAvaliacao av ");
 		sql.append("where 1 = 1");
 		sql.append(" and  av.aluno.id = ");
 		sql.append(idAluno);
@@ -366,15 +375,19 @@ public class AlunoService extends Service {
 		sql.append(" and  av.avaliacao.recuperacao = ");
 		sql.append(recupecacao);
 		Query query = em.createQuery(sql.toString());
-
-		Object valor = query.getSingleResult();
-		if (valor != null) {
-			valor = (double) valor;
-		} else {
-			return 0;
+		
+		List<AlunoAvaliacao> notas = (List<AlunoAvaliacao>) query.getResultList();
+		Float soma = 0F;
+		Float pesos = 0F;
+		if(notas != null && !notas.isEmpty()){
+			for(AlunoAvaliacao avas : notas){
+				soma += avas.getNota() * avas.getAvaliacao().getPeso();
+				pesos += avas.getAvaliacao().getPeso();
+			}
 		}
+		
 
-		return Float.parseFloat(String.valueOf(valor));
+		return soma/pesos;
 	}
 
 	public float getNota(Long idAluno, DisciplinaEnum disciplina, boolean recuperacao, boolean provafinal) {
@@ -444,7 +457,8 @@ public class AlunoService extends Service {
 			CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 			Root<Aluno> member = countQuery.from(Aluno.class);
 			countQuery.select(cb.count(member));
-
+			
+			final List<Predicate> predicates = new ArrayList<Predicate>();
 			if (filtros != null) {
 				for (Map.Entry<String, Object> entry : filtros.entrySet()) {
 
@@ -454,11 +468,12 @@ public class AlunoService extends Service {
 					} else {
 						pred = cb.equal(member.get(entry.getKey()), entry.getValue());
 					}
-					countQuery.where(pred);
+					predicates.add(pred);
+					
 				}
 
 			}
-
+			countQuery.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 			Query q = em.createQuery(countQuery);
 			return (long) q.getSingleResult();
 

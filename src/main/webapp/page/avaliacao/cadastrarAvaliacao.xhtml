@@ -27,16 +27,16 @@
 									itemValue="#{country}" />
 							</p:selectOneMenu>
 
-							<h:outputLabel value="Bimestre:" style="font-size: 13px; width:180px" />
-							<p:selectOneMenu style="width: 256px;" value="#{avaliacao.bimestre}">
+							<h:outputLabel value="Bimestre:" style="font-size: 13px; width:180px" rendered="#{authController.hasPermission(authController.administrador)}"/>
+							<p:selectOneMenu style="width: 256px;" value="#{avaliacao.bimestre}" rendered="#{authController.hasPermission(authController.administrador)}">
 								<f:selectItems value="#{CombosEspeciaisMB.getBimestres()}"
 									var="country" itemLabel="#{country.name}"
 									itemValue="#{country}" />
 							</p:selectOneMenu>
 							
-							<h:outputLabel value="Serie:" style="font-size: 13px; width:180px" />
-							<p:selectOneMenu style="width: 256px;" value="#{avaliacao.serie}">
-								<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
+							<h:outputLabel value="Serie:" style="font-size: 13px; width:180px" rendered="#{avaliacaoController.exibirSerie()}"/>
+							<p:selectOneMenu style="width: 256px;" value="#{avaliacao.serie}" rendered="#{avaliacaoController.exibirSerie()}">
+								<f:selectItems value="#{avaliacaoController.getSeries()}"
 									var="country" itemLabel="#{country.name}"
 									itemValue="#{country}" />
 							</p:selectOneMenu>

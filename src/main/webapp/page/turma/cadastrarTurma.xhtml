@@ -45,7 +45,7 @@
 						<p:selectOneMenu style="width: 256px;"
 							value="#{turmaController.disciplinaSelecionada}"
 							rendered="#{authController.hasPermission(authController.professor)}">
-							<f:selectItem itemLabel="Todas" />
+							<f:selectItem itemLabel="Selecione uma disciplina" />
 							<f:selectItems value="#{CombosEspeciaisMB.getDisciplinas()}"
 								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
 
@@ -111,53 +111,108 @@
 								value="#{turmaController.getAlunoAvaliacaoPortugues().keySet()}"
 								var="mapAlunoAva">
 								<p:column style="border:none !importante">
-									<p:dataTable value="#{mapAlunoAva}" var="alun" style="border:none !importante"
+									<p:dataTable value="#{mapAlunoAva}" var="alun"
+										style="border:none !importante"
 										styleClass="removerCabecalhoTabela">
-									
-										<p:column  style="border:none !important;" width="10%"
+
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
-											<h:outputText value="#{alunIngles.nomeAluno}"
+											<h:outputText value="#{alun.nomeAluno}"
 												style="float:none; width:80px" />
-													
-											<h:panelGrid  columns="2" style="border:none !important">
-												<p:outputLabel value="Media 1º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alun,turmaController.portugues,turmaController.primeiroBimestre)}"/>
-												
-												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alun,turmaController.portugues,turmaController.segundoBimestre)}"/>
-													
-												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alun,turmaController.portugues,turmaController.terceiroBimestre)}"/>
-													
-												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alun,turmaController.portugues,turmaController.quartoBimestre)}"/>	
-													
+
+											<h:panelGrid columns="4" style="border:none !important">
+												<p:outputLabel value="Media 1º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alun,turmaController.portugues,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas1Bimestre}">
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+												</p:inputText>
+
+												<p:outputLabel value="Media 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;"
+													value="#{turmaController.getNota(alun,turmaController.portugues,turmaController.segundoBimestre)}" />
+
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+
+
+												<p:outputLabel value="Media 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alun,turmaController.portugues,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+
+
+												<p:outputLabel value="Media 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;"
+													value="#{turmaController.getNota(alun,turmaController.portugues,turmaController.quartoBimestre)}" />
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alun,turmaController.portugues,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;"
+													value="#{turmaController.getNota(alun,turmaController.portugues,null)}" />
+
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
+
 											</h:panelGrid>
-											
 										</p:column>
+
 										<p:column>
 											<p:dataTable styleClass="removerCabecalhoTabela"
 												value="#{turmaController.getAlunoAvaliacaoPortugues().get(alun)}"
 												var="alunoAva" sortBy="#{alunoAva.avaliacao.nome}"
 												style="border:none !importante; width:900px">
-												
+
 
 												<p:column style="border:none !importante">
-													<h:outputLabel
-														value="#{alunoAva.avaliacao.bimestre.name}"
+													<h:outputLabel value="#{alunoAva.avaliacao.bimestre.name}"
 														style="border:none !importante;"
 														styleClass="alinharEsquerda" />
 													<h:outputLabel value="#{alunoAva.avaliacao.nome}"
@@ -165,9 +220,8 @@
 													<p:inputText value="#{alunoAva.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAva)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAva)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -180,10 +234,11 @@
 
 						</h:panelGrid>
 
-						<h:panelGrid id="panelNotasIngles" rendered="#{turmaController.renderDisciplina(3)}">
+						<h:panelGrid id="panelNotasIngles"
+							rendered="#{turmaController.renderDisciplina(3)}">
 							<!-- INGLES -->
 							<h:outputLabel value="Inglês" />
-							<p:dataTable 
+							<p:dataTable
 								value="#{turmaController.getAlunoAvaliacaoIngles().keySet()}"
 								var="mapAlunoAvaIngles" styleClass="removerCabecalhoTabela">
 								<p:column style="border:none !importante">
@@ -191,37 +246,95 @@
 										style="border:none !importante"
 										styleClass="removerCabecalhoTabela">
 
-										<p:column  style="border:none !important;" width="10%"
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
 											<h:outputText value="#{alunIngles.nomeAluno}"
 												style="float:none; width:80px" />
-											
-											<h:panelGrid  columns="2" style="border:none !important">
+
+											<h:panelGrid columns="4" style="border:none !important">
 												<p:outputLabel value="Media 1º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ingles,turmaController.primeiroBimestre)}"/>
-												
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ingles,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas1Bimestre}">
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+												</p:inputText>
+
+
 												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ingles,turmaController.segundoBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ingles,turmaController.segundoBimestre)}" />
+
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+
+
+
 												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ingles,turmaController.terceiroBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ingles,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+
+
 												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ingles,turmaController.quartoBimestre)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ingles,turmaController.quartoBimestre)}" />
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ingles,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ingles,null)}" />
+												
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
+
 											</h:panelGrid>
 										</p:column>
 
@@ -242,9 +355,8 @@
 													<p:inputText value="#{alunoAvaIngles.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -261,50 +373,105 @@
 							<h:outputLabel value="Matematica" />
 							<p:dataTable
 								value="#{turmaController.getAlunoAvaliacaoMatematica().keySet()}"
-								styleClass="removerCabecalhoTabela"
-								var="mapAlunoAvaIngles">
+								styleClass="removerCabecalhoTabela" var="mapAlunoAvaIngles">
 								<p:column style="border:none !importante">
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" style="border:none !importante"
-									styleClass="removerCabecalhoTabela">
-												<p:column  style="border:none !important;" width="10%"
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles"
+										style="border:none !importante"
+										styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
 											<h:outputText value="#{alunIngles.nomeAluno}"
 												style="float:none; width:80px" />
-									
-											<h:panelGrid  columns="2" style="border:none !important">
+
+											<h:panelGrid columns="4" style="border:none !important">
 												<p:outputLabel value="Media 1º Bimestre:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.matematica,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
 															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.matematica,turmaController.primeiroBimestre)}"/>
+												<p:inputText style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"  
+														value="#{alun.faltas1Bimestre}">
+														<p:ajax event="change"
+														   		update="panelNotasIngles"
+															listener="#{turmaController.saveAluno(alun)}"/>
+												</p:inputText>
 												
+
 												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.matematica,turmaController.segundoBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.matematica,turmaController.segundoBimestre)}" />
+												
+												
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
 												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.matematica,turmaController.terceiroBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.matematica,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.matematica,turmaController.quartoBimestre)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.matematica,turmaController.quartoBimestre)}" />
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.matematica,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.matematica,null)}" />
+
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
+
 											</h:panelGrid>
-											
 										</p:column>
 										<p:column>
 											<p:dataTable
 												value="#{turmaController.getAlunoAvaliacaoMatematica().get(alunIngles)}"
-												var="alunoAvaIngles"
-												styleClass="removerCabecalhoTabela"
+												var="alunoAvaIngles" styleClass="removerCabecalhoTabela"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}"
 												style="border:none !importante; width:900px">
 
@@ -318,9 +485,8 @@
 													<p:inputText value="#{alunoAvaIngles.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -337,50 +503,107 @@
 							<h:outputLabel value="História" />
 							<p:dataTable
 								value="#{turmaController.getAlunoAvaliacaoHistoria().keySet()}"
-								styleClass="removerCabecalhoTabela"
-								var="mapAlunoAvaIngles">
+								styleClass="removerCabecalhoTabela" var="mapAlunoAvaIngles">
 								<p:column style="border:none !importante">
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" style="border:none !importante"
-												styleClass="removerCabecalhoTabela">
-												<p:column  style="border:none !important;" width="10%"
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles"
+										style="border:none !importante"
+										styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
 											<h:outputText value="#{alunIngles.nomeAluno}"
 												style="float:none; width:80px" />
-									
-											<h:panelGrid  columns="2" style="border:none !important">
+
+											<h:panelGrid columns="4" style="border:none !important">
 												<p:outputLabel value="Media 1º Bimestre:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.historia,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
 															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.historia,turmaController.primeiroBimestre)}"/>
+												<p:inputText style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"  
+														value="#{alun.faltas1Bimestre}">
+														<p:ajax event="change"
+														   		update="panelNotasIngles"
+															listener="#{turmaController.saveAluno(alun)}"/>
+												</p:inputText>
 												
+
 												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.historia,turmaController.segundoBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.historia,turmaController.segundoBimestre)}" />
+
+
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
 												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.historia,turmaController.terceiroBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.historia,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.historia,turmaController.quartoBimestre)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.historia,turmaController.quartoBimestre)}" />
+
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.historia,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.historia,null)}" />
+												
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
+
 											</h:panelGrid>
-											
+
 										</p:column>
 										<p:column>
 											<p:dataTable
 												value="#{turmaController.getAlunoAvaliacaoHistoria().get(alunIngles)}"
-												var="alunoAvaIngles"
-												styleClass="removerCabecalhoTabela"
+												var="alunoAvaIngles" styleClass="removerCabecalhoTabela"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}"
 												style="border:none !importante; width:900px">
 
@@ -394,9 +617,8 @@
 													<p:inputText value="#{alunoAvaIngles.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -414,53 +636,107 @@
 							<h:outputLabel value="Geografia" />
 							<p:dataTable
 								value="#{turmaController.getAlunoAvaliacaoGeografia().keySet()}"
-								styleClass="removerCabecalhoTabela"
-								var="mapAlunoAvaIngles">
+								styleClass="removerCabecalhoTabela" var="mapAlunoAvaIngles">
 
 								<p:column style="border:none !importante">
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" style="border:none !importante"
-									styleClass="removerCabecalhoTabela">
-												<p:column  style="border:none !important;" width="10%"
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles"
+										style="border:none !importante"
+										styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
 											<h:outputText value="#{alunIngles.nomeAluno}"
 												style="float:none; width:80px" />
-									
-											
-											<h:panelGrid  columns="2" style="border:none !important">
+
+
+											<h:panelGrid columns="4" style="border:none !important">
 												<p:outputLabel value="Media 1º Bimestre:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.geografia,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
 															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.geografia,turmaController.primeiroBimestre)}"/>
-												
+												<p:inputText style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"  
+														value="#{alun.faltas1Bimestre}">
+														<p:ajax event="change"
+														   		update="panelNotasIngles"
+															listener="#{turmaController.saveAluno(alun)}"/>
+												</p:inputText>
+
+
 												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.geografia,turmaController.segundoBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.geografia,turmaController.segundoBimestre)}" />
+
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.geografia,turmaController.terceiroBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.geografia,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.geografia,turmaController.quartoBimestre)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.geografia,turmaController.quartoBimestre)}" />
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.geografia,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.geografia,null)}" />
+
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
+
 											</h:panelGrid>
-											
-											
 										</p:column>
 										<p:column>
 											<p:dataTable
 												value="#{turmaController.getAlunoAvaliacaoGeografia().get(alunIngles)}"
-												var="alunoAvaIngles"
-												styleClass="removerCabecalhoTabela"
+												var="alunoAvaIngles" styleClass="removerCabecalhoTabela"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}"
 												style="border:none !importante; width:900px">
 
@@ -474,9 +750,8 @@
 													<p:inputText value="#{alunoAvaIngles.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -496,51 +771,105 @@
 
 							<p:dataTable
 								value="#{turmaController.getAlunoAvaliacaoCiencias().keySet()}"
-								styleClass="removerCabecalhoTabela"
-								var="mapAlunoAvaIngles">
+								styleClass="removerCabecalhoTabela" var="mapAlunoAvaIngles">
 								<p:column style="border:none !importante">
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" style="border:none !importante"
-									styleClass="removerCabecalhoTabela">
-												<p:column  style="border:none !important;" width="10%"
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles"
+										style="border:none !importante"
+										styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
 											<h:outputText value="#{alunIngles.nomeAluno}"
 												style="float:none; width:80px" />
-									
-											<h:panelGrid  columns="2" style="border:none !important">
+
+											<h:panelGrid columns="4" style="border:none !important">
 												<p:outputLabel value="Media 1º Bimestre:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ciencias,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
 															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ciencias,turmaController.primeiroBimestre)}"/>
-												
+												<p:inputText style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"  
+														value="#{alun.faltas1Bimestre}">
+														<p:ajax event="change"
+														   		update="panelNotasIngles"
+															listener="#{turmaController.saveAluno(alun)}"/>
+												</p:inputText>
+
 												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ciencias,turmaController.segundoBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ciencias,turmaController.segundoBimestre)}" />
+
+
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ciencias,turmaController.terceiroBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ciencias,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+																							
+
 												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ciencias,turmaController.quartoBimestre)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ciencias,turmaController.quartoBimestre)}" />
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.ciencias,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.ciencias,null)}" />
+
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
+
 											</h:panelGrid>
-											
-											
 										</p:column>
 										<p:column>
 											<p:dataTable
 												value="#{turmaController.getAlunoAvaliacaoCiencias().get(alunIngles)}"
-												var="alunoAvaIngles"
-												styleClass="removerCabecalhoTabela"
+												var="alunoAvaIngles" styleClass="removerCabecalhoTabela"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}"
 												style="border:none !importante; width:900px">
 
@@ -554,9 +883,8 @@
 													<p:inputText value="#{alunoAvaIngles.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -575,50 +903,105 @@
 
 							<p:dataTable
 								value="#{turmaController.getAlunoAvaliacaoFormacaoCrista().keySet()}"
-								styleClass="removerCabecalhoTabela"
-								var="mapAlunoAvaIngles">
+								styleClass="removerCabecalhoTabela" var="mapAlunoAvaIngles">
 								<p:column style="border:none !importante">
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" style="border:none !importante" 
-												styleClass="removerCabecalhoTabela">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles"
+										style="border:none !importante"
+										styleClass="removerCabecalhoTabela">
 
-										<p:column  style="border:none !important;" width="10%"
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
 											<h:outputText value="#{alunIngles.nomeAluno}"
 												style="float:none; width:80px" />
-									
-											<h:panelGrid  columns="2" style="border:none !important">
+
+											<h:panelGrid columns="4" style="border:none !important">
 												<p:outputLabel value="Media 1º Bimestre:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
 															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,turmaController.primeiroBimestre)}"/>
-												
+												<p:inputText style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"  
+														value="#{alun.faltas1Bimestre}">
+														<p:ajax event="change"
+														   		update="panelNotasIngles"
+															listener="#{turmaController.saveAluno(alun)}"/>
+												</p:inputText>
+
+
 												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,turmaController.segundoBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,turmaController.segundoBimestre)}" />
+
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,turmaController.terceiroBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,turmaController.quartoBimestre)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,turmaController.quartoBimestre)}" />
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.formacaoCrista,null)}" />
+
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
 											</h:panelGrid>
 										</p:column>
 										<p:column>
 											<p:dataTable
 												value="#{turmaController.getAlunoAvaliacaoFormacaoCrista().get(alunIngles)}"
-												var="alunoAvaIngles"
-												styleClass="removerCabecalhoTabela"
+												var="alunoAvaIngles" styleClass="removerCabecalhoTabela"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}"
 												style="border:none !importante; width:900px">
 
@@ -632,9 +1015,8 @@
 													<p:inputText value="#{alunoAvaIngles.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -653,52 +1035,108 @@
 
 							<p:dataTable
 								value="#{turmaController.getAlunoAvaliacaoArtes().keySet()}"
-								styleClass="removerCabecalhoTabela"
-								var="mapAlunoAvaIngles">
+								styleClass="removerCabecalhoTabela" var="mapAlunoAvaIngles">
 								<p:column style="border:none !importante">
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" style="border:none !importante"
-												styleClass="removerCabecalhoTabela">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles"
+										style="border:none !importante"
+										styleClass="removerCabecalhoTabela">
 
-										<p:column  style="border:none !important;" width="10%"
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
 											<h:outputText value="#{alunIngles.nomeAluno}"
 												style="float:none; width:80px" />
-									
-											
-											<h:panelGrid  columns="2" style="border:none !important">
+
+
+											<h:panelGrid columns="4" style="border:none !important">
 												<p:outputLabel value="Media 1º Bimestre:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.artes,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
 															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.artes,turmaController.primeiroBimestre)}"/>
-												
+												<p:inputText style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"  
+														value="#{alun.faltas1Bimestre}">
+														<p:ajax event="change"
+														   		update="panelNotasIngles"
+															listener="#{turmaController.saveAluno(alun)}"/>
+												</p:inputText>
+
+
+
 												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.artes,turmaController.segundoBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.artes,turmaController.segundoBimestre)}" />
+
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.artes,turmaController.terceiroBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.artes,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.artes,turmaController.quartoBimestre)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.artes,turmaController.quartoBimestre)}" />
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.artes,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.artes,null)}" />
+
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
 											</h:panelGrid>
-											
+
 										</p:column>
 										<p:column>
 											<p:dataTable
 												value="#{turmaController.getAlunoAvaliacaoArtes().get(alunIngles)}"
-												var="alunoAvaIngles"
-												styleClass="removerCabecalhoTabela"
+												var="alunoAvaIngles" styleClass="removerCabecalhoTabela"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}"
 												style="border:none !importante; width:900px">
 
@@ -712,9 +1150,8 @@
 													<p:inputText value="#{alunoAvaIngles.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -732,53 +1169,106 @@
 							<h:outputLabel value="Educação Fisica" />
 							<p:dataTable
 								value="#{turmaController.getAlunoAvaliacaoEdFisica().keySet()}"
-								styleClass="removerCabecalhoTabela"
-								var="mapAlunoAvaIngles">
+								styleClass="removerCabecalhoTabela" var="mapAlunoAvaIngles">
 								<p:column style="border:none !importante">
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" style="border:none !importante"
-												 styleClass="removerCabecalhoTabela">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles"
+										style="border:none !importante"
+										styleClass="removerCabecalhoTabela">
 
-										<p:column  style="border:none !important;" width="10%"
+										<p:column style="border:none !important;" width="10%"
 											styleClass="removerLinhasColuna">
 											<h:outputText value="#{alunIngles.nomeAluno}"
 												style="float:none; width:80px" />
-									
-											
-											<h:panelGrid  columns="2" style="border:none !important">
+
+											<h:panelGrid columns="4" style="border:none !important">
 												<p:outputLabel value="Media 1º Bimestre:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,turmaController.primeiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 1º Bim:"
 															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,turmaController.primeiroBimestre)}"/>
-												
+												<p:inputText style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"  
+														value="#{alun.faltas1Bimestre}">
+														<p:ajax event="change"
+														   		update="panelNotasIngles"
+															listener="#{turmaController.saveAluno(alun)}"/>
+												</p:inputText>
+
+
 												<p:outputLabel value="Media 2º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,turmaController.segundoBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,turmaController.segundoBimestre)}" />
+
+												<p:outputLabel value="Faltas 2º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px; width:25px !important;"
+													value="#{alun.faltas2Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 3º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,turmaController.terceiroBimestre)}"/>
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,turmaController.terceiroBimestre)}" />
+
+												<p:outputLabel value="Faltas 3º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas3Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+												
+
 												<p:outputLabel value="Media 4º Bimestre:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,turmaController.quartoBimestre)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,turmaController.quartoBimestre)}" />
+
+												<p:outputLabel value="Faltas 4º Bim:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;width:25px !important;"
+													value="#{alun.faltas4Bimestre}">
+
+													<p:ajax event="change" update="panelNotasIngles"
+														listener="#{turmaController.saveAluno(alun)}" />
+
+												</p:inputText>
+
+
 												<p:outputLabel value="Media Final:"
-															style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
-												<h:outputText style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"  
-														value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,null)}"/>	
-													
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<h:outputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{turmaController.getNota(alunIngles,turmaController.EDFisica,null)}" />
+
+												<p:outputLabel value="Faltas:"
+													style="width:100%;text-align: left;float:left; font-size:10px;border:none !important" />
+												<p:inputText
+													style="width:100%;text-align: right;float:left; font-size:11px;border:none !important"
+													value="#{alun.faltas1Bimestre}" />
 											</h:panelGrid>
-											
-											
+
 										</p:column>
 										<p:column>
 											<p:dataTable
 												value="#{turmaController.getAlunoAvaliacaoEdFisica().get(alunIngles)}"
-												var="alunoAvaIngles"
-												styleClass="removerCabecalhoTabela"
+												var="alunoAvaIngles" styleClass="removerCabecalhoTabela"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}"
 												style="border:none !importante; width:900px">
 
@@ -792,9 +1282,8 @@
 													<p:inputText value="#{alunoAvaIngles.nota}"
 														style="border:none !importante; width:25px !important;"
 														styleClass="alinharEsquerda">
-														<p:ajax event="change"
-														   		update="panelNotasIngles"
-															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}"/>
+														<p:ajax event="change" update="panelNotasIngles"
+															listener="#{turmaController.saveAvaliacaoAluno(alunoAvaIngles)}" />
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
@@ -814,6 +1303,7 @@
 								action="#{turmaController.voltar()}" value="Voltar" /></td>
 
 						<td><h:commandButton id="salvarButtom"
+								rendered="#{authController.hasPermission(authController.administrador)}"
 								style="margin-left:690px !important;"
 								action="#{turmaController.salvar()}" value="Salvar" /></td>
 					</tr>

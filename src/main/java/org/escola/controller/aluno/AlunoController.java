@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -158,6 +159,8 @@ public class AlunoController implements Serializable {
 						}
 
 					}
+					
+					filtros.put("removido", false);
 
 					String orderByParam = (order != null) ? order : "id";
 					String orderParam = ("ASCENDING".equals(so.name())) ? "asc" : "desc";
@@ -430,14 +433,26 @@ public class AlunoController implements Serializable {
 	}
 
 	private Float maior(Float float1, Float float2) {
+		if(Float.isNaN(float1)){
+			return float2;
+		}
+		if(Float.isNaN(float2)){
+			return float1;
+		}
+		
 		return float1 > float2 ? float1 : float2;
 	}
 
 	private String mostraNotas(Float nota) {
-		if (nota == null || nota == 0) {
+		if (nota == null || nota == 0 || Float.isNaN(nota)) {
 			return "";
 		} else {
-			return String.valueOf(Math.round(nota * 100) / 100);
+			DecimalFormat df = new DecimalFormat("0.##");
+			String dx = df.format(nota);
+			
+			dx = dx.replace(",", ".");
+			
+			return String.valueOf((Math.round(Float.parseFloat(dx) / 0.5) * 0.5)) ;
 		}
 	}
 
@@ -503,6 +518,12 @@ public class AlunoController implements Serializable {
 		trocas.put("#nomeAluno", aluno.getNomeAluno());
 		trocas.put("#nomeProfessor", prof.getNome());
 		trocas.put("#turma", aluno.getSerie().getName());
+		
+		//FALTAS
+		trocas.put("#f1", aluno.getFaltas1Bimestre() != null ?aluno.getFaltas1Bimestre().toString():"");
+		trocas.put("#f2", aluno.getFaltas2Bimestre() != null ?aluno.getFaltas2Bimestre().toString():"");
+		trocas.put("#f3", aluno.getFaltas3Bimestre() != null ?aluno.getFaltas3Bimestre().toString():"");
+		trocas.put("#f4", aluno.getFaltas4Bimestre() != null ?aluno.getFaltas4Bimestre().toString():"");
 
 		float notaPortuguesPrimeiroBimestre = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES,
 				BimestreEnum.PRIMEIRO_BIMESTRE, false);
@@ -1312,6 +1333,7 @@ public class AlunoController implements Serializable {
 	}
 
 	public String adicionarNovo() {
+		Util.removeAtributoSessao("aluno");
 		return "cadastrar";
 	}
 	

@@ -9,49 +9,69 @@
 <h:form style="width:100%; border:none !important">
 	<p:growl id="messages" />
 
-	<p:menubar style="width:100%;margin-left: -16px;margin-top: -16px">
-		<p:menuitem value="Alunos" url="../aluno/index.jsf"	icon="ui-icon-pencil" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
 
-		<p:menuitem value="Alunos" url="../professor/alunosProfessor.jsf"	icon="ui-icon-pencil" 
-					rendered="#{authController.hasPermission(authController.professor)}"/>
-		
+	<p:dialog modal="true" widgetVar="statusDialog" header="Status" 
+				draggable="false" closable="false" resizable="false">
+    		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
+		</p:dialog>
+
+	<p:menubar style="width:100%;margin-left: -16px;margin-top: -16px">
+		<p:menuitem value="Alunos" url="../aluno/index.jsf"
+			icon="ui-icon-pencil"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+		<p:menuitem value="Alunos" url="../professor/alunosProfessor.jsf"
+			icon="ui-icon-pencil"
+			rendered="#{authController.hasPermission(authController.professor)}" />
+
 
 		<p:menuitem value="Professores" url="../professor/index.jsf"
-			icon="ui-icon-search" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+			icon="ui-icon-search"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
 
-		<p:menuitem value="Avaliações" url="../avaliacao/index.jsf"	icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}"/>
-		
-		<p:menuitem value="Turmas" url="../turma/index.jsf"	icon="ui-icon-gear"
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
+		<p:menuitem value="Avaliações" url="../avaliacao/index.jsf"
+			icon="ui-icon-close"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
 
-		<p:menuitem value="Relatórios" url="../relatorio/index.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+		<p:menuitem value="Turmas" url="../turma/index.jsf"
+			icon="ui-icon-gear"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
 
-		<p:menuitem value="Calendario" url="../calendario/index.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}"/>
+		<p:menuitem value="Relatórios" url="../relatorio/index.jsf"
+			icon="ui-icon-close"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+		<p:menuitem value="Calendario" url="../calendario/index.jsf"
+			icon="ui-icon-close"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
 
 		<p:submenu label="Secretaria"
-				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
-		
-				<p:menuitem value="Configuração" url="../secretaria/configuracoes.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
-				
-				<p:menuitem value="Ex-Alunos" url="../secretaria/exAlunos.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
-				
-				<p:menuitem value="Alunos 2016" url="../secretaria/alunosUltimoAnoLetivo.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
-				
-				<p:menuitem value="Documentos" url="../secretaria/documentos.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
-					
-				<p:menuitem value="Usuarios" url="../admin/listarUsuarios.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador)}"/>
-					
-				
-		
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+
+			<p:menuitem value="Configuração"
+				url="../secretaria/configuracoes.jsf" icon="ui-icon-close"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+			<p:menuitem value="Ex-Alunos" url="../secretaria/exAlunos.jsf"
+				icon="ui-icon-close"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+			<p:menuitem value="Alunos 2016"
+				url="../secretaria/alunosUltimoAnoLetivo.jsf" icon="ui-icon-close"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+			<p:menuitem value="Documentos" url="../secretaria/documentos.jsf"
+				icon="ui-icon-close"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+			<p:menuitem value="Usuarios" url="../admin/listarUsuarios.jsf"
+				icon="ui-icon-close"
+				rendered="#{authController.hasPermission(authController.administrador)}" />
+
+
+
 		</p:submenu>
 
 		<f:facet name="options">

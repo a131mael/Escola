@@ -17,6 +17,7 @@
 package org.escola.controller;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
@@ -38,12 +39,19 @@ public class ConfiguracaoController implements Serializable{
 	@Named
 	private Configuracao configuracao;
 		
-	 @Inject
+	@Inject
     private ConfiguracaoService configuracaoService;
 
 	
 	@PostConstruct
 	private void init() {
+		List<Configuracao> confs =configuracaoService.findAll(); 
+		
+		if(confs == null || confs.isEmpty()){
+			configuracao = new Configuracao();
+		}else{
+			configuracao = confs.get(0);
+		}
 	}
 
 	public String salvar(){

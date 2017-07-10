@@ -94,6 +94,7 @@ public class UsuarioController implements Serializable{
 	}
 	
 	public String adicionarNovo(){
+		Util.removeAtributoSessao("usuario");
 		return "cadastrar";
 	}
 	

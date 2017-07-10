@@ -26,6 +26,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.escola.enums.BimestreEnum;
+
 @SuppressWarnings("serial")
 @Entity
 @XmlRootElement
@@ -38,6 +40,9 @@ public class Configuracao implements Serializable {
 
     @Column
     private int anoLetivo;
+    
+    @Column
+    private BimestreEnum bimestre;
     
 	public Long getId() {
 		return id;
@@ -55,6 +60,14 @@ public class Configuracao implements Serializable {
 
 	public void setAnoLetivo(int anoLetivo) {
 		this.anoLetivo = anoLetivo;
+	}
+
+	public BimestreEnum getBimestre() {
+		return bimestre;
+	}
+
+	public void setBimestre(BimestreEnum bimestre) {
+		this.bimestre = bimestre;
 	}
 
 }

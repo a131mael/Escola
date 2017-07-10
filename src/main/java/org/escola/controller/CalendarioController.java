@@ -33,6 +33,7 @@ import javax.inject.Named;
 import org.escola.model.Evento;
 import org.escola.service.AlunoService;
 import org.escola.service.EventoService;
+import org.escola.util.Util;
 import org.escola.util.UtilFinalizarAnoLetivo;
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;

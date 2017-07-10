@@ -42,9 +42,14 @@
 					</f:facet>
 					
 					<p:column style="width:8%">
+						<p:tooltip  for="boletim" value="Boletim" position="top"/>
 						<f:facet name="header">
 							<h:outputText value="Ações" />
 						</f:facet>
+						<p:commandButton id="boletim" ajax="true" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 icon="ui-icon-bookmark" rendered="#{!authController.isTeacher()}">
+								<p:fileDownload value="#{turmaController.imprimirBoletinsTurma(alunoTab.id)}" />
+  					  	</p:commandButton >
 						<p:commandButton icon="ui-icon-search"  action="#{turmaController.editar(alunoTab.id)}" rendered="#{!authController.isTeacher()}"/>
 						<p:commandButton icon="ui-icon-search"  action="#{turmaController.editar(alunoTab.id)}" actionListener="#{turmaController.verificarTodosAlunosTemAvaliacao(alunoTab.id)}" rendered="#{authController.isTeacher()}"/>
 						
@@ -82,7 +87,7 @@
 						<f:facet name="header">
 							<h:outputText value="Qtade Alunos" />
 						</f:facet>
-						<h:outputText value="#{turmaController.totalAlunos}" />
+						<h:outputText value="#{alunoTab.totalAlunos}" />
 					</p:column>
 					
 					<p:column style="width:10%" 

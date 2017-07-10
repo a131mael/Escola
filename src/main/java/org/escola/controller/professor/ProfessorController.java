@@ -109,7 +109,7 @@ public class ProfessorController extends AuthController implements Serializable{
 	}
 	
 	public String cadastrarNovo(){
-		
+		Util.removeAtributoSessao("professor");
 		return "exibir";
 	}
 	

@@ -47,49 +47,69 @@
 						</f:facet>
 						<table style="border: none">
 							<tr style="border: none">
-								<td style="border: none"><p:commandButton
-										icon="ui-icon-pencil"
-										action="#{avaliacaoController.editar(avaliacaoTab.id)}" /></td>
+								<td style="border: none">
+										<p:commandButton
+											icon="ui-icon-pencil"
+											action="#{avaliacaoController.editar(avaliacaoTab.id)}" 
+											disabled="#{!avaliacaoController.podeEditar(avaliacaoTab)}"/></td>
 
 							</tr>
 						</table>
 					</p:column>
 
-					<p:column style="width:10%" rendered="false">
+					<p:column style="width:10%" rendered="false"
+							  filterBy="#{avaliacaoTab.id}"
+                              sortBy="#{avaliacaoTab.id}" >
 						<f:facet name="header">
 							<h:outputText value="Código" />
 						</f:facet>
 						<h:outputText value="#{avaliacaoTab.id}" />
 					</p:column>
 
-					<p:column>
+					<p:column filterBy="#{avaliacaoTab.nome}"
+                              sortBy="#{avaliacaoTab.nome}" >
 						<f:facet name="header">
 							<h:outputText value="Nome" />
 						</f:facet>
 						<h:outputText value="#{avaliacaoTab.nome}" />
 					</p:column>
 
-					<p:column>
+					<p:column filterBy="#{avaliacaoTab.disciplina}"
+                              sortBy="#{avaliacaoTab.disciplina}" 
+							  filterOptions="#{CombosEspeciaisMB.disciplinasSelectIItem}">
 						<f:facet name="header">
 							<h:outputText value="Disciplina	" />
 						</f:facet>
 						<h:outputText value="#{avaliacaoTab.disciplina.name}" />
 					</p:column>
 	
-					<p:column>
+					<p:column filterBy="#{avaliacaoTab.serie}"
+                              sortBy="#{avaliacaoTab.serie}"
+					          filterOptions="#{CombosEspeciaisMB.seriesSelectIItem}"
+					          rendered="#{avaliacaoController.exibirSerie()}">
 						<f:facet name="header">
 							<h:outputText value="Serie" />
 						</f:facet>
 						<h:outputText value="#{avaliacaoTab.serie.name}" />
 					</p:column>
 					
-					<p:column>
+					<p:column filterBy="#{avaliacaoTab.bimestre}"
+                              sortBy="#{avaliacaoTab.bimestre}"
+					          filterOptions="#{CombosEspeciaisMB.bimestreSelectIItem}">
 						<f:facet name="header">
 							<h:outputText value="Bimestre" />
 						</f:facet>
 						<h:outputText value="#{avaliacaoTab.bimestre.name}" />
 					</p:column>
 					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Nota Média" />
+						</f:facet>
+						<h:outputText value="#{avaliacaoController.getMedia(avaliacaoTab)}" style="center" >
+							<f:convertNumber pattern="#0.00" />
+						</h:outputText>
+					</p:column>
 					
 
 					<p:column style="width:10%">
@@ -98,8 +118,9 @@
 						</f:facet>
 
 						<p:commandButton update="tbl" icon="ui-icon-trash"
-							action="#{avaliacaoController.remover(avaliacaoTab.id)}">
-
+							action="#{avaliacaoController.remover(avaliacaoTab.id)}"
+							disabled="#{!avaliacaoController.podeEditar(avaliacaoTab)}">
+  							
 						</p:commandButton>
 					</p:column>
 

@@ -334,7 +334,11 @@ public class AvaliacaoService extends Service {
 		em.persist(al);
 	}
 
-	public Map<Aluno, List<AlunoAvaliacao>> findAlunoAvaliacaoMap(Long idAluno, Long idAvaliavao, DisciplinaEnum disciplina, BimestreEnum bimestre, Serie serie) {
+	public Map<Aluno, List<AlunoAvaliacao>> findAlunoAvaliacaoMap(Long idAluno, Long idAvaliavao, DisciplinaEnum disciplina, BimestreEnum bimestre, Long idTurma) {
+		return findAlunoAvaliacaoMap(idAluno, idAvaliavao, disciplina, bimestre,null, idTurma);
+	}
+
+	public Map<Aluno, List<AlunoAvaliacao>> findAlunoAvaliacaoMap(Long idAluno, Long idAvaliavao, DisciplinaEnum disciplina, BimestreEnum bimestre, Serie serie, PerioddoEnum perioddoEnum) {
 		Map<Aluno,List<AlunoAvaliacao>> alunosAvaliacoes = new LinkedHashMap<>();
 		
 		
@@ -354,6 +358,12 @@ public class AvaliacaoService extends Service {
 			sql.append(" and al.avaliacao.disciplina =   ");
 			sql.append(disciplina.ordinal());
 		}
+		
+		if(perioddoEnum != null){
+			sql.append(" and al.aluno.periodo =   ");
+			sql.append(perioddoEnum.ordinal());
+		}
+		
 		if(bimestre != null){
 			sql.append(" and al.avaliacao.bimestre =   ");
 			sql.append(bimestre.ordinal());
@@ -389,6 +399,126 @@ public class AvaliacaoService extends Service {
 		return alunosAvaliacoes;
 	}
 
+	public Map<Aluno, List<AlunoAvaliacao>> findAlunoAvaliacaoMap(Long idAluno, Long idAvaliavao, DisciplinaEnum disciplina, BimestreEnum bimestre, Serie serie) {
+		Map<Aluno,List<AlunoAvaliacao>> alunosAvaliacoes = new LinkedHashMap<>();
+		
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT al from  AlunoAvaliacao al ");
+		sql.append("where 1=1 ");
+		if(idAluno != null ){
+			sql.append(" and al.aluno.id =   ");
+			sql.append(idAluno);
+		}
+		if(idAvaliavao != null ){
+			sql.append(" and al.avaliacao.id =   ");
+			sql.append(idAvaliavao);
+		}
+		
+		if(disciplina != null){
+			sql.append(" and al.avaliacao.disciplina =   ");
+			sql.append(disciplina.ordinal());
+		}
+		
+		if(bimestre != null){
+			sql.append(" and al.avaliacao.bimestre =   ");
+			sql.append(bimestre.ordinal());
+		}
+		
+		if(serie != null){
+			sql.append(" and al.avaliacao.serie =   ");
+			sql.append(serie.ordinal());
+		}
+		sql.append(" order by  al.aluno.nomeAluno");
+		
+		Query query = em.createQuery(sql.toString());
+		
+		
+
+		try {
+			List<AlunoAvaliacao> alunosAva = query.getResultList();
+			for(AlunoAvaliacao aa :alunosAva){
+				if(!alunosAvaliacoes.containsKey(aa.getAluno())){
+					alunosAvaliacoes.put(aa.getAluno(), getAvaliacoesAluno(aa.getAluno(),alunosAva));
+				}
+			}
+			
+			
+
+		} catch (NoResultException noResultException) {
+			noResultException.printStackTrace();
+			return alunosAvaliacoes;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return alunosAvaliacoes;
+	}
+
+	
+	public Map<Aluno, List<AlunoAvaliacao>> findAlunoAvaliacaoMap(Long idAluno, Long idAvaliavao, DisciplinaEnum disciplina, BimestreEnum bimestre, Serie serie, Long idTurma) {
+		Map<Aluno,List<AlunoAvaliacao>> alunosAvaliacoes = new LinkedHashMap<>();
+		
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT al from  AlunoAvaliacao al ");
+		sql.append("where 1=1 ");
+		if(idAluno != null ){
+			sql.append(" and al.aluno.id =   ");
+			sql.append(idAluno);
+		}
+		if(idAvaliavao != null ){
+			sql.append(" and al.avaliacao.id =   ");
+			sql.append(idAvaliavao);
+		}
+		
+		if(disciplina != null){
+			sql.append(" and al.avaliacao.disciplina =   ");
+			sql.append(disciplina.ordinal());
+		}
+		
+		if(bimestre != null){
+			sql.append(" and al.avaliacao.bimestre =   ");
+			sql.append(bimestre.ordinal());
+		}
+		
+		if(serie != null){
+			sql.append(" and al.avaliacao.serie =   ");
+			sql.append(serie.ordinal());
+		}
+		
+		
+		sql.append(" order by  al.aluno.nomeAluno");
+		
+		Query query = em.createQuery(sql.toString());
+		
+		List<Aluno> alunosTurma =new ArrayList<>(); 
+		if(idTurma != null){
+			
+			alunosTurma = alunoService.findAlunoTurmaBytTurma(idTurma);
+		}
+			
+		try {
+			List<AlunoAvaliacao> alunosAva = query.getResultList();
+			for(AlunoAvaliacao aa :alunosAva){
+				if(!alunosAvaliacoes.containsKey(aa.getAluno()) && (alunosTurma != null && !alunosTurma.isEmpty() && alunosTurma.contains(aa.getAluno()))   ){
+					alunosAvaliacoes.put(aa.getAluno(), getAvaliacoesAluno(aa.getAluno(),alunosAva));
+				}
+			}
+			
+			
+
+		} catch (NoResultException noResultException) {
+			noResultException.printStackTrace();
+			return alunosAvaliacoes;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return alunosAvaliacoes;
+	}
+
+	
 	private List<AlunoAvaliacao> getAvaliacoesAluno(Aluno aluno, List<AlunoAvaliacao> avaliacoes){
 		List<AlunoAvaliacao> avaliacoesAluno = new ArrayList<>();
 		for(AlunoAvaliacao aav: avaliacoes){
@@ -401,11 +531,24 @@ public class AvaliacaoService extends Service {
 
 	public Set<Avaliacao> findAll(Member loggedUser) {
 		Set<Avaliacao> avaliacoes = new LinkedHashSet<>();
-		List<Turma> turmasProf = turmaService.findAll(loggedUser.getId());
+		List<Turma> turmasProf = loggedUser.getProfessor() != null? turmaService.findAll(loggedUser.getProfessor().getId()):turmaService.findAll();
 		for(Turma turma :turmasProf){
 			avaliacoes.addAll(find(turma.getSerie(),null));
 		}
+		
 		return avaliacoes;
+	}
+
+	public Double getMedia(Avaliacao avaliacao) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT avg(al.nota) from  AlunoAvaliacao al ");
+		sql.append("where 1=1 ");
+		sql.append(" and al.avaliacao.id =   ");
+		sql.append(avaliacao.getId());
+		
+		Query query = em.createQuery(sql.toString());
+		return (Double) query.getSingleResult();
+			
 	}
 
 	/*

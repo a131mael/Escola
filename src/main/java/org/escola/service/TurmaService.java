@@ -29,6 +29,9 @@ public class TurmaService extends Service {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private AlunoService alunoService;
 
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
@@ -51,7 +54,13 @@ public class TurmaService extends Service {
 			// feature in JPA 2.0
 			// criteria.select(member).orderBy(cb.asc(member.get(Member_.name)));
 			criteria.select(member).orderBy(cb.asc(member.get("id")));
-			return em.createQuery(criteria).getResultList();
+			List<Turma> turmas = new ArrayList<>();
+			for(Turma t : em.createQuery(criteria).getResultList()){
+				t.setTotalAlunos(alunoService.findAlunoTurmaBytTurma(t.getId()).size());
+				turmas.add(t);
+			}
+			
+			return turmas;
 	
 		}catch(NoResultException nre){
 			return new ArrayList<>();
@@ -140,7 +149,10 @@ public class TurmaService extends Service {
 		try{
 			List<ProfessorTurma> professorTurmas = query.getResultList();
 			for(ProfessorTurma profT : professorTurmas){
-				turmasDoProfessor.add(profT.getTurma());
+				Turma t = profT.getTurma();
+				t.setTotalAlunos(alunoService.findAlunoTurmaBytTurma(t.getId()).size());
+				turmasDoProfessor.add(t);
+				
 			}
 		
 		}catch(NoResultException noResultException){
