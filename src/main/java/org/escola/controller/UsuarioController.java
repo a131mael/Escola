@@ -21,14 +21,13 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.escola.model.Member;
 import org.escola.service.UsuarioService;
 import org.escola.util.Util;
-
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
 
 @Named
 @ViewScoped

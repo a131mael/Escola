@@ -176,4 +176,17 @@
     TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#recado#index.xhtml"
+  PATH="/page/recado/index.xhtml" SHAPE="32,392,50,41" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#recado#index.xhtml:0" NAME="item"
+   PATH="/page/recado/index.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="cadastrar::#page#recado#cadastrarRecado.xhtml" NAME="output"
+    PATH="/page/recado/cadastrarRecado.xhtml"
+    TARGET="rules:#page#recado#cadastrarRecado.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#recado#cadastrarRecado.xhtml"
+  PATH="/page/recado/cadastrarRecado.xhtml" SHAPE="192,416,50,25"
+  model-entity="JSFProcessGroup" persistent="true"/>
 </PROCESS>

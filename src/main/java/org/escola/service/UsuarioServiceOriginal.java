@@ -1,4 +1,5 @@
-
+package org.escola.service;
+/*
 package org.escola.service;
 
 import java.util.ArrayList;
@@ -12,13 +13,22 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
+import org.escola.enums.TipoMembro;
+import org.escola.model.Evento;
 import org.escola.model.Member;
 import org.escola.model.Professor;
+import org.escola.model.ProfessorTurma;
+import org.escola.model.Turma;
+import org.escola.util.Constant;
 import org.escola.util.Service;
+import org.escola.util.UtilFinalizarAnoLetivo;
 
 
 @Stateless
@@ -102,3 +112,4 @@ public class UsuarioService extends Service {
 	}
 
 }
+*/

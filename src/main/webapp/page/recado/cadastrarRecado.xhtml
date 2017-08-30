@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content"
+		rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		<h:form style="width:100%; border:none">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+
+				<p:tabView>
+					<p:tab title="Dados do aluno">
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel for="name" value="Título(*): "
+								style="font-size: 13px; width:180px" />
+							<p:inputText id="nome" title="" value="#{recado.nome}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Codigo(*): "
+								style="font-size: 13px; width:180px" />
+							<p:inputText title="" value="#{recado.codigo}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Descrição: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{recado.descricao}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Data Inicio: "
+								style="font-size: 13px; width:180px" />
+							<p:calendar value="#{recado.dataInicio}" pattern="dd/MM/yyyy"
+								mask="true" style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Data Fim: "
+								style="font-size: 13px; width:180px" />
+							<p:calendar value="#{recado.dataFim}" pattern="dd/MM/yyyy"
+								mask="true" style="font-size: 15px; width:280px" />
+							
+							
+							<h:outputLabel value="opção 1: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{recado.opcao1}"
+								style="font-size: 15px; width:280px" />
+							
+							<h:outputLabel value="opção 2: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{recado.opcao2}"
+								style="font-size: 15px; width:280px" />
+							
+							<h:outputLabel value="opção 3: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{recado.opcao3}"
+								style="font-size: 15px; width:280px" />
+							
+							<h:outputLabel value="opção 4: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{recado.opcao4}"
+								style="font-size: 15px; width:280px" />
+							
+							<h:outputLabel value="opção 5: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{recado.opcao5}"
+								style="font-size: 15px; width:280px" />
+							
+							<h:outputLabel value="opção 6: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{recado.opcao6}"
+								style="font-size: 15px; width:280px" />
+							
+						</h:panelGrid>
+
+					</p:tab>
+					<p:tab title="Relatório do Recado">
+						<h:panelGrid columns="2" border="0">
+
+							
+
+						</h:panelGrid>
+
+					</p:tab>
+					
+				</p:tabView>
+
+			</h:panelGrid>
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{recadoController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{recadoController.salvar()}" value="Salvar" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

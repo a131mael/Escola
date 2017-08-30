@@ -16,7 +16,6 @@
 	<groupId>org.escola</groupId>
 	<artifactId>Escola</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 	<name>WildFly Quickstarts: Escola</name>
 	<description>A starter Java EE 7 webapp project for use on JBoss WildFly / WildFly, generated from the jboss-javaee6-webapp archetype</description>
 
@@ -64,6 +63,7 @@
 				for your project, such as Arquillian for testing) and the jboss-javaee-7.0-with-hibernate 
 				stack you can read this as the JBoss stack of the Java EE 7 APIs, with extras 
 				from the Hibernate family of projects) -->
+
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>
 				<artifactId>jboss-javaee-7.0-with-tools</artifactId>
@@ -78,13 +78,24 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+		
+		
 		</dependencies>
+		
 	</dependencyManagement>
 
 	<dependencies>
+	
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.aaf.webInterface</groupId> -->
+<!-- 			<artifactId>webInterface</artifactId> -->
+<!-- 			<version>0.0.1-SNAPSHOT</version> -->
+<!-- 			<type>war</type> -->
+<!-- 		</dependency> -->
+			
 
 		<!-- SHIRO -->
- 		<dependency> 
+		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-core</artifactId>
 			<version>1.2.4</version>
@@ -94,7 +105,7 @@
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-web</artifactId>
 			<version>1.2.4</version>
-		</dependency> 
+		</dependency>
 
 		<dependency>
 			<groupId>org.primefaces</groupId>
@@ -269,6 +280,12 @@
 			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.escola.beans</groupId>
+			<artifactId>EscolaBEANS</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 	</dependencies>
 
@@ -292,6 +309,44 @@
 				<artifactId>wildfly-maven-plugin</artifactId>
 				<version>${version.wildfly.maven.plugin}</version>
 			</plugin>
+			
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+				    <archive>
+				        <manifest>
+				            <addClasspath>true</addClasspath>
+				            <classpathPrefix>lib/</classpathPrefix>
+				           <!--  <mainClass>example.MyMainClass</mainClass> -->
+				        </manifest>
+				    </archive>
+				</configuration>
+			</plugin>
+				
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+				    <execution>
+				        <id>copy-dependencies</id>
+				        <phase>package</phase>
+				        <goals>
+				            <goal>copy-dependencies</goal>
+				        </goals>
+				        <configuration>
+				            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+				            <overWriteReleases>false</overWriteReleases>
+				            <overWriteSnapshots>false</overWriteSnapshots>
+				            <overWriteIfNewer>true</overWriteIfNewer>
+				        </configuration>
+				    </execution>
+				</executions>
+			
+			</plugin>
+			
+			
 		</plugins>
 	</build>
 
@@ -373,4 +428,5 @@
 		</profile>
 
 	</profiles>
+	<packaging>war</packaging>
 </project>
