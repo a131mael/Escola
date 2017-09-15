@@ -7,83 +7,146 @@
 
 	<ui:define name="content"
 		rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
-		<h:form style="width:100%; border:none">
+		<h:form style="width:100%; border:none" prependId="false">
 
 			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
 				style="margin-top: -30px;width:92%">
 
 				<p:tabView>
 					<p:tab title="Dados do aluno">
-						<h:panelGrid columns="2" border="0">
+						<h:panelGrid id="pnlPrincipal" columns="2" border="0">
 
 							<h:outputLabel for="name" value="Título(*): "
 								style="font-size: 13px; width:180px" />
 							<p:inputText id="nome" title="" value="#{recado.nome}"
-								style="font-size: 15px; width:280px" />
+								style="font-size: 15px; width:280px">
+									<p:ajax process="@this" />
+								</p:inputText>
 
 							<h:outputLabel value="Codigo(*): "
 								style="font-size: 13px; width:180px" />
 							<p:inputText title="" value="#{recado.codigo}"
-								style="font-size: 15px; width:280px" />
+								style="font-size: 15px; width:280px">
+								<p:ajax process="@this" />
+								</p:inputText>
+								
+							<h:outputLabel value="Destinatario(*): "
+								style="font-size: 13px; width:180px" />
+							<p:selectOneMenu id="periodo" style="width: 256px;"
+								value="#{recado.tipoDestinatario}">
+								<f:selectItems value="#{CombosEspeciaisMB.destinatariosSelectIItem}"
+									var="country" itemLabel="#{country.name}"
+									itemValue="#{country}" />
+								<p:ajax event="change" process="@this" />
+							</p:selectOneMenu>
+	
 
 							<h:outputLabel value="Descrição: "
 								style="font-size: 13px; width:180px" />
-							<p:inputTextarea value="#{recado.descricao}"
-								style="font-size: 15px; width:280px" />
-
+							
+							<p:textEditor widgetVar="editor1" value="#{recado.descricao}" height="300" style="margin-bottom:10px">
+								
+							</p:textEditor>
+							
 							<h:outputLabel value="Data Inicio: "
 								style="font-size: 13px; width:180px" />
 							<p:calendar value="#{recado.dataInicio}" pattern="dd/MM/yyyy"
-								mask="true" style="font-size: 15px; width:280px" />
+								mask="true" style="font-size: 15px; width:280px" >
+								<p:ajax process="@this" />
+								</p:calendar>
 
 							<h:outputLabel value="Data Fim: "
 								style="font-size: 13px; width:180px" />
 							<p:calendar value="#{recado.dataFim}" pattern="dd/MM/yyyy"
-								mask="true" style="font-size: 15px; width:280px" />
-							
-							
-							<h:outputLabel value="opção 1: "
-								style="font-size: 13px; width:180px" />
-							<p:inputTextarea value="#{recado.opcao1}"
-								style="font-size: 15px; width:280px" />
-							
-							<h:outputLabel value="opção 2: "
-								style="font-size: 13px; width:180px" />
-							<p:inputTextarea value="#{recado.opcao2}"
-								style="font-size: 15px; width:280px" />
-							
-							<h:outputLabel value="opção 3: "
-								style="font-size: 13px; width:180px" />
-							<p:inputTextarea value="#{recado.opcao3}"
-								style="font-size: 15px; width:280px" />
-							
-							<h:outputLabel value="opção 4: "
-								style="font-size: 13px; width:180px" />
-							<p:inputTextarea value="#{recado.opcao4}"
-								style="font-size: 15px; width:280px" />
-							
-							<h:outputLabel value="opção 5: "
-								style="font-size: 13px; width:180px" />
-							<p:inputTextarea value="#{recado.opcao5}"
-								style="font-size: 15px; width:280px" />
-							
-							<h:outputLabel value="opção 6: "
-								style="font-size: 13px; width:180px" />
-							<p:inputTextarea value="#{recado.opcao6}"
-								style="font-size: 15px; width:280px" />
-							
+								mask="true" style="font-size: 15px; width:280px" >
+								<p:ajax process="@this" />
+								</p:calendar>
+
+							<h:outputLabel value="Precisa de resposta ? " 
+											style="font-size: 13px; width:180px" />
+							<p:selectBooleanCheckbox value="#{recado.questionario}">
+								<p:ajax update="cbPreisaResposta,pnlPrincipal" process="@this" />
+							</p:selectBooleanCheckbox>
+
+							<h:outputLabel id="cbPreisaResposta" value="Apenas sim ou não: "
+										style="font-size: 13px; width:180px" 
+								rendered="#{recado.questionario}" />
+							<p:selectBooleanCheckbox value="#{recado.respostaBooleana}" 
+								rendered="#{recado.questionario}">
+								<p:ajax update="pnlOpcoes" process="@this" />
+							</p:selectBooleanCheckbox>
+
+<br/>
+							<h:panelGrid id="pnlOpcoes" columns="2" border="0">
+								<h:outputLabel value="opção 1: "
+									style="font-size: 13px; width:180px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}" />
+								<p:inputTextarea value="#{recado.opcao1}"
+									style="font-size: 15px; width:280px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}" >
+										<p:ajax process="@this" />
+									</p:inputTextarea>
+
+								<h:outputLabel value="opção 2: "
+									style="font-size: 13px; width:180px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}" />
+								<p:inputTextarea value="#{recado.opcao2}"
+									style="font-size: 15px; width:280px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}" >
+									<p:ajax process="@this" />
+									</p:inputTextarea>
+
+								<h:outputLabel value="opção 3: "
+									style="font-size: 13px; width:180px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}" />
+								<p:inputTextarea value="#{recado.opcao3}"
+									style="font-size: 15px; width:280px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}">
+									<p:ajax process="@this" />
+									</p:inputTextarea>
+
+								<h:outputLabel value="opção 4: "
+									style="font-size: 13px; width:180px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}" />
+								<p:inputTextarea value="#{recado.opcao4}"
+									style="font-size: 15px; width:280px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}">
+										<p:ajax process="@this" />
+									</p:inputTextarea>
+
+								<h:outputLabel value="opção 5: "
+									style="font-size: 13px; width:180px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}" />
+								<p:inputTextarea value="#{recado.opcao5}"
+									style="font-size: 15px; width:280px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}">
+									<p:ajax process="@this" />
+									</p:inputTextarea>
+
+								<h:outputLabel value="opção 6: "
+									style="font-size: 13px; width:180px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}" />
+								<p:inputTextarea value="#{recado.opcao6}"
+									style="font-size: 15px; width:280px"
+									rendered="#{recado.questionario and !recado.respostaBooleana}">
+									<p:ajax process="@this" />
+									</p:inputTextarea>
+
+
+							</h:panelGrid>
+
 						</h:panelGrid>
 
 					</p:tab>
 					<p:tab title="Relatório do Recado">
 						<h:panelGrid columns="2" border="0">
 
-							
+
 
 						</h:panelGrid>
 
 					</p:tab>
-					
+
 				</p:tabView>
 
 			</h:panelGrid>

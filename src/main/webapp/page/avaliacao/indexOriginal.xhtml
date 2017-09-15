@@ -14,26 +14,11 @@
 			</h:panelGrid>
 
 			<h:panelGrid width="90%">
-			<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
-                             emptyMessage="#Nenhum registro encontrado"
-                             selectionMode="single" 
-                             selection="#{alunoController.aluno}"
-                             rowKey="#{professorTab.id}"
-                             filterEvent="enter" 
-                             lazy="true" 
-                             liveResize="true"
-                             styleClass="tabela"
-                             pageLinks="5"
-                             paginator="true"
-                             paginatorPosition="bottom"                                         
-                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
-                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                             resizableColumns="true"
-                             rows="20"
-                          	 id="tbl" var="avaliacaoTab"
-							 value="#{avaliacaoController.lazyDataModel}"
-							 >
-			
+				<p:dataTable id="tbl" var="avaliacaoTab"
+					value="#{avaliacaoController.avaliacoes}"
+					paginator="true" style="margin-bottom:20px; width:100%"
+					paginatorPosition="bottom">
+
 					<f:facet name="{Exporters}">
 						<h:commandLink>
 							<p:graphicImage name="/gfx/excel.png" width="24" />

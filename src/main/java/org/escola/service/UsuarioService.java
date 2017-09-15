@@ -1,6 +1,7 @@
 
 package org.escola.service;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,24 +13,30 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.escola.model.Member;
 import org.escola.model.Professor;
+import org.escola.model.ProfessorTurma;
 import org.escola.util.Service;
 
-
 @Stateless
-public class UsuarioService extends Service {
+public class UsuarioService extends Service implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private Logger log;
 
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
-	
+
 	public Member findById(EntityManager em, Long id) {
 		return em.find(Member.class, id);
 	}
@@ -37,18 +44,35 @@ public class UsuarioService extends Service {
 	public Member findById(Long id) {
 		return em.find(Member.class, id);
 	}
-	
+
 	public Professor findProfessorById(Long idProfessor) {
 		return em.find(Professor.class, idProfessor);
 	}
-	
-	public String remover(Long idTurma){
+
+	public String remover(Long idTurma) {
 		em.remove(findById(idTurma));
 		return "index";
 	}
 
+	public List<Member> findAllWithToken() {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT m from  Member m ");
+		sql.append("where m.tokenFCM is not null ");
+
+		Query query = em.createQuery(sql.toString());
+
+		Object sqlReturn = query.getResultList();
+		if (sqlReturn != null) {
+			return (List<Member>) sqlReturn;
+		} else {
+			return null;
+		}
+
+	}
+
 	public List<Member> findAll() {
-		try{
+		try {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<Member> criteria = cb.createQuery(Member.class);
 			Root<Member> member = criteria.from(Member.class);
@@ -58,10 +82,10 @@ public class UsuarioService extends Service {
 			// criteria.select(member).orderBy(cb.asc(member.get(Member_.name)));
 			criteria.select(member).orderBy(cb.asc(member.get("id")));
 			return em.createQuery(criteria).getResultList();
-	
-		}catch(NoResultException nre){
+
+		} catch (NoResultException nre) {
 			return new ArrayList<>();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<>();
 		}
@@ -72,22 +96,22 @@ public class UsuarioService extends Service {
 		try {
 
 			log.info("Registering " + member.getName());
-		
+
 			if (member.getId() != null && member.getId() != 0L) {
 				user = findById(member.getId());
-				if(user != null && user.getProfessor() != null){
+				if (user != null && user.getProfessor() != null) {
 					user.setProfessor(findProfessorById(user.getProfessor().getId()));
 				}
 			} else {
 				user = new Member();
 			}
-			
+
 			user.setEmail(member.getEmail());
 			user.setLogin(member.getLogin());
 			user.setName(member.getName());
 			user.setSenha(member.getSenha());
 			user.setTipoMembro(member.getTipoMembro());
-			
+
 			em.persist(user);
 
 		} catch (Exception e) {

@@ -1,5 +1,5 @@
-package org.escola.service;
-/*
+/*package org.escola.service;
+
 package org.escola.service;
 
 import java.util.ArrayList;

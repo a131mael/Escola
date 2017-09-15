@@ -20,6 +20,7 @@ import org.escola.enums.EspecialidadeEnum;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
 import org.escola.enums.Sexo;
+import org.escola.enums.TipoDestinatario;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Professor;
 import org.escola.service.ConfiguracaoService;
@@ -73,6 +74,21 @@ public class CombosEspeciaisMB implements Serializable {
 			 items.add(new SelectItem(null, " "));
 			for (PerioddoEnum m : PerioddoEnum.values()) {
 				items.add(new SelectItem(m, m.getName()));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return items;
+	}
+	
+	public ArrayList<SelectItem> getDestinatariosSelectIItem() {
+		ArrayList<SelectItem> items = new ArrayList<SelectItem>();
+		try {
+			 items.add(new SelectItem(null, " "));
+			for (TipoDestinatario td : TipoDestinatario.values()) {
+				items.add(new SelectItem(td, td.getName()));
 			}
 
 		} catch (Exception e) {

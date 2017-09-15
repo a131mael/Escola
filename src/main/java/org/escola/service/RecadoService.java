@@ -1,4 +1,3 @@
-
 package org.escola.service;
 
 import java.util.ArrayList;
@@ -20,9 +19,12 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.enums.TipoDestinatario;
+import org.escola.model.Member;
 import org.escola.model.Recado;
+import org.escola.util.Constants;
+import org.escola.util.Herald;
 import org.escola.util.Service;
-
 
 @Stateless
 public class RecadoService extends Service {
@@ -32,7 +34,10 @@ public class RecadoService extends Service {
 
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
-
+	
+	@Inject
+	private UsuarioService usuarioService;
+	
 	public Recado findById(EntityManager em, Long id) {
 		return em.find(Recado.class, id);
 	}
@@ -40,18 +45,18 @@ public class RecadoService extends Service {
 	public Recado findById(Long id) {
 		return em.find(Recado.class, id);
 	}
-	
+
 	public Recado findByCodigo(Long id) {
 		return em.find(Recado.class, id);
 	}
-	
-	public String remover(Long idRecado){
+
+	public String remover(Long idRecado) {
 		em.remove(findById(idRecado));
 		return "index";
 	}
 
 	public List<Recado> findAll() {
-		try{
+		try {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<Recado> criteria = cb.createQuery(Recado.class);
 			Root<Recado> member = criteria.from(Recado.class);
@@ -61,10 +66,10 @@ public class RecadoService extends Service {
 			// criteria.select(member).orderBy(cb.asc(member.get(Member_.name)));
 			criteria.select(member).orderBy(cb.asc(member.get("id")));
 			return em.createQuery(criteria).getResultList();
-	
-		}catch(NoResultException nre){
+
+		} catch (NoResultException nre) {
 			return new ArrayList<>();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<>();
 		}
@@ -75,21 +80,39 @@ public class RecadoService extends Service {
 		try {
 
 			log.info("Registering " + recado.getNome());
-		
+
 			if (recado.getId() != null && recado.getId() != 0L) {
 				user = findById(recado.getId());
 			} else {
 				user = new Recado();
 			}
-			
+
 			user.setDataFim(recado.getDataFim());
 			user.setDataInicio(recado.getDataInicio());
 			user.setDescricao(recado.getDescricao());
 			user.setNome(recado.getNome());
 			user.setCodigo(recado.getCodigo());
-			
+			user.setBigQuestion(recado.isBigQuestion());
+			user.setDescricaoUnder(recado.getDescricaoUnder());
+			user.setFilePergunta(recado.getFilePergunta());
+			user.setFontSizeQuestion(recado.getFontSizeQuestion());
+			user.setId(recado.getId());
+			user.setOpcao1(recado.getOpcao1());
+			user.setOpcao2(recado.getOpcao2());
+			user.setOpcao3(recado.getOpcao3());
+			user.setOpcao4(recado.getOpcao4());
+			user.setOpcao5(recado.getOpcao5());
+			user.setOpcao6(recado.getOpcao6());
+			user.setRespostaBooleana(recado.isRespostaBooleana());
+			user.setQuestionario(recado.isQuestionario());
+			user.setPrecisaDeResposta(recado.isPrecisaDeResposta());
+			user.setRespostaAberta(recado.getRespostaAberta());
+			user.setTipoDestinatario(recado.getTipoDestinatario());
+
+			enviarMensagemAPP(recado);
+
 			em.persist(user);
-			
+
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues
 			// builder = createViolationResponse(ce.getConstraintViolations());
@@ -107,6 +130,33 @@ public class RecadoService extends Service {
 		}
 
 		return user;
+	}
+
+	private void enviarMensagemAPP(final Recado recado) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				List<Member> destinatarios = new ArrayList<>();
+				switch (recado.getTipoDestinatario()) {
+				
+				case TODOS:
+					destinatarios = usuarioService.findAllWithToken();
+					break;
+
+				default:
+					break;
+				}
+				
+				
+				//Envia mensagem para cada destinatario da lista
+				for(Member m :destinatarios){
+					Herald.sendFCMMessage(Constants.FCM_URL_POST, Constants.FCM_KEY_APP, Constants.FCM_PRIORITY_HIGH, "Colégio Adonai", recado.getNome(), m.getTokenFCM());	
+				}
+				
+				
+			}
+		}).start();
+
 	}
 
 	public Recado findByCodigo(String codigo) {
@@ -129,7 +179,7 @@ public class RecadoService extends Service {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<Recado> find(int first, int size, String orderBy, String order, Map<String, Object> filtros) {
 		try {
@@ -147,8 +197,8 @@ public class RecadoService extends Service {
 				} else {
 					pred = cb.equal(member.get(entry.getKey()), entry.getValue());
 				}
-				 predicates.add(pred);
-				//cq.where(pred);
+				predicates.add(pred);
+				// cq.where(pred);
 			}
 
 			cq.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
@@ -173,7 +223,7 @@ public class RecadoService extends Service {
 			CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 			Root<Recado> member = countQuery.from(Recado.class);
 			countQuery.select(cb.count(member));
-			
+
 			final List<Predicate> predicates = new ArrayList<Predicate>();
 			if (filtros != null) {
 				for (Map.Entry<String, Object> entry : filtros.entrySet()) {
@@ -185,7 +235,7 @@ public class RecadoService extends Service {
 						pred = cb.equal(member.get(entry.getKey()), entry.getValue());
 					}
 					predicates.add(pred);
-					
+
 				}
 
 			}
@@ -201,6 +251,4 @@ public class RecadoService extends Service {
 		}
 	}
 
-
 }
-

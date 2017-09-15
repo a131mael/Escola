@@ -17,8 +17,10 @@
 package org.escola.controller;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -30,8 +32,10 @@ import javax.inject.Named;
 import org.escola.auth.AuthController;
 import org.escola.enums.BimestreEnum;
 import org.escola.enums.DisciplinaEnum;
+import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
 import org.escola.enums.TipoMembro;
+import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
 import org.escola.model.Avaliacao;
 import org.escola.model.Member;
@@ -40,6 +44,8 @@ import org.escola.service.AvaliacaoService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.TurmaService;
 import org.escola.util.Util;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 @Named
 @ViewScoped
 public class AvaliacaoController extends AuthController implements Serializable{
@@ -60,6 +66,8 @@ public class AvaliacaoController extends AuthController implements Serializable{
 	@Inject
     private TurmaService turmaService;
 	
+	private LazyDataModel<Avaliacao> lazyListDataModel;
+	
 	@PostConstruct
 	private void init() {
 		if(avaliacao == null){
@@ -70,6 +78,82 @@ public class AvaliacaoController extends AuthController implements Serializable{
 				avaliacao = new Avaliacao();
 			}
 		}
+	}
+	
+	public LazyDataModel<Avaliacao> getLazyDataModel() {
+		if (lazyListDataModel == null) {
+
+			lazyListDataModel = new LazyDataModel<Avaliacao>() {
+
+				@Override
+				public Avaliacao getRowData(String rowKey) {
+					return avaliacaoService.findById(Long.valueOf(rowKey));
+				}
+
+				@Override
+				public Object getRowKey(Avaliacao al) {
+					return al.getId();
+				}
+
+				@Override
+				public List<Avaliacao> load(int first, int pageSize, String order, SortOrder so,
+						Map<String, Object> where) {
+
+					Map<String, Object> filtros = new HashMap<String, Object>();
+
+					filtros.putAll(where);
+					
+					if (filtros.containsKey("periodo")) {
+						filtros.put("periodo", filtros.get("periodo").equals("MANHA") ? PerioddoEnum.MANHA
+								: filtros.get("periodo").equals("TARDE") ? PerioddoEnum.TARDE : PerioddoEnum.INTEGRAL);
+					}
+
+					if (filtros.containsKey("serie")) {
+						if (filtros.get("serie").equals(Serie.JARDIM_I.toString())) {
+							filtros.put("serie", Serie.JARDIM_I);
+						} else if (filtros.get("serie").equals(Serie.JARDIM_II.toString())) {
+							filtros.put("serie", Serie.JARDIM_II);
+						} else if (filtros.get("serie").equals(Serie.MATERNAL.toString())) {
+							filtros.put("serie", Serie.MATERNAL);
+						} else if (filtros.get("serie").equals(Serie.PRE.toString())) {
+							filtros.put("serie", Serie.PRE);
+						} else if (filtros.get("serie").equals(Serie.PRIMEIRO_ANO.toString())) {
+							filtros.put("serie", Serie.PRIMEIRO_ANO);
+						} else if (filtros.get("serie").equals(Serie.SEGUNDO_ANO.toString())) {
+							filtros.put("serie", Serie.SEGUNDO_ANO);
+						} else if (filtros.get("serie").equals(Serie.TERCEIRO_ANO.toString())) {
+							filtros.put("serie", Serie.TERCEIRO_ANO);
+						} else if (filtros.get("serie").equals(Serie.QUARTO_ANO.toString())) {
+							filtros.put("serie", Serie.QUARTO_ANO);
+						} else if (filtros.get("serie").equals(Serie.QUINTO_ANO.toString())) {
+							filtros.put("serie", Serie.QUINTO_ANO);
+						}
+
+					}
+					
+					/*filtros.put("removido", false);*/
+
+					String orderByParam = (order != null) ? order : "id";
+					String orderParam = ("ASCENDING".equals(so.name())) ? "asc" : "desc";
+
+					List<Avaliacao> ol = avaliacaoService.find(first, pageSize, orderByParam, orderParam, filtros);
+
+					if (ol != null && ol.size() > 0) {
+						lazyListDataModel.setRowCount((int) avaliacaoService.count(filtros));
+						return ol;
+					}
+
+					this.setRowCount((int) avaliacaoService.count(filtros));
+					return null;
+
+				}
+			};
+			lazyListDataModel.setRowCount((int) avaliacaoService.count(null));
+
+		}
+
+		return lazyListDataModel;
+
 	}
 	
 	public Double getMedia(Avaliacao avaliacao){

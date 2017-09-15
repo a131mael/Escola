@@ -550,6 +550,78 @@ public class AvaliacaoService extends Service {
 		return (Double) query.getSingleResult();
 			
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Avaliacao> find(int first, int size, String orderBy, String order, Map<String, Object> filtros) {
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Avaliacao> criteria = cb.createQuery(Avaliacao.class);
+			Root<Avaliacao> member = criteria.from(Avaliacao.class);
+			CriteriaQuery cq = criteria.select(member);
+
+			final List<Predicate> predicates = new ArrayList<Predicate>();
+			for (Map.Entry<String, Object> entry : filtros.entrySet()) {
+
+				Predicate pred = cb.and();
+				if (entry.getValue() instanceof String) {
+					pred = cb.and(pred, cb.like(member.<String> get(entry.getKey()), "%" + entry.getValue() + "%"));
+				} else {
+					pred = cb.equal(member.get(entry.getKey()), entry.getValue());
+				}
+				 predicates.add(pred);
+				//cq.where(pred);
+			}
+
+			cq.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+			cq.orderBy((order.equals("asc") ? cb.asc(member.get(orderBy)) : cb.desc(member.get(orderBy))));
+			Query q = em.createQuery(criteria);
+			q.setFirstResult(first);
+			q.setMaxResults(size);
+			return (List<Avaliacao>) q.getResultList();
+
+		} catch (NoResultException nre) {
+			return new ArrayList<>();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+
+	}
+	
+	public long count(Map<String, Object> filtros) {
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+			Root<Avaliacao> member = countQuery.from(Avaliacao.class);
+			countQuery.select(cb.count(member));
+			
+			final List<Predicate> predicates = new ArrayList<Predicate>();
+			if (filtros != null) {
+				for (Map.Entry<String, Object> entry : filtros.entrySet()) {
+
+					Predicate pred = cb.and();
+					if (entry.getValue() instanceof String) {
+						pred = cb.and(pred, cb.like(member.<String> get(entry.getKey()), "%" + entry.getValue() + "%"));
+					} else {
+						pred = cb.equal(member.get(entry.getKey()), entry.getValue());
+					}
+					predicates.add(pred);
+					
+				}
+
+			}
+			countQuery.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+			Query q = em.createQuery(countQuery);
+			return (long) q.getSingleResult();
+
+		} catch (NoResultException nre) {
+			return 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
 
 	/*
 	 * public Usuario findMaiorPontuadorSemana() { StringBuilder sql = new

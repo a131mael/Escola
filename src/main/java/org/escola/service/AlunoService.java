@@ -1,4 +1,3 @@
-
 package org.escola.service;
 
 import java.util.ArrayList;
@@ -173,7 +172,6 @@ public class AlunoService extends Service {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Aluno> findAlunoTurmaBytTurma(List<Turma> turmas) {
 		List<Aluno> alunos = new ArrayList<>();
 
