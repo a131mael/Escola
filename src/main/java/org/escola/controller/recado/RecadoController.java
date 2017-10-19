@@ -41,9 +41,13 @@ import org.escola.enums.BimestreEnum;
 import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
+import org.escola.enums.TipoDestinatario;
+import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.HistoricoAluno;
+import org.escola.model.Member;
 import org.escola.model.Recado;
+import org.escola.model.RecadoDestinatario;
 import org.escola.service.RecadoService;
 import org.escola.util.FileDownload;
 import org.escola.util.ImpressoesUtils;
@@ -72,7 +76,7 @@ public class RecadoController implements Serializable {
 	@Inject
 	private RecadoService recadoService;
 
-		@Named
+	@Named
 	private BimestreEnum bimestreSel;
 	@Named
 	private DisciplinaEnum disciplinaSel;
@@ -168,6 +172,24 @@ public class RecadoController implements Serializable {
 		}
 	}
 	
+	public List<RecadoDestinatario> getMemberRespondeu(){
+		return recadoService.getMemberRespondeu(recado);
+	}
+	
+	public int getPercentualProfessoresLeram(){
+		System.out.println("Total de professores resp : " +recadoService.getMemberRespondeu(recado,TipoMembro.PROFESSOR).size());
+		System.out.println("Total de professores : " + recadoService.getTotalProfessores());
+		
+		System.out.println("%% : " + (recadoService.getMemberRespondeu(recado,TipoMembro.PROFESSOR).size()*100 / recadoService.getTotalProfessores()));
+		
+		return (recadoService.getMemberRespondeu(recado,TipoMembro.PROFESSOR).size()*100 / recadoService.getTotalProfessores());
+	}
+
+	public int getPercentualResponsaveisLeram(){
+		return ((recadoService.getMemberRespondeu(recado,TipoMembro.ALUNO)).size()*100 /  (recadoService.getTotalResponsaveis(recado)));
+	}
+
+	
 	public boolean estaEmUmaTurma(long idAluno){
 		//boolean estaNaTurma =alunoService.estaEmUmaTUrma(idAluno);
 	//	return estaNaTurma;
@@ -198,6 +220,13 @@ public class RecadoController implements Serializable {
 		}
 	}
 
+	public boolean isRecadoSelecionado() {
+		if(recado == null){
+			return false;
+		}
+		return recado.getId() != null ? true : false;
+	}
+	
 	private Float media(Float... notas) {
 		int qtade = 0;
 		float sum = 0;

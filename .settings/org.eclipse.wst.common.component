@@ -7,9 +7,6 @@
         <dependent-module archiveName="EscolaBEANS-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/EscolaBeans/EscolaBeans">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="EscolaDTO-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/EscolaDTO/EscolaDTO">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="context-root" value="Escola"/>
         <property name="java-output-path" value="/Escola/target/classes"/>
     </wb-module>

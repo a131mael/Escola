@@ -1107,11 +1107,18 @@ public class AlunoController implements Serializable {
 
 		HashMap<String, String> trocas = new HashMap<>();
 		trocas.put("adonainomealuno", aluno.getNomeAluno());
-		trocas.put("adonaiurma", aluno.getSerie().getName());
-		trocas.put("adonaieriodo", aluno.getPeriodo().getName());
+		trocas.put("adonaiturma", aluno.getSerie().getName());
+		trocas.put("adonaiperiodo", aluno.getPeriodo().getName());
 		trocas.put("adonaidata", dataExtenso);
 		trocas.put("adonaiano", ano);
 		trocas.put("adonaidatalimtevaga", dataLimiteExtenso);
+		trocas.put("adonaivalortotal", (aluno.getValorMensal()*aluno.getNumeroParcelas())+"");
+		trocas.put("adonainumeroparcelas", (aluno.getNumeroParcelas())+"");
+		trocas.put("adonaimensalidade", (aluno.getValorMensal())+"");
+		trocas.put("adonaimensalidade", (aluno.getValorMensal())+"");
+		
+		trocas.put("adonairgcontratado", aluno.getRgResponsavel());
+		trocas.put("adonaicpfcontratado", aluno.getCpfResponsavel());
 
 		return trocas;
 	}

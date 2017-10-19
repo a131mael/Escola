@@ -130,6 +130,31 @@ public class AvaliacaoController extends AuthController implements Serializable{
 						}
 
 					}
+					if (filtros.containsKey("disciplina")) {
+						if (filtros.get("disciplina").equals(DisciplinaEnum.ARTES.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.ARTES);
+						} else if (filtros.get("disciplina").equals(DisciplinaEnum.CIENCIAS.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.CIENCIAS);
+						} else if (filtros.get("disciplina").equals(DisciplinaEnum.EDUCACAO_FISICA.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.EDUCACAO_FISICA);
+						} else if (filtros.get("disciplina").equals(DisciplinaEnum.FORMACAO_CRISTA.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.FORMACAO_CRISTA);
+						} else if (filtros.get("disciplina").equals(DisciplinaEnum.GEOGRAFIA.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.GEOGRAFIA);
+						} else if (filtros.get("disciplina").equals(DisciplinaEnum.HISTORIA.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.HISTORIA);
+						} else if (filtros.get("disciplina").equals(DisciplinaEnum.MATEMATICA.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.MATEMATICA);
+						} else if (filtros.get("disciplina").equals(DisciplinaEnum.PORTUGUES.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.PORTUGUES);
+						} else if (filtros.get("disciplina").equals(DisciplinaEnum.INGLES.toString())) {
+							filtros.put("disciplina", DisciplinaEnum.INGLES);
+						}
+
+					}
+					
+					filtros.put("bimestre", configuracaoService.getConfiguracao().getBimestre());
+					filtros.put("professor", getLoggedUser().getProfessor());
 					
 					/*filtros.put("removido", false);*/
 

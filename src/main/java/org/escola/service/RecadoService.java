@@ -1,6 +1,7 @@
 package org.escola.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,12 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.enums.Serie;
 import org.escola.enums.TipoDestinatario;
+import org.escola.enums.TipoMembro;
 import org.escola.model.Member;
 import org.escola.model.Recado;
+import org.escola.model.RecadoDestinatario;
 import org.escola.util.Constants;
 import org.escola.util.Herald;
 import org.escola.util.Service;
@@ -34,10 +38,10 @@ public class RecadoService extends Service {
 
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
-	
+
 	@Inject
 	private UsuarioService usuarioService;
-	
+
 	public Recado findById(EntityManager em, Long id) {
 		return em.find(Recado.class, id);
 	}
@@ -108,6 +112,7 @@ public class RecadoService extends Service {
 			user.setPrecisaDeResposta(recado.isPrecisaDeResposta());
 			user.setRespostaAberta(recado.getRespostaAberta());
 			user.setTipoDestinatario(recado.getTipoDestinatario());
+			user.setDataParaExibicao(recado.getDataInicio() != null ? recado.getDataInicio() : new Date());
 
 			enviarMensagemAPP(recado);
 
@@ -138,25 +143,290 @@ public class RecadoService extends Service {
 			public void run() {
 				List<Member> destinatarios = new ArrayList<>();
 				switch (recado.getTipoDestinatario()) {
-				
+
 				case TODOS:
-					destinatarios = usuarioService.findAllWithToken();
+					destinatarios = usuarioService.findAllWithToken(recado.getTipoDestinatario());
+					break;
+
+				case PROFESSORES:
+					destinatarios = usuarioService.findAllWithToken(recado.getTipoDestinatario());
+					break;
+
+				case MEMBRO:
+					// destinatarios =
+					// usuarioService.findAllWithToken(recado.getTipoDestinatario());
+					break;
+
+				case PRIMEIRO:
+					destinatarios = usuarioService.findAllWithToken(Serie.PRIMEIRO_ANO);
+					break;
+
+				case SEGUNDO:
+					destinatarios = usuarioService.findAllWithToken(Serie.SEGUNDO_ANO);
+					break;
+
+				case TERCEIRO:
+					destinatarios = usuarioService.findAllWithToken(Serie.TERCEIRO_ANO);
+					break;
+
+				case QUARTO:
+					destinatarios = usuarioService.findAllWithToken(Serie.QUARTO_ANO);
+					break;
+
+				case QUINTO:
+					destinatarios = usuarioService.findAllWithToken(Serie.QUINTO_ANO);
+					break;
+
+				case SEXTO:
+					destinatarios = usuarioService.findAllWithToken(Serie.SEXTO_ANO);
+					break;
+
+				case SETIMO:
+					destinatarios = usuarioService.findAllWithToken(Serie.SETIMO_ANO);
+					break;
+
+				case OITAVO:
+					destinatarios = usuarioService.findAllWithToken(Serie.OITAVO_ANO);
+					break;
+
+				case NONO:
+					destinatarios = usuarioService.findAllWithToken(Serie.NONO_ANO);
 					break;
 
 				default:
 					break;
 				}
-				
-				
-				//Envia mensagem para cada destinatario da lista
-				for(Member m :destinatarios){
-					Herald.sendFCMMessage(Constants.FCM_URL_POST, Constants.FCM_KEY_APP, Constants.FCM_PRIORITY_HIGH, "Colégio Adonai", recado.getNome(), m.getTokenFCM());	
+
+				// Envia mensagem para cada destinatario da lista
+				for (Member m : destinatarios) {
+					Herald.sendFCMMessage(Constants.FCM_URL_POST, Constants.FCM_KEY_APP, Constants.FCM_PRIORITY_HIGH,
+							"Colégio Adonai", recado.getNome(), m.getTokenFCM());
+					System.out.println("Envio Mensagem para...  :" + m.getTokenFCM());
 				}
-				
-				
 			}
 		}).start();
 
+	}
+
+	public int getQtadeMensagensRespondidas(Recado recado) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT count(rd) from  RecadoDestinatario rd ");
+			sql.append("where rd.recado.id = ");
+			sql.append(recado.getId());
+
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getSingleResult();
+			if (sqlReturn != null) {
+				return (int) sqlReturn;
+			} else {
+				return 0;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	public int getTotalProfessores() {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT count(m) from  Member m ");
+			sql.append("where m.tipoMembro = ");
+			sql.append(TipoMembro.PROFESSOR.ordinal());
+			sql.append(" and m.desabilitado = false");
+
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getSingleResult();
+			if (sqlReturn != null) {
+				Long ret = (Long) sqlReturn;
+				if(ret <1){
+					return 1;
+				}else{
+					return  ret.intValue();
+				}
+			} else {
+				return 1;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 1;
+		}
+	}
+
+	public int getTotalResponsaveis(Recado recado) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT count(m) from  Member m ");
+			sql.append("where m.tipoMembro = ");
+			sql.append(TipoMembro.ALUNO.ordinal());
+			sql.append(" and m.desabilitado = false");
+
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getSingleResult();
+			if (sqlReturn != null) {
+				Long ret = (Long) sqlReturn;
+				if(ret <1){
+					return 1;
+				}else{
+					return ret.intValue();
+				}
+			} else {
+				return 1;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+
+	}
+
+	public int getTotalSim(Recado recado) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT count(rd) from  RecadoDestinatario rd ");
+			sql.append("where rd.recado.id = ");
+			sql.append(recado.getId());
+			sql.append(" and rd.resposta = 1");
+
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getSingleResult();
+			if (sqlReturn != null) {
+				return (int) sqlReturn;
+			} else {
+				return 0;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	public int getTotalNao(Recado recado) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT count(rd) from  RecadoDestinatario rd ");
+			sql.append("where rd.recado.id = ");
+			sql.append(recado.getId());
+			sql.append(" and rd.resposta = 2");
+
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getSingleResult();
+			if (sqlReturn != null) {
+				return (int) sqlReturn;
+			} else {
+				return 0;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	public List<Member> getMemberRespondeu(Recado recado, int resposta) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT rd.destinatario from  RecadoDestinatario rd ");
+			sql.append("where rd.recado.id = ");
+			sql.append(recado.getId());
+			sql.append(" and rd.resposta = ");
+			sql.append(resposta);
+
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getSingleResult();
+			if (sqlReturn != null) {
+				return (List<Member>) sqlReturn;
+			} else {
+				return null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
+	public List<RecadoDestinatario> getMemberRespondeu(Recado recado) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT rd from  RecadoDestinatario rd ");
+			sql.append("where rd.recado.id = ");
+			sql.append(recado.getId());
+
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getResultList();
+			if (sqlReturn != null) {
+				return (List<RecadoDestinatario>) sqlReturn;
+			} else {
+				return null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public List<Member> getMemberRespondeu(Recado recado, TipoDestinatario destinatario, int resposta) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT rd.destinatario from  RecadoDestinatario rd ");
+			sql.append("where rd.recado.id = ");
+			sql.append(recado.getId());
+			sql.append(" and rd.resposta = ");
+			sql.append(resposta);
+			sql.append(" and rd.recado.tipoDestinatario = ");
+			sql.append(destinatario.ordinal());
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getSingleResult();
+			if (sqlReturn != null) {
+				return (List<Member>) sqlReturn;
+			} else {
+				return null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public List<Member> getMemberRespondeu(Recado recado, TipoMembro tipoMembro) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT rd.destinatario from  RecadoDestinatario rd ");
+			sql.append("where rd.recado.id = ");
+			sql.append(recado.getId());
+			sql.append(" and rd.destinatario.tipoMembro = ");
+			sql.append(tipoMembro.ordinal());
+			Query query = em.createQuery(sql.toString());
+
+			Object sqlReturn = query.getResultList();
+			if (sqlReturn != null) {
+				return (List<Member>) sqlReturn;
+			} else {
+				return null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public Recado findByCodigo(String codigo) {

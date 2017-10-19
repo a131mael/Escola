@@ -18,6 +18,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.escola.enums.Serie;
+import org.escola.enums.TipoDestinatario;
+import org.escola.enums.TipoMembro;
 import org.escola.model.Member;
 import org.escola.model.Professor;
 import org.escola.model.ProfessorTurma;
@@ -54,12 +57,14 @@ public class UsuarioService extends Service implements Serializable {
 		return "index";
 	}
 
-	public List<Member> findAllWithToken() {
+	public List<Member> findAllWithToken(TipoDestinatario tipoMembro) {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT m from  Member m ");
 		sql.append("where m.tokenFCM is not null ");
-
+		sql.append(" and m.tipoMembro = ");
+		sql.append(tipoMembro.ordinal());
+		
 		Query query = em.createQuery(sql.toString());
 
 		Object sqlReturn = query.getResultList();
@@ -71,6 +76,26 @@ public class UsuarioService extends Service implements Serializable {
 
 	}
 
+	public List<Member> findAllWithToken(Serie serie) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT m from  Member m ");
+		sql.append("where m.tokenFCM is not null ");
+		sql.append(" and m.alunoserie = ");
+		sql.append(serie.ordinal());
+		
+		Query query = em.createQuery(sql.toString());
+
+		Object sqlReturn = query.getResultList();
+		if (sqlReturn != null) {
+			return (List<Member>) sqlReturn;
+		} else {
+			return null;
+		}
+
+	}
+
+	
 	public List<Member> findAll() {
 		try {
 			CriteriaBuilder cb = em.getCriteriaBuilder();

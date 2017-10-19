@@ -13,88 +13,90 @@
 				style="margin-top: -30px;width:92%">
 
 				<p:tabView>
-					<p:tab title="Dados do aluno">
+					<p:tab title="Recado">
 						<h:panelGrid id="pnlPrincipal" columns="2" border="0">
 
 							<h:outputLabel for="name" value="Título(*): "
 								style="font-size: 13px; width:180px" />
 							<p:inputText id="nome" title="" value="#{recado.nome}"
 								style="font-size: 15px; width:280px">
-									<p:ajax process="@this" />
-								</p:inputText>
+								<p:ajax process="@this" />
+							</p:inputText>
 
 							<h:outputLabel value="Codigo(*): "
 								style="font-size: 13px; width:180px" />
 							<p:inputText title="" value="#{recado.codigo}"
 								style="font-size: 15px; width:280px">
 								<p:ajax process="@this" />
-								</p:inputText>
-								
+							</p:inputText>
+
 							<h:outputLabel value="Destinatario(*): "
 								style="font-size: 13px; width:180px" />
 							<p:selectOneMenu id="periodo" style="width: 256px;"
 								value="#{recado.tipoDestinatario}">
-								<f:selectItems value="#{CombosEspeciaisMB.destinatariosSelectIItem}"
+								<f:selectItems
+									value="#{CombosEspeciaisMB.destinatariosSelectIItem}"
 									var="country" itemLabel="#{country.name}"
 									itemValue="#{country}" />
 								<p:ajax event="change" process="@this" />
 							</p:selectOneMenu>
-	
+
 
 							<h:outputLabel value="Descrição: "
 								style="font-size: 13px; width:180px" />
-							
-							<p:textEditor widgetVar="editor1" value="#{recado.descricao}" height="300" style="margin-bottom:10px">
-								
+
+							<p:textEditor widgetVar="editor1" value="#{recado.descricao}"
+								height="300" style="margin-bottom:10px">
+
 							</p:textEditor>
-							
+
 							<h:outputLabel value="Data Inicio: "
 								style="font-size: 13px; width:180px" />
 							<p:calendar value="#{recado.dataInicio}" pattern="dd/MM/yyyy"
-								mask="true" style="font-size: 15px; width:280px" >
+								mask="true" style="font-size: 15px; width:280px">
 								<p:ajax process="@this" />
-								</p:calendar>
+							</p:calendar>
 
 							<h:outputLabel value="Data Fim: "
 								style="font-size: 13px; width:180px" />
 							<p:calendar value="#{recado.dataFim}" pattern="dd/MM/yyyy"
-								mask="true" style="font-size: 15px; width:280px" >
+								mask="true" style="font-size: 15px; width:280px">
 								<p:ajax process="@this" />
-								</p:calendar>
+							</p:calendar>
 
-							<h:outputLabel value="Precisa de resposta ? " 
-											style="font-size: 13px; width:180px" />
+							<h:outputLabel value="Precisa de resposta ? "
+								style="font-size: 13px; width:180px" />
 							<p:selectBooleanCheckbox value="#{recado.questionario}">
 								<p:ajax update="cbPreisaResposta,pnlPrincipal" process="@this" />
 							</p:selectBooleanCheckbox>
 
 							<h:outputLabel id="cbPreisaResposta" value="Apenas sim ou não: "
-										style="font-size: 13px; width:180px" 
+								style="font-size: 13px; width:180px"
 								rendered="#{recado.questionario}" />
-							<p:selectBooleanCheckbox value="#{recado.respostaBooleana}" 
+							<p:selectBooleanCheckbox value="#{recado.respostaBooleana}"
 								rendered="#{recado.questionario}">
 								<p:ajax update="pnlOpcoes" process="@this" />
 							</p:selectBooleanCheckbox>
 
-<br/>
+							<br />
 							<h:panelGrid id="pnlOpcoes" columns="2" border="0">
 								<h:outputLabel value="opção 1: "
 									style="font-size: 13px; width:180px"
 									rendered="#{recado.questionario and !recado.respostaBooleana}" />
 								<p:inputTextarea value="#{recado.opcao1}"
 									style="font-size: 15px; width:280px"
-									rendered="#{recado.questionario and !recado.respostaBooleana}" >
-										<p:ajax process="@this" />
-									</p:inputTextarea>
+									rendered="#{recado.questionario and !recado.respostaBooleana}">
+									<p:ajax process="@this" />
+								</p:inputTextarea>
 
 								<h:outputLabel value="opção 2: "
 									style="font-size: 13px; width:180px"
 									rendered="#{recado.questionario and !recado.respostaBooleana}" />
 								<p:inputTextarea value="#{recado.opcao2}"
 									style="font-size: 15px; width:280px"
-									rendered="#{recado.questionario and !recado.respostaBooleana}" >
+									rendered="#{recado.questionario and !recado.respostaBooleana}">
 									<p:ajax process="@this" />
-									</p:inputTextarea>
+								</p:inputTextarea>
 
 								<h:outputLabel value="opção 3: "
 									style="font-size: 13px; width:180px"
@@ -103,7 +105,7 @@
 									style="font-size: 15px; width:280px"
 									rendered="#{recado.questionario and !recado.respostaBooleana}">
 									<p:ajax process="@this" />
-									</p:inputTextarea>
+								</p:inputTextarea>
 
 								<h:outputLabel value="opção 4: "
 									style="font-size: 13px; width:180px"
@@ -111,8 +113,8 @@
 								<p:inputTextarea value="#{recado.opcao4}"
 									style="font-size: 15px; width:280px"
 									rendered="#{recado.questionario and !recado.respostaBooleana}">
-										<p:ajax process="@this" />
-									</p:inputTextarea>
+									<p:ajax process="@this" />
+								</p:inputTextarea>
 
 								<h:outputLabel value="opção 5: "
 									style="font-size: 13px; width:180px"
@@ -121,7 +123,7 @@
 									style="font-size: 15px; width:280px"
 									rendered="#{recado.questionario and !recado.respostaBooleana}">
 									<p:ajax process="@this" />
-									</p:inputTextarea>
+								</p:inputTextarea>
 
 								<h:outputLabel value="opção 6: "
 									style="font-size: 13px; width:180px"
@@ -130,7 +132,7 @@
 									style="font-size: 15px; width:280px"
 									rendered="#{recado.questionario and !recado.respostaBooleana}">
 									<p:ajax process="@this" />
-									</p:inputTextarea>
+								</p:inputTextarea>
 
 
 							</h:panelGrid>
@@ -140,8 +142,56 @@
 					</p:tab>
 					<p:tab title="Relatório do Recado">
 						<h:panelGrid columns="2" border="0">
+							<h:outputLabel value="Professores" />
+							<h:outputText
+								value="#{recadoController.percentualProfessoresLeram} %" />
 
+							<h:outputLabel value="Responsáveis" />
+							<h:outputText
+								value="#{recadoController.percentualResponsaveisLeram} %" />
 
+						</h:panelGrid>
+
+					</p:tab>
+
+					<p:tab title="Quem Votou ?">
+						<h:panelGrid width="50%" style="width:50%">
+							<p:dataTable
+								currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+								emptyMessage="#Nenhum registro encontrado"
+								filterEvent="enter" 
+								liveResize="true" styleClass="tabela" pageLinks="5"
+								paginator="true" paginatorPosition="bottom"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								resizableColumns="true" rows="20" id="tbl" var="professorTab"
+								value="#{recadoController.memberRespondeu}"
+								>
+
+								<p:column style="width:7%; text-align:center;"
+									filterBy="#{professorTab.destinatario.id}"
+									sortBy="#{professorTab.destinatario.id}" headerText="ID ">
+									<h:outputText value="#{professorTab.destinatario.id}" />
+								</p:column>
+								
+								<p:column style="width:7%; text-align:center;"
+									filterBy="#{professorTab.destinatario.name}"
+									sortBy="#{professorTab.destinatario.name}" headerText="Nome ">
+									<h:outputText value="#{professorTab.destinatario.name}" />
+								</p:column>
+								
+								<p:column style="width:7%; text-align:center;"
+									filterBy="#{professorTab.destinatario.tipoMembro}"
+									sortBy="#{professorTab.id}" headerText="Tipo">
+									<h:outputText value="#{professorTab.destinatario.tipoMembro}" />
+								</p:column>
+								
+								<p:column style="width:7%; text-align:center;"
+									filterBy="#{professorTab.resposta}"
+									sortBy="#{professorTab.resposta}" headerText="Resposta">
+									<h:outputText value="#{professorTab.resposta}" />
+								</p:column>
+							</p:dataTable>
 
 						</h:panelGrid>
 

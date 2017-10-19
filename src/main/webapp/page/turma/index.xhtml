@@ -6,18 +6,19 @@
 	template="/WEB-INF/templates/templateADM.xhtml">
 
 	<ui:define name="content">
-		<h:form style="width:100%; border:none" >
+		<h:form style="width:100%; border:none">
+
 
 			<h:panelGrid columns="8" style="margin-top: -30px;">
-				<h:commandButton action="#{turmaController.adicionarNovo()}" value="Adicionar" 
-				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+				<h:commandButton action="#{turmaController.adicionarNovo()}"
+					value="Adicionar"
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
 			</h:panelGrid>
 
 			<h:panelGrid width="90%" style="border: none !important">
 				<p:dataTable id="tbl" var="alunoTab"
-					value="#{turmaController.turmas}"
-					paginator="true" style="margin-bottom:20px; width:100%"
-					paginatorPosition="bottom">
+					value="#{turmaController.turmas}" paginator="true"
+					style="margin-bottom:20px; width:100%" paginatorPosition="bottom">
 
 					<f:facet name="{Exporters}">
 						<h:commandLink>
@@ -40,21 +41,39 @@
 							<p:dataExporter type="xml" target="tbl" fileName="cars" />
 						</h:commandLink>
 					</f:facet>
-					
+
 					<p:column style="width:8%">
-						<p:tooltip  for="boletim" value="Boletim" position="top"/>
+						<p:tooltip for="boletim" value="Boletim" position="top" />
 						<f:facet name="header">
 							<h:outputText value="Ações" />
 						</f:facet>
-						<p:commandButton id="boletim" ajax="true" onclick="PrimeFaces.monitorDownload(start, stop);" 
-								 icon="ui-icon-bookmark" rendered="#{!authController.isTeacher()}">
-								<p:fileDownload value="#{turmaController.imprimirBoletinsTurma(alunoTab.id)}" />
-  					  	</p:commandButton >
-						<p:commandButton icon="ui-icon-search"  action="#{turmaController.editar(alunoTab.id)}" rendered="#{!authController.isTeacher()}"/>
-						<p:commandButton icon="ui-icon-search"  action="#{turmaController.editar(alunoTab.id)}" actionListener="#{turmaController.verificarTodosAlunosTemAvaliacao(alunoTab.id)}" rendered="#{authController.isTeacher()}"/>
-						
+						<p:commandButton id="boletim" ajax="true"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-bookmark" rendered="#{!authController.isTeacher()}">
+							<p:fileDownload
+								value="#{turmaController.imprimirBoletinsTurma(alunoTab.id)}" />
+						</p:commandButton>
+						<p:commandButton ajax="true" icon="ui-icon-search"
+							action="#{turmaController.editar(alunoTab.id)}"
+							rendered="#{!authController.isTeacher()}" />
+
+						<p:commandButton ajax="true" icon="ui-icon-search"
+							action="#{turmaController.editar(alunoTab.id)}"
+							actionListener="#{turmaController.verificarTodosAlunosTemAvaliacao(alunoTab.id)}"
+							rendered="#{authController.isTeacher()}"
+							onstart="
+                      $('button').css('cursor','progress');
+                      $('a').css('cursor','progress');
+                      statusDialog.show();"
+							oncomplete="statusDialog.hide();
+                      $('button').css('cursor','pointer');
+                      $('a').css('cursor','pointer');"
+							onerror="statusDialog.hide();
+                      $('button').css('cursor','pointer');
+                      $('a').css('cursor','pointer');" />
+
 					</p:column>
-					
+
 					<p:column style="width:10%">
 						<f:facet name="header">
 							<h:outputText value="Id" />
@@ -75,30 +94,31 @@
 						</f:facet>
 						<h:outputText value="#{alunoTab.serie.name}" />
 					</p:column>
-					
+
 					<p:column>
 						<f:facet name="header">
 							<h:outputText value="Periodo" />
 						</f:facet>
 						<h:outputText value="#{alunoTab.periodo.name}" />
 					</p:column>
-					
+
 					<p:column>
 						<f:facet name="header">
 							<h:outputText value="Qtade Alunos" />
 						</f:facet>
 						<h:outputText value="#{alunoTab.totalAlunos}" />
 					</p:column>
-					
-					<p:column style="width:10%" 
-							  rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+
+					<p:column style="width:10%"
+						rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
 						<f:facet name="header">
 							<h:outputText value="Remover" />
 						</f:facet>
-						
-							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{turmaController.remover(alunoTab.id)}" >
-								
-							</p:commandButton>
+
+						<p:commandButton update="tbl" icon="ui-icon-trash"
+							action="#{turmaController.remover(alunoTab.id)}">
+
+						</p:commandButton>
 					</p:column>
 
 				</p:dataTable>

@@ -3,8 +3,6 @@ package org.escola.util;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.faces.context.FacesContext;
-
 import org.escola.controller.OfficeDOCUtil;
 import org.escola.model.Aluno;
 
