@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	
+	<h:panelGrid columns="1" border="0" rendered="#{visible}">
+	<h:panelGrid width="98%">
+				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="#Nenhum registro encontrado"
+                             filterEvent="enter" 
+                             lazy="true" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="20"
+  							 id="tbboleto" var="professorTab"
+							 value="#{parametro.boletos}"
+							 sortOrder="#{professorTab.vencimento}"
+							 editable="true" editMode="cell"
+							 >
+							 
+							 
+   					<p:column style="width:7%; text-align:center;" headerText="id ">
+						<h:outputText value="#{professorTab.id}" />
+					</p:column>
+
+   					<p:column style="width:7%; text-align:center;" headerText="Num. Doc.">
+						<h:outputText value="#{professorTab.nossoNumero}" />
+					</p:column>
+
+					<p:column style="width:7%; text-align:center;" headerText="Vencimento ">
+						<p:cellEditor>
+               				<f:facet name="output">
+               					<h:outputText value="#{professorTab.vencimento}" >
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt-br" timeZone="GMT-3" />
+								</h:outputText>
+               					</f:facet>
+               				<f:facet name="input">
+               					<p:inputText value="#{professorTab.vencimento}" >
+               						<f:convertDateTime pattern="dd/MM/yyyy" locale="pt-br" timeZone="GMT-3" />
+               						<p:ajax process="@this" update="tbboleto" listener="#{alunoController.alterarBoleto(professorTab)}"/>
+               					</p:inputText>
+               				</f:facet>
+           				</p:cellEditor>	
+					</p:column>
+					
+					<p:column style="width:7%; text-align:center;" headerText="Valor Nominal ">
+					<p:cellEditor>
+               				<f:facet name="output"><h:outputText value="#{professorTab.valorNominal}" /></f:facet>
+               				<f:facet name="input">
+               					<p:inputText value="#{professorTab.valorNominal}" style="width:96%" >
+               						<p:ajax process="@this" update="tbboleto" listener="#{alunoController.alterarBoleto(professorTab)}"/>
+               					</p:inputText>
+               				</f:facet>
+           				</p:cellEditor>
+						
+					</p:column>
+					
+					<p:column style="width:7%; text-align:center;" headerText="Desconto">
+						<h:outputText value="#{alunoController.getDescontoString(professorTab)}" />
+					</p:column>
+
+					<p:column style="width:7%; text-align:center;" headerText="Juro e Multa">
+						<h:outputText value="#{alunoController.getJurosMultaString(professorTab)}" />
+					</p:column>
+					
+					<p:column style="width:7%; text-align:center;" headerText="Valor Final">
+						<h:outputText value="#{alunoController.getValorFinalString(professorTab)}" />
+					</p:column>
+					
+					<p:column style="width:7%; text-align:center;" headerText="Status">
+						<h:outputText value="#{alunoController.getStatus(professorTab)}" />
+					</p:column>
+					
+					<p:column style="width:7%; text-align:center;" headerText="Downloand">
+						<p:commandButton id="cnab" icon="ui-icon-print"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  
+								disabled="#{!alunoController.alunoSelecionado}">
+						<p:fileDownload value="#{alunoController.downloadBoleto(professorTab)}" />
+					</p:commandButton>
+					
+					</p:column>
+				</p:dataTable>
+
+			</h:panelGrid>
+	
+	</h:panelGrid>
+
+	
+</ui:composition>

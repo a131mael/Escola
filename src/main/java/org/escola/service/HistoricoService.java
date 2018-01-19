@@ -19,6 +19,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.model.Aluno;
 import org.escola.model.Evento;
 import org.escola.model.HistoricoAluno;
 import org.escola.util.Service;
@@ -29,6 +30,10 @@ public class HistoricoService extends Service {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private AlunoService alunoService;
+
 
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
@@ -71,15 +76,16 @@ public class HistoricoService extends Service {
 	}
 
 	public HistoricoAluno save(HistoricoAluno evento) {
-		HistoricoAluno user = null;
 		try {
 
-			log.info("Registering " + evento.getAno());
+			//log.info("Registering " + evento.getAno());
 		
 			if (evento.getId() != null && evento.getId() != 0L) {
-				user = findById(evento.getId());
-			} else {
-				user = new HistoricoAluno();
+				evento = findById(evento.getId());
+			} 
+			if(evento.getAluno() != null && evento.getAluno().getId() != null){
+				Aluno al =alunoService.findById(evento.getAluno().getId());
+				evento.setAluno(al);
 			}
 			
 			/*user.setDataFim(evento.getDataFim());
@@ -88,7 +94,7 @@ public class HistoricoService extends Service {
 			user.setNome(evento.getNome());
 			user.setCodigo(evento.getCodigo());*/
 			
-			em.persist(user);
+			em.persist(evento);
 			
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues
@@ -106,7 +112,7 @@ public class HistoricoService extends Service {
 			e.printStackTrace();
 		}
 
-		return user;
+		return evento;
 	}
 
 	public HistoricoAluno findByAluno(Long idAluno) {

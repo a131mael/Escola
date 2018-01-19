@@ -10,26 +10,31 @@
 			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
 
 			<p:growl id="messages" showDetail="true" />
-			
-			<h:panelGrid id="panelSche" columns="2" columnClasses="value" width="98%" style="height:100%">
+
+			<h:panelGrid id="panelSche" columns="2" columnClasses="value"
+				width="98%" style="height:100%">
 				<h:outputText value="Ano Letivo:" />
-			  	<p:inputText value="#{configuracao.anoLetivo}">
-			  	<p:ajax event="change" process="@this"
-								listener="#{configuracaoController.salvar()}"/>
-			  	</p:inputText>
-			  	
-			  	<h:outputText value="Bimestre Atual:" />
-			  	<p:selectOneMenu style="width: 256px;"
-							value="#{configuracao.bimestre}"
-							rendered="#{authController.hasPermission(authController.administrador)}">
-							<f:selectItems value="#{CombosEspeciaisMB.getBimestres()}"
-								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
-							<p:ajax event="change" process="@this"
-								listener="#{configuracaoController.salvar()}"/>
-						</p:selectOneMenu>
+				<p:inputText value="#{configuracao.anoLetivo}" disabled="true">
+					<p:ajax event="change" process="@this"
+						listener="#{configuracaoController.salvar()}" />
+				</p:inputText>
+
+				<h:outputText value="Bimestre Atual:" />
+				<p:selectOneMenu style="width: 256px;"
+					value="#{configuracao.bimestre}"
+					rendered="#{authController.hasPermission(authController.administrador)}">
+					<f:selectItems value="#{CombosEspeciaisMB.getBimestres()}"
+						var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+					<p:ajax event="change" process="@this"
+						listener="#{configuracaoController.salvar()}" />
+				</p:selectOneMenu>
+
+				<p:commandButton value="FINALIZAR ANO LETIVO" icon="ui-icon-pencil" ajax="false" action="#{secretariaController.finalizarAnoLetivo()}">
+					
+				</p:commandButton>
 
 			</h:panelGrid>
-				
+
 
 
 		</h:form>

@@ -1,0 +1,207 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			function start() {
+			    PF('statusDialog').show();
+			}
+			 
+			function stop() {
+			    PF('statusDialog').hide();
+			}
+		</script>
+		
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" 
+				draggable="false" closable="false" resizable="false">
+    		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
+		</p:dialog>
+	
+		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
+
+			<h:panelGrid id="panelFerramentas" columns="17" style="margin-top: -30px; margin-left:-20px">
+				<p:tooltip  for="adicionar" value="Adicionar um novo Devedor" position="top"/> 
+				 <p:tooltip  for="editar" value="Editar" position="top"/>
+			
+				<p:commandButton id="adicionar" icon="ui-icon-plus" action="#{devedorController.adicionarNovo()}" />
+				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{devedorController.editar()}"	alt="Editar" disabled="#{!devedorController.alunoSelecionado}"/>
+				<p:separator style=" height:25px;" />
+				
+				</h:panelGrid>
+
+			<h:panelGrid width="98%">
+				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="#Nenhum registro encontrado"
+                             selectionMode="single" 
+                             selection="#{devedorController.devedor}"
+                             rowKey="#{professorTab.id}"
+                             filterEvent="enter" 
+                             lazy="true" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="20"
+                          
+  							 id="tbl" var="professorTab"
+							 value="#{devedorController.lazyDataModel}"
+							 >
+   <!-- rowsPerPageTemplate="25,50,100" -->
+   
+   					<p:ajax event="rowSelect"  update="panelFerramentas" />
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tbl" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+
+					<p:column filterBy="#{professorTab.nome}"
+                              sortBy="#{professorTab.nome}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Nome "
+                              >
+						<h:outputText value="#{professorTab.nome}" />
+						<br />
+						<h:outputText value="#{professorTab.telefoneResidencial}" />
+						<br />
+						<h:outputText value="#{professorTab.telefoneCelular}" />
+						<br />
+						<h:outputText value="#{professorTab.telefoneCelular2}" />
+					</p:column>
+
+					<p:column filterBy="#{professorTab.cpf}"
+                              sortBy="#{professorTab.cpf}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="CPF "
+                              width="14%">
+						<h:outputText value="#{professorTab.cpf}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.enviadoParaCobrancaCDL}"
+                              sortBy="#{professorTab.enviadoParaCobrancaCDL}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="P/ CDL "
+                              filterOptions="#{CombosEspeciaisMB.simNaoNull}"
+                              width="7%">
+						<h:outputText value="#{professorTab.enviadoParaCobrancaCDL eq true?'Sim':'Não'}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.contratoTerminado}"
+                              sortBy="#{professorTab.contratoTerminado}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Sem Contr."
+                              filterOptions="#{CombosEspeciaisMB.simNaoNull}"
+                              width="8%">
+						<h:outputText value="#{professorTab.contratoTerminado eq true?'Sim':'Não'}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.enviadoSPC}"
+                              sortBy="#{professorTab.enviadoSPC}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="SPC"
+                              filterOptions="#{CombosEspeciaisMB.simNaoNull}"
+                              width="7%">
+						<h:outputText value="#{professorTab.enviadoSPC eq true?'Sim':'Não'}" />
+					</p:column>
+					
+					<p:column style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Boletos">
+                              <ui:repeat var="boleto" value="#{professorTab.boletos}">
+                             		<h:outputText value="#{boleto.numero}" />
+                             		<h:outputText value=" - " />
+                              		<h:outputText value="#{boleto.dataGeracao}" >
+                              			<f:convertDateTime attern="dd/MM/yyyy" />
+                              		</h:outputText>
+                              		<h:outputText value=" - " />
+                              		<h:outputText value="#{boleto.valor}" >
+                              		    <f:convertNumber minFractionDigits="2" />
+                              		</h:outputText>
+	                              <br/>
+                              </ui:repeat>
+					</p:column>
+					
+					
+					<!-- <p:column filterBy="#{professorTab.telefoneCelular}"
+                              sortBy="#{professorTab.telefoneCelular}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Celular">
+						<h:outputText value="#{professorTab.telefoneCelular}" />
+					</p:column> -->
+					
+					<!-- <p:column filterBy="#{professorTab.telefoneCelular2}"
+                              sortBy="#{professorTab.telefoneCelular2}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Celular">
+						<h:outputText value="#{professorTab.telefoneCelular2}" />
+					</p:column>
+					 -->
+					<!-- <p:column filterBy="#{professorTab.telefoneResidencial}"
+                              sortBy="#{professorTab.telefoneResidencial}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="Residencial">
+						<h:outputText value="#{professorTab.telefoneResidencial}" />
+					</p:column>
+					 -->
+					<p:column sortBy="#{professorTab.valorTotal}" 
+                              style="text-align:center;"
+                              styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              headerText="TOTAL"
+                              width="7%">
+						<h:outputText value="#{devedorController.getTotal(professorTab)}" >
+                         		    <f:convertNumber minFractionDigits="2" />
+                        </h:outputText>
+					</p:column>
+					
+
+					<p:column style="text-align: center; width:8%" 
+					styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+					width="5%">
+						<f:facet name="header">
+							<h:outputText value="Rem." />
+						</f:facet>
+						
+							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{devedorController.remover(professorTab.id)}" >
+								<p:confirm header="Confirmação" message="Tem certeza que deseja remover ?" icon="ui-icon-alert" />
+							</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

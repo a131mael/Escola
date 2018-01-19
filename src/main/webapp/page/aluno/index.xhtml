@@ -21,9 +21,14 @@
     		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
 		</p:dialog>
 	
-		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
 
-			<h:panelGrid id="panelFerramentas" columns="19" style="margin-top: -30px; margin-left:-20px">
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        		<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        		<p:commandButton value="Nao" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />		
+    		</p:confirmDialog>
+
+			<h:panelGrid id="panelFerramentas" columns="36" style="margin-top: -30px; margin-left:-20px">
 				<p:tooltip  for="adicionar" value="Adicionar um novo Aluno" position="top"/> 
 				<p:tooltip  for="boletim" value="Boletim" position="top"/> 
 				 <p:tooltip  for="editar" value="Editar" position="top"/>
@@ -33,6 +38,19 @@
 				<p:tooltip  for="atestadoFrequencia" value="Atestado de Frequencia" position="top"/>
 				<p:tooltip  for="atestadoMatricula" value="Atestado e Matricula" position="top"/>
 				<p:tooltip  for="historico" value="Histórico" position="top"/>
+				<p:tooltip  for="rematricula" value="Rematricular" position="top"/>
+				<p:tooltip  for="desmatricular" value="Desmatricular" position="top"/>
+				<p:tooltip  for="enviarCnab" value="Enviar CNAB" position="top"
+							rendered="#{authController.hasPermission(authController.mestre)}" />
+				<p:tooltip  for="removerCnabEnviado" value="Remover CNAB ENVIADO" position="top"
+							rendered="#{authController.hasPermission(authController.mestre)}"/>
+				
+				<p:tooltip for="boleto" value="Boleto" position="top" />
+				<p:tooltip for="cnab" value="CNAB240" position="top" />
+				<p:tooltip for="gerarBoleto" value="GERAR BOLETOS" position="top" />
+				<p:tooltip  for="gerarBaixa" value="Gerar arquivo Baixa" position="top"
+							rendered="#{authController.hasPermission(authController.mestre)}"/>
+				
 			
 				<p:commandButton id="adicionar" icon="ui-icon-plus" action="#{alunoController.adicionarNovo()}" />
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
@@ -67,7 +85,64 @@
 				<p:commandButton id="historico" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
 								 disabled="#{!alunoController.alunoSelecionado}">
 								<p:fileDownload value="#{alunoController.imprimirHistorico()}" />
-				</p:commandButton> 
+				</p:commandButton>
+			
+				<p:commandButton id="boleto" icon="ui-icon-print" ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					disabled="#{!alunoController.alunoSelecionado}">
+					<p:fileDownload value="#{alunoController.gerarBoleto()}" />
+				</p:commandButton>
+
+				<p:commandButton id="cnab" icon="ui-icon-transfer-e-w" ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					disabled="#{!alunoController.alunoSelecionado}">
+					<p:fileDownload value="#{alunoController.gerarCNB240()}" />
+				</p:commandButton>
+				<p:commandButton id="gerarBoleto"
+					action="#{alunoController.gerarBoletoModel()}" alt="GerarBoleto"
+					rendered="#{true}" />
+			
+				<p:commandButton id="rematricula" update="@form" icon="ui-icon-check" action="#{alunoController.rematricular()}" 
+								alt="Rematricular" disabled="#{!alunoController.alunoSelecionado}"
+								rendered="#{!alunoController.matriculado}">
+				 		<p:confirm header="Confirmacao" message="Deseja fazer a rematricula ?" icon="ui-icon-alert" />
+				</p:commandButton>
+			 
+			 	<p:commandButton id="desmatricular" update="@form" icon="ui-icon-check" action="#{alunoController.desmatricular()}"	
+			 					 alt="Desmatricular" disabled="#{!alunoController.alunoSelecionado}"
+			 					 rendered="#{alunoController.matriculado}">
+					<p:confirm header="Confirmacao" message="Deseja remover a rematricula ?" icon="ui-icon-alert" />
+				</p:commandButton>
+				
+				<p:commandButton id="enviarCnab" update="@form" icon="ui-icon-check" action="#{alunoController.enviarCnab()}" 
+								alt="Rematricular" disabled="#{!alunoController.alunoSelecionado}"
+								rendered="#{authController.hasPermission(authController.mestre) and !alunoController.cnabEnvado}">
+				 		<p:confirm header="Confirmacao" message="Deseja fazer a rematricula ?" icon="ui-icon-alert" />
+				</p:commandButton>
+			 
+			 	<p:commandButton id="removerCnabEnviado" update="@form" icon="ui-icon-check" action="#{alunoController.removerCnabEnviado()}"	
+			 					 alt="Desmatricular" disabled="#{!alunoController.alunoSelecionado}"
+			 					 rendered="#{authController.hasPermission(authController.mestre) and alunoController.cnabEnvado}">
+					<p:confirm header="Confirmacao" message="Deseja remover a rematricula ?" icon="ui-icon-alert" />
+				</p:commandButton>
+			 
+			 
+			 <p:commandButton id="salvarTodos" update="@form" icon="ui-icon-check" action="#{alunoController.salvarTodos()}"	
+			 					 alt="Desmatricular" 
+			 					 rendered="#{authController.hasPermission(authController.mestre)}">
+					<p:confirm header="Confirmacao" message="Atualizar Todas as Crianças ?" icon="ui-icon-alert" />
+				</p:commandButton>
+			 
+			 	 <p:commandButton id="gerarBaixa" update="@form" icon="ui-icon-check" 	
+			 					 alt="Gerar Baixa"
+			 					 ajax="false"
+			 					 onclick="PrimeFaces.monitorDownload(start, stop);" 
+			 					 rendered="#{authController.hasPermission(authController.mestre)}">
+					
+					<p:fileDownload value="#{alunoController.gerarArquivoBaixa()}" />
+				</p:commandButton>
+			 
+			 
 			</h:panelGrid>
 
 			<h:panelGrid width="98%">
@@ -90,7 +165,7 @@
                           
   							 id="tbl" var="professorTab"
 							 value="#{alunoController.lazyDataModel}"
-							 >
+							 sortBy="#{professorTab.codigo}">
    <!-- rowsPerPageTemplate="25,50,100" -->
    
    					<p:ajax event="rowSelect"  update="panelFerramentas" />
@@ -115,8 +190,48 @@
 							<p:dataExporter type="xml" target="tbl" fileName="cars" />
 						</h:commandLink>
 					</f:facet>
+					<p:column style="width:10%; text-align:center;"
+						styleClass="#{alunoController.marcarLinha(professorTab.id)}"
+						headerText="Status ">
+						<table>
+							<tr>
+								<td style="border: none;">
+									<p:panelGrid
+										rendered="#{alunoController.cadastroOk(professorTab.id)}"
+										styleClass="semborda" style="border:none !important;padding:1px">
+										<img src="../../admin/resources/ico/ok.png" width="390"
+											style="width: 20px; height: 20px;" />
+									</p:panelGrid>
+									<p:panelGrid
+										rendered="#{!alunoController.cadastroOk(professorTab.id)}"
+										styleClass="semborda" style="border:none !important;padding:1px">
+										<img src="../../admin/resources/ico/alertRed.png" width="390"
+											style="width: 20px; height: 20px;" />
+									</p:panelGrid>
+								
+								</td>
+						
+								<td style="border: none;">
+									<p:panelGrid
+										rendered="#{alunoController.cnabEnviado(professorTab.id)}"
+										styleClass="semborda" style="border:none !important;padding:1px">
+										<img src="../../admin/resources/ico/cnabEnviado.png" width="390"
+											style="width: 20px; height: 20px;" />
+									</p:panelGrid>
+									<p:panelGrid
+										rendered="#{!alunoController.cnabEnviado(professorTab.id)}"
+										styleClass="semborda" style="border:none !important;padding:1px">
+										<img src="../../admin/resources/ico/enviarCnab.png" width="390"
+											style="width: 20px; height: 20px;" />
+									</p:panelGrid>
+								</td>
+						</tr>
+						</table>
+
+					</p:column>
+					
 					<p:column style="width:7%; text-align:center;" filterBy="#{professorTab.codigo}"
-                              styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              styleClass="#{alunoController.marcarLinha(professorTab.id)}"
                               sortBy="#{professorTab.codigo}" 
                               headerText="Código ">
 						<h:outputText value="#{professorTab.codigo}" />
@@ -125,7 +240,7 @@
 					<p:column filterBy="#{professorTab.nomeAluno}"
                               sortBy="#{professorTab.nomeAluno}" 
                               style="text-align:center;"
-                              styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              styleClass="#{alunoController.marcarLinha(professorTab.id)}"
                               headerText="Nome ">
 						<h:outputText value="#{professorTab.nomeAluno}" />
 					</p:column>
@@ -133,7 +248,7 @@
 					<p:column filterBy="#{professorTab.periodo}"
                               sortBy="#{professorTab.periodo}" 
                               style="text-align:center;width:8%"
-                              styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              styleClass="#{alunoController.marcarLinha(professorTab.id)}"
                               headerText="Periodo "
                               filterOptions="#{CombosEspeciaisMB.periodosSelectIItem}">
 						<h:outputText value="#{professorTab.periodo.name}" />
@@ -142,14 +257,14 @@
 					<p:column filterBy="#{professorTab.serie}"
                               sortBy="#{professorTab.serie}" 
                               style="text-align: center;width:10%;"
-                              styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}"
+                              styleClass="#{alunoController.marcarLinha(professorTab.id)}"
                               headerText="Série "
                               filterOptions="#{CombosEspeciaisMB.seriesSelectIItem}">
 						<h:outputText value="#{professorTab.serie.name}" />
 					</p:column>	
 
 					<p:column style="text-align: center; width:8%" 
-					styleClass="#{alunoController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}">
+					styleClass="#{alunoController.marcarLinha(professorTab.id)}">
 						<f:facet name="header">
 							<h:outputText value="Remover" />
 						</f:facet>

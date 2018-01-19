@@ -9,6 +9,17 @@
 table tbody .marcarLinha {color: #00008B !important; }
  /* box-shadow: 0 0 0 !important; */
  /* border: #e2bfbf !important; */
+
+table tbody .marcarLinhaVerde {color: #00ff00!important; }
+ /* box-shadow: 0 0 0 !important; */
+ /* border: #e2bfbf !important; */
+
+table tbody .marcarLinhaAmarelo {color: #FFD700 !important; }
+
+table tbody .marcarLinhaVermelho {color: #FF0000 !important; }
+ /* box-shadow: 0 0 0 !important; */
+ /* border: #e2bfbf !important; */
+
  
 .fc-day-grid-event .fc-content {
    white-space: normal; 

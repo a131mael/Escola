@@ -1,12 +1,16 @@
 package org.escola.util;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 public class Util {
 
@@ -88,6 +92,20 @@ public class Util {
 	    }  
 	    return map;  
 	}
+	
+	public static long diferencaEntreDatas(Date data1, Date data2) {
+		DateTime dt1 = new DateTime(data1.getTime());
+		DateTime dt2 = new DateTime(data2.getTime());
 
+		Days d = Days.daysBetween(dt2, dt1);
+		int days = d.getDays();
+		return days;
+	}
+	
+	public static String formatarDouble2Decimais(double valor){
+		String sb=  String.format("%.2f", valor);
+		
+		return sb;
+	}
 	
 }

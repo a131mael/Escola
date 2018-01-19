@@ -1,0 +1,206 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			function start() {
+			    PF('statusDialog').show();
+			}
+			 
+			function stop() {
+			    PF('statusDialog').hide();
+			}
+		</script>
+		
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" 
+				draggable="false" closable="false" resizable="false">
+    		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
+		</p:dialog>
+	
+		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+
+			<h:panelGrid id="panelFerramentas" columns="17" style="margin-top: -30px; margin-left:-20px">
+				<p:tooltip  for="adicionar" value="Adicionar um novo Devedor" position="top" rendered="true"/> 
+				 <p:tooltip  for="editar" value="Editar" position="top" rendered="false"/>
+			
+				<p:commandButton id="adicionar" icon="ui-icon-plus" action="#{devedorController.adicionarNovo()}" rendered="false"/>
+				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{devedorController.editar()}" rendered="false"	alt="Editar" disabled="#{!devedorController.alunoSelecionado}"/>
+				
+				<p:commandButton  ajax="false" value="Imprimir"
+					onclick="PrimeFaces.monitorDownload(start, stop);">
+					<p:fileDownload value="#{devedorController.imprimirDevedores()}" />
+				</p:commandButton>
+				
+				<p:separator style=" height:25px;" rendered="false"/>
+				
+				</h:panelGrid>
+
+			<h:panelGrid width="98%">
+				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="#Nenhum registro encontrado"
+                             rowKey="#{professorTab.id}"
+                             filterEvent="enter" 
+                             lazy="true" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="20"
+                          
+  							 id="tbl" var="professorTab"
+							 value="#{devedorController.lazyDataModel}"
+							 editable="true" editMode="cell"
+							 >
+   
+					<p:column filterBy="#{professorTab.nomeResponsavel}"
+                              sortBy="#{professorTab.nomeResponsavel}" 
+                              style="text-align:center;"
+                              width="20%" 
+                              exportable="true">
+                               <f:facet name="header">
+                					<h:outputText value="Nome" />
+	            				</f:facet>
+                        <h:outputText value="#{professorTab.nomeAluno}" />
+                        <br />
+                        <h:outputText value="#{professorTab.irmao1.nomeAluno}" />
+                        <br />
+                        <h:outputText value="#{professorTab.irmao2.nomeAluno}" />
+                        <br />
+                        <h:outputText value="#{professorTab.irmao3.nomeAluno}" />
+						<br />
+						<h:outputText value="#{professorTab.nomeResponsavel}" />
+						<br />
+						<h:outputText value="#{professorTab.telefone}" />
+						<br />
+						<h:outputText value="#{professorTab.telefoneCelularMae}" />
+						<br />
+						<h:outputText value="#{professorTab.telefoneCelularPai}" />
+						<br />
+						<h:outputText value="#{professorTab.telefoneResidencialPai}" />
+						<br />
+						<h:outputText value="#{professorTab.telefoneResidencialMae}" />
+
+					</p:column>
+
+					<p:column filterBy="#{professorTab.cpfResponsavel}"
+                              sortBy="#{professorTab.cpfResponsavel}" 
+                              style="text-align:center;"
+                              width="14%"
+                              exportable="true">
+                              <f:facet name="header">
+                					<h:outputText value="CPF" />
+            				</f:facet>
+						<h:outputText value="#{professorTab.cpfResponsavel}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.enviadoParaCobrancaCDL}"
+                              sortBy="#{professorTab.enviadoParaCobrancaCDL}" 
+                              style="text-align:center;"
+                              headerText="P/ CDL "
+                              filterOptions="#{CombosEspeciaisMB.simNaoNull}"
+                              width="7%"
+                              exportable="false">
+						<h:outputText value="#{professorTab.enviadoParaCobrancaCDL eq true?'Sim':'Não'}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.contratoTerminado}"
+                              sortBy="#{professorTab.contratoTerminado}" 
+                              style="text-align:center;"
+                              headerText="Sem Contr."
+                              filterOptions="#{CombosEspeciaisMB.simNaoNull}"
+                              width="8%"
+                              exportable="false">
+						<h:outputText value="#{professorTab.contratoTerminado eq true?'Sim':'Não'}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.enviadoSPC}"
+                              sortBy="#{professorTab.enviadoSPC}" 
+                              style="text-align:center;"
+                              headerText="SPC"
+                              filterOptions="#{CombosEspeciaisMB.simNaoNull}"
+                              width="7%"
+                              exportable="false">
+						<h:outputText value="#{professorTab.enviadoSPC eq true?'Sim':'Não'}" />
+					</p:column>
+					
+					<p:column style="text-align:center;"
+                              headerText="Boletos" 
+                              exportable="true">
+                              <ui:repeat var="boleto" value="#{professorTab.boletos}" style="border:none">
+                              		<p:panel rendered="#{boleto.atrasado}" columns="5" style="border:none; background:none !important">
+	                              		<h:outputText value="#{boleto.nossoNumero}" style="border:none;background:none !important"/>
+	                             		<h:outputText value=" - " style="border:none"/>
+	                              		<br/>
+	                              		<h:outputText value="#{boleto.emissao}" style="border:none">
+	                              			<f:convertDateTime attern="dd/MM/yyyy" />
+	                              		</h:outputText>
+	                              		<br/>
+	                              		<h:outputText value="#{boleto.vencimento}" style="border:none">
+	                              			<f:convertDateTime attern="dd/MM/yyyy" />
+	                              		</h:outputText>
+	                              		<br/>
+	                              		<h:outputText value="#{boleto.valorNominal}" style="border:none">
+	                              		    <f:convertNumber minFractionDigits="2" />
+	                              		</h:outputText>
+	                              		<h:outputText value=" / " style="border:none"/>
+	                              		<h:outputText value="#{financeiroController.verificaValorFinalBoleto(boleto)}" style="border:none">
+	                              		    <f:convertNumber minFractionDigits="2" />
+	                              		</h:outputText>
+	                              		<br/>
+                              		</p:panel>
+	                              
+                              </ui:repeat>
+					</p:column>
+					
+					
+					
+					<p:column sortBy="#{professorTab.valorTotalDevido}" 
+                              style="text-align:center;"
+                              headerText="TOTAL"
+                              width="7%"
+                              exportable="true">
+						<h:outputText value="#{devedorController.getTotal(professorTab)}" >
+                         		    <f:convertNumber minFractionDigits="2" />
+                        </h:outputText>
+					</p:column>
+					
+					<p:column width="20%" 
+						exportable="false">
+					 <p:cellEditor>
+			               <f:facet name="output"><p:inputTextarea value="#{professorTab.observacaoSecretaria}" style="width:93%;height:90px" /></f:facet>
+			               <f:facet name="input">
+			               <p:inputTextarea id="modelInput" value="#{professorTab.observacaoSecretaria}" style="width:93%;height:90px">
+			               		<p:ajax event="change" process="@this" listener="#{devedorController.saveObservavao(professorTab)}"/>
+			               </p:inputTextarea>
+			               
+			               </f:facet>
+			           </p:cellEditor>
+					</p:column>
+
+					<p:column style="text-align: center; width:8%" 
+							  width="5%" rendered="false"
+							  exportable="false">
+						<f:facet name="header">
+							<h:outputText value="Rem." />
+						</f:facet>
+						
+							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{devedorController.remover(professorTab.id)}" >
+								<p:confirm header="Confirmação" message="Tem certeza que deseja remover ?" icon="ui-icon-alert" />
+							</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

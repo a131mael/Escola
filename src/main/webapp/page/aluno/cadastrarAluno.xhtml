@@ -7,92 +7,54 @@
 
 	<ui:define name="content"
 		rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
-		<h:form style="width:100%; border:none">
+		<h:form id="form" style="width:100%; border:none">
 
-			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+			<h:panelGrid id="panelPrincipal" columns="0" width="100%;" styleClass="alinharTopo"
 				style="margin-top: -30px;width:92%">
 
-				<p:tabView>
-					<p:tab title="Dados do aluno">
-						<h:panelGrid columns="2" border="0">
-
-							<h:outputLabel for="name" value="Nome(*): "
-								style="font-size: 13px; width:180px" />
-							<p:inputText id="nome" title="" value="#{aluno.nomeAluno}"
-								style="font-size: 15px; width:280px" />
-
-							<h:outputLabel value="Codigo(*): "
-								style="font-size: 13px; width:180px" />
-							<p:inputText title="" value="#{aluno.codigo}"
-								style="font-size: 15px; width:280px" />
-
-							<h:outputLabel value="Série "
-								style="font-size: 13px; width:180px" />
-							<p:selectOneMenu id="serie" style="width: 256px;"
-								value="#{aluno.serie}">
-								<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
-									var="country" itemLabel="#{country.name}"
-									itemValue="#{country}" />
-								<p:ajax event="change" process="@this" />
-							</p:selectOneMenu>
-
-							<h:outputLabel value="Periodo: "
-								style="font-size: 13px; width:180px" />
-							<p:selectOneMenu id="periodo" style="width: 256px;"
-								value="#{aluno.periodo}">
-								<f:selectItems value="#{CombosEspeciaisMB.getPeriodos()}"
-									var="country" itemLabel="#{country.name}"
-									itemValue="#{country}" />
-								<p:ajax event="change" process="@this" />
-							</p:selectOneMenu>
-
-							<h:outputLabel value="Endereço: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.endereco}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-
-							<h:outputLabel value="Bairro: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.bairro}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-
-							<h:outputLabel value="CEP: " style="font-size: 13px; width:180px" />
-							<p:inputMask id="cpf" value="#{aluno.cep}" mask="99 999-999"
-								style="font-size: 15px; width:275px" />
-
-							<h:outputLabel value="Cidade: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.bairro}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-
-							<h:outputLabel value="Nacionalidade: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.nacionalidade}"
-								style="font-size: 15px; width:280px" />
-
-							<h:outputLabel value="Nascimento: "
-								style="font-size: 13px; width:180px" />
-							<p:calendar value="#{aluno.dataNascimento}" pattern="dd/MM/yyyy"
-								mask="true" style="font-size: 15px; width:280px" />
-
-							<h:outputLabel value="Sexo: " style="font-size: 13px; width:120px" />
-							<p:selectOneMenu  style="width: 160px;"
-								value="#{aluno.sexo}">
-								<f:selectItems value="#{CombosEspeciaisMB.getSexo()}"
-									var="serie" itemLabel="#{serie.name}"
-									itemValue="#{serie}" />
-								<p:ajax event="change" process="@this" />
-							</p:selectOneMenu>
-
-							<h:outputLabel value="Administrar Paracetamol?: "
-								style="font-size: 13px; width:180px" />
-							<h:selectBooleanCheckbox value="#{aluno.administrarParacetamol}" />
-
-						</h:panelGrid>
-
+				<p:tabView id="tabView">
+					<p:tab id="tabAluno" title="Dados do aluno">
+						
+					<h:panelGrid columns="2" border="0">
+						<h:commandButton id="adicionar" value="Adicionar" action="#{alunoController.adicionarIrmao()}" >
+							<p:ajax process="@this" update="form:tabView:panelIrmaos,tabView"/>
+						</h:commandButton>
+						<p:commandButton id="remover" icon="ui-icon-minusthick" action="#{alunoController.removerIrmao()}" ></p:commandButton>
+					</h:panelGrid>
+					
+					<h:panelGrid id="panelIrmaos" columns="1" border="0">
+					
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno}" />
+	    					<ui:param name="visible" value="#{true}" />
+						</ui:include>
+						
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno.irmao1}" />
+	    					<ui:param name="visible" value="#{alunoController.irmao1}" />
+						</ui:include>
+						
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno.irmao2}" />
+	    					<ui:param name="visible" value="#{alunoController.irmao2}" />
+						</ui:include>
+						
+						
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno.irmao3}" />
+	    					<ui:param name="visible" value="#{alunoController.irmao3}" />
+						</ui:include>
+						
+						
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno.irmao4}" />
+	    					<ui:param name="visible" value="#{alunoController.irmao4}" />
+						</ui:include>
+					
+					</h:panelGrid>
+					
+						
+						
 					</p:tab>
 					<p:tab title="Dados Pai do Aluno">
 						<h:panelGrid columns="2" border="0">
@@ -226,6 +188,16 @@
 						</h:panelGrid>
 
 					</p:tab>
+					<p:tab title="Boletos" rendered="#{aluno.boletos eq null?false:true}">
+						<ui:include src="cmpAlunoBoletos.xhtml">
+	    					<ui:param name="parametro" value="#{aluno}" />
+	    					<ui:param name="visible" value="#{aluno.boletos eq null?false:true}" />
+					</ui:include>
+												
+
+					</p:tab>
+					
+					
 					<p:tab title="Contrato">
 						<h:panelGrid columns="2" border="0">
 							<h:outputLabel value="Nome Responsável: "
@@ -239,6 +211,37 @@
 							<p:inputText value="#{aluno.cpfResponsavel}"
 								style="font-size: 15px; width:275px">
 							</p:inputText>
+							
+							<h:outputLabel value="RG Responsável: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{aluno.rgResponsavel}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+							
+							<h:outputLabel value="Endereço: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{aluno.endereco}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+
+							<h:outputLabel value="Bairro: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{aluno.bairro}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+
+							
+							<h:outputLabel value="Cidade: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{aluno.bairro}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+							
+
+							<h:outputLabel value="CEP: " style="font-size: 13px; width:180px" />
+							<p:inputMask id="cpf" value="#{aluno.cep}" mask="99 999-999"
+								style="font-size: 15px; width:275px" />
+							
 
 
 							<h:outputLabel value="Nº Parcelas: "
@@ -253,9 +256,25 @@
 								style="font-size: 15px; width:275px">
 							</p:inputText>
 
-							<h:outputLabel value="Valor Total :"
+							<h:outputLabel value="Vencimento:  "
 								style="font-size: 13px; width:180px" />
-							<p:inputText style="font-size: 15px; width:275px">
+								<h:panelGrid id="panelVencimento" columns="2">
+									<p:selectOneMenu  style="width: 160px;"
+										value="#{aluno.vencimentoUltimoDia}" >
+										<f:selectItem itemLabel="No dia" itemValue="#{false}" />
+										<f:selectItem itemLabel="Vence ultimo dia" itemValue="#{true}" />
+										<p:ajax event="blur" process="@this" update="form:tabView:diaVencimento"/>
+									</p:selectOneMenu>
+							
+									<p:inputText id="diaVencimento" value="#{aluno.diaVencimento}"
+										style="font-size: 15px; width:275px" rendered="#{!aluno.vencimentoUltimoDia}">
+									</p:inputText>
+								
+								</h:panelGrid>
+
+							<h:outputLabel value="Valor Total :"
+								style="font-size: 13px; width:180px" rendered="false"/>
+							<p:inputText style="font-size: 15px; width:275px" rendered="false">
 							</p:inputText>
 
 

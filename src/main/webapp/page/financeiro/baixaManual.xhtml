@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" style="width:100%; border:none; height:100%"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
+
+			
+			<h:panelGrid id="panelSche" columns="4" columnClasses="value" width="98%" style="height:100%">
+				
+				<h:outputText value="Nome Crianca:" style="font-size: 12px; padding-right:10px !important"  styleClass="alinharDireita"/>
+				<p:inputText value="#{financeiroController.nomeAluno}" style="width:300px; " />
+				
+				<h:outputText value="Nome Responsavel:" style="font-size: 12px; padding-right:10px !important"  styleClass="alinharDireita"/>
+				<p:inputText value="#{financeiroController.nomeResponsavel}" style="width:300px;" />
+			
+				<h:outputText value="CPF responsavel:" style="font-size: 12px; padding-right:10px !important" styleClass="alinharDireita"/>
+				<p:inputText value="#{financeiroController.cpfResponsavel}" style="width:300px;" />
+			
+				<h:outputText value="Nº Documento:" style="font-size: 12px; padding-right:10px !important" styleClass="alinharDireita"/>
+				<p:inputText value="#{financeiroController.nDocumento}" style="width:300px;" />
+				
+				<p:commandButton id="buscar" ajax="false"
+					value="Buscar"
+					action="#{financeiroController.buscarAluno()}"
+					icon="ui-icon-bookmark">
+				</p:commandButton>
+				<br/>
+			
+			</h:panelGrid>
+			<p:dataTable id="basicDT" var="alun" value="#{financeiroController.alunosEcontrados}"
+				emptyMessage="Nenhum resultado encontrado" rendered="#{financeiroController.alunosEcontrados != null}">
+		        <f:facet name="header">
+		        </f:facet>
+		        <p:column headerText="Codigo">
+		            <h:outputText value="#{alun.codigo}" />
+		        </p:column>
+		        <p:column headerText="Crianca">
+		            <h:outputText value="#{alun.nomeAluno}" />
+		        </p:column>
+		        <p:column headerText="Responsavel">
+		            <h:outputText value="#{alun.nomeResponsavel}" />
+		        </p:column>
+		        <p:column headerText="CPF Responsavel">
+		            <h:outputText value="#{alun.cpfResponsavel}" />
+		        </p:column>
+		        <p:column style="text-align: center">
+		             <p:commandButton update="form:boletos" icon="ui-icon-search" title="Ver">
+		                <f:setPropertyActionListener value="#{alun}" target="#{financeiroController.alunoBaixaSelecionado}" />
+		            </p:commandButton>
+		        </p:column>
+		    </p:dataTable>
+		    <br/>
+		    <br/>
+		    <h:panelGrid id="panelBoletos">
+			    <p:dataTable id="boletos" var="bolet" value="#{financeiroController.alunoBaixaSelecionado.boletos}"
+					emptyMessage="Nenhum resultado encontrado" >
+			        <f:facet name="header">
+			        </f:facet>
+			        <p:column headerText="Codigo">
+			            <h:outputText value="#{bolet.nossoNumero}" />
+			        </p:column>
+			        <p:column headerText="Responsavel">
+			            <h:outputText value="#{bolet.pagador.nomeResponsavel}" />
+			        </p:column>
+			        <p:column headerText="Juros e Multa" style="text-align: center">
+			            <h:outputText value="#{financeiroController.verificaJurosMultaFinalBoleto(bolet)}" />
+			        </p:column>
+			        <p:column headerText="Valor Final" style="text-align: center">
+			            <h:outputText value="#{financeiroController.verificaValorFinalBoleto(bolet)}" />
+			        </p:column>
+			        
+			        <p:column headerText="Vencimento" style="text-align: center">
+			            <h:outputText value="#{bolet.vencimento}" >
+			             <f:convertDateTime pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>
+			        <p:column headerText="Valor Pago" style="text-align: center">
+			            <h:outputText value="#{bolet.valorPago}" />
+			        </p:column>
+			        
+			        <p:column style="text-align: center">
+			             <p:commandButton  title="Baixar" actionListener="#{financeiroController.baixarBoleto(bolet)}" disabled="#{financeiroController.isBoletoPago(bolet)}">
+			             <p:ajax process="@this" update="form"/>
+			                <f:setPropertyActionListener value="#{car}" target="#{financeiroController.alunoBaixaSelecionado}" />
+			                <p:confirm header="Confirmacao" message="Tem certeza que deseja baixar o boleto com vencimento #{financeiroController.formatarData(bolet.vencimento)} ?" icon="ui-icon-alert" />
+			            </p:commandButton>
+			        </p:column>
+			    </p:dataTable>
+			    
+		    </h:panelGrid>
+		    			
+				 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			    </p:confirmDialog>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

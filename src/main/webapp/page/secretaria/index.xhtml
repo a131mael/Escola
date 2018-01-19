@@ -5,7 +5,7 @@
 	template="/WEB-INF/templates/templateADM.xhtml">
 
 	<ui:define name="content">
-		<h:form style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		<h:form style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
 			<center>
 				<h1>ADONAI</h1>
 				<div>

@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none; height:100%"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+
+			<p:growl id="messages" showDetail="true" />
+			
+				<h:panelGrid id="panelSche" columns="" columnClasses="value" width="98%" style="height:100%">
+				<h:outputText value="Importar CNAB SICOOB:" />
+				
+				<p:commandButton id="boletim" ajax="false"
+					value="Importar CNAB"
+					action="#{alunoController.importarCNAB240Sicoob()}"
+					icon="ui-icon-bookmark">
+				</p:commandButton>
+				
+				<h:outputText value="Gerar arquivo de BAIXA:" />
+				
+				<p:commandButton ajax="false"
+					value="Gerar Arquivo de Baixa"
+					action="#{alunoController.gerarArquivoBaixa()}"
+					icon="ui-icon-bookmark">
+				</p:commandButton>
+
+			</h:panelGrid>
+				
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

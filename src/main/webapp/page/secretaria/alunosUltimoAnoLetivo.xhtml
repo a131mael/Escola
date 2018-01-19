@@ -29,6 +29,9 @@
 				<p:tooltip  for="negativoDebito" value="Negativo Debito" position="top"/>
 				<p:tooltip  for="contrato" value="Contrato" position="top"/>
 				<p:tooltip  for="atestadoFrequencia" value="Atestado de Frequencia" position="top"/>
+				<p:tooltip  for="historico" value="Histórico" position="top"/>
+				<p:tooltip  for="rematricular" value="Rematricular" position="top"/>
+				
 			
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
 				<p:separator style=" height:25px;" />
@@ -50,6 +53,15 @@
 								 disabled="#{!alunoController.alunoSelecionado}">
 								<p:fileDownload value="#{alunoController.imprimirAtestadoFrequencia()}" />
 				</p:commandButton> 
+				<p:commandButton id="historico" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 disabled="#{!alunoController.alunoSelecionado}">
+								<p:fileDownload value="#{alunoController.imprimirHistorico()}" />
+				</p:commandButton>
+			
+				<p:commandButton id="rematricular" update="@form"  icon="ui-icon-check" action="#{alunoController.rematricularAlunoAntigo()}" 
+								alt="Rematricular" disabled="#{!alunoController.alunoSelecionado}">
+				</p:commandButton>
+			 
 			</h:panelGrid>
 
 			<h:panelGrid width="98%">

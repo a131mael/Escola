@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content"
+		rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		<h:form id="form" style="width:100%; border:none">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+
+				<p:tabView id="tabs">
+					<p:tab id="dadosALunoTab" title="Devedor">
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="CPF(*): "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask mask="999.999.999-99"  value="#{devedor.cpf}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel for="name" value="Nome(*): "
+								style="font-size: 13px; width:180px" />
+							<p:inputText id="nome" title="" value="#{devedor.nome}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Enviado Para cobrança da CDL: "
+								style="font-size: 13px; width:180px" />
+							<p:selectOneMenu id="periodo" style="width: 256px;"
+								value="#{devedor.enviadoParaCobrancaCDL}">
+								<f:selectItems value="#{CombosEspeciaisMB.simNao}" var="country"
+									itemLabel="#{country.name}" itemValue="#{country}" />
+								<p:ajax event="change" process="@this" />
+							</p:selectOneMenu>
+							
+							<h:outputLabel value="Já saiu do escolar ?: "
+								style="font-size: 13px; width:180px" />
+							<p:selectOneMenu  style="width: 256px;"
+								value="#{devedor.contratoTerminado}">
+								<f:selectItems value="#{CombosEspeciaisMB.simNao}" var="country"
+									itemLabel="#{country.name}" itemValue="#{country}" />
+								<p:ajax event="change" process="@this" />
+							</p:selectOneMenu>
+
+							<h:outputLabel value="Colocado SPC ?: "
+									style="font-size: 13px; width:180px" />
+							<p:selectOneMenu  style="width: 256px;"
+								value="#{devedor.enviadoSPC}">
+								<f:selectItems value="#{CombosEspeciaisMB.simNao}" var="country"
+									itemLabel="#{country.name}" itemValue="#{country}" />
+								<p:ajax event="change" process="@this" />
+							</p:selectOneMenu>
+
+
+							<h:outputLabel value="Endereço: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{devedor.endereco}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+
+							<h:outputLabel value="Bairro: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{devedor.bairro}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+
+							<h:outputLabel value="CEP: " style="font-size: 13px; width:180px" />
+							<p:inputMask id="cpf" value="#{devedor.cep}" mask="99 999-999"
+								style="font-size: 15px; width:275px" />
+								
+							<h:outputLabel value="Celular 1: " style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{devedor.telefoneCelular}" mask="9 9999 9999"
+								style="font-size: 15px; width:275px" />
+								
+							<h:outputLabel value="Celular 2: " style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{devedor.telefoneCelular2}" mask="9 9999 9999"
+								style="font-size: 15px; width:275px" />
+								
+							<h:outputLabel value="Residencial: " style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{devedor.telefoneResidencial}" mask="9999 9999"
+								style="font-size: 15px; width:275px" />
+								
+						</h:panelGrid>
+
+						<h:panelGrid styleClass="alinharTopo" columns="2"
+							style="width:100%">
+							<p:commandButton id="adicionar" icon="ui-icon-plus"
+								action="#{devedorController.adicionarBoleto()}"
+								update="tableBoletos" />
+							<p:dataTable id="tableBoletos" value="#{devedor.boletos}"
+								var="boleto" type="ordered">
+								<f:facet name="header">
+							            Boletos
+							        </f:facet>
+								<p:column headerText="Numero">
+									<p:inputText value="#{boleto.nossoNumero}">
+										<p:ajax event="change" process="@this" />
+									</p:inputText>
+								</p:column>
+								<p:column headerText="Data Geração">
+									<p:calendar value="#{boleto.emissao}" pattern="dd/MM/yyyy"
+										mask="true" style="font-size: 15px; ">
+										<p:ajax event="change" process="@this" />
+									</p:calendar>
+								</p:column>
+								<p:column headerText="Numero Contrato">
+									<p:inputText value="#{devedor.numeroContrato}">
+										<p:ajax event="change" process="@this" />
+									</p:inputText>
+								</p:column>
+								<p:column headerText="Valor">
+									<p:inputText value="#{boleto.valorNominal}"
+										onkeydown="mascara(this,moeda)">
+										<p:ajax event="change" process="@this" />
+										
+									</p:inputText>
+								</p:column>
+
+								<p:column style="text-align: center; width:8%"
+									styleClass="#{devedorController.estaEmUmaTurma(professorTab.id)?'':'marcarLinha'}">
+									<f:facet name="header">
+										<h:outputText value="Remover" />
+									</f:facet>
+
+									<p:commandButton update="tableBoletos" icon="ui-icon-trash"
+										action="#{devedorController.remover(boleto)}">
+										<p:confirm header="Confirmação" message="Tem certeza que deseja remover ?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</p:column>
+
+							</p:dataTable>
+
+							<h:panelGrid styleClass="alinharTopo">
+
+							</h:panelGrid>
+
+						</h:panelGrid>
+					</p:tab>
+
+					<p:tab title="Observações">
+						<h:panelGrid columns="2" border="0" width="100%" >
+							<h:outputLabel value="Observações: "
+								style="font-size: 13px; width:14px" />
+							<p:inputTextarea value="#{devedor.observacao}" style="width:100%;height:100px !important"/>
+						</h:panelGrid>
+					</p:tab>
+
+				</p:tabView>
+			</h:panelGrid>
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{devedorController.voltar()}" value="Voltar" />
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{devedorController.salvar()}" value="Salvar" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

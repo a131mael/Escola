@@ -107,5 +107,17 @@ public class ConfiguracaoService extends Service {
 		return user;
 	}
 	
+	public long getSequencialArquivo(){
+		return getConfiguracao().getSequencialArquivoCNAB();
+	}
+	
+	public void incrementaSequencialArquivoCNAB(){
+		long sequecial = getSequencialArquivo();
+		sequecial++;
+		Configuracao conf = getConfiguracao();
+		conf.setSequencialArquivoCNAB(sequecial);
+		save(conf);
+	}
+	
 }
 

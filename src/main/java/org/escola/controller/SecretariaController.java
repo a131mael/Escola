@@ -18,26 +18,43 @@ package org.escola.controller;
 
 import javax.enterprise.inject.Model;
 import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+
+import org.escola.util.UtilFinalizarAnoLetivo;
 
 @Model
 @ViewScoped
 public class SecretariaController {
-	
-	public String linkAlunos(){
+
+	@Inject
+	private UtilFinalizarAnoLetivo finalizarAnoLetivo;
+
+	public void finalizarAnoLetivo() {
+		int quantidade = finalizarAnoLetivo.getAlunosAlunoLetivoAtual().size();
+		int gerados = 0;
+		int quantidadeNoLote = 300;
+		int inicio = 0;
+		while (inicio <= quantidade) {
+			finalizarAnoLetivo.finalizar(inicio,quantidadeNoLote);
+			inicio +=quantidadeNoLote +1;
+		}
+		finalizarAnoLetivo.alterarConfiguracao();
+	}
+
+	public String linkAlunos() {
 		return "listagemAlunos";
 	}
 
-	public String linkProfessores(){
+	public String linkProfessores() {
 		return "listagemProfessores";
 	}
 
-	public String linkCalendario(){
+	public String linkCalendario() {
 		return "listagemCalendario";
 	}
 
-	public String linkTurmas(){
+	public String linkTurmas() {
 		return "listagemTurmas";
 	}
 
-	
 }

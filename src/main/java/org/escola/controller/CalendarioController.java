@@ -71,7 +71,7 @@ public class CalendarioController implements Serializable{
 	
 	@PostConstruct
 	private void init() {
-		mudarDatas.mudaDataDosEventosParaAnoLetivoAtual();
+		mudarDatas.mudarDataDosEventos();
 		evento = new Evento();
 		 setEventModel(new DefaultScheduleModel());
 		 montarAgenda();
