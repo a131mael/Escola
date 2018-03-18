@@ -281,18 +281,18 @@
 			<scope>provided</scope>
 		</dependency>
 
-		 <dependency>
+		<dependency>
 			<groupId>org.escola.beans</groupId>
 			<artifactId>EscolaBEANS</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>br.com.caelum.stella</groupId>
 			<artifactId>caelum-stella-boleto</artifactId>
 			<version>2.1.2</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/br.com.caelum.stella/caelum-stella-core -->
 		<dependency>
 			<groupId>br.com.caelum.stella</groupId>
@@ -306,7 +306,22 @@
 			<artifactId>jasperreports</artifactId>
 			<version>5.5.0</version>
 		</dependency>
-		
+
+
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/javax.xml/jaxrpc-api -->
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxrpc-api</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

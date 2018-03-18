@@ -175,6 +175,14 @@
 						filterOptions="#{CombosEspeciaisMB.periodosSelectIItem}">
 						<h:outputText value="#{professorTab.periodo.name}" />
 					</p:column>
+					
+					<p:column style="text-align: center; width:8%" 
+					styleClass="#{alunoController.marcarLinha(professorTab.id)}">
+						<f:facet name="header">
+							<h:outputText value="Email" />
+						</f:facet>
+							<p:commandButton update="tbl" icon="ui-icon-mail-closed" action="#{alunoController.enviarEmailBoletoAtualEAtrasado(professorTab.id)}" />
+					</p:column>
 										
 				</p:dataTable>
 

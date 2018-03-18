@@ -10,7 +10,11 @@ import org.escola.model.Boleto;
 public class Verificador {
 
 	public static Double getValorFinal(Boleto boleto) {
-		return boleto.getValorNominal() + getJurosMulta(boleto) - getDesconto(boleto);
+		if(getStatusEnum(boleto).equals(StatusBoletoEnum.ATRASADO)){
+			return boleto.getValorNominal() + getJurosMulta(boleto);
+		}else{
+			return boleto.getValorNominal() -getDesconto(boleto);
+		}
 	}
 
 	public static Double getDesconto(Boleto boleto) {
@@ -55,12 +59,14 @@ public class Verificador {
 		Date vencimento = Formatador.formatDateSomenteDiaMesAno(boleto.getVencimento());
 		Date amanha = Formatador.formatDateSomenteDiaMesAno(tomorrow.getTime());
 		long diasVencimento = Util.diferencaEntreDatas(amanha, vencimento);
-		if(boleto.getId()==3447L){
+		if(boleto.getId()==3808L){
 			System.out.println("a");
 		}
 		if (pago(boleto)) {
 			return StatusBoletoEnum.PAGO;
-		} else if (diasVencimento > 0) {
+		}else if(baixado(boleto)){	
+			return StatusBoletoEnum.CANCELADO;
+		} else if (diasVencimento > 3) {
 			return StatusBoletoEnum.ATRASADO;
 		} else if (diasVencimento == 0) {
 			return StatusBoletoEnum.VENCE_HOJE;
@@ -79,9 +85,19 @@ public class Verificador {
 				if (boleto.getValorNominal() -20 <= (boleto.getValorPago())) {
 					return true;
 				}
-			}else if(boleto.getValorNominal() <= boleto.getValorPago()){
+			}else if(boleto.getValorNominal() -20 <= boleto.getValorPago()){
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	private static boolean baixado(org.escola.model.Boleto boleto) {
+		if(boleto.getBaixaGerada() != null && boleto.getBaixaGerada()){
+			return true;
+		}
+		if(boleto.getBaixaManual() != null && boleto.getBaixaManual()){
+			return true;
 		}
 		return false;
 	}

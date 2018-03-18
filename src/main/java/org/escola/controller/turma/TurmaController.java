@@ -245,17 +245,14 @@ public class TurmaController extends AuthController implements Serializable {
 			}
 		}
 		
-		
 		OfficeDOCUtil.unionDocs2(caminhoFinalPasta, turma.getNome()+".doc");
 		
 		String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+turma.getNome()+".zip";
 		CompactadorZip.compactarParaZip(arquivoSaida, caminhoFinalPasta);
 		
-		
 		InputStream stream =  new FileInputStream(arquivoSaida);
 		return FileDownload.getContentDoc(stream, turma.getNome()+".zip");
 
-		
 	}
 	
 	public void gerarBoletim(Aluno aluno,String pasta) throws IOException {

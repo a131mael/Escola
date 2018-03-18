@@ -24,7 +24,7 @@
                              resizableColumns="true"
                              rows="20"
   							 id="tbboleto" var="professorTab"
-							 value="#{parametro.boletos}"
+							 value="#{alunoController.getBoletosParaPagar(parametro)}"
 							 sortOrder="#{professorTab.vencimento}"
 							 editable="true" editMode="cell"
 							 >

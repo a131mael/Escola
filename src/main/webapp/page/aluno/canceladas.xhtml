@@ -31,6 +31,7 @@
 				<p:tooltip for="editar" value="Editar" position="top" />
 				<p:tooltip for="contrato" value="Contrato" position="top" />
 				<p:tooltip for="boleto" value="Boleto" position="top" />
+				<p:tooltip for="restaurar" value="Restaurar" position="top" />
 				<p:tooltip for="cnab" value="CNAB240" position="top" />
 				<p:tooltip for="gerarBoleto" value="GERAR BOLETOS" position="top" />
 
@@ -57,9 +58,16 @@
 					disabled="#{!alunoController.alunoSelecionado}">
 					<p:fileDownload value="#{alunoController.gerarCNB240()}" />
 				</p:commandButton>
-				<p:commandButton id="gerarBoleto"
+				
+				<p:commandButton id="gerarBoleto" 
 					action="#{alunoController.gerarBoletoModel()}" alt="GerarBoleto"
 					rendered="#{true}" />
+					
+				<p:commandButton id="restaurar" icon="ui-icon-transfer-e-w"
+					action="#{alunoController.restaurarCancelado()}" alt="Restaurar Cancelado"
+					rendered="#{true}" 
+					update="@form"
+					disabled="#{!alunoController.alunoSelecionado}" />
 
 				<h:panelGrid columns="1"
 					style="float:right; float: none !important;">

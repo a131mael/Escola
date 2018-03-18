@@ -16,11 +16,27 @@
  */
 package org.escola.controller;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.inject.Model;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import org.escola.model.Aluno;
+import org.escola.service.AlunoService;
+import org.escola.service.ConfiguracaoService;
+import org.escola.util.CompactadorZip;
+import org.escola.util.FileDownload;
+import org.escola.util.FileUtils;
 import org.escola.util.UtilFinalizarAnoLetivo;
+import org.primefaces.model.StreamedContent;
 
 @Model
 @ViewScoped
@@ -28,6 +44,12 @@ public class SecretariaController {
 
 	@Inject
 	private UtilFinalizarAnoLetivo finalizarAnoLetivo;
+	
+	@Inject
+	private ConfiguracaoService configuracaoService;
+	
+	@Inject
+	private AlunoService alunoService;
 
 	public void finalizarAnoLetivo() {
 		int quantidade = finalizarAnoLetivo.getAlunosAlunoLetivoAtual().size();
@@ -41,6 +63,43 @@ public class SecretariaController {
 		finalizarAnoLetivo.alterarConfiguracao();
 	}
 
+	
+	public StreamedContent gerarCNAB240_TodosAlunos() {
+		try {
+			Map<String,Object> parametros = new HashMap<>();
+			parametros.put("removido", false);
+			List<Aluno> todosAlunos = alunoService.findAll(parametros);
+			long sequencialArquivo = configuracaoService.getSequencialArquivo() ;
+			String pasta = ""+System.currentTimeMillis();
+			String caminhoFinalPasta = System.getProperty("java.io.tmpdir") + pasta;
+			CompactadorZip.createDir(caminhoFinalPasta);
+			
+			for(Aluno al : todosAlunos){
+				String nomeArquivo = caminhoFinalPasta +System.getProperty("file.separator")+ "CNAB240_" + al.getCodigo() + ".txt";
+				InputStream stream = FileUtils.gerarCNB240(sequencialArquivo+"", nomeArquivo, al);
+				configuracaoService.incrementaSequencialArquivoCNAB();
+				sequencialArquivo++;
+				
+				FileUtils.inputStreamToFile(stream, nomeArquivo);
+			}
+			
+			String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+"escolartodasCriancasCNAB.zip";
+			CompactadorZip.compactarParaZip(arquivoSaida, caminhoFinalPasta);
+			
+			InputStream stream2 =  new FileInputStream(arquivoSaida);
+			return FileDownload.getContentDoc(stream2, "escolartodasCriancasCNAB.zip");
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
 	public String linkAlunos() {
 		return "listagemAlunos";
 	}

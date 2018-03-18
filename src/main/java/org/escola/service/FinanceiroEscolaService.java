@@ -15,6 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.escola.model.Aluno;
 import org.escola.model.Boleto;
 import org.escola.util.Service;
 
@@ -78,7 +79,8 @@ public class FinanceiroEscolaService extends Service {
 				sql.append(" and bol.vencimento < '");
 				sql.append(c2.getTime());
 				sql.append("'");
-
+				sql.append(" and bol.pagador.removido = false");
+				
 				Query query = em.createQuery(sql.toString());
 				Double boleto = (Double) query.getSingleResult();
 				return boleto;
@@ -107,7 +109,8 @@ public class FinanceiroEscolaService extends Service {
 				sql.append(" and bol.dataPagamento < '");
 				sql.append(c2.getTime());
 				sql.append("'");
-
+				sql.append(" and bol.pagador.removido = false");
+				
 				Query query = em.createQuery(sql.toString());
 				Object retorno = query.getSingleResult();
 				Double boleto = null;
@@ -143,15 +146,18 @@ public class FinanceiroEscolaService extends Service {
 				sql.append(" and bol.vencimento < '");
 				sql.append(c2.getTime());
 				sql.append("'");
-
+				sql.append(" AND bol.pagador.removido = false ");
 				Query query = em.createQuery(sql.toString());
 				List<Boleto> boleto = (List<Boleto>) query.getResultList();
+				
 				return boleto;
+				
 			} catch (NoResultException nre) {
 				return null;
 			}
 		}
 		return null;
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -248,7 +254,10 @@ public class FinanceiroEscolaService extends Service {
 			return boleto;
 		} catch (NoResultException nre) {
 			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return null;
 
 	}
 
@@ -259,6 +268,7 @@ public class FinanceiroEscolaService extends Service {
 			bol.setDataPagamento(boleto.getDataPagamento());
 			bol.setBaixaManual(boleto.getBaixaManual());
 			bol.setConciliacaoPorExtrato(boleto.getConciliacaoPorExtrato());
+			bol.setBaixaGerada(boleto.getBaixaGerada());
 			em.merge(bol);
 		}
 	}
@@ -270,4 +280,136 @@ public class FinanceiroEscolaService extends Service {
 		boletoMerged.setValorNominal(boleto.getValorNominal());
 		em.merge(boletoMerged);
 	}
+
+
+	public void saveCNABENviado(Aluno aluno){
+		Aluno al =  em.find(Aluno.class, aluno.getId());
+		al.setCnabEnviado(true);
+		em.merge(al);
+	}
+	
+	public List<Aluno> getAlunosRemovidos() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT distinct(al) from  Boleto bol ");
+		sql.append("left join bol.pagador al ");
+		sql.append("where 1=1 ");
+		sql.append(" and al.removido = true ");
+		sql.append(" and (bol.baixaGerada = false or bol.baixaGerada is null)");
+
+		Query query = em.createQuery(sql.toString());
+
+		@SuppressWarnings("unchecked")
+		List<Aluno> alunos = query.getResultList();
+		for (Aluno al : alunos) {
+			al.getBoletos().size();
+		}
+
+		return alunos;
+	}
+	
+	public List<Aluno> getAlunosCNABNaoEnviado() {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT distinct(al) from  Aluno al ");
+			sql.append("where 1=1 ");
+			sql.append("and (al.cnabEnviado = false or al.cnabEnviado is null )");
+			sql.append("and al.removido=false");
+
+			Query query = em.createQuery(sql.toString());
+
+			@SuppressWarnings("unchecked")
+			List<Aluno> alunos = query.getResultList();
+
+			return alunos;
+		} catch (NoResultException nre) {
+			return null;
+		}
+	}
+	
+	public List<org.escola.model.Boleto> getBoletosAtrasados(int mes) {
+	
+		return getBoletosAtrasadosAluno(mes, null);
+	}
+
+	public List<Boleto> getBoletosAtrasadosAluno(int mes, Long idAluno) {
+		if (mes >= 0) {
+			try {
+				Calendar c = Calendar.getInstance();
+				c.set(Calendar.YEAR, anoLetivo);
+				c.set(Calendar.MONTH, mes);
+				c.set(Calendar.MINUTE, 59);
+				c.set(Calendar.HOUR, 23);
+				
+
+				StringBuilder sql = new StringBuilder();
+				sql.append("SELECT bol from Boleto bol ");
+				sql.append("where 1=1 ");
+				sql.append(" and bol.vencimento <= '");
+				sql.append(c.getTime());
+				sql.append("'");
+				if(idAluno != null){
+					sql.append(" and bol.pagador.id = ");
+					sql.append(idAluno);
+				}
+				sql.append(" and (bol.valorPago = 0");
+				sql.append(" or bol.valorPago is null)");
+				sql.append(" and (bol.baixaManual = false");
+				sql.append(" or bol.baixaManual is null)");
+
+				
+				sql.append(" and (bol.conciliacaoPorExtrato = false");
+				sql.append(" or bol.conciliacaoPorExtrato is null)");
+				
+				
+				sql.append(" and (bol.baixaGerada = false");
+				sql.append(" or bol.baixaGerada is null)");
+				
+				
+				Query query = em.createQuery(sql.toString());
+				List<org.escola.model.Boleto> boleto = (List<org.escola.model.Boleto>) query.getResultList();
+				return boleto;
+			} catch (NoResultException nre) {
+				return null;
+			}
+		}
+		return null;
+
+	}
+
+	public Boleto getBoletoMes(int mes ,Long idAluno) {
+		if (mes >= 0) {
+			try {
+				Calendar c = Calendar.getInstance();
+				c.set(anoLetivo, mes, 1, 0, 0, 0);
+				Calendar c2 = Calendar.getInstance();
+				c2.set(anoLetivo, mes, c.getMaximum(Calendar.MONTH), 23, 59, 59);
+
+				StringBuilder sql = new StringBuilder();
+				sql.append("SELECT bol from Boleto bol ");
+				sql.append("where 1=1 ");
+				sql.append(" and bol.vencimento >= '");
+				sql.append(c.getTime());
+				sql.append("'");
+				sql.append(" and bol.vencimento < '");
+				sql.append(c2.getTime());
+				sql.append("'");
+				if(idAluno != null){
+					sql.append(" and bol.pagador.id = ");
+					sql.append(idAluno);
+				}
+				sql.append(" AND bol.pagador.removido = false ");
+				Query query = em.createQuery(sql.toString());
+				Boleto boleto = (Boleto) query.getSingleResult();
+				return boleto;
+			} catch (NoResultException nre) {
+				return null;
+			}
+		}
+		return null;
+
+	}
+
+	
 }
+
+

@@ -52,52 +52,50 @@ public class AlunoService extends Service {
 	@Inject
 	private ConfiguracaoService configuracaoService;
 
-	
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
 
 	public Aluno findById(EntityManager em, Long id) {
-		Aluno al = em.find(Aluno.class, id); 
-		if(al.getIrmao1() != null){
+		Aluno al = em.find(Aluno.class, id);
+		if (al.getIrmao1() != null) {
 			al.getIrmao1().getAnoLetivo();
 		}
-		
-		if(al.getIrmao2() != null){
+
+		if (al.getIrmao2() != null) {
 			al.getIrmao2().getAnoLetivo();
 		}
-		
-		if(al.getIrmao3() != null){
+
+		if (al.getIrmao3() != null) {
 			al.getIrmao3().getAnoLetivo();
 		}
-		
-		if(al.getIrmao4() != null){
+
+		if (al.getIrmao4() != null) {
 			al.getIrmao4().getAnoLetivo();
 		}
 		al.getBoletos().size();
-		
+
 		return al;
 	}
 
 	public Aluno findById(Long id) {
-		Aluno al = em.find(Aluno.class, id); 
-		if(al.getIrmao1() != null){
+		Aluno al = em.find(Aluno.class, id);
+		if (al.getIrmao1() != null) {
 			al.getIrmao1().getAnoLetivo();
 		}
-		
-		if(al.getIrmao2() != null){
+
+		if (al.getIrmao2() != null) {
 			al.getIrmao2().getAnoLetivo();
 		}
-		
-		if(al.getIrmao3() != null){
+
+		if (al.getIrmao3() != null) {
 			al.getIrmao3().getAnoLetivo();
 		}
-		
-		if(al.getIrmao4() != null){
+
+		if (al.getIrmao4() != null) {
 			al.getIrmao4().getAnoLetivo();
 		}
 		al.getBoletos().size();
-		
-		
+
 		return al;
 	}
 
@@ -124,6 +122,43 @@ public class AlunoService extends Service {
 			return new ArrayList<>();
 		}
 	}
+	
+	public List<Aluno> findAll(Map<String, Object> filtros) {
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Aluno> criteria = cb.createQuery(Aluno.class);
+			Root<Aluno> member = criteria.from(Aluno.class);
+			criteria.select(member).orderBy(cb.asc(member.get("nomeAluno")));
+			
+			final List<Predicate> predicates = new ArrayList<Predicate>();
+			for (Map.Entry<String, Object> entry : filtros.entrySet()) {
+
+				Predicate pred = cb.and();
+				if (entry.getValue() instanceof String) {
+					pred = cb.and(pred, cb.like(member.<String> get(entry.getKey()), "%" + entry.getValue() + "%"));
+				} else {
+					pred = cb.equal(member.get(entry.getKey()), entry.getValue());
+				}
+				predicates.add(pred);
+				// cq.where(pred);
+			}
+			
+			List<Aluno> als =em.createQuery(criteria).getResultList(); 
+			List<Aluno> aux = new ArrayList<>();
+			for(Aluno al: als){
+				al.getBoletos().size();
+				aux.add(al);
+			}
+			return aux;
+
+		} catch (NoResultException nre) {
+			return new ArrayList<>();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+
 
 	public List<Aluno> findAll(Serie serie, PerioddoEnum periodo) {
 		List<Aluno> alunos = new ArrayList<>();
@@ -195,7 +230,6 @@ public class AlunoService extends Service {
 		sql.append(idTurma);
 		sql.append(" and pt.aluno.removido = ");
 		sql.append(false);
-		
 
 		Query query = em.createQuery(sql.toString());
 
@@ -230,11 +264,12 @@ public class AlunoService extends Service {
 		return saveAluno(aluno, true);
 	}
 
-	public String removeCaracteresEspeciais(String texto){
+	public String removeCaracteresEspeciais(String texto) {
 		texto = texto.replaceAll("[^aA-zZ-Z1-9 ]", "");
 		return texto;
 	}
-	public Aluno saveAluno(Aluno aluno,boolean saveBrother) {
+
+	public Aluno saveAluno(Aluno aluno, boolean saveBrother) {
 		Aluno user = null;
 		try {
 
@@ -254,12 +289,12 @@ public class AlunoService extends Service {
 			if (aluno.getEndereco() != null) {
 				user.setEndereco(removeCaracteresEspeciais(aluno.getEndereco()));
 			}
-			if(aluno.getBairro() != null){
+			if (aluno.getBairro() != null) {
 				user.setBairro(removeCaracteresEspeciais(aluno.getBairro().replace("ç", "c")));
-				
+
 			}
 			user.setCep(aluno.getCep());
-			if(aluno.getCidade() != null){
+			if (aluno.getCidade() != null) {
 				user.setCidade(removeCaracteresEspeciais(aluno.getCidade().replace("ç", "c")));
 			}
 			user.setNacionalidade(aluno.getNacionalidade());
@@ -267,37 +302,37 @@ public class AlunoService extends Service {
 			user.setDataNascimento(aluno.getDataNascimento());
 			user.setDataMatricula(aluno.getDataMatricula());
 			user.setAdministrarParacetamol(aluno.isAdministrarParacetamol());
-			
+
 			user.setPeriodoProximoAno(aluno.getPeriodoProximoAno());
-			
-			if(aluno.getPeriodoProximoAno() == null){
+
+			if (aluno.getPeriodoProximoAno() == null) {
 				user.setPeriodoProximoAno(aluno.getPeriodo());
 			}
-			
+
 			user.setFaltas1Bimestre(aluno.getFaltas1Bimestre());
 			user.setFaltas2Bimestre(aluno.getFaltas2Bimestre());
 			user.setFaltas3Bimestre(aluno.getFaltas3Bimestre());
 			user.setFaltas4Bimestre(aluno.getFaltas4Bimestre());
-			if(aluno.getRemovido() == null){
+			if (aluno.getRemovido() == null) {
 				user.setRemovido(false);
-			}else{
+			} else {
 				user.setRemovido(aluno.getRemovido());
 			}
 			user.setCodigo(aluno.getCodigo());
 			user.setSexo(aluno.getSexo());
 			user.setNomeAvoHPaternoMae(aluno.getNomeAvoHPaternoMae());
-			user.setAnuidade(aluno.getAnuidade() != null ? aluno.getAnuidade():0);
-			if(aluno.getBairro() != null){
+			user.setAnuidade(aluno.getAnuidade() != null ? aluno.getAnuidade() : 0);
+			if (aluno.getBairro() != null) {
 				user.setBairro(removeCaracteresEspeciais(aluno.getBairro().replace("ç", "c")));
 			}
-			
+
 			user.setCep(aluno.getCep());
-			if(aluno.getCidade() != null){
+			if (aluno.getCidade() != null) {
 				user.setCidade(removeCaracteresEspeciais(aluno.getCidade().replace("ç", "c")));
 			}
 			user.setCpfMae(aluno.getCpfMae());
 			user.setCpfPai(aluno.getCpfPai());
-			if(aluno.getCpfResponsavel() != null){
+			if (aluno.getCpfResponsavel() != null) {
 				user.setCpfResponsavel(aluno.getCpfResponsavel().replace(".", "").replace("-", ""));
 			}
 			user.setRgResponsavel(aluno.getRgResponsavel());
@@ -323,8 +358,8 @@ public class AlunoService extends Service {
 			user.setTelefoneResidencialMae(aluno.getTelefoneResidencialMae());
 			user.setEmpresaTrabalhaMae(aluno.getTelefoneEmpresaTrabalhaMae());
 			user.setEmpresaTrabalhaPai(aluno.getEmpresaTrabalhaPai());
-			
-			if(aluno.getNomeResponsavel() != null){
+
+			if (aluno.getNomeResponsavel() != null) {
 				user.setNomeResponsavel(removeCaracteresEspeciais(aluno.getNomeResponsavel().toUpperCase()));
 			}
 			user.setNumeroParcelas(aluno.getNumeroParcelas());
@@ -337,24 +372,24 @@ public class AlunoService extends Service {
 			user.setSenha(aluno.getSenha());
 			user.setTelefone(aluno.getTelefone());
 			user.setEmergenciaLigarPara(aluno.getEmergenciaLigarPara());
-			
+
 			user.setDoenca(aluno.getDoenca());
 			user.setAlergico(aluno.getAlergico());
 			user.setNomeAlergias(aluno.getNomeAlergias());
 			user.setNomeDoencas(aluno.getNomeDoencas());
-			
+
 			user.setDiaVencimento(aluno.getDiaVencimento());
 			user.setVencimentoUltimoDia(aluno.isVencimentoUltimoDia());
-			if( user.getCidade() != null && user.getCidade().equalsIgnoreCase("Palhoa")){
+			if (user.getCidade() != null && user.getCidade().equalsIgnoreCase("Palhoa")) {
 				user.setCidade("Palhoca");
 			}
-			if(user.getBairro() != null &&  user.getBairro().equalsIgnoreCase("Palhoa")){
+			if (user.getBairro() != null && user.getBairro().equalsIgnoreCase("Palhoa")) {
 				user.setBairro("Palhoca");
 			}
-			
+
 			user.setDataCancelamento(aluno.getDataCancelamento());
 			user.setCnabEnviado(aluno.getCnabEnviado());
-			
+
 			em.persist(user);
 
 			if (user.getDataNascimento() != null) {
@@ -392,8 +427,8 @@ public class AlunoService extends Service {
 		}
 
 		List<Boleto> boletos = null;
-		if(saveBrother){
-			salvarIrmaos(user,aluno);
+		if (saveBrother) {
+			salvarIrmaos(user, aluno);
 			if (aluno.getId() == null || aluno.getId() == 0L) {
 				boletos = gerarBoletos(user);
 			}
@@ -401,11 +436,10 @@ public class AlunoService extends Service {
 		if (aluno.getId() == null || aluno.getId() == 0L) {
 			user.setBoletos(boletos);
 		}
-		
+
 		return user;
 	}
 
-	
 	private void salvarIrmaos(Aluno aluno, Aluno unMerge) {
 		Aluno irmao1 = unMerge.getIrmao1();
 		boolean tem1Irmao = irmao1 != null ? true : false;
@@ -417,14 +451,14 @@ public class AlunoService extends Service {
 		boolean tem4Irmao = irmao4 != null ? true : false;
 
 		if (tem1Irmao) {
-			clone(aluno,irmao1);
+			clone(aluno, irmao1);
 			irmao1 = saveAluno(irmao1, false);
-			
+
 			aluno.setIrmao1(irmao1);
 			irmao1.setIrmao1(aluno);
 
 			if (tem2Irmao) {
-				clone(aluno,irmao2);
+				clone(aluno, irmao2);
 				irmao2 = saveAluno(irmao2, false);
 				aluno.setIrmao2(irmao2);
 				irmao1.setIrmao1(aluno);
@@ -433,7 +467,7 @@ public class AlunoService extends Service {
 				irmao2.setIrmao2(irmao1);
 			}
 			if (tem3Irmao) {
-				clone(aluno,irmao3);
+				clone(aluno, irmao3);
 				irmao3 = saveAluno(irmao3, false);
 				aluno.setIrmao3(irmao3);
 				irmao3.setIrmao1(aluno);
@@ -448,7 +482,7 @@ public class AlunoService extends Service {
 				irmao2.setIrmao3(irmao3);
 			}
 			if (tem4Irmao) {
-				clone(aluno,irmao4);
+				clone(aluno, irmao4);
 				irmao4 = saveAluno(irmao4, false);
 				aluno.setIrmao4(irmao4);
 				irmao4.setIrmao1(aluno);
@@ -473,13 +507,13 @@ public class AlunoService extends Service {
 		}
 
 		if (tem2Irmao) {
-			clone(aluno,irmao2);
+			clone(aluno, irmao2);
 			irmao2 = saveAluno(irmao2, false);
 			aluno.setIrmao2(irmao2);
 			irmao2.setIrmao1(aluno);
 
 			if (tem3Irmao) {
-				clone(aluno,irmao3);
+				clone(aluno, irmao3);
 				irmao3 = saveAluno(irmao3, false);
 				aluno.setIrmao3(irmao3);
 				irmao3.setIrmao1(aluno);
@@ -489,7 +523,7 @@ public class AlunoService extends Service {
 				irmao2.setIrmao3(irmao3);
 			}
 			if (tem4Irmao) {
-				clone(aluno,irmao4);
+				clone(aluno, irmao4);
 				irmao4 = saveAluno(irmao4, false);
 				aluno.setIrmao4(irmao4);
 				irmao4.setIrmao1(aluno);
@@ -507,13 +541,13 @@ public class AlunoService extends Service {
 
 		}
 		if (tem3Irmao) {
-			clone(aluno,irmao3);
+			clone(aluno, irmao3);
 			irmao3 = saveAluno(irmao3, false);
 			aluno.setIrmao3(irmao3);
 			irmao3.setIrmao1(aluno);
 
 			if (tem4Irmao) {
-				clone(aluno,irmao4);
+				clone(aluno, irmao4);
 				irmao4 = saveAluno(irmao4, false);
 				aluno.setIrmao4(irmao4);
 				irmao4.setIrmao1(aluno);
@@ -524,14 +558,14 @@ public class AlunoService extends Service {
 		}
 
 		if (tem4Irmao) {
-			clone(aluno,irmao4);
+			clone(aluno, irmao4);
 			irmao4 = saveAluno(irmao4, false);
 			aluno.setIrmao4(irmao4);
 			irmao4.setIrmao1(aluno);
 		}
 	}
-	
-	public void clone (Aluno aluno, Aluno user){
+
+	public void clone(Aluno aluno, Aluno user) {
 		// user.setAdministrarParacetamol(aluno.isAdministrarParacetamol());
 		user.setValorMensal(aluno.getValorMensal());
 		user.setDataMatricula(aluno.getDataMatricula());
@@ -568,13 +602,13 @@ public class AlunoService extends Service {
 		user.setSenha(aluno.getSenha());
 		user.setTelefone(aluno.getTelefone());
 		user.setAdministrarParacetamol(aluno.isAdministrarParacetamol());
-		
+
 		user.setAnuidade(aluno.getAnuidade());
-		if(aluno.getBairro() != null){
+		if (aluno.getBairro() != null) {
 			user.setBairro(removeCaracteresEspeciais(aluno.getBairro().replace("ç", "c")));
 		}
 		user.setCep(aluno.getCep());
-		if(aluno.getCidade() != null){
+		if (aluno.getCidade() != null) {
 			user.setCidade(removeCaracteresEspeciais(aluno.getCidade().replace("ç", "c")));
 		}
 		user.setCpfMae(aluno.getCpfMae());
@@ -585,7 +619,7 @@ public class AlunoService extends Service {
 		user.setNomecontatoSaidaEstabelecimento2(aluno.getNomecontatoSaidaEstabelecimento2());
 		user.setNomecontatoSaidaEstabelecimento3(aluno.getNomecontatoSaidaEstabelecimento3());
 		user.setRgResponsavel(aluno.getRgResponsavel());
-		
+
 		if (aluno.getRemovido() == null) {
 			user.setRemovido(false);
 		} else {
@@ -593,18 +627,20 @@ public class AlunoService extends Service {
 		}
 
 	}
-	
+
 	public String remover(Long idAluno) {
-		Aluno al = findById(idAluno); 
+		Aluno al = findById(idAluno);
 		al.setRemovido(true);
 		al.setDataCancelamento(new Date());
 		em.persist(al);
 		return "ok";
 	}
-	
+
 	public String restaurar(Long idAluno) {
-		Aluno al = findById(idAluno); 
+		Aluno al = findById(idAluno);
 		al.setRemovido(false);
+		al.setRestaurada(true);
+		al.setCnabEnviado(false);
 		em.persist(al);
 		return "ok";
 	}
@@ -661,7 +697,7 @@ public class AlunoService extends Service {
 	}
 
 	public float getNota(Long idAluno, DisciplinaEnum disciplina, BimestreEnum bimestre, boolean recupecacao) {
-		try{
+		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT av from  AlunoAvaliacao av ");
 			sql.append("where 1 = 1");
@@ -669,28 +705,27 @@ public class AlunoService extends Service {
 			sql.append(idAluno);
 			sql.append(" and  av.avaliacao.disciplina = ");
 			sql.append(disciplina.ordinal());
-			if(bimestre != null){
+			if (bimestre != null) {
 				sql.append(" and  av.avaliacao.bimestre = ");
-				sql.append(bimestre.ordinal());	
+				sql.append(bimestre.ordinal());
 			}
 			sql.append(" and  av.avaliacao.recuperacao = ");
 			sql.append(recupecacao);
 			Query query = em.createQuery(sql.toString());
-			
+
 			List<AlunoAvaliacao> notas = (List<AlunoAvaliacao>) query.getResultList();
 			Float soma = 0F;
 			Float pesos = 0F;
-			if(notas != null && !notas.isEmpty()){
-				for(AlunoAvaliacao avas : notas){
+			if (notas != null && !notas.isEmpty()) {
+				for (AlunoAvaliacao avas : notas) {
 					soma += avas.getNota() * avas.getAvaliacao().getPeso();
 					pesos += avas.getAvaliacao().getPeso();
 				}
 			}
-			
 
-			return soma/pesos;
-			
-		}catch(Exception e){
+			return soma / pesos;
+
+		} catch (Exception e) {
 			return 0f;
 		}
 	}
@@ -736,8 +771,8 @@ public class AlunoService extends Service {
 				} else {
 					pred = cb.equal(member.get(entry.getKey()), entry.getValue());
 				}
-				 predicates.add(pred);
-				//cq.where(pred);
+				predicates.add(pred);
+				// cq.where(pred);
 			}
 
 			cq.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
@@ -762,7 +797,7 @@ public class AlunoService extends Service {
 			CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 			Root<Aluno> member = countQuery.from(Aluno.class);
 			countQuery.select(cb.count(member));
-			
+
 			final List<Predicate> predicates = new ArrayList<Predicate>();
 			if (filtros != null) {
 				for (Map.Entry<String, Object> entry : filtros.entrySet()) {
@@ -774,7 +809,7 @@ public class AlunoService extends Service {
 						pred = cb.equal(member.get(entry.getKey()), entry.getValue());
 					}
 					predicates.add(pred);
-					
+
 				}
 
 			}
@@ -812,7 +847,7 @@ public class AlunoService extends Service {
 			return new ArrayList<>();
 		}
 	}
-	
+
 	public void saveHistorico(HistoricoAluno historico) {
 		log.info("Registering historico do aluno " + historico.getAluno().getNomeAluno());
 		HistoricoAluno ha = null;
@@ -858,7 +893,7 @@ public class AlunoService extends Service {
 			countQuery.where(pred);
 
 			Query q = em.createQuery(countQuery);
-			return ((long) q.getSingleResult())>0?true:false;
+			return ((long) q.getSingleResult()) > 0 ? true : false;
 
 		} catch (NoResultException nre) {
 			return false;
@@ -874,16 +909,26 @@ public class AlunoService extends Service {
 		rematriculado.setRematricular(true);
 		rematriculado.setPeriodoProximoAno(rematriculado.getPeriodo());
 		em.merge(rematriculado);
-		
+
 	}
-	
+
 	public void rematricularAlunoAntigo(Long id) {
 		Aluno rematriculado = findById(id);
 		rematriculado.setAnoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
 		rematriculado.setPeriodoProximoAno(rematriculado.getPeriodo());
 		rematriculado.setRemovido(false);
 		em.merge(rematriculado);
-		
+
+	}
+
+	public void rematricularCancelado(Long id) {
+		Aluno rematriculado = findById(id);
+		rematriculado.setAnoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
+		rematriculado.setRestaurada(true);
+		rematriculado.setRemovido(false);
+		rematriculado.setCnabEnviado(false);
+		em.merge(rematriculado);
+
 	}
 
 	public void desmatricular(Long id) {
@@ -891,22 +936,22 @@ public class AlunoService extends Service {
 		rematriculado.setRematricular(false);
 		em.merge(rematriculado);
 	}
-	
+
 	public List<Boleto> gerarBoletos(Aluno user) {
 		List<Boleto> boletos = new ArrayList<>();
 		int i = 12 - user.getNumeroParcelas();
 		long nossoNumero = getProximoNossoNumero();
-		while(i<12){
-			Boleto boleto = new Boleto();	
+		while (i < 12) {
+			Boleto boleto = new Boleto();
 			Calendar vencimento = Calendar.getInstance();
 			vencimento.set(Calendar.MONTH, i);
 			vencimento.set(Calendar.YEAR, Constant.anoLetivoAtual);
 			vencimento.set(Calendar.HOUR, 0);
-			vencimento.set(Calendar.MINUTE,0);
-			vencimento.set(Calendar.SECOND,0);
-			if(!user.isVencimentoUltimoDia()){
+			vencimento.set(Calendar.MINUTE, 0);
+			vencimento.set(Calendar.SECOND, 0);
+			if (!user.isVencimentoUltimoDia()) {
 				vencimento.set(Calendar.DAY_OF_MONTH, user.getDiaVencimento());
-			}else{
+			} else {
 				int dia = vencimento.getActualMaximum(Calendar.DAY_OF_MONTH);
 				vencimento.set(Calendar.DAY_OF_MONTH, dia);
 			}
@@ -918,121 +963,146 @@ public class AlunoService extends Service {
 			em.persist(boleto);
 			nossoNumero++;
 			boletos.add(boleto);
-			
+
 			i++;
 		}
 		return boletos;
 	}
-	
+
 	public void gerarBoletos() {
 		List<Aluno> alunos = findAll();
-		for(Aluno al : alunos){
-			if(al.getRemovido() != null &&  !al.getRemovido()){
-				
-				if(al.getBoletos() == null || al.getBoletos().size()==0){
-					if(al.getNumeroParcelas() != null && al.getNumeroParcelas()>0){
-						if((al.getAnoLetivo() == Constant.anoLetivoAtual) || (al.getRematricular() != null && al.getRematricular()) ){
-							if(!irmaoJaTemBoleto(al)){
-								List<Boleto> boletos =gerarBoletos(al);
+		for (Aluno al : alunos) {
+			if(al.getCodigo().equals("135")){
+			}
+			if (al.getRemovido() != null && !al.getRemovido()) {
+
+				if (al.getBoletos() == null || al.getBoletos().size() == 0) {
+					if (al.getNumeroParcelas() != null && al.getNumeroParcelas() > 0) {
+						if ((al.getAnoLetivo() == Constant.anoLetivoAtual)
+								|| (al.getRematricular() != null && al.getRematricular())) {
+							if (!irmaoJaTemBoleto(al)) {
+								List<Boleto> boletos = gerarBoletos(al);
 								al.setBoletos(boletos);
 								em.persist(al);
 							}
 						}
 					}
-				}else if(al.getBoletos() != null && al.getBoletos().size()>0){
+				} else if (al.getBoletos() != null && al.getBoletos().size() > 0) {
 					List<Boleto> boletos = al.getBoletos();
-					for(Boleto b :boletos){
-						if(b.getAlteracaoBoletoManual() == null || !b.getAlteracaoBoletoManual()){
-							b.setValorNominal(al.getValorMensal());
-							Calendar c = Calendar.getInstance();
-							c.setTime(b.getVencimento());
-							if(!al.isVencimentoUltimoDia()){
-								c.set(Calendar.DAY_OF_MONTH, al.getDiaVencimento());
-							}else{
-								int dia = c.getActualMaximum(Calendar.DAY_OF_MONTH);
-								c.set(Calendar.DAY_OF_MONTH, dia);
+					if (todosBoletosBaixados(boletos) && al.getRestaurada() != null && al.getRestaurada()) {
+						List<Boleto> boletosGErados = gerarBoletos(al);
+						boletosGErados.addAll(al.getBoletos());
+						al.setBoletos(boletosGErados);
+							em.persist(al);
+					} else {
+						for (Boleto b : boletos) {
+							if (b.getAlteracaoBoletoManual() == null || !b.getAlteracaoBoletoManual()) {
+								b.setValorNominal(al.getValorMensal());
+								Calendar c = Calendar.getInstance();
+								c.setTime(b.getVencimento());
+								if (!al.isVencimentoUltimoDia()) {
+									c.set(Calendar.DAY_OF_MONTH, al.getDiaVencimento());
+								} else {
+									int dia = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+									c.set(Calendar.DAY_OF_MONTH, dia);
+								}
+								b.setVencimento(c.getTime());
+								em.merge(b);
 							}
-							b.setVencimento(c.getTime());
-							em.merge(b);	
 						}
-						
 					}
-				}	
+				}
 			}
-			
+
 		}
 	}
-	
+
 	private boolean irmaoJaTemBoleto(Aluno aluno) {
 		Aluno irmao1 = aluno.getIrmao1();
 		Aluno irmao2 = aluno.getIrmao2();
 		Aluno irmao3 = aluno.getIrmao3();
 		Aluno irmao4 = aluno.getIrmao4();
-		
-		if(irmao1 != null){
-			if(irmao1.getBoletos() != null && irmao1.getBoletos().size()>0){
+
+		if (irmao1 != null) {
+			if (irmao1.getBoletos() != null && irmao1.getBoletos().size() > 0) {
 				return true;
 			}
 		}
-		
-		if(irmao2 != null){
-			if(irmao2.getBoletos() != null && irmao2.getBoletos().size()>0){
+
+		if (irmao2 != null) {
+			if (irmao2.getBoletos() != null && irmao2.getBoletos().size() > 0) {
 				return true;
 			}
 		}
-		
-		if(irmao3 != null){
-			if(irmao3.getBoletos() != null && irmao3.getBoletos().size()>0){
+
+		if (irmao3 != null) {
+			if (irmao3.getBoletos() != null && irmao3.getBoletos().size() > 0) {
 				return true;
 			}
 		}
-		
-		if(irmao4 != null){
-			if(irmao4.getBoletos() != null && irmao4.getBoletos().size()>0){
+
+		if (irmao4 != null) {
+			if (irmao4.getBoletos() != null && irmao4.getBoletos().size() > 0) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
-	public List<Boleto> gerarBoletos(Aluno user,boolean setUser) {
+	public List<Boleto> gerarBoletos(Aluno user, boolean setUser) {
 		user = findById(user.getId());
-		List<Boleto> boletos =gerarBoletos(user); 
+		List<Boleto> boletos = gerarBoletos(user);
 		user.setBoletos(boletos);
 		em.persist(user);
 		return boletos;
 	}
 
+	private boolean todosBoletosBaixados(List<Boleto> boletos) {
+		boolean todosBaixados = true;
+		for (Boleto bol : boletos) {
+			if( !(bol.getBaixaGerada() != null && bol.getBaixaGerada())){
+				if(!(bol.getBaixaManual() != null && bol.getBaixaManual())){
+					if(!(bol.getConciliacaoPorExtrato() != null && bol.getConciliacaoPorExtrato())){
+						if (!(bol.getValorPago() != null && bol.getValorPago() > 0)) {
+							todosBaixados = false;
+						}
+					}
+				}
+			}
+		}
+		return todosBaixados;
+	}
+
 	public Long getProximoCodigo() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT max(al.codigo)  from Aluno al ");
-		
+
 		Query query = em.createQuery(sql.toString());
-		String codigo= (String) query.getSingleResult();
-		return Long.parseLong(codigo)+1;
+		String codigo = (String) query.getSingleResult();
+		return Long.parseLong(codigo) + 1;
 	}
 
 	public Long getProximoNossoNumero() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT max(bol.nossoNumero) from Boleto bol ");
-		
+
 		Query query = em.createQuery(sql.toString());
 		Long codigo = null;
-		try{
-			codigo= (Long) query.getSingleResult();
-			
-		}catch(Exception e){
+		try {
+			codigo = (Long) query.getSingleResult();
+
+		} catch (Exception e) {
 			codigo = 30000L;
 		}
-		if(codigo == null){
+		if (codigo == null) {
 			codigo = 30000L;
 		}
-		if(codigo<10000){
+		if (codigo < 10000) {
 			codigo = 30000L;
 		}
-		
-		return codigo+1;
+
+		return codigo + 1;
 	}
 
 	public List<Aluno> findAluno(String nome, String nomeResponsavel, String cpf, String numeroDocumento) {
@@ -1058,7 +1128,7 @@ public class AlunoService extends Service {
 			sql.append(cpf);
 			sql.append("%' ");
 		}
-		
+
 		if (numeroDocumento != null && !numeroDocumento.equalsIgnoreCase("")) {
 			sql.append(" or bol.nossoNumero = ");
 			sql.append(numeroDocumento);
@@ -1077,10 +1147,10 @@ public class AlunoService extends Service {
 
 	public void salvarTodos() {
 		List<Aluno> todos = findAll();
-		for(Aluno a : todos){
+		for (Aluno a : todos) {
 			save(a);
 		}
-		
+
 	}
 
 	public void removerCnabEnviado(Long id) {
@@ -1092,6 +1162,18 @@ public class AlunoService extends Service {
 	public void enviarCnab(Long id) {
 		Aluno aluno = findById(id);
 		aluno.setCnabEnviado(true);
+		em.merge(aluno);
+	}
+
+	public void removerVerificadoOk(Long id) {
+		Aluno aluno = findById(id);
+		aluno.setVerificadoOk(false);
+		em.merge(aluno);
+	}
+
+	public void verificadoOk(Long id) {
+		Aluno aluno = findById(id);
+		aluno.setVerificadoOk(true);
 		em.merge(aluno);
 	}
 	

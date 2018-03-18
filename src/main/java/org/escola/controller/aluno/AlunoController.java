@@ -53,11 +53,13 @@ import org.escola.service.AlunoService;
 import org.escola.service.AvaliacaoService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.FinanceiroEscolaService;
+import org.escola.service.rotinasAutomaticas.EnviadorEmail;
 import org.escola.util.CompactadorZip;
 import org.escola.util.Constant;
 import org.escola.util.CurrencyWriter;
 import org.escola.util.FileDownload;
 import org.escola.util.FileUtils;
+import org.escola.util.Formatador;
 import org.escola.util.ImpressoesUtils;
 import org.escola.util.Util;
 import org.escola.util.Verificador;
@@ -380,6 +382,16 @@ public class AlunoController implements Serializable {
 
 		return lazyListDataModelExAlunos;
 
+	}
+	
+	public void enviarEmailBoletoAtualEAtrasado(final Long idAluno){
+		new Thread() {
+			  @Override
+		        public void run() {
+					EnviadorEmail email = new EnviadorEmail();
+					email.enviarEmailBoletosMesAtualEAtrasados(idAluno);		  
+			  }
+		}.start();
 	}
 
 	public LazyDataModel<Aluno> getLazyDataModelUltimoAnoLetivo() {
@@ -1412,6 +1424,27 @@ public class AlunoController implements Serializable {
 		return aluno.getCnabEnviado();
 	}
 
+	public boolean isVerificadoOk() {
+		if (aluno == null) {
+			return false;
+		}
+		if (aluno.getVerificadoOk() == null) {
+			return false;
+		}
+		return aluno.getVerificadoOk();
+	}
+	
+	public boolean isVerificadoOk(Long idAluno) {
+		Aluno a = alunoService.findById(idAluno);
+		if (a == null) {
+			return false;
+		}
+		if (a.getVerificadoOk() == null) {
+			return false;
+		}
+		return a.getVerificadoOk();
+	}
+		
 	public StreamedContent imprimirContratoAdonai(Aluno aluno) throws IOException {
 		String nomeArquivo = "";
 		if(aluno != null && aluno.getId() != null){
@@ -1632,6 +1665,25 @@ public class AlunoController implements Serializable {
 		return "ok";
 	}
 	
+	public String verificarOk() {
+		return verificarOk(aluno.getId());
+	}
+
+	public String removerVerificadoOk() {
+		return removerVerificadoOk(aluno.getId());
+	}
+
+	private String removerVerificadoOk(Long id) {
+		alunoService.removerVerificadoOk(id);
+		return "ok";
+	}
+
+	private String verificarOk(Long id) {
+		alunoService.verificadoOk(id);
+		return "ok";
+	}
+
+	
 	public String desmatricular() {
 		return desmatricular(aluno.getId());
 	}
@@ -1651,6 +1703,15 @@ public class AlunoController implements Serializable {
 		return "ok";
 	}
 
+	public String restaurarCancelado(Long id){
+		alunoService.rematricularCancelado(id);
+		return "ok";
+	}
+	
+	public String restaurarCancelado(){
+		return restaurarCancelado(aluno.getId());
+	}
+	
 	public String remover(Long idTurma) {
 		alunoService.remover(idTurma);
 		if(getLoggedUser().getTipoMembro().equals(TipoMembro.FINANCEIRO)){
@@ -1968,7 +2029,7 @@ public class AlunoController implements Serializable {
 			pagador.setNome(aluno.getNomeResponsavel());
 			pagador.setNossoNumero(aluno.getCodigo());
 			pagador.setUF("SC");
-			pagador.setBoletos(aluno.getBoletosFinanceiro());
+			pagador.setBoletos(Formatador.getBoletosFinanceiro(getBoletosParaPagar(aluno)));
 
 			byte[] pdf = cnab.getBoletoPDF(pagador);
 
@@ -2059,28 +2120,10 @@ public class AlunoController implements Serializable {
 		try {
 			String sequencialArquivo = configuracaoService.getSequencialArquivo() + "";
 			String nomeArquivo = "CNAB240_" + aluno.getCodigo() + ".txt";
+			InputStream stream = FileUtils.gerarCNB240(sequencialArquivo, nomeArquivo, aluno);
+			configuracaoService.incrementaSequencialArquivoCNAB();
 
-			Pagador pagador = new Pagador();
-			pagador.setBairro(aluno.getBairro());
-			pagador.setCep(aluno.getCep());
-			pagador.setCidade(aluno.getCidade() != null ? aluno.getCidade() : "PALHOCA");
-			pagador.setCpfCNPJ(aluno.getCpfResponsavel());
-			pagador.setEndereco(aluno.getEndereco());
-			pagador.setNome(aluno.getNomeResponsavel());
-			pagador.setNossoNumero(aluno.getCodigo());
-			pagador.setUF("SC");
-			pagador.setBoletos(aluno.getBoletosFinanceiro());
-			CNAB240_REMESSA_SICOOB cnbRemessa = new CNAB240_REMESSA_SICOOB(2);
-			byte[] arquivo = cnbRemessa.geraRemessa(pagador, sequencialArquivo);
-
-			try {
-				configuracaoService.incrementaSequencialArquivoCNAB();
-				InputStream stream = new ByteArrayInputStream(arquivo);
-				return FileDownload.getContentDoc(stream, nomeArquivo);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			return FileDownload.getContentDoc(stream, nomeArquivo);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2124,7 +2167,7 @@ public class AlunoController implements Serializable {
 
 	public Double getValorFinal(org.escola.model.Boleto boleto) {
 
-		return boleto.getValorNominal() + getJurosMulta(boleto) - getDesconto(boleto);
+		return Verificador.getValorFinal(boleto);
 	}
 
 	public String getValorFinalString(org.escola.model.Boleto boleto) {
@@ -2141,6 +2184,30 @@ public class AlunoController implements Serializable {
 		return true;
 	}
 
+	public List<org.escola.model.Boleto> getBoletosParaPagar(Aluno aluno){
+		List<org.escola.model.Boleto> boletosParaPagar = new ArrayList<>();
+		if(aluno.getBoletos() != null){
+			for(org.escola.model.Boleto b : aluno.getBoletos()){
+				if( (!Verificador.getStatusEnum(b).equals(StatusBoletoEnum.PAGO))  && !(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.CANCELADO)) ){
+					boletosParaPagar.add(b);
+				}
+			}
+		}
+		return boletosParaPagar;
+	}
+	
+	public List<org.escola.model.Boleto> getBoletosParaPagar(List<org.escola.model.Boleto> boletos){
+		List<org.escola.model.Boleto> boletosParaPagar = new ArrayList<>();
+		if(aluno.getBoletos() != null){
+			for(org.escola.model.Boleto b : boletos){
+				if( (!Verificador.getStatusEnum(b).equals(StatusBoletoEnum.PAGO))  && !(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.CANCELADO)) ){
+					boletosParaPagar.add(b);
+				}
+			}
+			
+		}
+		return boletosParaPagar;
+	}
 
 	public void alterarBoleto(org.escola.model.Boleto boleto) {
 		financeiroEscolaService.alterarBoletoManualmente(boleto);
