@@ -168,7 +168,7 @@ public class OfficePDFUtil {
 			String entrada = "";
 			for(org.escola.model.Boleto boleto : aluno.getBoletos()){
 				if(boleto.getAtrasado() != null && boleto.getAtrasado()){
-					numeroBoleto +=aluno.getCodigo() + "\n" + boleto.getNossoNumero(); 
+					numeroBoleto +=aluno.getCodigo() + "-" + boleto.getNossoNumero() + "\n"; 
 					entrada += Formatador.formataData(boleto.getEmissao()) + "\n";
 					vencimento += Formatador.formataData(boleto.getVencimento()) + "\n";
 					valorTotalDevido += Verificador.getValorFinal(boleto);

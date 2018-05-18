@@ -6,18 +6,21 @@
 	template="/WEB-INF/templates/templateADM.xhtml">
 
 	<ui:define name="content">
-		<h:form style="width:100%; border:none">
+		<h:form id="form" style="width:100%; border:none">
 
-			<h:panelGrid columns="8" style="margin-top: -30px;">
-				<h:commandButton action="#{avaliacaoController.adicionarNovo()}"
-					value="Adicionar" />
+			<h:panelGrid id="panelFerramentas" columns="8" style="margin-top: -30px;">
+				<h:commandButton action="#{avaliacaoController.adicionarNovo()}"	value="Adicionar" />
+				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{avaliacaoController.editar()}"	alt="Editar" disabled="#{!avaliacaoController.avaliacaoSelecionada}"/>
+				<p:commandButton id="remover" icon="ui-icon-trash" action="#{avaliacaoController.remover()}" alt="Remover" 
+									disabled="#{!avaliacaoController.avaliacaoSelecionada}" update="form:tbl"/>
+				
 			</h:panelGrid>
 
 			<h:panelGrid width="90%">
 			<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
                              emptyMessage="#Nenhum registro encontrado"
                              selectionMode="single" 
-                             selection="#{alunoController.aluno}"
+                             selection="#{avaliacaoController.avaliacao}"
                              rowKey="#{professorTab.id}"
                              filterEvent="enter" 
                              lazy="true" 
@@ -33,45 +36,8 @@
                           	 id="tbl" var="avaliacaoTab"
 							 value="#{avaliacaoController.lazyDataModel}"
 							 >
-			
-					<f:facet name="{Exporters}">
-						<h:commandLink>
-							<p:graphicImage name="/gfx/excel.png" width="24" />
-							<p:dataExporter type="xls" target="tbl" fileName="cars" />
-						</h:commandLink>
-
-						<h:commandLink>
-							<p:graphicImage name="/gfx/pdf.png" width="24" />
-							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
-						</h:commandLink>
-
-						<h:commandLink>
-							<p:graphicImage name="/gfx/csv.png" width="24" />
-							<p:dataExporter type="csv" target="tbl" fileName="cars" />
-						</h:commandLink>
-
-						<h:commandLink>
-							<p:graphicImage name="/gfx/xml.png" width="24" />
-							<p:dataExporter type="xml" target="tbl" fileName="cars" />
-						</h:commandLink>
-					</f:facet>
-
-					<p:column style="width:10%">
-						<f:facet name="header">
-							<h:outputText value="Ações" />
-						</f:facet>
-						<table style="border: none">
-							<tr style="border: none">
-								<td style="border: none">
-										<p:commandButton
-											icon="ui-icon-pencil"
-											action="#{avaliacaoController.editar(avaliacaoTab.id)}" 
-											disabled="#{!avaliacaoController.podeEditar(avaliacaoTab)}"/></td>
-
-							</tr>
-						</table>
-					</p:column>
-
+					<p:ajax event="rowSelect"  update="form:panelFerramentas" />
+				
 					<p:column style="width:10%" rendered="false"
 							  filterBy="#{avaliacaoTab.id}"
                               sortBy="#{avaliacaoTab.id}" >
@@ -117,28 +83,7 @@
 						<h:outputText value="#{avaliacaoTab.bimestre.name}" />
 					</p:column>
 					
-					<p:column >
-						<f:facet name="header">
-							<h:outputText value="Nota Média" />
-						</f:facet>
-						<h:outputText value="#{avaliacaoController.getMedia(avaliacaoTab)}" style="center" >
-							<f:convertNumber pattern="#0.00" />
-						</h:outputText>
-					</p:column>
 					
-
-					<p:column style="width:10%">
-						<f:facet name="header">
-							<h:outputText value="Remover" />
-						</f:facet>
-
-						<p:commandButton update="tbl" icon="ui-icon-trash"
-							action="#{avaliacaoController.remover(avaliacaoTab.id)}"
-							disabled="#{!avaliacaoController.podeEditar(avaliacaoTab)}">
-  							
-						</p:commandButton>
-					</p:column>
-
 				</p:dataTable>
 
 			</h:panelGrid>

@@ -268,10 +268,9 @@
 						<f:facet name="header">
 							<h:outputText value="Remover" />
 						</f:facet>
-						
-							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{alunoController.remover(professorTab.id)}" >
-								
-							</p:commandButton>
+						<p:commandButton update="tbl" icon="ui-icon-trash" 
+										 action="#{alunoController.remover(professorTab.id)}" >
+						</p:commandButton>
 					</p:column>
 
 				</p:dataTable>

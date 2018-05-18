@@ -74,6 +74,9 @@
    <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
     NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
     TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
+    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
+    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
   <PROCESS-ITEM ID="rules:#page#aluno#index.xhtml:1" NAME="item1"
    PATH="/page/aluno/index.xhtml" model-entity="JSFProcessItem">
@@ -235,4 +238,6 @@
     TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#aluno#removerAluno.xhtml"
+  PATH="/page/aluno/removerAluno.xhtml" SHAPE="624,17,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

@@ -59,12 +59,10 @@ public class Verificador {
 		Date vencimento = Formatador.formatDateSomenteDiaMesAno(boleto.getVencimento());
 		Date amanha = Formatador.formatDateSomenteDiaMesAno(tomorrow.getTime());
 		long diasVencimento = Util.diferencaEntreDatas(amanha, vencimento);
-		if(boleto.getId()==3808L){
-			System.out.println("a");
-		}
+		
 		if (pago(boleto)) {
 			return StatusBoletoEnum.PAGO;
-		}else if(baixado(boleto)){	
+		}else if(baixado(boleto) || cancelado(boleto)){	
 			return StatusBoletoEnum.CANCELADO;
 		} else if (diasVencimento > 3) {
 			return StatusBoletoEnum.ATRASADO;
@@ -97,6 +95,13 @@ public class Verificador {
 			return true;
 		}
 		if(boleto.getBaixaManual() != null && boleto.getBaixaManual()){
+			return true;
+		}
+		return false;
+	}
+	
+	private static boolean cancelado(org.escola.model.Boleto boleto) {
+		if(boleto.getCancelado() != null && boleto.getCancelado()){
 			return true;
 		}
 		return false;

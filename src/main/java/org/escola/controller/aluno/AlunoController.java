@@ -1713,12 +1713,42 @@ public class AlunoController implements Serializable {
 	}
 	
 	public String remover(Long idTurma) {
-		alunoService.remover(idTurma);
-		if(getLoggedUser().getTipoMembro().equals(TipoMembro.FINANCEIRO)){
+		aluno = alunoService.findById(idTurma);
+		Util.addAtributoSessao("aluno", aluno);
+		/*alunoService.remover(idTurma);
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.FINANCEIRO)) {
+			return "indexFinanceiro";
+		}*/
+		return "remover";
+	}
+	
+	public void removerBoleto(Long idBoleto) {
+		org.escola.model.Boleto b = alunoService.findBoletoById(idBoleto);
+		for(org.escola.model.Boleto bol :aluno.getBoletos()){
+			if(bol.getId().equals(b.getId())){
+				bol.setCancelado(true);
+				bol.setValorPago((double) 0);
+			}
+		}
+		//alunoService.removerBoleto(idBoleto);
+	}
+	
+	
+	public String removerAluno() {
+		for(org.escola.model.Boleto b : aluno.getBoletos()){
+			if(b.getCancelado() == null || !b.getCancelado().booleanValue()){
+				b.setManterAposRemovido(true);
+			}
+		}
+		alunoService.remover(aluno);
+		Util.removeAtributoSessao("aluno");
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.FINANCEIRO)) {
 			return "indexFinanceiro";
 		}
 		return "index";
 	}
+
+
 	
 	public String restaurar(Long idTurma) {
 		alunoService.restaurar(idTurma);
@@ -2188,7 +2218,8 @@ public class AlunoController implements Serializable {
 		List<org.escola.model.Boleto> boletosParaPagar = new ArrayList<>();
 		if(aluno.getBoletos() != null){
 			for(org.escola.model.Boleto b : aluno.getBoletos()){
-				if( (!Verificador.getStatusEnum(b).equals(StatusBoletoEnum.PAGO))  && !(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.CANCELADO)) ){
+				if( (!Verificador.getStatusEnum(b).equals(StatusBoletoEnum.PAGO))  
+						&& !(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.CANCELADO)) ){
 					boletosParaPagar.add(b);
 				}
 			}

@@ -93,7 +93,14 @@ public class FinanceiroController implements Serializable{
 	}
 	
 	public boolean isBoletoPago(Boleto boleto){
-		return Verificador.getStatusEnum(boleto).equals(StatusBoletoEnum.PAGO);
+		return Verificador.getStatusEnum(boleto).equals(StatusBoletoEnum.PAGO) || isRemovido(boleto);
+	}
+	
+	public boolean isRemovido(Boleto boleto){
+		if(boleto.getCancelado() != null && boleto.getCancelado()){
+			return true;
+		}
+		return false;
 	}
 	
 	
@@ -185,6 +192,25 @@ public class FinanceiroController implements Serializable{
 
 	}
 
+	public String marcarLinha(Aluno a) {
+		String cor = "";
+		if(a == null){
+			return "";
+		}
+		
+		if(a.getRemovido() != null && a.getRemovido()){
+			cor = "marcarLinhaVermelho";
+		}else{
+			cor = "marcarLinha";
+		}
+		
+		/*cor = "marcarLinhaVermelho";
+		cor = "marcarLinhaVerde";
+		cor = "marcarLinhaAmarelo";
+		cor = "marcarLinha"
+		*/
+		return cor;
+	}
 	
 	public double getPrevisto(int mes){
 		return financeiroService.getPrevisto(mes);

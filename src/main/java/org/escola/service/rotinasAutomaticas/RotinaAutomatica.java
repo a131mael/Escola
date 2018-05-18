@@ -21,7 +21,7 @@ public class RotinaAutomatica {
 	@Schedule(minute = "30", hour = "5", dayOfWeek="Sun,Thu", month="*", persistent = false)
 	public void automaticTimeout() {
 		
-		try {
+		/*try {
 			System.out.println("Gerando CNAB DE ALUNOS AINDA NAO ENVIADOs Escolar");
 			cnab240.gerarCNABAlunos();
 		} catch (Exception e) {
@@ -32,7 +32,7 @@ public class RotinaAutomatica {
 			cnab240.gerarBaixaBoletosPagos();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	@Schedule(minute = "*/5", hour = "*", month="*", persistent = false)
@@ -47,53 +47,53 @@ public class RotinaAutomatica {
 	
 	@Schedule(minute = "*/5", hour = "*", persistent = false)
 	public void enviarSPC() {
-		try {
+		/*try {
 			System.out.println("ENVIANDO SPC ");
 			//ClienteWebServiceSPC clienteWebServiceSPC = new ClienteWebServiceSPC();
 			//clienteWebServiceSPC.enviarSPC();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	
 	@Schedule(minute = "*/5", hour = "*", persistent = false)
 	public void importarCNABPagmentos() {
-		try {
+		/*try {
 			System.out.println("Gerando Arquivo de Baixa Pagos ");
 			cnab240.importarPagamentosCNAB240();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Schedule(minute = "4", hour = "15", dayOfWeek="Tue", month="*", persistent = false)
 	public void enviandoEmailBoletoAtrasado() {
-		new Thread() {
+		/*new Thread() {
 			  @Override
 		        public void run() {
 				  try {
 						System.out.println("Enviando Email boleto Atrasado ");
-						/*EnviadorEmail email = new EnviadorEmail();
-						email.enviarEmailBoletoAtrasado(CONSTANTES.emailFinanceiro,CONSTANTES.senhaEmailFinanceiro);*/
+						EnviadorEmail email = new EnviadorEmail();
+						email.enviarEmailBoletoAtrasado(CONSTANTES.emailFinanceiro,CONSTANTES.senhaEmailFinanceiro);
 					} catch (Exception e) {
 					//	e.printStackTrace();
 					}	  
 			  }
 			
-		}.start();
+		}.start();*/
 	}
 
 	// Rotina que executa as 3:30 da manha.
 	@Schedule(minute = "30", hour = "3",dayOfMonth="2", month="*" , persistent = false)
 	public void enviarEmail() {
-		new Thread() {
+		/*new Thread() {
 			  @Override
 		        public void run() {
 				  System.out.println("Enviando email do mes atual ");
 					EnviadorEmail email = new EnviadorEmail();
 					email.enviarEmailBoletosMesAtual();		  
 			  }
-		}.start();
+		}.start();*/
 	}
 }

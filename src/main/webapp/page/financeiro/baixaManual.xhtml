@@ -36,19 +36,19 @@
 				emptyMessage="Nenhum resultado encontrado" rendered="#{financeiroController.alunosEcontrados != null}">
 		        <f:facet name="header">
 		        </f:facet>
-		        <p:column headerText="Codigo">
+		        <p:column headerText="Codigo" styleClass="#{financeiroController.marcarLinha(alun)}">
 		            <h:outputText value="#{alun.codigo}" />
 		        </p:column>
-		        <p:column headerText="Crianca">
+		        <p:column headerText="Crianca" styleClass="#{financeiroController.marcarLinha(alun)}">
 		            <h:outputText value="#{alun.nomeAluno}" />
 		        </p:column>
-		        <p:column headerText="Responsavel">
+		        <p:column headerText="Responsavel" styleClass="#{financeiroController.marcarLinha(alun)}">
 		            <h:outputText value="#{alun.nomeResponsavel}" />
 		        </p:column>
-		        <p:column headerText="CPF Responsavel">
+		        <p:column headerText="CPF Responsavel" styleClass="#{financeiroController.marcarLinha(alun)}">
 		            <h:outputText value="#{alun.cpfResponsavel}" />
 		        </p:column>
-		        <p:column style="text-align: center">
+		        <p:column style="text-align: center" styleClass="#{financeiroController.marcarLinha(alun)}">
 		             <p:commandButton update="form:boletos" icon="ui-icon-search" title="Ver">
 		                <f:setPropertyActionListener value="#{alun}" target="#{financeiroController.alunoBaixaSelecionado}" />
 		            </p:commandButton>

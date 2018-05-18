@@ -540,6 +540,7 @@ public class AvaliacaoService extends Service {
 	}
 
 	public Double getMedia(Avaliacao avaliacao) {
+		Long t1 = System.currentTimeMillis();
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT avg(al.nota) from  AlunoAvaliacao al ");
 		sql.append("where 1=1 ");
@@ -547,13 +548,19 @@ public class AvaliacaoService extends Service {
 		sql.append(avaliacao.getId());
 		
 		Query query = em.createQuery(sql.toString());
-		return (Double) query.getSingleResult();
+		
+		Double m = (Double) query.getSingleResult();
+		Long t2 = System.currentTimeMillis();
+		System.out.println("Tempo execução query Media -------------- ");
+		System.out.println("Tm =  " + (t2-t1)/1000);
+		return m;
 			
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Avaliacao> find(int first, int size, String orderBy, String order, Map<String, Object> filtros) {
 		try {
+			Long t1 = System.currentTimeMillis();
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<Avaliacao> criteria = cb.createQuery(Avaliacao.class);
 			Root<Avaliacao> member = criteria.from(Avaliacao.class);
@@ -577,8 +584,15 @@ public class AvaliacaoService extends Service {
 			Query q = em.createQuery(criteria);
 			q.setFirstResult(first);
 			q.setMaxResults(size);
-			return (List<Avaliacao>) q.getResultList();
-
+			Long t2 = System.currentTimeMillis();
+			List<Avaliacao> avas = (List<Avaliacao>) q.getResultList();
+			Long t3 = System.currentTimeMillis();
+			System.out.println("Tempo execução query getavaliacaoLazy -------------- ");
+			System.out.println("T1 =  " + (t2-t1)/1000);
+			System.out.println("T2 =  " + (t3-t2)/1000);
+			System.out.println("T3 =  " + (t3-t1)/1000);
+			return avas;
+			
 		} catch (NoResultException nre) {
 			return new ArrayList<>();
 		} catch (Exception e) {

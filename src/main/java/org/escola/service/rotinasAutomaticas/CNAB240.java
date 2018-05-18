@@ -113,16 +113,21 @@ public class CNAB240 {
 		b.setBaixaGerada(true);
 		financeiroService.save(b);
 	}
-	
+
 	public void gerarBaixaBoletosCancelados(Boleto b, String path) {
-		byte[] arquivo = gerarCNB240Baixa(CONSTANTES.projeto, b);
-		String nomeArquivo = "CNAB240_" + b.getNossoNumero() + ".txt";
-		ImportadorArquivo.geraArquivoFisico(arquivo, path + nomeArquivo);
-		b.setBaixaGerada(true);
-		b.setCancelado(true);
-		financeiroService.save(b);
+		if ((b.getManterAposRemovido() != null && !b.getManterAposRemovido())) {
+			if (b.getCancelado() == null || !b.getCancelado()) {
+				byte[] arquivo = gerarCNB240Baixa(CONSTANTES.projeto, b);
+				String nomeArquivo = "CNAB240_" + b.getNossoNumero() + ".txt";
+				ImportadorArquivo.geraArquivoFisico(arquivo, path + nomeArquivo);
+				b.setBaixaGerada(true);
+				b.setCancelado(true);
+				b.setValorPago((double) 0);
+				financeiroService.save(b);
+			}
+		}
 	}
-	
+
 	public void gerarCNABAlunos() {
 		List<Aluno> alunosSemCNABENVIADO = financeiroService.getAlunosCNABNaoEnviado();
 		for (Aluno al : alunosSemCNABENVIADO) {
@@ -136,23 +141,23 @@ public class CNAB240 {
 	public void gerarBaixaBoletosPagos() {
 		List<Boleto> boletoParaBaixa = financeiroService.getBoletosParaBaixa();
 		for (Boleto b : boletoParaBaixa) {
-			gerarBaixaBoletosPagos(b,CONSTANTES.PATH_ENVIAR_BAIXA);
+			gerarBaixaBoletosPagos(b, CONSTANTES.PATH_ENVIAR_BAIXA);
 		}
 	}
 
 	public void gerarBaixaBoletoAlunosCancelados() {
 		List<Aluno> alunosCancelados = financeiroService.getAlunosRemovidos();
 		for (Aluno al : alunosCancelados) {
-			for(Boleto b : al.getBoletos()){
-				gerarBaixaBoletosCancelados(b,CONSTANTES.PATH_ENVIAR_BAIXA_CANCELADOS);
+			for (Boleto b : al.getBoletos()) {
+				gerarBaixaBoletosCancelados(b, CONSTANTES.PATH_ENVIAR_BAIXA_CANCELADOS);
 			}
 		}
 	}
-	
-	private List<org.aaf.financeiro.model.Boleto> getBoletosFinanceiro(List<Boleto> boletos){
+
+	private List<org.aaf.financeiro.model.Boleto> getBoletosFinanceiro(List<Boleto> boletos) {
 		List<org.aaf.financeiro.model.Boleto> boletosFinanceiro = new ArrayList<>();
-		if(boletos!= null){
-			for(Boleto boleto : boletos){
+		if (boletos != null) {
+			for (Boleto boleto : boletos) {
 				org.aaf.financeiro.model.Boleto boletoFinanceiro = new org.aaf.financeiro.model.Boleto();
 				boletoFinanceiro.setEmissao(boleto.getEmissao());
 				boletoFinanceiro.setId(boleto.getId());
@@ -166,7 +171,7 @@ public class CNAB240 {
 		}
 		return boletosFinanceiro;
 	}
-	
+
 	public void importarPagamentosCNAB240() {
 		try {
 			List<Pagador> boletosImportados = CNAB240_RETORNO_SICOOB.imporCNAB240(
@@ -185,44 +190,44 @@ public class CNAB240 {
 		} catch (Exception e) {
 
 		}
-		
+
 	}
 
 	public void importarBoletos(List<Pagador> boletosImportados, boolean extratoBancario) throws ParseException {
-		for(Pagador pagador : boletosImportados){
-			org.aaf.financeiro.model.Boleto
-			boletoCNAB =pagador.getBoletos().get(0);
+		for (Pagador pagador : boletosImportados) {
+			org.aaf.financeiro.model.Boleto boletoCNAB = pagador.getBoletos().get(0);
 			String numeroDocumento = boletoCNAB.getNossoNumero();
-			if(numeroDocumento != null && !numeroDocumento.equalsIgnoreCase("") && !numeroDocumento.contains("-")){
-				try{
-					numeroDocumento = numeroDocumento.trim().replace(" ", "").replace("/", "".replace("-", "").replace(".", ""));
-					if(numeroDocumento.matches("^[0-9]*$")){
+			if (numeroDocumento != null && !numeroDocumento.equalsIgnoreCase("") && !numeroDocumento.contains("-")) {
+				try {
+					numeroDocumento = numeroDocumento.trim().replace(" ", "").replace("/",
+							"".replace("-", "").replace(".", ""));
+					if (numeroDocumento.matches("^[0-9]*$")) {
 						Long numeroDocumentoLong = Long.parseLong(numeroDocumento);
 						org.escola.model.Boleto boleto = null;
-						if(!extratoBancario){
-							numeroDocumentoLong-=10000;
-							 boleto = financeiroService.findBoletoByID(numeroDocumentoLong);
-						}else{
+						if (!extratoBancario) {
+							numeroDocumentoLong -= 10000;
+							boleto = financeiroService.findBoletoByID(numeroDocumentoLong);
+						} else {
 							String numeroDocumentoExtrato = String.valueOf(numeroDocumentoLong);
-							boleto = financeiroService.findBoletoByNumeroModel(numeroDocumentoExtrato.substring(0, numeroDocumentoExtrato.length()-1));
+							boleto = financeiroService.findBoletoByNumeroModel(
+									numeroDocumentoExtrato.substring(0, numeroDocumentoExtrato.length() - 1));
 						}
-						if(boleto != null){
-							if(!Verificador.getStatusEnum(boleto).equals(StatusBoletoEnum.PAGO)){
+						if (boleto != null) {
+							if (!Verificador.getStatusEnum(boleto).equals(StatusBoletoEnum.PAGO)) {
 								boleto.setValorPago(boletoCNAB.getValorPago());
 								boleto.setDataPagamento(OfficeUtil.retornaData(boletoCNAB.getDataPagamento()));
 								boleto.setConciliacaoPorExtrato(extratoBancario);
 								financeiroService.save(boleto);
-								System.out.println("YESS, BOLETO PAGO");								
+								System.out.println("YESS, BOLETO PAGO");
 							}
 						}
 					}
-					
-				}catch (ClassCastException cce) {
+
+				} catch (ClassCastException cce) {
 					cce.printStackTrace();
 				}
 			}
 		}
 	}
-
 
 }

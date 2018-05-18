@@ -25,6 +25,8 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,7 +37,6 @@ import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
 import org.escola.enums.TipoMembro;
-import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
 import org.escola.model.Avaliacao;
 import org.escola.model.Member;
@@ -44,6 +45,8 @@ import org.escola.service.AvaliacaoService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.TurmaService;
 import org.escola.util.Util;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 @Named
@@ -70,14 +73,34 @@ public class AvaliacaoController extends AuthController implements Serializable{
 	
 	@PostConstruct
 	private void init() {
-		if(avaliacao == null){
+		if(getAvaliacao() == null){
 			Object obj = Util.getAtributoSessao("avaliacao");
 			if(obj != null){
-				avaliacao = (Avaliacao) obj;
+				setAvaliacao((Avaliacao) obj);
 			}else{
-				avaliacao = new Avaliacao();
+				setAvaliacao(new Avaliacao());
 			}
 		}
+	}
+	
+	
+	public void onRowSelect(SelectEvent event) {
+		Avaliacao av = (Avaliacao) event.getObject();
+		FacesMessage msg = new FacesMessage("Avaliacao Selecionada");
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	public void onRowUnselect(UnselectEvent event) {
+		Avaliacao av = (Avaliacao) event.getObject();
+		FacesMessage msg = new FacesMessage("Car Unselected");
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+	
+	public boolean isAvaliacaoSelecionada() {
+		if(getAvaliacao() == null){
+			return false;
+		}
+		return getAvaliacao().getId() != null ? true : false;
 	}
 	
 	public LazyDataModel<Avaliacao> getLazyDataModel() {
@@ -186,18 +209,18 @@ public class AvaliacaoController extends AuthController implements Serializable{
 	}
 	
 	public String salvar(){
-		if(avaliacao.getBimestre() == null){
-			avaliacao.setBimestre(configuracaoService.getConfiguracao().getBimestre());
+		if(getAvaliacao().getBimestre() == null){
+			getAvaliacao().setBimestre(configuracaoService.getConfiguracao().getBimestre());
 		}
 		
-		if(avaliacao.getSerie() == null){
-			avaliacao.setSerie(getSeries().iterator().next());
+		if(getAvaliacao().getSerie() == null){
+			getAvaliacao().setSerie(getSeries().iterator().next());
 		}
 		
 		if(getLoggedUser().getProfessor() != null){
-			avaliacaoService.save(avaliacao,getLoggedUser().getProfessor().getId());
+			avaliacaoService.save(getAvaliacao(),getLoggedUser().getProfessor().getId());
 		}else{
-			avaliacaoService.save(avaliacao, null);
+			avaliacaoService.save(getAvaliacao(), null);
 		}
 		return "index";
 	}
@@ -271,19 +294,37 @@ public class AvaliacaoController extends AuthController implements Serializable{
 	}
 
 	public String editar(Long idprof){
-		avaliacao = avaliacaoService.findById(idprof);
-		Util.addAtributoSessao("avaliacao", avaliacao);
+		setAvaliacao(avaliacaoService.findById(idprof));
+		Util.addAtributoSessao("avaliacao", getAvaliacao());
 		return "cadastrar";
-	}	
+	}
+	
+	public String editar(){
+		return editar(getAvaliacao().getId());
+	}
 	
 	public String remover(Long idTurma){
 		avaliacaoService.remover(idTurma);
 		return "index";
 	}
 	
+	public String remover(){
+		return remover(getAvaliacao().getId()) ;
+	}
+	
 	public String adicionarNovo(){
 		Util.removeAtributoSessao("avaliacao");
 		return "cadastrar";
+	}
+
+
+	public Avaliacao getAvaliacao() {
+		return avaliacao;
+	}
+
+
+	public void setAvaliacao(Avaliacao avaliacao) {
+		this.avaliacao = avaliacao;
 	}
 	
 }

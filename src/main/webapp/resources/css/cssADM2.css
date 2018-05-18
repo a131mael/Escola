@@ -15,7 +15,7 @@ body {
   border-left: 5px solid #8c8f91;
   border-right: 5px solid #8c8f91;
   border-bottom: 25px solid #8c8f91;
-  width: 865px; subtract 40px from banner width for padding
+  width: 1200px; subtract 40px from banner width for padding
   background: #FFFFFF;
   background-image: url(#{request.contextPath}/resources/gfx/headerbkg.png);
   background-repeat: repeat-x;
@@ -25,7 +25,7 @@ body {
 
 #content {
   float: left;
-  width: 1200px;
+  width: 1500px;
   margin-top: 20px;
 }
 #aside {

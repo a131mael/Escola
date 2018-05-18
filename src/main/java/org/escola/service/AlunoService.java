@@ -77,6 +77,11 @@ public class AlunoService extends Service {
 		return al;
 	}
 
+	public Boleto findBoletoById(Long id){
+		Boleto boleto = em.find(Boleto.class, id);
+		return boleto;
+	}
+	
 	public Aluno findById(Long id) {
 		Aluno al = em.find(Aluno.class, id);
 		if (al.getIrmao1() != null) {
@@ -180,7 +185,9 @@ public class AlunoService extends Service {
 
 			Predicate whereSerie = null;
 			Predicate wherePeriodo = null;
-
+			Predicate whereRemovido = cb.equal(member.get("removido"), false);;
+			Predicate whereAnoLetivo = cb.equal(member.get("anoLetivo"), Constant.anoLetivoAtual);
+			
 			StringBuilder sb = new StringBuilder();
 			if (serie != null) {
 				sb.append("A");
@@ -195,15 +202,15 @@ public class AlunoService extends Service {
 			switch (sb.toString()) {
 
 			case "A":
-				criteria.select(member).where(whereSerie);
+				criteria.select(member).where(whereSerie,whereRemovido,whereAnoLetivo);
 				break;
 
 			case "B":
-				criteria.select(member).where(wherePeriodo);
+				criteria.select(member).where(wherePeriodo,whereRemovido,whereAnoLetivo);
 				break;
 
 			case "AB":
-				criteria.select(member).where(whereSerie, wherePeriodo);
+				criteria.select(member).where(whereSerie, wherePeriodo,whereRemovido,whereAnoLetivo);
 				break;
 			default:
 				break;
@@ -1175,6 +1182,35 @@ public class AlunoService extends Service {
 		Aluno aluno = findById(id);
 		aluno.setVerificadoOk(true);
 		em.merge(aluno);
+	}
+
+	public void removerBoleto(Long idBoleto) {
+		Boleto b = findBoletoById(idBoleto);
+		b.setManterAposRemovido(false);
+		b.setValorPago((double) 0);
+		b.setDataPagamento(new Date());
+		em.merge(b);
+	}
+	
+	public void manterBoleto(Long idBoleto) {
+		Boleto b = findBoletoById(idBoleto);
+		
+		b.setManterAposRemovido(true);
+		b.setCancelado(false);
+		em.merge(b);
+	}
+
+	
+	public void remover(Aluno aluno) {
+		for(Boleto b : aluno.getBoletos()){
+			if(b.getManterAposRemovido() != null && b.getManterAposRemovido()){
+				manterBoleto(b.getId());
+			}else{
+				removerBoleto(b.getId());
+			}
+		}
+		em.flush();
+		remover(aluno.getId());
 	}
 	
 }
