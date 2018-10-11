@@ -1277,18 +1277,18 @@ public class AlunoController implements Serializable {
 		String nomeSerie = Serie.values()[aluno.getSerie().ordinal()].getName();
 		String nomePeriodo = aluno.getPeriodoProximoAno().getName();
 		
-		if (aluno.getIrmao1() != null && aluno.getIrmao1().getRematricular() != null && aluno.getIrmao1().getRematricular()) {
+		if (aluno.getIrmao1() != null && ((aluno.getIrmao1().getRematricular() != null && aluno.getIrmao1().getRematricular()) || aluno.getIrmao1().getRematricular() == null ) ) {
 			nomeAluno += ", " + aluno.getIrmao1().getNomeAluno();
 			nomeSerie += ", " + Serie.values()[aluno.getIrmao1().getSerie().ordinal()].getName();
 			nomePeriodo += ", " + aluno.getIrmao1().getPeriodoProximoAno().getName();
 			
 		}
-		if (aluno.getIrmao2() != null && aluno.getIrmao2().getRematricular() != null && aluno.getIrmao2().getRematricular()) {
+		if (aluno.getIrmao2() != null && ((aluno.getIrmao2().getRematricular() != null && aluno.getIrmao2().getRematricular()) || aluno.getIrmao2().getRematricular() == null ) ) {
 			nomeAluno += ", " + aluno.getIrmao2().getNomeAluno();
 			nomeSerie += ", " + Serie.values()[aluno.getIrmao2().getSerie().ordinal()].getName();
 			nomePeriodo += ", " + aluno.getIrmao2().getPeriodoProximoAno().getName();
 		}
-		if (aluno.getIrmao3() != null && aluno.getIrmao3().getRematricular() != null && aluno.getIrmao3().getRematricular()) {
+		if (aluno.getIrmao3() != null && ((aluno.getIrmao3().getRematricular() != null && aluno.getIrmao3().getRematricular()) || aluno.getIrmao3().getRematricular() == null ) ) {
 			nomeAluno += ", " + aluno.getIrmao3().getNomeAluno();
 			nomeSerie += ", " + Serie.values()[aluno.getIrmao3().getSerie().ordinal()].getName();
 			nomePeriodo += ", " + aluno.getIrmao3().getPeriodoProximoAno().getName();

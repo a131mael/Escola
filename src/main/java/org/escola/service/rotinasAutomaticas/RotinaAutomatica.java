@@ -21,25 +21,25 @@ public class RotinaAutomatica {
 	@Schedule(minute = "30", hour = "5", dayOfWeek="Sun,Thu", month="*", persistent = false)
 	public void automaticTimeout() {
 		
-		/*try {
-			System.out.println("Gerando CNAB DE ALUNOS AINDA NAO ENVIADOs Escolar");
-			cnab240.gerarCNABAlunos();
+		try {
+			System.out.println("Gerando CNAB DE ALUNOS AINDA NAO ENVIADOs Escola");
+		//	cnab240.gerarCNABAlunos();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		try {
-			cnab240.gerarBaixaBoletosPagos();
+	//		cnab240.gerarBaixaBoletosPagos();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 	@Schedule(minute = "*/5", hour = "*", month="*", persistent = false)
 	public void gerarArquivos() {
 		try {
 			System.out.println("Gerando Arquivo de Baixa Cancelados ");
-			cnab240.gerarBaixaBoletoAlunosCancelados();
+		//	cnab240.gerarBaixaBoletoAlunosCancelados();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -59,12 +59,12 @@ public class RotinaAutomatica {
 	
 	@Schedule(minute = "*/5", hour = "*", persistent = false)
 	public void importarCNABPagmentos() {
-		/*try {
+		try {
 			System.out.println("Gerando Arquivo de Baixa Pagos ");
-			cnab240.importarPagamentosCNAB240();
+		//	cnab240.importarPagamentosCNAB240();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 	
 	@Schedule(minute = "4", hour = "15", dayOfWeek="Tue", month="*", persistent = false)
@@ -87,13 +87,13 @@ public class RotinaAutomatica {
 	// Rotina que executa as 3:30 da manha.
 	@Schedule(minute = "30", hour = "3",dayOfMonth="2", month="*" , persistent = false)
 	public void enviarEmail() {
-		/*new Thread() {
+		new Thread() {
 			  @Override
 		        public void run() {
 				  System.out.println("Enviando email do mes atual ");
-					EnviadorEmail email = new EnviadorEmail();
-					email.enviarEmailBoletosMesAtual();		  
+			//		EnviadorEmail email = new EnviadorEmail();
+			//		email.enviarEmailBoletosMesAtual();		  
 			  }
-		}.start();*/
+		}.start();
 	}
 }

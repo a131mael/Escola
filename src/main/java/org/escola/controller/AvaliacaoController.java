@@ -71,6 +71,8 @@ public class AvaliacaoController extends AuthController implements Serializable{
 	
 	private LazyDataModel<Avaliacao> lazyListDataModel;
 	
+	private Boolean mostrarListagem = false;
+	
 	@PostConstruct
 	private void init() {
 		if(getAvaliacao() == null){
@@ -325,6 +327,24 @@ public class AvaliacaoController extends AuthController implements Serializable{
 
 	public void setAvaliacao(Avaliacao avaliacao) {
 		this.avaliacao = avaliacao;
+	}
+
+
+	public Boolean getMostrarListagem() {
+		return mostrarListagem;
+	}
+
+
+	public void setMostrarListagem(Boolean mostrarListagem) {
+		this.mostrarListagem = mostrarListagem;
+	}
+	
+	public void setMostrarListagem() {
+		if(this.mostrarListagem){
+			this.mostrarListagem =false;
+		}else{
+			this.mostrarListagem = true;
+		}
 	}
 	
 }

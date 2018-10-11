@@ -62,8 +62,10 @@ public class UsuarioService extends Service implements Serializable {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT m from  Member m ");
 		sql.append("where m.tokenFCM is not null ");
-		sql.append(" and m.tipoMembro = ");
-		sql.append(tipoMembro.ordinal());
+		if(!tipoMembro.equals(TipoDestinatario.TODOS)){
+			sql.append(" and m.tipoMembro = ");
+			sql.append(tipoMembro.ordinal());
+		}
 		
 		Query query = em.createQuery(sql.toString());
 

@@ -71,7 +71,7 @@
 
 							<h:outputLabel value="Nome AVÓ Paterno: "
 								style="font-size: 13px; width:180px" />
-							<h:inputText title="" value="#{aluno.nomeAvoPaternoPai}"
+							<h:inputText title="" value="#{aluno.nomeAvoHPaternoPai}"
 								style="font-size: 15px; width:280px" />
 
 							<h:outputLabel value="Naturalidade Pai: "
@@ -137,7 +137,7 @@
 
 							<h:outputLabel value="Nome AVÓ Materno: "
 								style="font-size: 13px; width:180px" />
-							<h:inputText title="" value="#{aluno.nomeAvoPaternoMae}"
+							<h:inputText title="" value="#{aluno.nomeAvoHPaternoMae}"
 								style="font-size: 15px; width:280px" />
 
 							<h:outputLabel value="Naturalidade Mãae: "
@@ -205,6 +205,18 @@
 							<p:inputText value="#{aluno.nomeResponsavel}"
 								style="font-size: 15px; width:275px">
 							</p:inputText>
+							
+							<h:outputLabel value="Nome PAI Responsável: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{aluno.nomePaiResponsavel}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+							
+							<h:outputLabel value="Nome MAE Responsável: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{aluno.nomeMaeResponsavel}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
 
 							<h:outputLabel value="CPF Responsável: "
 								style="font-size: 13px; width:180px" />
@@ -233,7 +245,7 @@
 							
 							<h:outputLabel value="Cidade: "
 								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.bairro}"
+							<p:inputText value="#{aluno.cidade}"
 								style="font-size: 15px; width:275px">
 							</p:inputText>
 							

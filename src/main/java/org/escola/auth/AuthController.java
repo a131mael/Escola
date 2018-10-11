@@ -186,6 +186,7 @@ public class AuthController implements Serializable {
 
 	public Member getLoggedUser() {
 		try {
+			long t1 = System.currentTimeMillis();
 			if (loggedUser == null) {
 				if (SecurityUtils.getSubject().getPrincipal() != null) {
 					System.out.println("CONSTRUIU O USUARIO LOGADO !!");
@@ -193,7 +194,8 @@ public class AuthController implements Serializable {
 					loggedUser = user;
 				}
 			}
-
+			long t2 = System.currentTimeMillis();
+			System.out.println("Tempo execção usuario logado" + (t2-t1));
 			return loggedUser;
 
 		} catch (Exception ex) {

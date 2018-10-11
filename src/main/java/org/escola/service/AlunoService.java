@@ -272,7 +272,7 @@ public class AlunoService extends Service {
 	}
 
 	public String removeCaracteresEspeciais(String texto) {
-		texto = texto.replaceAll("[^aA-zZ-Z1-9 ]", "");
+		texto = texto.replaceAll("[^aA-zZ-Z0-9 ]", "");
 		return texto;
 	}
 
@@ -369,6 +369,15 @@ public class AlunoService extends Service {
 			if (aluno.getNomeResponsavel() != null) {
 				user.setNomeResponsavel(removeCaracteresEspeciais(aluno.getNomeResponsavel().toUpperCase()));
 			}
+			
+			if (aluno.getNomePaiResponsavel() != null) {
+				user.setNomePaiResponsavel(removeCaracteresEspeciais(aluno.getNomePaiResponsavel().toUpperCase()));
+			}
+			
+			if (aluno.getNomeMaeResponsavel() != null) {
+				user.setNomeMaeResponsavel(removeCaracteresEspeciais(aluno.getNomeMaeResponsavel().toUpperCase()));
+			}
+			
 			user.setNumeroParcelas(aluno.getNumeroParcelas());
 			user.setObservacaoProfessores(aluno.getObservacaoProfessores());
 			user.setObservacaoSecretaria(aluno.getObservacaoSecretaria());

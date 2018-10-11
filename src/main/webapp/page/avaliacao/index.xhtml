@@ -10,13 +10,16 @@
 
 			<h:panelGrid id="panelFerramentas" columns="8" style="margin-top: -30px;">
 				<h:commandButton action="#{avaliacaoController.adicionarNovo()}"	value="Adicionar" />
+				<h:commandButton actionListener="#{avaliacaoController.setMostrarListagem()}"	value="Exibir" >
+					<p:ajax process="@this" update="@form"/>
+				</h:commandButton>
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{avaliacaoController.editar()}"	alt="Editar" disabled="#{!avaliacaoController.avaliacaoSelecionada}"/>
 				<p:commandButton id="remover" icon="ui-icon-trash" action="#{avaliacaoController.remover()}" alt="Remover" 
 									disabled="#{!avaliacaoController.avaliacaoSelecionada}" update="form:tbl"/>
 				
 			</h:panelGrid>
 
-			<h:panelGrid width="90%">
+			<h:panelGrid id="panelPrincipal" width="90%" rendered="#{avaliacaoController.mostrarListagem}">
 			<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
                              emptyMessage="#Nenhum registro encontrado"
                              selectionMode="single" 
