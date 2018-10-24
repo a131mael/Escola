@@ -86,6 +86,7 @@ public class ConfiguracaoService extends Service {
 			
 			user.setAnoLetivo(configuracao.getAnoLetivo());
 			user.setBimestre(configuracao.getBimestre());
+			user.setAnoRematricula(configuracao.getAnoRematricula());
 			
 			em.persist(user);
 			

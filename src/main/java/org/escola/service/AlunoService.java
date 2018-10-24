@@ -3,6 +3,7 @@ package org.escola.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,6 @@ import org.escola.model.Evento;
 import org.escola.model.HistoricoAluno;
 import org.escola.model.Professor;
 import org.escola.model.Turma;
-import org.escola.util.Constant;
 import org.escola.util.Service;
 import org.escola.util.UtilFinalizarAnoLetivo;
 
@@ -186,7 +186,7 @@ public class AlunoService extends Service {
 			Predicate whereSerie = null;
 			Predicate wherePeriodo = null;
 			Predicate whereRemovido = cb.equal(member.get("removido"), false);;
-			Predicate whereAnoLetivo = cb.equal(member.get("anoLetivo"), Constant.anoLetivoAtual);
+			Predicate whereAnoLetivo = cb.equal(member.get("anoLetivo"), configuracaoService.getConfiguracao().getAnoLetivo());
 			
 			StringBuilder sb = new StringBuilder();
 			if (serie != null) {
@@ -226,6 +226,7 @@ public class AlunoService extends Service {
 			return new ArrayList<>();
 		}
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	public List<Aluno> findAlunoTurmaBytTurma(long idTurma) {
@@ -286,7 +287,7 @@ public class AlunoService extends Service {
 				user = findById(aluno.getId());
 			} else {
 				user = new Aluno();
-				user.setAnoLetivo(Constant.anoLetivoAtual);
+				user.setAnoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
 			}
 
 			user.setAdministrarParacetamol(aluno.isAdministrarParacetamol());
@@ -415,9 +416,9 @@ public class AlunoService extends Service {
 					aniversario = new Evento();
 				}
 
-				aniversario.setDataFim(finalizarAnoLetivo.mudarAno(user.getDataNascimento(), Constant.anoLetivoAtual));
+				aniversario.setDataFim(finalizarAnoLetivo.mudarAno(user.getDataNascimento(), configuracaoService.getConfiguracao().getAnoLetivo()));
 				aniversario
-						.setDataInicio(finalizarAnoLetivo.mudarAno(user.getDataNascimento(), Constant.anoLetivoAtual));
+						.setDataInicio(finalizarAnoLetivo.mudarAno(user.getDataNascimento(), configuracaoService.getConfiguracao().getAnoLetivo()));
 				aniversario.setCodigo(user.getCodigo());
 				aniversario.setDescricao(" Aniversário do(a) aluno(a) " + user.getNomeAluno());
 				aniversario.setNome(
@@ -678,7 +679,7 @@ public class AlunoService extends Service {
 
 			for (Aluno prof : target) {
 				AlunoTurma pt = new AlunoTurma();
-				pt.setAnoLetivo(Constant.anoLetivoAtual);
+				pt.setAnoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
 				pt.setAluno(prof);
 				pt.setTurma(em.find(Turma.class, turma.getId()));
 				em.persist(pt);
@@ -954,14 +955,22 @@ public class AlunoService extends Service {
 	}
 
 	public List<Boleto> gerarBoletos(Aluno user) {
+		return gerarBoletos(user,configuracaoService.getConfiguracao().getAnoLetivo());
+	}
+
+	public List<Boleto> gerarBoletos(Aluno user, int ano) {
+		int quantidadeParcelas = 12 - user.getNumeroParcelas();
+		return gerarBoletos(user,ano,quantidadeParcelas);
+	}
+	
+	public List<Boleto> gerarBoletos(Aluno user, int ano, int quantidadeParcelas) {
 		List<Boleto> boletos = new ArrayList<>();
-		int i = 12 - user.getNumeroParcelas();
 		long nossoNumero = getProximoNossoNumero();
-		while (i < 12) {
+		while (quantidadeParcelas < 12) {
 			Boleto boleto = new Boleto();
 			Calendar vencimento = Calendar.getInstance();
-			vencimento.set(Calendar.MONTH, i);
-			vencimento.set(Calendar.YEAR, Constant.anoLetivoAtual);
+			vencimento.set(Calendar.MONTH, quantidadeParcelas);
+			vencimento.set(Calendar.YEAR, ano);
 			vencimento.set(Calendar.HOUR, 0);
 			vencimento.set(Calendar.MINUTE, 0);
 			vencimento.set(Calendar.SECOND, 0);
@@ -980,13 +989,14 @@ public class AlunoService extends Service {
 			nossoNumero++;
 			boletos.add(boleto);
 
-			i++;
+			quantidadeParcelas++;
 		}
 		return boletos;
 	}
 
 	public void gerarBoletos() {
 		List<Aluno> alunos = findAll();
+		int anoREmatricula = configuracaoService.getConfiguracao().getAnoRematricula();
 		for (Aluno al : alunos) {
 			if(al.getCodigo().equals("135")){
 			}
@@ -994,8 +1004,7 @@ public class AlunoService extends Service {
 
 				if (al.getBoletos() == null || al.getBoletos().size() == 0) {
 					if (al.getNumeroParcelas() != null && al.getNumeroParcelas() > 0) {
-						if ((al.getAnoLetivo() == Constant.anoLetivoAtual)
-								|| (al.getRematricular() != null && al.getRematricular())) {
+						if ((al.getAnoLetivo() == configuracaoService.getConfiguracao().getAnoLetivo()) || (al.getRematricular() != null && al.getRematricular())) {
 							if (!irmaoJaTemBoleto(al)) {
 								List<Boleto> boletos = gerarBoletos(al);
 								al.setBoletos(boletos);
@@ -1029,8 +1038,39 @@ public class AlunoService extends Service {
 					}
 				}
 			}
-
+			gerarBoletosRematricula(al,anoREmatricula);
 		}
+	}
+	
+	private void gerarBoletosRematricula(Aluno al, int anoRematricula){
+		if (al.getRemovido() != null && !al.getRemovido()) {
+			if(al.getRematricular() != null && al.getRematricular()){
+				if(!possuiBoletoNoAno(al,anoRematricula)){
+					List<Boleto> boletosGErados =  gerarBoletos(al, anoRematricula,0);
+					boletosGErados.addAll(al.getBoletos());
+					al.setBoletos(boletosGErados);
+						em.persist(al);
+				}
+			}
+		}
+	}
+	
+	private boolean possuiBoletoNoAno(Aluno al, int anoRematricula) {
+		boolean retorno = false;
+		List<Boleto> boletos = al.getBoletos();
+		Calendar calendar = new GregorianCalendar();
+		if(boletos != null && !boletos.isEmpty()){
+			for(Boleto boleto:boletos){
+				calendar.setTime(boleto.getVencimento());
+				int anoBoleto = calendar.get(Calendar.YEAR);
+				if(anoBoleto == anoRematricula){
+					retorno = true;
+				}
+			}
+		}else{
+			retorno = false;
+		}
+		return retorno;
 	}
 
 	private boolean irmaoJaTemBoleto(Aluno aluno) {
@@ -1221,5 +1261,7 @@ public class AlunoService extends Service {
 		em.flush();
 		remover(aluno.getId());
 	}
+	
+	
 	
 }

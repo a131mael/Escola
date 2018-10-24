@@ -29,6 +29,11 @@
 						listener="#{configuracaoController.salvar()}" />
 				</p:selectOneMenu>
 
+				<h:outputText value="Ano rematrícula:" />
+				<p:inputText value="#{configuracao.anoRematricula}">
+					<p:ajax event="blur" process="@this" listener="#{configuracaoController.salvar()}"/>
+				</p:inputText>
+
 				<p:commandButton value="FINALIZAR ANO LETIVO" icon="ui-icon-pencil" ajax="false" action="#{secretariaController.finalizarAnoLetivo()}">
 					
 				</p:commandButton>

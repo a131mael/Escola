@@ -46,6 +46,7 @@ import org.escola.enums.StatusBoletoEnum;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
+import org.escola.model.Configuracao;
 import org.escola.model.HistoricoAluno;
 import org.escola.model.Member;
 import org.escola.model.Professor;
@@ -138,7 +139,8 @@ public class AlunoController implements Serializable {
 	private boolean irmao3;
 
 	private boolean irmao4;
-
+	
+	private Configuracao configuracao;
 	
 	public LazyDataModel<Aluno> getLazyDataModelCanceladas() {
 		if (lazyListDataModelCanceladas == null) {
@@ -161,7 +163,7 @@ public class AlunoController implements Serializable {
 
 					Map<String, Object> filtros = new HashMap<String, Object>();
 
-					filtros.put("anoLetivo", Constant.anoLetivoAtual);
+					filtros.put("anoLetivo", configuracao.getAnoLetivo());
 
 					filtros.putAll(where);
 					filtros.put("removido", true);
@@ -417,7 +419,7 @@ public class AlunoController implements Serializable {
 
 					filtros.putAll(where);
 					
-					filtros.put("anoLetivo", configuracaoService.getConfiguracao().getAnoLetivo() -1);
+					filtros.put("anoLetivo", configuracao.getAnoLetivo() -1);
 					
 					if (filtros.containsKey("periodo")) {
 						filtros.put("periodo", filtros.get("periodo").equals("MANHA") ? PerioddoEnum.MANHA
@@ -574,6 +576,7 @@ public class AlunoController implements Serializable {
 		}
 		officeDOCUtil = new OfficeDOCUtil();
 		cw = new CurrencyWriter();
+		configuracao = configuracaoService.getConfiguracao();
 	}
 	
 	public boolean estaEmUmaTurma(long idAluno){
@@ -1268,9 +1271,6 @@ public class AlunoController implements Serializable {
 		dataLim.add(Calendar.MONTH, 1);
 		String dataLimiteExtenso = formatador.format(dataLim.getTime());
 
-		DateFormat formatadorAno = DateFormat.getDateInstance(DateFormat.YEAR_FIELD, new Locale("pt", "BR"));
-		String ano = formatadorAno.format(new Date());
-
 		HashMap<String, String> trocas = new HashMap<>();
 
 		String nomeAluno = aluno.getNomeAluno();
@@ -1298,9 +1298,12 @@ public class AlunoController implements Serializable {
 			nomeSerie += ", " + Serie.values()[aluno.getIrmao4().getSerie().ordinal()].getName();
 			nomePeriodo += ", " + aluno.getIrmao4().getPeriodoProximoAno().getName();
 		}
-
+		int ano = configuracao.getAnoLetivo();
+		if(aluno.getRematricular() != null && aluno.getRematricular()){
+			ano = configuracao.getAnoRematricula();	
+		}
 		
-		trocas.put("adonaianoletivo",  (Constant.anoLetivoAtual)+"");
+		trocas.put("adonaianoletivo",  ano+"");
 		trocas.put("adonainomealuno", nomeAluno);
 		trocas.put("adonaiturma", nomeSerie);
 		trocas.put("adonaiperiodo", nomePeriodo);
