@@ -21,7 +21,8 @@
     		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
 		</p:dialog>
 	
-		<h:form prependId="false" style="width:100%; border:none" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
+		<h:form prependId="false" style="width:100%; border:none" 
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
 
 			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
         		<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
@@ -47,7 +48,7 @@
 				
 				<p:tooltip for="boleto" value="Boleto" position="top" />
 				<p:tooltip for="cnab" value="CNAB240" position="top" />
-				<p:tooltip for="gerarBoleto" value="GERAR BOLETOS" position="top" />
+				<!-- <p:tooltip for="gerarBoleto" value="GERAR BOLETOS" position="top" /> -->
 				<p:tooltip  for="gerarBaixa" value="Gerar arquivo Baixa" position="top"
 							rendered="#{authController.hasPermission(authController.mestre)}"/>
 				
@@ -100,7 +101,7 @@
 				</p:commandButton>
 				<p:commandButton id="gerarBoleto"
 					action="#{alunoController.gerarBoletoModel()}" alt="GerarBoleto"
-					rendered="#{true}" />
+					rendered="#{authController.hasPermission(authController.mestre)}" />
 			
 				<p:commandButton id="rematricula" update="@form" icon="ui-icon-check" action="#{alunoController.rematricular()}" 
 								alt="Rematricular" disabled="#{!alunoController.alunoSelecionado}"

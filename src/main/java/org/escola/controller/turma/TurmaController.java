@@ -766,7 +766,7 @@ public class TurmaController extends AuthController implements Serializable {
 	}
 	
 	public void saveAluno(Aluno aluno) {
-		alunoService.save(aluno);
+		alunoService.save(aluno,aluno.getContratoVigente());
 	}
 
 	public void saveAvaliacaoAluno(Long idAluAv, Float nota) {

@@ -37,6 +37,8 @@ import javax.inject.Named;
 import org.escola.enums.PerioddoEnum;
 import org.escola.model.Aluno;
 import org.escola.model.Boleto;
+import org.escola.model.ContratoAdonai;
+import org.escola.model.ContratoAluno;
 import org.escola.model.Devedor;
 import org.escola.service.DevedorService;
 import org.escola.util.FileDownload;
@@ -234,8 +236,8 @@ public class DevedorController implements Serializable {
 	public Double getTotal(Aluno devedor){
 		Double total = 0D;
 		if(devedor  != null){
-			if(devedor.getBoletos() != null && !devedor.getBoletos().isEmpty()){
-				for(Boleto b : devedor.getBoletos()){
+			if(devedor.getContratoVigente() != null &&  !devedor.getContratoVigente().getBoletos().isEmpty()){
+				for(Boleto b : devedor.getContratoVigente().getBoletos()){
 					if(b.getAtrasado() != null && b.getAtrasado()){
 						total += Verificador.getValorFinal(b);
 					}
@@ -266,8 +268,9 @@ public class DevedorController implements Serializable {
 	}
 	
 	public double valorTotal(Aluno aluno){
-		if(aluno != null && aluno.getNumeroParcelas() != null){
-			return aluno.getValorMensal()*aluno.getNumeroParcelas();
+		ContratoAluno contrato = aluno.getContratoVigente();
+		if(contrato != null && contrato.getNumeroParcelas() != null){
+			return contrato.getValorMensal()*contrato.getNumeroParcelas();
 		}else{
 			return 0;
 		}

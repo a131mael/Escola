@@ -22,6 +22,7 @@ import org.aaf.financeiro.util.constantes.Constante;
 import org.escola.enums.StatusBoletoEnum;
 import org.escola.model.Aluno;
 import org.escola.model.Boleto;
+import org.escola.model.ContratoAluno;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.FinanceiroEscolaService;
 import org.escola.util.Verificador;
@@ -40,18 +41,18 @@ public class CNAB240 {
 	@Inject
 	private FinanceiroEscolaService financeiroService;
 
-	public byte[] gerarCNB240(int projeto, Aluno aluno) {
+	public byte[] gerarCNB240(int projeto, Aluno aluno, ContratoAluno contrato) {
 		try {
 
 			String sequencialArquivo = configuracaoService.getSequencialArquivo() + "";
 
 			Pagador pagador = new Pagador();
-			pagador.setBairro(aluno.getBairro());
-			pagador.setCep(aluno.getCep());
-			pagador.setCidade(aluno.getCidade() != null ? aluno.getCidade() : "PALHOCA");
-			pagador.setCpfCNPJ(aluno.getCpfResponsavel());
-			pagador.setEndereco(aluno.getEndereco());
-			pagador.setNome(aluno.getNomeResponsavel());
+			pagador.setBairro(contrato.getBairro());
+			pagador.setCep(contrato.getCep());
+			pagador.setCidade(contrato.getCidade() != null ? contrato.getCidade() : "PALHOCA");
+			pagador.setCpfCNPJ(contrato.getCpfResponsavel());
+			pagador.setEndereco(contrato.getEndereco());
+			pagador.setNome(contrato.getNomeResponsavel());
 			pagador.setNossoNumero(aluno.getCodigo());
 			pagador.setUF("SC");
 			pagador.setBoletos(aluno.getBoletosFinanceiro());
@@ -78,13 +79,13 @@ public class CNAB240 {
 			String sequencialArquivo = configuracaoService.getSequencialArquivo() + "";
 
 			Pagador pagador = new Pagador();
-			pagador.setBairro(b.getPagador().getBairro());
-			pagador.setCep(b.getPagador().getCep());
-			pagador.setCidade(b.getPagador().getCidade() != null ? b.getPagador().getCidade() : "PALHOCA");
-			pagador.setCpfCNPJ(b.getPagador().getCpfResponsavel());
-			pagador.setEndereco(b.getPagador().getEndereco());
-			pagador.setNome(b.getPagador().getNomeResponsavel());
-			pagador.setNossoNumero(b.getPagador().getCodigo());
+			pagador.setBairro(b.getContrato().getBairro());
+			pagador.setCep(b.getContrato().getCep());
+			pagador.setCidade(b.getContrato().getCidade() != null ? b.getContrato().getCidade() : "PALHOCA");
+			pagador.setCpfCNPJ(b.getContrato().getCpfResponsavel());
+			pagador.setEndereco(b.getContrato().getEndereco());
+			pagador.setNome(b.getContrato().getNomeResponsavel());
+			pagador.setNossoNumero(b.getContrato().getNumero());
 			pagador.setUF("SC");
 			ArrayList<Boleto> boletos = new ArrayList<>();
 			boletos.add(b);
@@ -131,10 +132,12 @@ public class CNAB240 {
 	public void gerarCNABAlunos() {
 		List<Aluno> alunosSemCNABENVIADO = financeiroService.getAlunosCNABNaoEnviado();
 		for (Aluno al : alunosSemCNABENVIADO) {
-			byte[] arquivo = gerarCNB240(CONSTANTES.projeto, al);
-			String nomeArquivo = "CNAB240_" + al.getCodigo() + ".txt";
-			ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
-			financeiroService.saveCNABENviado(al);
+			for(ContratoAluno contrato : al.getContratosVigentes()){
+				byte[] arquivo = gerarCNB240(CONSTANTES.projeto, al,contrato);
+				String nomeArquivo = "CNAB240_" + al.getCodigo() + ".txt";
+				ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
+				financeiroService.saveCNABENviado(al);
+			}
 		}
 	}
 
@@ -148,8 +151,10 @@ public class CNAB240 {
 	public void gerarBaixaBoletoAlunosCancelados() {
 		List<Aluno> alunosCancelados = financeiroService.getAlunosRemovidos();
 		for (Aluno al : alunosCancelados) {
-			for (Boleto b : al.getBoletos()) {
-				gerarBaixaBoletosCancelados(b, CONSTANTES.PATH_ENVIAR_BAIXA_CANCELADOS);
+			for(ContratoAluno contrato : al.getContratos()){
+				for (Boleto b : contrato.getBoletos()) {
+					gerarBaixaBoletosCancelados(b, CONSTANTES.PATH_ENVIAR_BAIXA_CANCELADOS);
+				}	
 			}
 		}
 	}

@@ -29,6 +29,17 @@ public class ImpressoesUtils {
 		}
 	}
 	
+	public static void imprimirInformacoesAluno(String modelo, HashMap<String, String> trocas, String nomeArquivoSaida) throws IOException {
+
+		try {
+			officeDOCUtil.editDoc2(modelo, trocas, nomeArquivoSaida);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public static void imprimirInformacoesAlunoTemp(Aluno aluno, String modelo, HashMap<String, String> trocas,
 			String nomeArquivoSaida) throws IOException {
 

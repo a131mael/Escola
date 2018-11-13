@@ -97,9 +97,9 @@ public class FinanceiroController implements Serializable{
 	}
 	
 	public boolean isRemovido(Boleto boleto){
-		if(boleto.getCancelado() != null && boleto.getCancelado()){
+		/*if(boleto.getCancelado() != null && boleto.getCancelado()){
 			return true;
-		}
+		}*/
 		return false;
 	}
 	

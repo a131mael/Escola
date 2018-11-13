@@ -60,9 +60,12 @@
    <PROCESS-ITEM-OUTPUT ID="index::#page#aluno#index.xhtml"
     NAME="output1" PATH="/page/aluno/index.xhtml"
     TARGET="rules:#page#aluno#index.xhtml" TITLE="index" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerContrato.xhtml"
+    NAME="output2" PATH="/page/aluno/removerContrato.xhtml"
+    TARGET="rules:#page#aluno#removerContrato.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="indexFinanceiro::#page#aluno#indexFinanceiro.xhtml"
-    NAME="output2" PATH="/page/aluno/indexFinanceiro.xhtml"
+    NAME="output3" PATH="/page/aluno/indexFinanceiro.xhtml"
     TARGET="rules:#page#aluno#indexFinanceiro.xhtml"
     TITLE="indexFinanceiro" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
@@ -240,4 +243,13 @@
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#page#aluno#removerAluno.xhtml"
   PATH="/page/aluno/removerAluno.xhtml" SHAPE="624,17,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#page#aluno#removerContrato.xhtml"
+  PATH="/page/aluno/removerContrato.xhtml" SHAPE="880,513,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aluno#removerContrato.xhtml:0"
+   NAME="item" PATH="/page/aluno/removerContrato.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="ok::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="ok" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
 </PROCESS>

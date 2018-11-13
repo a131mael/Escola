@@ -20,6 +20,7 @@ import org.aaf.financeiro.sicoob.util.CNAB240_REMESSA_SICOOB;
 import org.apache.poi.util.IOUtils;
 import org.escola.enums.StatusBoletoEnum;
 import org.escola.model.Aluno;
+import org.escola.model.ContratoAluno;
 
 /**
  * metodos estaticos tipo handle de arquivos e dados
@@ -175,16 +176,16 @@ public class FileUtils {
 		return bf.toString();
 	}
 
-	public static InputStream gerarCNB240(String sequencialArquivo, String nomeArquivo, Aluno aluno) {
+	public static InputStream gerarCNB240(String sequencialArquivo, String nomeArquivo, Aluno aluno, ContratoAluno contrato) {
 		try {
 
 			Pagador pagador = new Pagador();
-			pagador.setBairro(aluno.getBairro());
-			pagador.setCep(aluno.getCep());
-			pagador.setCidade(aluno.getCidade() != null ? aluno.getCidade() : "PALHOCA");
-			pagador.setCpfCNPJ(aluno.getCpfResponsavel());
-			pagador.setEndereco(aluno.getEndereco());
-			pagador.setNome(aluno.getNomeResponsavel());
+			pagador.setBairro(contrato.getBairro());
+			pagador.setCep(contrato.getCep());
+			pagador.setCidade(contrato.getCidade() != null ? contrato.getCidade() : "PALHOCA");
+			pagador.setCpfCNPJ(contrato.getCpfResponsavel());
+			pagador.setEndereco(contrato.getEndereco());
+			pagador.setNome(contrato.getNomeResponsavel());
 			pagador.setNossoNumero(aluno.getCodigo());
 			pagador.setUF("SC");
 			pagador.setBoletos(Formatador.getBoletosFinanceiro(getBoletosParaPagar(aluno)));
@@ -207,14 +208,17 @@ public class FileUtils {
 
 	public static List<org.escola.model.Boleto> getBoletosParaPagar(Aluno aluno) {
 		List<org.escola.model.Boleto> boletosParaPagar = new ArrayList<>();
-		if (aluno.getBoletos() != null) {
-			for (org.escola.model.Boleto b : aluno.getBoletos()) {
-				if ((!Verificador.getStatusEnum(b).equals(StatusBoletoEnum.PAGO))
-						&& !(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.CANCELADO))) {
-					boletosParaPagar.add(b);
+		if (aluno.getContratosVigentes() != null) {
+			for(ContratoAluno contrato : aluno.getContratosVigentes()){
+				if(contrato.getBoletos() != null){
+					for (org.escola.model.Boleto b : contrato.getBoletos()) {
+						if ((!Verificador.getStatusEnum(b).equals(StatusBoletoEnum.PAGO))
+								&& !(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.CANCELADO))) {
+							boletosParaPagar.add(b);
+						}
+					}
 				}
 			}
-
 		}
 		return boletosParaPagar;
 	}

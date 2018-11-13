@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	
+	<h:panelGrid id="panelContratos" border="0" rendered="#{visible}" width="100%">
+		<p:accordionPanel value="#{contratos}" var="contratoAlun" multiple="true" >
+		 <p:tab title="#{alunoController.getTituloContrato(contratoAlun)}">
+		 	<p:tabView id="tabViewContrato">
+					<p:tab id="tabcontrato" title="Contrato">
+						<h:panelGrid columns="2" border="0">
+							<h:panelGrid columns="2" border="0">
+								<h:outputLabel value="Numero: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.numero}"
+									disabled="true"
+									style="font-size: 15px; width:275px">
+								</p:inputText>
+								
+								<h:outputLabel value="Ano: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.ano}"
+									style="font-size: 15px; width:275px">
+								</p:inputText>
+								
+								<h:outputLabel value="Nome Responsável: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.nomeResponsavel}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+								
+								<h:outputLabel value="Nome PAI Responsável: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.nomePaiResponsavel}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+								
+								<h:outputLabel value="Nome MAE Responsável: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.nomeMaeResponsavel}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+	
+								<h:outputLabel value="CPF Responsável: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.cpfResponsavel}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+								
+								<h:outputLabel value="RG Responsável: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.rgResponsavel}"
+									style="font-size: 15px; width:275px">
+								</p:inputText>
+								
+								<h:outputLabel value="Endereço: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.endereco}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+	
+								<h:outputLabel value="Bairro: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.bairro}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+	
+								
+								<h:outputLabel value="Cidade: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.cidade}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+								
+	
+								<h:outputLabel value="CEP: " style="font-size: 13px; width:180px" />
+								<p:inputMask id="cpf" value="#{contratoAlun.cep}" mask="99 999-999"
+											style="font-size: 15px; width:275px" />
+								
+	
+	
+								<h:outputLabel value="Nº Parcelas: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.numeroParcelas}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+	
+								<h:outputLabel value="Mensalidade: "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.valorMensal}"
+											style="font-size: 15px; width:275px">
+								</p:inputText>
+	
+								<h:outputLabel value="Vencimento:  "
+									style="font-size: 13px; width:180px" />
+									<h:panelGrid id="panelVencimento" columns="2">
+										<p:selectOneMenu  style="width: 160px;"
+											value="#{contratoAlun.vencimentoUltimoDia}" >
+											<f:selectItem itemLabel="No dia" itemValue="#{false}" />
+											<f:selectItem itemLabel="Vence ultimo dia" itemValue="#{true}" />
+										<!-- 	<p:ajax event="blur" process="@this" update="form:tabView:diaVencimento"/> -->
+										</p:selectOneMenu>
+								
+									
+										<p:inputText id="diaVencimento" value="#{contratoAlun.diaVencimento}"
+											style="font-size: 15px; width:275px" rendered="#{!contratoAlun.vencimentoUltimoDia}">
+										</p:inputText> 
+									
+									</h:panelGrid>
+	
+								<h:outputLabel value="Valor Total :"
+									style="font-size: 13px; width:180px" rendered="false"/>
+								<p:inputText style="font-size: 15px; width:275px" rendered="false">
+								</p:inputText>
+								
+							</h:panelGrid>
+							<h:panelGrid columns="1" border="0" style="100%">
+									<p:commandButton value="Salvar Contrato" 
+													rendered="#{not contratoAlun.cancelado and alunoController.podeGerarBoleto(contratoAlun)}">
+													<p:ajax process="tabcontrato" event="click"
+															update="form:tabView:panelContratos" 
+															listener="#{alunoController.salvar(contratoAlun)}"/>
+									</p:commandButton>
+									
+									<br/>
+									
+									<br/>
+									
+									<p:commandButton style="background:blue"
+													value="Gerar Boletos" rendered="#{alunoController.podeGerarBoleto(contratoAlun) and !contratoAlun.cancelado}">
+													<p:ajax listener="#{alunoController.gerarBoletos(contratoAlun)}"   
+															update="form:tabView:panelContratos" />
+									</p:commandButton>
+									
+									<br/>
+									<br/>
+									<h:panelGrid columns="2" border="0">
+										<p:commandButton id="contrato" icon="ui-icon-print"
+														value="Download Contrato"  
+														ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);">
+										<p:fileDownload value="#{alunoController.imprimirContrato(contratoAlun)}" />
+										</p:commandButton>
+				
+										<p:commandButton id="boleto" icon="ui-icon-print" ajax="false"
+													onclick="PrimeFaces.monitorDownload(start, stop);"
+													value="Download Boletos" >
+												<p:fileDownload value="#{alunoController.gerarBoleto(contratoAlun)}" />
+										</p:commandButton>
+				
+										
+									</h:panelGrid>
+									<br/>
+									<br/>
+							
+									<p:commandButton style="background:red"
+													action="#{alunoController.cancelar(contratoAlun)}"  
+													value="Cancelar Contrato" 
+													rendered="#{not contratoAlun.cancelado}">
+													
+									</p:commandButton>
+														
+									
+							</h:panelGrid>
+					</h:panelGrid>
+						
+			</p:tab>
+			
+			<p:tab id="tabBoleto" title="Boletos">
+			<ui:include src="cmpAlunoBoletos.xhtml">
+		    	<ui:param name="parametro" value="#{contratoAlun}" />
+		    	<ui:param name="visible" value="#{true}" />
+			</ui:include>
+			</p:tab>			
+		</p:tabView>
+		 </p:tab>
+				
+		</p:accordionPanel>
+
+	</h:panelGrid>
+
+	<h:panelGrid border="0" rendered="#{visible}" width="100%">
+		<hr/>
+	</h:panelGrid>
+
+</ui:composition>

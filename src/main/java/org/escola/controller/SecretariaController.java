@@ -30,6 +30,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import org.escola.model.Aluno;
+import org.escola.model.ContratoAluno;
 import org.escola.service.AlunoService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.util.CompactadorZip;
@@ -75,12 +76,14 @@ public class SecretariaController {
 			CompactadorZip.createDir(caminhoFinalPasta);
 			
 			for(Aluno al : todosAlunos){
-				String nomeArquivo = caminhoFinalPasta +System.getProperty("file.separator")+ "CNAB240_" + al.getCodigo() + ".txt";
-				InputStream stream = FileUtils.gerarCNB240(sequencialArquivo+"", nomeArquivo, al);
-				configuracaoService.incrementaSequencialArquivoCNAB();
-				sequencialArquivo++;
-				
-				FileUtils.inputStreamToFile(stream, nomeArquivo);
+				for(ContratoAluno contrato : al.getContratosVigentes()){
+					String nomeArquivo = caminhoFinalPasta +System.getProperty("file.separator")+ "CNAB240_" + al.getCodigo() + ".txt";
+					InputStream stream = FileUtils.gerarCNB240(sequencialArquivo+"", nomeArquivo, al, contrato);
+					configuracaoService.incrementaSequencialArquivoCNAB();
+					sequencialArquivo++;
+					
+					FileUtils.inputStreamToFile(stream, nomeArquivo);
+				}
 			}
 			
 			String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+"escolartodasCriancasCNAB.zip";

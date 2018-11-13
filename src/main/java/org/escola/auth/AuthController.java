@@ -194,8 +194,6 @@ public class AuthController implements Serializable {
 					loggedUser = user;
 				}
 			}
-			long t2 = System.currentTimeMillis();
-			System.out.println("Tempo execção usuario logado" + (t2-t1));
 			return loggedUser;
 
 		} catch (Exception ex) {

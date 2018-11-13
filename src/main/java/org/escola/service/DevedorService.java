@@ -26,6 +26,8 @@ import javax.validation.ValidationException;
 import org.escola.enums.StatusBoletoEnum;
 import org.escola.model.Aluno;
 import org.escola.model.Boleto;
+import org.escola.model.ContratoAdonai;
+import org.escola.model.ContratoAluno;
 import org.escola.model.Devedor;
 import org.escola.util.Service;
 import org.escola.util.UtilFinalizarAnoLetivo;
@@ -52,7 +54,10 @@ public class DevedorService extends Service {
 
 	public Aluno findById(Long id) {
 		Aluno dev =em.find(Aluno.class, id);
-		dev.getBoletos().size();
+		dev.getContratos().size();
+		for(ContratoAluno contrato : dev.getContratos()){
+			contrato.getBoletos().size();
+		}
 		return dev;
 	}
 
@@ -69,7 +74,9 @@ public class DevedorService extends Service {
 			
 			List<Aluno> dvs = new ArrayList<>();
 			for(Aluno dev : em.createQuery(criteria).getResultList()){
-				dev.getBoletos().size();
+				for(ContratoAluno contrato : dev.getContratos()){
+					contrato.getBoletos().size();
+				}
 				dvs.add(dev);
 			}
 			
@@ -211,20 +218,18 @@ public class DevedorService extends Service {
 			boolean atrasado = false;
 			List<Aluno> ds = new LinkedList<>();
 			for(Aluno d : (List<Aluno>) q.getResultList()){
-				d.getBoletos().size();
-				System.out.println(d.getNomeAluno());
-				for(Boleto b : d.getBoletos() ){
-					if(b.getId()==3808L){
-						System.out.println("a");
+				for(ContratoAluno contrato : d.getContratos()){
+					contrato.getBoletos().size();
+					for(Boleto b : contrato.getBoletos() ){
+						if(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)){
+							b.setAtrasado(true);
+							atrasado = true;
+							
+						}else{
+							b.setAtrasado(false);
+						}
 					}
-
-					if(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)){
-						b.setAtrasado(true);
-						atrasado = true;
-						
-					}else{
-						b.setAtrasado(false);
-					}
+					
 				}
 				if(atrasado){
 					ds.add(d);

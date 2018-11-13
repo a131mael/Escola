@@ -286,8 +286,8 @@ public class RecadoController implements Serializable {
 		trocas.put("adonaiturma", aluno.getSerie().getName());
 		trocas.put("adonaiperiodo", aluno.getPeriodo().getName());
 		trocas.put("adonaidata", dataExtenso);
-		trocas.put("adonaicpfresponsavel", aluno.getCpfResponsavel());
-		trocas.put("adonainomeresponsavel", aluno.getNomeResponsavel());
+		trocas.put("adonaicpfresponsavel", aluno.getContratoVigente().getCpfResponsavel());
+		trocas.put("adonainomeresponsavel", aluno.getContratoVigente().getNomeResponsavel());
 
 		return trocas;
 	}

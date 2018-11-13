@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content"
+		rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		<h:form id="form" style="width:100%; border:none">
+
+			<h:panelGrid columns="2" width="100%;" styleClass="alinharTopo">
+				<h:outputLabel value="Aluno: " style="width:90%"/>
+				<h:outputText value="#{aluno.nomeAluno}" style="width:100%"/>
+				<h:outputLabel value="Escola: " style="width:90%"/>
+				<h:outputText value="#{aluno.serie.name}" style="width:100%"/>
+				<h:outputLabel value="Responsável: " style="width:90%"/>
+				<h:outputText value="#{aluno.nomeResponsavel}" style="width:100%"/>
+				<h:outputLabel value="CPF Responsável: " style="width:90%"/>
+				<h:outputText value="#{aluno.cpfResponsavel}" style="width:100%"/>
+				<h:outputLabel value="Telefone: " style="width:90%"/>
+				<h:outputText value="#{aluno.telefone} " style="width:100%"/>
+				<h:outputLabel value="Telefone: " style="width:90%"/>
+				<h:outputText value="#{aluno.telefoneCelularMae} " style="width:100%"/>
+				<h:outputLabel value="Endereço " style="width:90%"/>
+				<h:outputText value="#{aluno.endereco}, #{aluno.bairro}" style="width:100%"/>
+				
+			</h:panelGrid>
+
+			<br/>
+			<br/>
+			<br/>
+			<h:outputText value="**** Antes de cancelar  o contrato, remova os boletos que NÃO serão pagos, mantendo apenas os boletos que ficarão em aberto." 
+								style="width:50%;font-size:19px;color: red;"/>
+			<h:panelGrid columns="1" border="0" >
+				<h:panelGrid width="98%">
+					<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+	                             emptyMessage="#Nenhum registro encontrado"
+	                             filterEvent="enter" 
+	                             lazy="true" 
+	                             liveResize="true"
+	                             styleClass="tabela"
+	                             pageLinks="5"
+	                             paginator="true"
+	                             paginatorPosition="bottom"                                         
+	                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+	                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                             resizableColumns="true"
+	                             rows="20"
+	  							 id="tbl" var="professorTab"
+								 value="#{alunoController.getBoletosParaPagar(alunoController.contrato)}"
+								 sortOrder="#{professorTab.vencimento}"
+									editable="true" editMode="cell" >
+								 
+	   					<p:column style="width:7%; text-align:center;" headerText="id ">
+							<h:outputText value="#{professorTab.id}" />
+						</p:column>
+	
+						<p:column style="width:7%; text-align:center;" headerText="Num. Doc.">
+							<h:outputText value="#{professorTab.nossoNumero}" />
+						</p:column>
+	
+						<p:column style="width:7%; text-align:center;" headerText="Vencimento ">
+							<p:cellEditor>
+	               				<f:facet name="output">
+	               					<h:outputText value="#{professorTab.vencimento}" >
+										<f:convertDateTime pattern="dd/MM/yyyy" locale="pt-br" timeZone="GMT-3" />
+									</h:outputText>
+	               					</f:facet>
+	               				<f:facet name="input">
+	               					<p:inputText value="#{professorTab.vencimento}" >
+	               						<f:convertDateTime pattern="dd/MM/yyyy" locale="pt-br" timeZone="GMT-3" />
+	               						<p:ajax process="@this" update="tbl" listener="#{alunoController.alterarBoleto(professorTab)}"/>
+	               					</p:inputText>
+	               				</f:facet>
+	           				</p:cellEditor>	
+						</p:column>
+						
+						<p:column style="width:7%; text-align:center;" headerText="Valor Nominal ">
+						<p:cellEditor>
+	               				<f:facet name="output"><h:outputText value="#{professorTab.valorNominal}" /></f:facet>
+	               				<f:facet name="input">
+	               					<p:inputText value="#{professorTab.valorNominal}" style="width:96%" >
+	               						<p:ajax process="@this" update="tbl" listener="#{alunoController.alterarBoleto(professorTab)}"/>
+	               					</p:inputText>
+	               				</f:facet>
+	           				</p:cellEditor>
+							
+						</p:column>
+						
+						<p:column style="width:7%; text-align:center;" headerText="Desconto">
+							<h:outputText value="#{alunoController.getDescontoString(professorTab)}" />
+						</p:column>
+	
+						<p:column style="width:7%; text-align:center;" headerText="Juro e Multa">
+							<h:outputText value="#{alunoController.getJurosMultaString(professorTab)}" />
+						</p:column>
+						
+						<p:column style="width:7%; text-align:center;" headerText="Valor Final">
+							<h:outputText value="#{alunoController.getValorFinalString(professorTab)}" />
+						</p:column>
+						
+						<p:column style="width:7%; text-align:center;" headerText="Status">
+							<h:outputText value="#{alunoController.getStatus(professorTab)}" />
+						</p:column>
+						
+						<p:column style="width:7%; text-align:center;" headerText="REMOVER">
+							<p:commandButton id="cnab" icon="ui-icon-trash"
+											disabled="#{!alunoController.alunoSelecionado}">
+							<p:ajax listener="#{alunoController.removerBoleto(professorTab.id)}" 
+									process="@form" update="@form"/>
+						</p:commandButton>
+						
+						</p:column>
+					</p:dataTable>
+
+				</h:panelGrid>
+	
+			</h:panelGrid>
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{alunoController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important;"
+				action="#{alunoController.removerContrato(alunoController.contrato)}" value="Cancelar Contrato" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

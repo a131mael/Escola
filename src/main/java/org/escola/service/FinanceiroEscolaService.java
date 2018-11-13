@@ -17,6 +17,7 @@ import javax.persistence.criteria.Root;
 
 import org.escola.model.Aluno;
 import org.escola.model.Boleto;
+import org.escola.model.ContratoAluno;
 import org.escola.util.Service;
 
 @Stateless
@@ -284,16 +285,17 @@ public class FinanceiroEscolaService extends Service {
 
 	public void saveCNABENviado(Aluno aluno){
 		Aluno al =  em.find(Aluno.class, aluno.getId());
-		al.setCnabEnviado(true);
-		em.merge(al);
+		ContratoAluno contrato = al.getContratoVigente();
+		contrato.setCnabEnviado(true);
+		em.merge(contrato);
 	}
 	
 	public List<Aluno> getAlunosRemovidos() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT distinct(al) from  Boleto bol ");
-		sql.append("left join bol.pagador al ");
+		sql.append("left join bol.contrato al ");
 		sql.append("where 1=1 ");
-		sql.append(" and al.removido = true ");
+		sql.append(" and al.cancelado = true ");
 		sql.append(" and (bol.baixaGerada = false or bol.baixaGerada is null)");
 
 		Query query = em.createQuery(sql.toString());
@@ -301,7 +303,9 @@ public class FinanceiroEscolaService extends Service {
 		@SuppressWarnings("unchecked")
 		List<Aluno> alunos = query.getResultList();
 		for (Aluno al : alunos) {
-			al.getBoletos().size();
+			for(ContratoAluno contrato : al.getContratos()){
+				contrato.getBoletos().size();
+			}
 		}
 
 		return alunos;
@@ -310,10 +314,10 @@ public class FinanceiroEscolaService extends Service {
 	public List<Aluno> getAlunosCNABNaoEnviado() {
 		try {
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT distinct(al) from  Aluno al ");
+			sql.append("SELECT distinct(al) from  ContratoAluno al ");
 			sql.append("where 1=1 ");
 			sql.append("and (al.cnabEnviado = false or al.cnabEnviado is null )");
-			sql.append("and al.removido=false");
+			sql.append("and al.cancelado=false");
 
 			Query query = em.createQuery(sql.toString());
 

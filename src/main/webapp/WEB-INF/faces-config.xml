@@ -80,6 +80,7 @@
 	  </navigation-case>
  </navigation-rule>
  
+ 
  <navigation-rule>
   <from-view-id>/page/aluno/cadastrarAluno.xhtml</from-view-id>
   <navigation-case>
@@ -93,14 +94,28 @@
    <redirect/>
   </navigation-case>
   
+  <navigation-case>
+   <from-outcome>remover</from-outcome>
+   <to-view-id>/page/aluno/removerContrato.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
   
    <navigation-case>
    <from-outcome>indexFinanceiro</from-outcome>
    <to-view-id>/page/aluno/indexFinanceiro.xhtml</to-view-id>
    <redirect/>
   </navigation-case>
-  
  </navigation-rule>
+ 
+  <navigation-rule>
+  <from-view-id>/page/aluno/removerContrato.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>ok</from-outcome>
+   <to-view-id>/page/aluno/cadastrarAluno.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+ </navigation-rule>
+
  <navigation-rule>
   <from-view-id>/page/secretaria/index.xhtml</from-view-id>
   <navigation-case>

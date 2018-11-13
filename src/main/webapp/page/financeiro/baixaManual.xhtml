@@ -49,49 +49,69 @@
 		            <h:outputText value="#{alun.cpfResponsavel}" />
 		        </p:column>
 		        <p:column style="text-align: center" styleClass="#{financeiroController.marcarLinha(alun)}">
-		             <p:commandButton update="form:boletos" icon="ui-icon-search" title="Ver">
+		             <p:commandButton process="@this" update="form:panelBoletos" icon="ui-icon-search" title="Ver">
 		                <f:setPropertyActionListener value="#{alun}" target="#{financeiroController.alunoBaixaSelecionado}" />
 		            </p:commandButton>
 		        </p:column>
 		    </p:dataTable>
 		    <br/>
 		    <br/>
-		    <h:panelGrid id="panelBoletos">
-			    <p:dataTable id="boletos" var="bolet" value="#{financeiroController.alunoBaixaSelecionado.boletos}"
-					emptyMessage="Nenhum resultado encontrado" >
-			        <f:facet name="header">
-			        </f:facet>
-			        <p:column headerText="Codigo">
-			            <h:outputText value="#{bolet.nossoNumero}" />
-			        </p:column>
-			        <p:column headerText="Responsavel">
-			            <h:outputText value="#{bolet.pagador.nomeResponsavel}" />
-			        </p:column>
-			        <p:column headerText="Juros e Multa" style="text-align: center">
-			            <h:outputText value="#{financeiroController.verificaJurosMultaFinalBoleto(bolet)}" />
-			        </p:column>
-			        <p:column headerText="Valor Final" style="text-align: center">
-			            <h:outputText value="#{financeiroController.verificaValorFinalBoleto(bolet)}" />
-			        </p:column>
-			        
-			        <p:column headerText="Vencimento" style="text-align: center">
-			            <h:outputText value="#{bolet.vencimento}" >
-			             <f:convertDateTime pattern="dd/MM/yyyy"/>
-			            </h:outputText>
-			        </p:column>
-			        <p:column headerText="Valor Pago" style="text-align: center">
-			            <h:outputText value="#{bolet.valorPago}" />
-			        </p:column>
-			        
-			        <p:column style="text-align: center">
-			             <p:commandButton  title="Baixar" actionListener="#{financeiroController.baixarBoleto(bolet)}" disabled="#{financeiroController.isBoletoPago(bolet)}">
-			             <p:ajax process="@this" update="form"/>
-			                <f:setPropertyActionListener value="#{car}" target="#{financeiroController.alunoBaixaSelecionado}" />
-			                <p:confirm header="Confirmacao" message="Tem certeza que deseja baixar o boleto com vencimento #{financeiroController.formatarData(bolet.vencimento)} ?" icon="ui-icon-alert" />
-			            </p:commandButton>
-			        </p:column>
-			    </p:dataTable>
-			    
+		    <h:panelGrid id="panelBoletos" width="1200px">
+		    <p:repeat var="contratt" value="#{financeiroController.alunoBaixaSelecionado.contratos}">
+		    	<p:separator style="width:100%;" />
+		    	<h:outputText value="status :  " /> <h:outputText value="#{alunoController.getTituloContrato(contratt)}" /><br/>
+		    	
+	    		<h:panelGrid columns="7" width="1200px">
+		  	 		  	<p:column ><h:outputText value="Codigo" style="width:20px !important"/> </p:column>
+		    		  	<p:column ><h:outputText value="Responsavel" style="width:300px !important"/></p:column>
+	    			  	<p:column ><h:outputText value="Juro e Multa" style="width:100px !important"/></p:column>
+	    				<p:column ><h:outputText value="Valor Final" style="width:100px !important"/></p:column>
+	    				<p:column ><h:outputText value="Vencimento" style="width:100px !important"/></p:column>
+	    				<p:column ><h:outputText value="Valor Pago" style="width:100px !important"/></p:column>
+		    			<p:column ><h:outputText value="Baixar" style="width:100px !important"/></p:column>
+	    		</h:panelGrid>
+		    	
+		    	<p:repeat var="bols" value="#{contratt.boletos}">
+		    	
+		    		<h:panelGrid columns="7" width="1200px">
+				        <p:column >
+				            <h:outputText value="#{bols.nossoNumero}" style="width:20px !important"/>
+				        </p:column>
+				        <p:column headerText="Responsavel">
+				            <h:outputText value="#{bols.pagador.nomeResponsavel}" style="width:300px !important;text-align: center"/>
+				        </p:column>
+				        <p:column headerText="Juros e Multa" style="text-align: center">
+				            <h:outputLabel value="#{financeiroController.verificaJurosMultaFinalBoleto(bols)}" style="width:100px !important"/>
+				        </p:column>
+				        <p:column headerText="Valor Final" style="text-align: center">
+				            <h:outputLabel value="#{financeiroController.verificaValorFinalBoleto(bols)}" style="width:100px !important"/>
+				        </p:column>
+				        
+				        <p:column headerText="Vencimento" style="text-align: center">
+				            <h:outputLabel value="#{bols.vencimento}" style="width:100px !important">
+				             <f:convertDateTime pattern="dd/MM/yyyy"/>
+				            </h:outputLabel>
+				        </p:column>
+				        <p:column headerText="Valor Pago" style="text-align: center">
+				            <h:outputLabel value="#{bols.valorPago}" style="width:100px !important"/>
+				        </p:column>
+				        
+				        <p:column style="text-align: center">
+				             <p:commandButton  title="Baixar" actionListener="#{financeiroController.baixarBoleto(bols)}"
+				             					style="width:100px !important" 
+				             					disabled="#{financeiroController.isBoletoPago(bols)}">
+				             <p:ajax process="@this" update="form"/>
+				                <f:setPropertyActionListener value="#{bols}" target="#{financeiroController.alunoBaixaSelecionado}" />
+				                <p:confirm header="Confirmacao" message="Tem certeza que deseja baixar o boleto com vencimento #{financeiroController.formatarData(bols.vencimento)} ?" icon="ui-icon-alert" />
+				            </p:commandButton>
+				        </p:column>
+		    	
+		    	</h:panelGrid>
+	    					    			
+		    	</p:repeat>
+		    	  
+		    </p:repeat>
+		   			    
 		    </h:panelGrid>
 		    			
 				 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

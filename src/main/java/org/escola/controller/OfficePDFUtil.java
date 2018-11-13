@@ -154,8 +154,8 @@ public class OfficePDFUtil {
 		Table tabela = criaTabela(colunas);
 		
 		for(Aluno aluno : alunos){
-			tabela.addCell(criaCell(aluno.getNomeResponsavel(),6));
-			tabela.addCell(criaCell(aluno.getCpfResponsavel(),6));
+			//tabela.addCell(criaCell(aluno.getNomeResponsavel(),6));
+		//	tabela.addCell(criaCell(aluno.getCpfResponsavel(),6));
 			String telefones = "";
 			
 			telefones+= getTelefones(aluno);
@@ -166,14 +166,14 @@ public class OfficePDFUtil {
 			String numeroBoleto = "";
 			String vencimento = "";
 			String entrada = "";
-			for(org.escola.model.Boleto boleto : aluno.getBoletos()){
+			/*for(org.escola.model.Boleto boleto : aluno.getBoletos()){
 				if(boleto.getAtrasado() != null && boleto.getAtrasado()){
 					numeroBoleto +=aluno.getCodigo() + "-" + boleto.getNossoNumero() + "\n"; 
 					entrada += Formatador.formataData(boleto.getEmissao()) + "\n";
 					vencimento += Formatador.formataData(boleto.getVencimento()) + "\n";
 					valorTotalDevido += Verificador.getValorFinal(boleto);
 				}
-			}
+			}*/
 			tabela.addCell(criaCell(numeroBoleto,6));
 			tabela.addCell(criaCell(entrada,6));
 			tabela.addCell(criaCell(vencimento,6));
@@ -191,11 +191,11 @@ public class OfficePDFUtil {
 	private static Double getValorTotal(List<Aluno> alunos) {
 		Double quantidade = 0D;
 		for(Aluno al : alunos){
-			for(Boleto b : al.getBoletos()){
+			/*for(Boleto b : al.getBoletos()){
 				if(b.getAtrasado() != null && b.getAtrasado()){
 					quantidade+=  Verificador.getValorFinal(b);
 				}
-			}
+			}*/
 		}
 		return quantidade;
 	}
@@ -203,11 +203,11 @@ public class OfficePDFUtil {
 	private static int getQuantidadeBoletos(List<Aluno> alunos) {
 		int quantidade = 0;
 		for(Aluno al : alunos){
-			for(Boleto b : al.getBoletos()){
+			/*for(Boleto b : al.getBoletos()){
 				if(b.getAtrasado() != null && b.getAtrasado()){
 					quantidade+= 1;
 				}
-			}
+			}*/
 		}
 		return quantidade;
 	}

@@ -13,7 +13,7 @@ public class Verificador {
 		if(getStatusEnum(boleto).equals(StatusBoletoEnum.ATRASADO)){
 			return boleto.getValorNominal() + getJurosMulta(boleto);
 		}else{
-			return boleto.getValorNominal() -getDesconto(boleto);
+			return boleto.getValorNominal() - getDesconto(boleto);
 		}
 	}
 
@@ -33,17 +33,24 @@ public class Verificador {
 	}
 
 	public static Double getJurosMulta(org.escola.model.Boleto boleto) {
-		Calendar tomorrow = Calendar.getInstance();
-		tomorrow.set(Calendar.DAY_OF_MONTH, tomorrow.get(Calendar.DAY_OF_MONTH) + 1);
-		double multa = boleto.getValorNominal() * 0.02;
-		long diasVencimento = Util.diferencaEntreDatas(tomorrow.getTime(), boleto.getVencimento());
-		if (diasVencimento > 0) {
-			double juros = (diasVencimento / 2); // juros de 50 centavos
-			return multa + juros;
-
-		} else {
+		if(getStatusEnum(boleto).equals(StatusBoletoEnum.CANCELADO) ||  getStatusEnum(boleto).equals(StatusBoletoEnum.PAGO) ){
 			return 0D;
+			
+			}else{
+				Calendar tomorrow = Calendar.getInstance();
+				tomorrow.set(Calendar.DAY_OF_MONTH, tomorrow.get(Calendar.DAY_OF_MONTH) + 1);
+				double multa = boleto.getValorNominal() * 0.02;
+				long diasVencimento = Util.diferencaEntreDatas(tomorrow.getTime(), boleto.getVencimento());
+				if (diasVencimento > 0) {
+					double juros = (diasVencimento / 2); // juros de 50 centavos
+					return multa + juros;
+
+				} else {
+					return 0D;
+				}
+
 		}
+	
 	}
 
 	public static String getStatus(org.escola.model.Boleto boleto) {

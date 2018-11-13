@@ -19,6 +19,7 @@ import org.aaf.financeiro.sicoob.util.CNAB240_SICOOB;
 import org.aaf.financeiro.util.OfficeUtil;
 import org.escola.model.Aluno;
 import org.escola.model.Boleto;
+import org.escola.model.ContratoAluno;
 import org.escola.service.FinanceiroEscolaService;
 import org.escola.util.FileUtils;
 import org.escola.util.Formatador;
@@ -62,7 +63,7 @@ public class EnviadorEmail {
 			destinatario += bol.getPagador().getEmailPai() + ",";
 		}
 
-		byte[] anexoPDF = byteArrayPDFBoleto(getBoletoFinanceiro(bol), bol.getPagador());
+		byte[] anexoPDF = byteArrayPDFBoleto(getBoletoFinanceiro(bol), bol.getPagador(), bol.getContrato());
 
 		String corpoEmail = "<!DOCTYPE html><html><body><p><h2><center>Colégio Adonai.</center></h2><center>"
 				+ "<a href=\"https://ibb.co/mF1WjR\"><img src=\"https://preview.ibb.co/dPMmJm/logo.jpg\" "
@@ -76,7 +77,7 @@ public class EnviadorEmail {
 				+ "style=\"width:365px;height:126px;border:0;\"></a></body></html>";
 		corpoEmail = corpoEmail.replace("#vencimentoBoleto", Formatador.formataData(bol.getVencimento()));
 		corpoEmail = corpoEmail.replace("#valorAtualBoleto", Formatador.valorFormatado(Verificador.getValorFinal(bol)));
-		corpoEmail = corpoEmail.replace("#nomeResponsavel", bol.getPagador().getNomeResponsavel());
+		corpoEmail = corpoEmail.replace("#nomeResponsavel", bol.getContrato().getNomeResponsavel());
 		corpoEmail = corpoEmail.replace("#mesBoleto", Formatador.getMes(bol.getVencimento()));
 
 		ByteArrayInputStream bais = new ByteArrayInputStream(anexoPDF);
@@ -97,18 +98,17 @@ public class EnviadorEmail {
 		return boletoFinanceiro;
 	}
 
-	public byte[] byteArrayPDFBoleto(org.aaf.financeiro.model.Boleto boleto, Aluno aluno) {
+	public byte[] byteArrayPDFBoleto(org.aaf.financeiro.model.Boleto boleto, Aluno aluno, ContratoAluno contrato) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(boleto.getVencimento());
 		CNAB240_SICOOB cnab = new CNAB240_SICOOB(2);
-
 		Pagador pagador = new Pagador();
-		pagador.setBairro(aluno.getBairro());
-		pagador.setCep(aluno.getCep());
-		pagador.setCidade(aluno.getCidade() != null ? aluno.getCidade() : "PALHOCA");
-		pagador.setCpfCNPJ(aluno.getCpfResponsavel());
-		pagador.setEndereco(aluno.getEndereco());
-		pagador.setNome(aluno.getNomeResponsavel());
+		pagador.setBairro(contrato.getBairro());
+		pagador.setCep(contrato.getCep());
+		pagador.setCidade(contrato.getCidade() != null ? contrato.getCidade() : "PALHOCA");
+		pagador.setCpfCNPJ(contrato.getCpfResponsavel());
+		pagador.setEndereco(contrato.getEndereco());
+		pagador.setNome(contrato.getNomeResponsavel());
 		pagador.setNossoNumero(boleto.getNossoNumero() + "");
 		pagador.setUF("SC");
 		List<org.aaf.financeiro.model.Boleto> boletos = new ArrayList<>();
@@ -138,9 +138,9 @@ public class EnviadorEmail {
 				+ "</a></body></html>";
 
 		corpoEmail = corpoEmail.replace("#vencimentoBoleto", Formatador.formataData(bol.getVencimento()));
-		corpoEmail = corpoEmail.replace("#nomeResponsavel", bol.getPagador().getNomeResponsavel());
+		corpoEmail = corpoEmail.replace("#nomeResponsavel", bol.getContrato().getNomeResponsavel());
 		corpoEmail = corpoEmail.replace("#valorAtualBoleto", Formatador.valorFormatado(Verificador.getValorFinal(bol)));
-		byte[] anexoPDF = byteArrayPDFBoleto(getBoletoFinanceiro(bol), bol.getPagador());
+		byte[] anexoPDF = byteArrayPDFBoleto(getBoletoFinanceiro(bol), bol.getPagador(), bol.getContrato());
 
 		ByteArrayInputStream bais = new ByteArrayInputStream(anexoPDF);
 		org.aaf.financeiro.util.EnviadorEmail.enviarEmail("Colégio Adonai - Boleto Atrasado", corpoEmail, bais,

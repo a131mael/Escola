@@ -23,13 +23,13 @@ public class RotinaAutomatica {
 		
 		try {
 			System.out.println("Gerando CNAB DE ALUNOS AINDA NAO ENVIADOs Escola");
-		//	cnab240.gerarCNABAlunos();
+			cnab240.gerarCNABAlunos();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		try {
-	//		cnab240.gerarBaixaBoletosPagos();
+			cnab240.gerarBaixaBoletosPagos();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -39,7 +39,7 @@ public class RotinaAutomatica {
 	public void gerarArquivos() {
 		try {
 			System.out.println("Gerando Arquivo de Baixa Cancelados ");
-		//	cnab240.gerarBaixaBoletoAlunosCancelados();
+			cnab240.gerarBaixaBoletoAlunosCancelados();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,7 +61,7 @@ public class RotinaAutomatica {
 	public void importarCNABPagmentos() {
 		try {
 			System.out.println("Gerando Arquivo de Baixa Pagos ");
-		//	cnab240.importarPagamentosCNAB240();
+			cnab240.importarPagamentosCNAB240();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

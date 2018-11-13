@@ -188,117 +188,22 @@
 						</h:panelGrid>
 
 					</p:tab>
-					<p:tab title="Boletos" rendered="#{aluno.boletos eq null?false:true}">
-						<ui:include src="cmpAlunoBoletos.xhtml">
-	    					<ui:param name="parametro" value="#{aluno}" />
-	    					<ui:param name="visible" value="#{aluno.boletos eq null?false:true}" />
-					</ui:include>
-												
-
-					</p:tab>
-					
-					
-					<p:tab title="Contrato">
-						<h:panelGrid columns="2" border="0">
-							<h:outputLabel value="Nome Responsável: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.nomeResponsavel}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-							
-							<h:outputLabel value="Nome PAI Responsável: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.nomePaiResponsavel}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-							
-							<h:outputLabel value="Nome MAE Responsável: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.nomeMaeResponsavel}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-
-							<h:outputLabel value="CPF Responsável: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.cpfResponsavel}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-							
-							<h:outputLabel value="RG Responsável: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.rgResponsavel}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-							
-							<h:outputLabel value="Endereço: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.endereco}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-
-							<h:outputLabel value="Bairro: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.bairro}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-
-							
-							<h:outputLabel value="Cidade: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.cidade}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-							
-
-							<h:outputLabel value="CEP: " style="font-size: 13px; width:180px" />
-							<p:inputMask id="cpf" value="#{aluno.cep}" mask="99 999-999"
-								style="font-size: 15px; width:275px" />
-							
-
-
-							<h:outputLabel value="Nº Parcelas: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.numeroParcelas}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-
-							<h:outputLabel value="Mensalidade: "
-								style="font-size: 13px; width:180px" />
-							<p:inputText value="#{aluno.valorMensal}"
-								style="font-size: 15px; width:275px">
-							</p:inputText>
-
-							<h:outputLabel value="Vencimento:  "
-								style="font-size: 13px; width:180px" />
-								<h:panelGrid id="panelVencimento" columns="2">
-									<p:selectOneMenu  style="width: 160px;"
-										value="#{aluno.vencimentoUltimoDia}" >
-										<f:selectItem itemLabel="No dia" itemValue="#{false}" />
-										<f:selectItem itemLabel="Vence ultimo dia" itemValue="#{true}" />
-										<p:ajax event="blur" process="@this" update="form:tabView:diaVencimento"/>
-									</p:selectOneMenu>
-							
-									<p:inputText id="diaVencimento" value="#{aluno.diaVencimento}"
-										style="font-size: 15px; width:275px" rendered="#{!aluno.vencimentoUltimoDia}">
-									</p:inputText>
-								
-								</h:panelGrid>
-
-							<h:outputLabel value="Valor Total :"
-								style="font-size: 13px; width:180px" rendered="false"/>
-							<p:inputText style="font-size: 15px; width:275px" rendered="false">
-							</p:inputText>
-
-
-							<h:outputLabel value="Data Matricula: "
-								style="font-size: 13px; width:180px" />
-							<p:calendar value="#{aluno.dataMatricula}" pattern="dd/MM/yyyy"
-								mask="true" style="font-size: 15px; width:280px" />
+					<p:tab title="Contratos" >
+					<br/>
+						<h:panelGrid id="panelFerramentas" columns="36" style="margin-left:5px">
+								<p:commandButton id="adicionarNovoContrato" icon="ui-icon-plus" >
+												<p:ajax update="form:tabView:panelContratos" 
+														process="form:panelPrincipal"
+														listener="#{alunoController.adicionarNovoContrato(aluno)}"/>
+												</p:commandButton>
 						</h:panelGrid>
-
+						<ui:include src="cmpContrato.xhtml" >
+		    				<ui:param name="contratos" value="#{aluno.contratos}" />
+		    				<ui:param name="visible" value="#{true}" />
+						</ui:include>
 					</p:tab>
-
-					<p:tab id="tabHistorico" title="Histórico">
+					
+					<p:tab id="tabHistorico" title="Histórico" rendered="#{alunoController.alunoCadastrado(aluno)}">
 						<h:panelGrid columns="2">
 							<h:commandButton action="#{alunoController.adicionarHistorico(historicoAluno)}"
 								value="Adicionar" />
@@ -402,6 +307,7 @@
 							<p:dataTable id="tbl" var="historicoTab"
 									 value="#{alunoController.getHistoricoAluno(aluno)}"
 									 style="margin-bottom:20px; width:100%"
+									 rendered="#{alunoController.alunoCadastrado(aluno)}"
 									 emptyMessage="Nenhum histórico adicionado"
 									 >
 									 
