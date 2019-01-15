@@ -5,7 +5,9 @@ d * To change this template, choose Tools | Templates
 package org.escola.service.rotinasAutomaticas;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,7 @@ import org.escola.model.Boleto;
 import org.escola.model.ContratoAluno;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.FinanceiroEscolaService;
+import org.escola.util.FileUtils;
 import org.escola.util.Verificador;
 
 /**
@@ -72,6 +75,41 @@ public class CNAB240 {
 		}
 		return null;
 	}
+	
+	public byte[] gerarCNB240(int projeto, ContratoAluno contrato, Boleto b) {
+		try {
+
+			String sequencialArquivo = configuracaoService.getSequencialArquivo() + "";
+
+			Pagador pagador = new Pagador();
+			pagador.setBairro(contrato.getBairro());
+			pagador.setCep(contrato.getCep());
+			pagador.setCidade(contrato.getCidade() != null ? contrato.getCidade() : "PALHOCA");
+			pagador.setCpfCNPJ(contrato.getCpfResponsavel());
+			pagador.setEndereco(contrato.getEndereco());
+			pagador.setNome(contrato.getNomeResponsavel());
+			pagador.setNossoNumero(contrato.getNumero());
+			pagador.setUF("SC");
+			List<org.aaf.financeiro.model.Boleto> boletos = new ArrayList<>();
+			boletos.add(b.getBoletoFinanceiro());
+			pagador.setBoletos(boletos);
+			CNAB240_REMESSA_SICOOB cnbRemessa = new CNAB240_REMESSA_SICOOB(projeto);
+			byte[] arquivo = cnbRemessa.geraRemessa(pagador, sequencialArquivo);
+
+			try {
+				configuracaoService.incrementaSequencialArquivoCNAB();
+				return arquivo;
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 
 	public byte[] gerarCNB240Baixa(int projeto, Boleto b) {
 		try {
@@ -132,12 +170,50 @@ public class CNAB240 {
 	public void gerarCNABAlunos() {
 		List<Aluno> alunosSemCNABENVIADO = financeiroService.getAlunosCNABNaoEnviado();
 		for (Aluno al : alunosSemCNABENVIADO) {
-			for(ContratoAluno contrato : al.getContratosVigentes()){
-				byte[] arquivo = gerarCNB240(CONSTANTES.projeto, al,contrato);
+			for (ContratoAluno contrato : al.getContratosVigentes()) {
+				byte[] arquivo = gerarCNB240(CONSTANTES.projeto, al, contrato);
 				String nomeArquivo = "CNAB240_" + al.getCodigo() + ".txt";
 				ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
 				financeiroService.saveCNABENviado(al);
 			}
+		}
+	}
+
+	public void gerarCNABAlunos(int quantidadeDeMeses) {
+		//FileUtils
+		List<Boleto> boletosNAOEnviados = financeiroService.getBoletosCNABNaoEnviado(quantidadeDeMeses);
+		LocalDate data = LocalDate.now();
+		StringBuilder sb = new StringBuilder();
+		sb.append(data.getYear());
+		sb.append(data.getMonthValue());
+		sb.append(data.getDayOfMonth());
+		
+		int contador = 1;
+		for (Boleto b : boletosNAOEnviados) {
+			
+			ContratoAluno ca = configuracaoService.findContrato(b.getId()); 
+			
+			if(ca.getCpfResponsavel() != null && !ca.getCpfResponsavel().equalsIgnoreCase("")){
+				if(ca.getNomeResponsavel() != null && !ca.getNomeResponsavel().equalsIgnoreCase("")){
+					if(ca.getEndereco() != null && !ca.getEndereco().equalsIgnoreCase("")){
+						if(ca.getCep() == null || ca.getCep().equalsIgnoreCase("")){
+							ca.setCep("88132700");	
+						}
+						if(ca.getBairro() == null || ca.getBairro().equalsIgnoreCase("")){
+							ca.setBairro("Bela Vista");
+						}
+						if(ca.getCidade() == null || ca.getCidade().equalsIgnoreCase("")){
+							ca.setCidade("Palhoca");
+						}
+						byte[] arquivo = gerarCNB240(CONSTANTES.projeto,ca, b);
+						String nomeArquivo = "COB_756_494960_"+sb+ contador+".REM";
+						ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
+						financeiroService.saveCNABENviado(b);
+						contador++;
+					}
+				}
+			}
+			
 		}
 	}
 
@@ -149,12 +225,10 @@ public class CNAB240 {
 	}
 
 	public void gerarBaixaBoletoAlunosCancelados() {
-		List<Aluno> alunosCancelados = financeiroService.getAlunosRemovidos();
-		for (Aluno al : alunosCancelados) {
-			for(ContratoAluno contrato : al.getContratos()){
-				for (Boleto b : contrato.getBoletos()) {
-					gerarBaixaBoletosCancelados(b, CONSTANTES.PATH_ENVIAR_BAIXA_CANCELADOS);
-				}	
+		List<ContratoAluno> contratos = financeiroService.getAlunosRemovidos();
+		for (ContratoAluno contrato : contratos) {
+			for (Boleto b : contrato.getBoletos()) {
+				gerarBaixaBoletosCancelados(b, CONSTANTES.PATH_ENVIAR_BAIXA_CANCELADOS);
 			}
 		}
 	}
@@ -179,8 +253,7 @@ public class CNAB240 {
 
 	public void importarPagamentosCNAB240() {
 		try {
-			List<Pagador> boletosImportados = CNAB240_RETORNO_SICOOB.imporCNAB240(
-					Constante.LOCAL_ARMAZENAMENTO_REMESSA + "adonai" + File.separator + "importando" + File.separator);
+			List<Pagador> boletosImportados = CNAB240_RETORNO_SICOOB.imporCNAB240(Constante.LOCAL_ARMAZENAMENTO_REMESSA);
 			importarBoletos(boletosImportados, false);
 
 		} catch (Exception e) {
@@ -195,7 +268,6 @@ public class CNAB240 {
 		} catch (Exception e) {
 
 		}
-
 	}
 
 	public void importarBoletos(List<Pagador> boletosImportados, boolean extratoBancario) throws ParseException {
@@ -219,11 +291,13 @@ public class CNAB240 {
 						}
 						if (boleto != null) {
 							if (!Verificador.getStatusEnum(boleto).equals(StatusBoletoEnum.PAGO)) {
-								boleto.setValorPago(boletoCNAB.getValorPago());
-								boleto.setDataPagamento(OfficeUtil.retornaData(boletoCNAB.getDataPagamento()));
-								boleto.setConciliacaoPorExtrato(extratoBancario);
-								financeiroService.save(boleto);
-								System.out.println("YESS, BOLETO PAGO");
+								if (!(boletoCNAB.isDecurso() != null && boletoCNAB.isDecurso())) {
+									boleto.setValorPago(boletoCNAB.getValorPago());
+									boleto.setDataPagamento(OfficeUtil.retornaData(boletoCNAB.getDataPagamento()));
+									boleto.setConciliacaoPorExtrato(extratoBancario);
+									financeiroService.save(boleto);
+									System.out.println("YESS, BOLETO PAGO");
+								}
 							}
 						}
 					}

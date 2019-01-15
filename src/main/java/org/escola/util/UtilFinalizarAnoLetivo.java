@@ -97,12 +97,17 @@ public class UtilFinalizarAnoLetivo {
 		
 		return faltas;
 	}
-	public void gerarHistorico(Aluno aluno){
+	
+	public void gerarHistorico(Aluno aluno, int ano){
+		gerarHistorico(aluno, ano, true);
+	}
+	
+	public void gerarHistorico(Aluno aluno, int ano, boolean mesmoano){
 		if(aluno != null && aluno.getNomeAluno() != null){
 			HistoricoAluno historico = new HistoricoAluno();
 			historico.setNomeAluno(aluno.getNomeAluno());
 			historico.setAluno(aluno);
-			historico.setAno(configuracaoService.getConfiguracao().getAnoLetivo());
+			historico.setAno(ano);
 			historico.setEscola("Centro Educacional ADONAI");
 			historico.setEstado("Santa Catarina");
 			
@@ -114,7 +119,15 @@ public class UtilFinalizarAnoLetivo {
 			
 			historico.setMunicipio("Palhoça");
 			historico.setPeriodo(aluno.getPeriodo());
-			historico.setSerie(aluno.getSerie());
+			if(mesmoano){
+				historico.setSerie(aluno.getSerie());
+			}else{
+				if(aluno.getRematricular() != null && aluno.getRematricular()){
+					historico.setSerie(Serie.values()[aluno.getSerie().ordinal()]);
+				}else{
+					historico.setSerie(Serie.values()[aluno.getSerie().ordinal()-1]);
+				}
+			}
 
 			//Artes
 			float notaArtes1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.PRIMEIRO_BIMESTRE, false);
@@ -229,7 +242,10 @@ public class UtilFinalizarAnoLetivo {
 			historicoService.save(historico);	
 	
 		}
-						
+	}
+	
+	public void gerarHistorico(Aluno aluno){
+		gerarHistorico(aluno, configuracaoService.getConfiguracao().getAnoLetivo());
 	}
 	
 	public void mudarAnoLetivoAluno(Aluno aluno){
@@ -259,10 +275,29 @@ public class UtilFinalizarAnoLetivo {
 		}
 	}
 	
+	public void gerarHistorico(int inicio,int quantidade,int ano){
+		List<Aluno> alunos = alunoService.findAll();
+		
+		for(int i=inicio;i<inicio+quantidade;i++){
+			try{
+				System.out.println("id : " + alunos.get(i).getId());
+				System.out.println("Nome : " + alunos.get(i).getNomeAluno());
+				gerarHistorico(alunos.get(i),ano,false);
+			}catch(Exception e){
+				
+			}
+		}
+	}
+	
 	public List<Aluno> getAlunosAlunoLetivoAtual(){
+		
+		return getAlunosAlunoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
+	}
+	
+	public List<Aluno> getAlunosAlunoLetivo(int ano){
 		Map<String, Object> filtros = new HashMap<String, Object>();
 		
-		filtros.put("anoLetivo" , Constant.anoLetivoAtual -1);
+		filtros.put("anoLetivo" ,ano);
 		filtros.put("removido" , false);
 		return  alunoService.find(1, 30000, "nomeAluno", "asc", filtros);
 	}

@@ -53,8 +53,6 @@
 					
 					</h:panelGrid>
 					
-						
-						
 					</p:tab>
 					<p:tab title="Dados Pai do Aluno">
 						<h:panelGrid columns="2" border="0">
@@ -104,15 +102,13 @@
 							<p:inputMask value="#{aluno.telefoneEmpresaTrabalhaPai}"
 								mask="(99)9999-9999" style="font-size: 15px; width:275px" />
 
-							<h:outputLabel value="Email Pai: "
-								style="font-size: 13px; width:180px" />
-							<h:inputText value="#{aluno.emailPai}"
-								style="font-size: 15px; width:280px" />
+							<h:outputLabel value="Email Pai: " style="font-size: 13px; width:180px" />
+							<h:inputText value="#{aluno.emailPai}" style="font-size: 15px; width:280px" />
 
 							<h:outputLabel value="Email Pai: "
-								style="font-size: 13px; width:180px" />
+								style="font-size: 13px; width:180px" rendered="false"/>
 							<h:inputText value="#{aluno.emailPai}"
-								style="font-size: 15px; width:280px" />
+								style="font-size: 15px; width:280px" rendered="false"/>
 
 							<h:outputLabel value="Empresa trabalha Pai : "
 								style="font-size: 13px; width:180px" />
@@ -176,9 +172,9 @@
 								style="font-size: 15px; width:280px" />
 
 							<h:outputLabel value="Email Mãe: "
-								style="font-size: 13px; width:180px" />
+								style="font-size: 13px; width:180px" rendered="false"/>
 							<h:inputText value="#{aluno.emailMae}"
-								style="font-size: 15px; width:280px" />
+								style="font-size: 15px; width:280px" rendered="false"/>
 
 							<h:outputLabel value="Empresa trabalha Mãe : "
 								style="font-size: 13px; width:180px" />
@@ -188,14 +184,12 @@
 						</h:panelGrid>
 
 					</p:tab>
-					<p:tab title="Contratos" >
-					<br/>
+					<p:tab id="contratos" title="Contratos" >
+						<br/>
 						<h:panelGrid id="panelFerramentas" columns="36" style="margin-left:5px">
 								<p:commandButton id="adicionarNovoContrato" icon="ui-icon-plus" >
-												<p:ajax update="form:tabView:panelContratos" 
-														process="form:panelPrincipal"
-														listener="#{alunoController.adicionarNovoContrato(aluno)}"/>
-												</p:commandButton>
+										<p:ajax process="@form" update="form:tabView:contratos"	listener="#{alunoController.adicionarNovoContrato(aluno)}"/>
+								</p:commandButton>
 						</h:panelGrid>
 						<ui:include src="cmpContrato.xhtml" >
 		    				<ui:param name="contratos" value="#{aluno.contratos}" />

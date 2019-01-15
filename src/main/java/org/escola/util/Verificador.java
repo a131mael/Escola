@@ -80,8 +80,6 @@ public class Verificador {
 		}
 	}
 
-	
-	
 	private static boolean pago(org.escola.model.Boleto boleto) {
 		if (boleto.getDataPagamento() != null) {
 			Date vencimento = Formatador.formatDateSomenteDiaMesAno(boleto.getVencimento());

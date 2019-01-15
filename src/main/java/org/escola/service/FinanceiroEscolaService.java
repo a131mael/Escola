@@ -1,5 +1,7 @@
 package org.escola.service;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -290,7 +292,13 @@ public class FinanceiroEscolaService extends Service {
 		em.merge(contrato);
 	}
 	
-	public List<Aluno> getAlunosRemovidos() {
+	public void saveCNABENviado(Boleto b){
+		Boleto al =  em.find(Boleto.class, b.getId());
+		al.setCnabEnviado(true);
+		em.merge(al);
+	}
+	
+	public List<ContratoAluno> getAlunosRemovidos() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT distinct(al) from  Boleto bol ");
 		sql.append("left join bol.contrato al ");
@@ -301,12 +309,10 @@ public class FinanceiroEscolaService extends Service {
 		Query query = em.createQuery(sql.toString());
 
 		@SuppressWarnings("unchecked")
-		List<Aluno> alunos = query.getResultList();
-		for (Aluno al : alunos) {
-			for(ContratoAluno contrato : al.getContratos()){
+		List<ContratoAluno> alunos = query.getResultList();
+			for(ContratoAluno contrato : alunos){
 				contrato.getBoletos().size();
 			}
-		}
 
 		return alunos;
 	}
@@ -411,6 +417,45 @@ public class FinanceiroEscolaService extends Service {
 		}
 		return null;
 
+	}
+
+	public List<Boleto> getBoletosCNABNaoEnviado(int quantidadeDeMeses) {
+		LocalDate hoje = LocalDate.now();
+		LocalDate primeiroDiaDoMes = hoje.with(TemporalAdjusters.firstDayOfMonth());
+		
+		hoje.plusMonths(quantidadeDeMeses);
+		LocalDate ultimoDiaDoMes = hoje.with(TemporalAdjusters.lastDayOfMonth());
+		
+		
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT distinct(bol) from  Boleto bol ");
+			sql.append("where 1=1 ");
+			sql.append("and (bol.cnabEnviado = false or bol.cnabEnviado is null )");
+			sql.append("and (bol.cancelado=false or bol.cancelado is null)");
+			sql.append("and vencimento < '");
+			sql.append(ultimoDiaDoMes);
+			sql.append("'");
+			sql.append(" and vencimento > '");
+			sql.append(primeiroDiaDoMes);
+			sql.append("'");
+			sql.append(" and ( valorPago < ");
+			sql.append(20);
+			sql.append(" or  valorPago is null ) ");
+			
+				
+			Query query = em.createQuery(sql.toString());
+
+			@SuppressWarnings("unchecked")
+			List<Boleto> alunos = query.getResultList();
+
+			return alunos;
+		} catch (NoResultException nre) {
+			return null;
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	

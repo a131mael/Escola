@@ -139,17 +139,27 @@
 									
 									<br/>
 									<br/>
-									<h:panelGrid columns="2" border="0">
+									<h:panelGrid columns="3" border="0">
 										<p:commandButton id="contrato" icon="ui-icon-print"
 														value="Download Contrato"  
-														ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);">
+														ajax="false"
+														rendered="#{alunoController.podeImprimir(contratoAlun)}"
+														onclick="PrimeFaces.monitorDownload(start, stop);">
 										<p:fileDownload value="#{alunoController.imprimirContrato(contratoAlun)}" />
 										</p:commandButton>
 				
 										<p:commandButton id="boleto" icon="ui-icon-print" ajax="false"
-													onclick="PrimeFaces.monitorDownload(start, stop);"
-													value="Download Boletos" >
+														onclick="PrimeFaces.monitorDownload(start, stop);"
+														rendered="#{alunoController.podeImprimir(contratoAlun)}"
+														value="Download Boletos" >
 												<p:fileDownload value="#{alunoController.gerarBoleto(contratoAlun)}" />
+										</p:commandButton>
+				
+										<p:commandButton id="cnb240" icon="ui-icon-print" ajax="false"
+														onclick="PrimeFaces.monitorDownload(start, stop);"
+														rendered="#{authController.hasPermission(authController.mestre)}" 
+														value="Download CNB240" >
+												<p:fileDownload value="#{alunoController.gerarCNB240(contratoAlun)}" />
 										</p:commandButton>
 				
 										

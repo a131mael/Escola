@@ -12,21 +12,17 @@
 							
 			<h:outputLabel value="Codigo(*): "
 				style="font-size: 13px; width:240px" />
-			<p:inputText title="" value="#{parametro.codigo}"
-				style="font-size: 15px; width:280px" />
+			<p:inputText title="" value="#{parametro.codigo}" style="font-size: 15px; width:280px" />
 			
-			<h:outputLabel value="Série "
-				style="font-size: 13px; width:240px" />
-			<p:selectOneMenu style="width: 256px;"
-				value="#{parametro.serie}">
+			<h:outputLabel value="Série " style="font-size: 13px; width:240px" />
+			<p:selectOneMenu style="width: 256px;" value="#{parametro.serie}">
 				<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
 					var="country" itemLabel="#{country.name}"
 					itemValue="#{country}" />
 				<p:ajax event="change" process="@this" />
 			</p:selectOneMenu>
 
-			<h:outputLabel value="Periodo: "
-				style="font-size: 13px; width:240px" />
+			<h:outputLabel value="Periodo: " style="font-size: 13px; width:240px" />
 			<h:panelGrid columns="2">
 				<p:selectOneMenu  style="width: 256px;"
 					value="#{parametro.periodo}">
@@ -36,8 +32,7 @@
 					<p:ajax event="change" process="@this" />
 				</p:selectOneMenu>
 				
-				<p:selectOneMenu  style="width: 256px;"
-					rendered="#{parametro.rematricular}"
+				<p:selectOneMenu  style="width: 256px;" rendered="#{parametro.rematricular}"
 					value="#{parametro.periodoProximoAno}">
 					<f:selectItems value="#{CombosEspeciaisMB.getPeriodos()}"
 						var="country" itemLabel="#{country.name}"

@@ -157,25 +157,28 @@
 					<p:column style="text-align:center;" width="40%"
                               headerText="Boletos" >
                               
-                              <ui:repeat var="boleto" value="#{professorTab.boletos}" style="border:none">
-                              		<p:panelGrid rendered="#{boleto.atrasado}" columns="5" 
+                              <ui:repeat var="contr" value="#{professorTab.contratos}" style="border:none">
+                              	<ui:repeat var="bole" value="#{contr.boletos}">
+                              	<p:panelGrid rendered="#{bole.atrasado}" columns="5" 
                               					 columnClasses="tamanhoCelula"
                               					 style="border:none; background:none !important; padding:1px">
-	                              		<h:outputText value="#{boleto.nossoNumero}" style="border:none;background:none !important"></h:outputText>
-	                              		<h:outputText value="#{boleto.emissao}" style="border:none">
+	                              		<h:outputText value="#{bole.nossoNumero}" style="border:none;background:none !important"></h:outputText>
+	                              		<h:outputText value="#{bole.emissao}" style="border:none">
 	                              			<f:convertDateTime attern="dd/MM/yyyy" />
 	                              		</h:outputText>
-	                              		<h:outputText value="#{boleto.vencimento}" style="border:none">
+	                              		<h:outputText value="#{bole.vencimento}" style="border:none">
 	                              			<f:convertDateTime attern="dd/MM/yyyy" />
 	                              		</h:outputText>
-	                              		<h:outputText value="#{boleto.valorNominal}" style="border:none">
+	                              		<h:outputText value="#{bole.valorNominal}" style="border:none">
 	                              		    <f:convertNumber minFractionDigits="2" />
 	                              		</h:outputText>
 	                              		
-	                              		<h:outputText value="#{financeiroController.verificaValorFinalBoleto(boleto)}" style="border:none">
+	                              		<h:outputText value="#{financeiroController.verificaValorFinalBoleto(bole)}" style="border:none">
 	                              		    <f:convertNumber minFractionDigits="2" />
 	                              		</h:outputText>
                               		</p:panelGrid>
+                              	</ui:repeat>
+                              		
 	                              
                               </ui:repeat>
                               <p:panelGrid style="width:100%" columns="2">

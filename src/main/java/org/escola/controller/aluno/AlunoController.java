@@ -602,7 +602,7 @@ public class AlunoController implements Serializable {
 		return estaNaTurma;
 	}
 
-	public String marcarLinha(Long idAluno) {
+	/*public String marcarLinha(Long idAluno) {
 		String cor = "";
 		if (idAluno == null) {
 			return "";
@@ -616,6 +616,23 @@ public class AlunoController implements Serializable {
 				cor = "marcarLinha";
 			}
 		}
+		return cor;
+	}*/
+	
+	public String marcarLinha(Aluno a) {
+		String cor = "";
+		if(a != null){
+			if (a.getRematricular() != null && a.getRematricular()) {
+				cor = "marcarLinhaVerde";
+			} else {
+				//TODO VER
+			//	boolean estaNaTurma = alunoService.estaEmUmaTUrma(a.getId());
+			//	if (!estaNaTurma) {
+			//		cor = "marcarLinha";
+			//	}
+			}	
+		}
+		
 		return cor;
 	}
 
@@ -1382,7 +1399,13 @@ public class AlunoController implements Serializable {
 		String nomeAluno = contrato.getAluno().getNomeAluno();
 		String nomeSerie = rematricula ? Serie.values()[contrato.getAluno().getSerie().ordinal() + 1].getName()
 				: Serie.values()[contrato.getAluno().getSerie().ordinal()].getName();
-		String nomePeriodo = contrato.getAluno().getPeriodoProximoAno().getName();
+
+		String nomePeriodo = "";
+		if(contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular()){
+			nomePeriodo = contrato.getAluno().getPeriodoProximoAno().getName();
+		}else{
+			nomePeriodo = contrato.getAluno().getPeriodo().getName();
+		}
 
 		if (contrato.getAluno().getIrmao1() != null
 				&& ((contrato.getAluno().getIrmao1().getRematricular() != null && contrato.getAluno().getIrmao1().getRematricular())
@@ -2346,6 +2369,23 @@ public class AlunoController implements Serializable {
 		return null;
 	}
 
+	public StreamedContent gerarCNB240(ContratoAluno contrato) {
+		try {
+			String sequencialArquivo = configuracaoService.getSequencialArquivo() + "";
+			String nomeArquivo = "CNAB240_" + aluno.getCodigo() + ".txt";
+
+			InputStream stream = FileUtils.gerarCNB240(sequencialArquivo, nomeArquivo, contrato);
+			configuracaoService.incrementaSequencialArquivoCNAB();
+
+			return FileDownload.getContentDoc(stream, nomeArquivo);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
 	public Double getDesconto(org.escola.model.Boleto boleto) {
 		Calendar tomorrow = Calendar.getInstance();
 		tomorrow.set(Calendar.DAY_OF_MONTH, tomorrow.get(Calendar.DAY_OF_MONTH) + 1);
@@ -2397,24 +2437,6 @@ public class AlunoController implements Serializable {
 	private boolean cadastroCompleto(Aluno aluno) {
 		// TODO Auto-generated method stub
 		return true;
-	}
-
-	public List<org.escola.model.Boleto> getBoletosParaPagar(Aluno aluno) {
-		List<org.escola.model.Boleto> boletosParaPagar = new ArrayList<>();
-		if (aluno.getContratosVigentes() != null) {
-			for (ContratoAluno contrato : aluno.getContratosVigentes()) {
-				if (contrato.getBoletos() != null) {
-					for (org.escola.model.Boleto b : contrato.getBoletos()) {
-						if ((!Verificador.getStatusEnum(b).equals(StatusBoletoEnum.PAGO))
-								&& !(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.CANCELADO))) {
-							boletosParaPagar.add(b);
-						}
-					}
-				}
-			}
-		}
-
-		return boletosParaPagar;
 	}
 
 	public String removerContrato(ContratoAluno contrat) {
@@ -2491,6 +2513,18 @@ public class AlunoController implements Serializable {
 		this.aluno = contrato.getAluno();
 
 	}
+	
+	public boolean podeImprimir(ContratoAluno contrato) {
+		if (contrato.getAluno() != null) {
+			if(contrato.getAluno().getId() != null){
+					if(contrato.getAluno().getId() > 0 ){
+						return true;
+					}
+			}
+		}
+		
+		return false;
+	}
 
 	public boolean podeGerarBoleto(ContratoAluno contrato) {
 		if (contrato.getBoletos() == null || contrato.getBoletos().isEmpty()) {
@@ -2500,6 +2534,25 @@ public class AlunoController implements Serializable {
 		}
 	}
 
+	public List<org.escola.model.Boleto> getBoletosParaPagar(Aluno aluno) {
+		List<org.escola.model.Boleto> boletosParaPagar = new ArrayList<>();
+		if (aluno.getContratosVigentes() != null) {
+			for (ContratoAluno contrato : aluno.getContratosVigentes()) {
+				if (contrato.getBoletos() != null) {
+					for (org.escola.model.Boleto b : contrato.getBoletos()) {
+						if ((!Verificador.getStatusEnum(b).equals(StatusBoletoEnum.PAGO))
+								&& !(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.CANCELADO))) {
+							boletosParaPagar.add(b);
+						}
+					}
+				}
+			}
+		}
+
+		return boletosParaPagar;
+	}
+
+	
 	public List<org.escola.model.Boleto> getBoletosParaPagar(ContratoAluno contrato) {
 		List<org.escola.model.Boleto> boletosParaPagar = new ArrayList<>();
 		if (contrato.getBoletos() != null) {
@@ -2510,8 +2563,8 @@ public class AlunoController implements Serializable {
 				}
 			}
 		}
-
-		return boletosParaPagar;
+		
+		return Util.inverterArray(boletosParaPagar);
 	}
 
 	public List<org.escola.model.Boleto> getBoletosParaPagar(List<org.escola.model.Boleto> boletos) {
@@ -2598,7 +2651,7 @@ public class AlunoController implements Serializable {
 		}
 	}
 
-	public boolean cadastroOk(Long idAluno) {
+	/*public boolean cadastroOk(Long idAluno) {
 		Aluno a = alunoService.findById(idAluno);
 		if (a.getContratoVigente() != null) {
 			if (!Verificador.isCPF(a.getContratoVigente().getCpfResponsavel())) {
@@ -2609,6 +2662,20 @@ public class AlunoController implements Serializable {
 		} else {
 			return false;
 		}
+
+		return true;
+	}*/
+	
+	public boolean cadastroOk(Aluno a) {
+		/*if (a.getContratoVigente() != null) {
+			if (!Verificador.isCPF(a.getContratoVigente().getCpfResponsavel())) {
+				return false;
+			} else if (!todosDadosContratoValidos(a, a.getContratoVigente())) {
+				return false;
+			}
+		} else {
+			return false;
+		}*/
 
 		return true;
 	}
@@ -2623,6 +2690,18 @@ public class AlunoController implements Serializable {
 				return false;
 			}
 		}
+		return true;
+	}
+	
+	public boolean cnabEnviado(Aluno a) {
+//		if (a != null) {
+//			if (a.getContratoVigente() != null
+//					&& (a.getContratoVigente().getCnabEnviado() != null && a.getContratoVigente().getCnabEnviado())) {
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		}
 		return true;
 	}
 

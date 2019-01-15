@@ -1,6 +1,7 @@
 
 package org.escola.service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,14 +13,18 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.model.Boleto;
 import org.escola.model.Configuracao;
+import org.escola.model.ContratoAluno;
 import org.escola.util.Service;
+import org.escola.util.Util;
 
 
 @Stateless
@@ -118,6 +123,39 @@ public class ConfiguracaoService extends Service {
 		Configuracao conf = getConfiguracao();
 		conf.setSequencialArquivoCNAB(sequecial);
 		save(conf);
+	}
+
+	public List<Boleto> findBoletosMes(int mes, int ano) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT distinct(bol) from Boleto bol ");
+		sql.append(" where 1 = 1");
+		sql.append(" and (bol.baixaGerada = false or bol.baixaGerada is null)");
+		sql.append(" and (bol.cancelado = false or bol.cancelado is null)");
+		sql.append(" and (bol.valorPago = 0 or bol.valorPago is null)");
+		sql.append(" and bol.vencimento > '" + Util.getDataInicioMesString(mes, ano) + "'");
+		sql.append(" and bol.vencimento < '" + Util.getDataFimMesString(mes, ano) + "'");
+
+		Query query = em.createQuery(sql.toString());
+		List<Boleto> t = (List<Boleto>) query.getResultList();
+
+		return t;
+	}
+
+	public ContratoAluno findContrato(Long idBoleto) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT distinct(contratoaluno_id) from contratoaluno_boleto ");
+		sql.append(" where 1 = 1");
+		sql.append(" and boletos_id  = ");
+		sql.append(idBoleto);
+		Query query = em.createNativeQuery(sql.toString());
+		BigInteger t = (BigInteger) query.getSingleResult();
+		
+		ContratoAluno c = em.find(ContratoAluno.class, t.longValue());
+		c.getBoletos().size();
+
+		return c;
 	}
 	
 }

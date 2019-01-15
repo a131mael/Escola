@@ -48,6 +48,34 @@
 			</h:panelGrid>
 
 
+				<br/>
+				<br/>
+				<br/>				
+				<h:outputText value="Gerar cnab do MES :" />
+				<p:inputText value="#{configuracaoController.mesGerarCNAB}">
+					<p:ajax event="blur" process="@this" />
+				</p:inputText>
+				
+				<p:commandButton id="contrato" icon="ui-icon-contact" ajax="false"
+					value="Gerar CNABs do mes "
+						onclick="PrimeFaces.monitorDownload(start, stop);">
+					<p:fileDownload value="#{configuracaoController.gerarCNABDoMES(configuracaoController.mesGerarCNAB)}" />
+				</p:commandButton>
+				
+				
+				<br/>
+				<br/>
+				<br/>				
+				<h:outputText value="Gerar Historico :" />
+				<p:inputText value="#{configuracaoController.anohistorico}">
+					<p:ajax event="blur" process="@this" />
+				</p:inputText>
+				
+				<p:commandButton icon="ui-icon-contact" ajax="false"
+								action="#{configuracaoController.gerarHistoricoAno(configuracaoController.anohistorico)}"
+								value="Gerar Historico do ano "	>
+				</p:commandButton>
+
 
 		</h:form>
 	</ui:define>

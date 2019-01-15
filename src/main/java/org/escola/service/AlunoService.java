@@ -103,54 +103,56 @@ public class AlunoService extends Service {
 	
 	public Aluno findById(Long id) {
 		Aluno al = em.find(Aluno.class, id);
-		if (al.getIrmao1() != null) {
-			al.getIrmao1().getAnoLetivo();
-		}
+		if(al != null){
+			if (al.getIrmao1() != null) {
+				al.getIrmao1().getAnoLetivo();
+			}
 
-		if (al.getIrmao2() != null) {
-			al.getIrmao2().getAnoLetivo();
-		}
+			if (al.getIrmao2() != null) {
+				al.getIrmao2().getAnoLetivo();
+			}
 
-		if (al.getIrmao3() != null) {
-			al.getIrmao3().getAnoLetivo();
-		}
+			if (al.getIrmao3() != null) {
+				al.getIrmao3().getAnoLetivo();
+			}
 
-		if (al.getIrmao4() != null) {
-			al.getIrmao4().getAnoLetivo();
+			if (al.getIrmao4() != null) {
+				al.getIrmao4().getAnoLetivo();
+			}
+			/*al.getBoletos().size();*/
+			
+			if(al.getContratos() != null){
+				 al.getContratos().size();
+				 for(ContratoAluno contrato : al.getContratos()){
+					 contrato.getBoletos().size();
+				 }
+			}
+			if(al.getIrmao1() != null){
+				al.getIrmao1().getContratos().size();
+				for(ContratoAluno contrato : al.getIrmao1().getContratos()){
+					 contrato.getBoletos().size();
+				 }
+			}
+			if(al.getIrmao2() != null){
+				al.getIrmao2().getContratos().size();
+				for(ContratoAluno contrato : al.getIrmao2().getContratos()){
+					 contrato.getBoletos().size();
+				 }
+			}
+			if(al.getIrmao3() != null){
+				al.getIrmao3().getContratos().size();
+				for(ContratoAluno contrato : al.getIrmao3().getContratos()){
+					 contrato.getBoletos().size();
+				 }
+			}
+			if(al.getIrmao4() != null){
+				al.getIrmao4().getContratos().size();
+				for(ContratoAluno contrato : al.getIrmao4().getContratos()){
+					 contrato.getBoletos().size();
+				 }
+			}
+
 		}
-		/*al.getBoletos().size();*/
-		
-		if(al.getContratos() != null){
-			 al.getContratos().size();
-			 for(ContratoAluno contrato : al.getContratos()){
-				 contrato.getBoletos().size();
-			 }
-		}
-		if(al.getIrmao1() != null){
-			al.getIrmao1().getContratos().size();
-			for(ContratoAluno contrato : al.getIrmao1().getContratos()){
-				 contrato.getBoletos().size();
-			 }
-		}
-		if(al.getIrmao2() != null){
-			al.getIrmao2().getContratos().size();
-			for(ContratoAluno contrato : al.getIrmao2().getContratos()){
-				 contrato.getBoletos().size();
-			 }
-		}
-		if(al.getIrmao3() != null){
-			al.getIrmao3().getContratos().size();
-			for(ContratoAluno contrato : al.getIrmao3().getContratos()){
-				 contrato.getBoletos().size();
-			 }
-		}
-		if(al.getIrmao4() != null){
-			al.getIrmao4().getContratos().size();
-			for(ContratoAluno contrato : al.getIrmao4().getContratos()){
-				 contrato.getBoletos().size();
-			 }
-		}
-		
 
 		return al;
 	}
@@ -450,6 +452,7 @@ public class AlunoService extends Service {
 		}
 
 		if (saveBrother) {
+			if(aluno.getContratos() != null)
 			for(ContratoAluno cont :aluno.getContratos()){
 				if(cont.getCancelado() != null && !cont.getCancelado()){
 					em.merge(cont);
@@ -683,9 +686,9 @@ public class AlunoService extends Service {
 		user.setNomecontatoSaidaEstabelecimento2(aluno.getNomecontatoSaidaEstabelecimento2());
 		user.setNomecontatoSaidaEstabelecimento3(aluno.getNomecontatoSaidaEstabelecimento3());
 
-		if(user.getContratos() != null){
+		if(user.getContratosSux() != null){
 			if(aluno.getContratos() != null){
-				user.getContratos().addAll(aluno.getContratos());
+				user.getContratosSux().addAll(aluno.getContratos());
 			}
 		}else {
 			List<ContratoAluno> contratos = new ArrayList<>();
@@ -771,6 +774,9 @@ public class AlunoService extends Service {
 
 	public float getNota(Long idAluno, DisciplinaEnum disciplina, BimestreEnum bimestre, boolean recupecacao) {
 		try {
+			if(idAluno == 5506L){
+				System.out.println("id");
+			}
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT av from  AlunoAvaliacao av ");
 			sql.append("where 1 = 1");
@@ -853,7 +859,11 @@ public class AlunoService extends Service {
 			Query q = em.createQuery(criteria);
 			q.setFirstResult(first);
 			q.setMaxResults(size);
-			return (List<Aluno>) q.getResultList();
+			List<Aluno> als =(List<Aluno>) q.getResultList();
+			for(Aluno al:als){
+				carregarLazyContrato(al);
+			}
+			return als;
 
 		} catch (NoResultException nre) {
 			return new ArrayList<>();
@@ -864,6 +874,15 @@ public class AlunoService extends Service {
 
 	}
 
+	private void carregarLazyContrato(Aluno al) {
+		if(al.getContratosSux() != null){
+			al.getContratosSux().size();
+			for(ContratoAluno c: al.getContratosSux()){
+				c.getBoletos().size();
+			}
+		}
+	}
+	
 	public long count(Map<String, Object> filtros) {
 		try {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -1423,10 +1442,13 @@ public class AlunoService extends Service {
 	}
 
 	public Aluno adicionarContrato(Aluno aluno, ContratoAluno novoContrato) {
+		if(aluno.getAnoLetivo() == 0){
+			aluno.setAnoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
+		}
 		if(aluno.getId() != null){
 			aluno = findById(aluno.getId());
 		}else{
-			em.persist(aluno);
+			saveAluno(aluno, true);
 		}
 		novoContrato.setAluno(aluno);
 		em.persist(novoContrato);

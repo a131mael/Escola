@@ -18,12 +18,14 @@ public class RotinaAutomatica {
 
 
 	// Rotina que roda as 5:30 minutos nos domingos e na quinta
-	@Schedule(minute = "30", hour = "5", dayOfWeek="Sun,Thu", month="*", persistent = false)
+	//@Schedule(minute = "*/5", hour = "*", month="*", persistent = false)
+	@Schedule(minute = "*/5", hour = "*", persistent = false)
 	public void automaticTimeout() {
 		
 		try {
 			System.out.println("Gerando CNAB DE ALUNOS AINDA NAO ENVIADOs Escola");
-			cnab240.gerarCNABAlunos();
+		//	cnab240.gerarCNABAlunos();
+			cnab240.gerarCNABAlunos(3);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -39,7 +41,7 @@ public class RotinaAutomatica {
 	public void gerarArquivos() {
 		try {
 			System.out.println("Gerando Arquivo de Baixa Cancelados ");
-			cnab240.gerarBaixaBoletoAlunosCancelados();
+		//	cnab240.gerarBaixaBoletoAlunosCancelados();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

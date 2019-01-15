@@ -6,7 +6,8 @@ public class CONSTANTES {
 
 	public static int projeto = 2;
 	public static String nomeProjeto = "adonai";
-	public static String PATH_ENVIAR_CNAB = File.separator+"home"+File.separator+"ubuntu" + File.separator+"cnab" + File.separator +nomeProjeto + File.separator + "enviar" + File.separator;
+	public static String PATH_ENVIAR_CNAB = File.separator+"home"+File.separator+"ubuntu" + File.separator+"Skyunix" + File.separator +"outbox" + File.separator;
+	//public static String PATH_ENVIAR_CNAB = File.separator+"home"+File.separator+"ubuntu" + File.separator+"cnab" + File.separator +nomeProjeto + File.separator + "enviar" + File.separator;
 	/*public static String PATH_ENVIAR_CNAB = "C:\\Sicoobnet\\RetornoCNAB\\"+nomeProjeto + File.separator + "enviar" + File.separator;*/
 	public static String PATH_ENVIAR_BAIXA = File.separator+"home"+File.separator+"ubuntu" + File.separator+"cnab" + File.separator +nomeProjeto + File.separator + "enviar" + File.separator +"baixa" +  File.separator;
 	/*public static String PATH_ENVIAR_BAIXA = "C:\\Sicoobnet\\RetornoCNAB\\"+nomeProjeto + File.separator + "enviar" + File.separator +"baixa" + File.separator;*/

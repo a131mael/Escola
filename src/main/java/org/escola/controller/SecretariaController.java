@@ -55,7 +55,7 @@ public class SecretariaController {
 	public void finalizarAnoLetivo() {
 		int quantidade = finalizarAnoLetivo.getAlunosAlunoLetivoAtual().size();
 		int gerados = 0;
-		int quantidadeNoLote = 300;
+		int quantidadeNoLote = 100;
 		int inicio = 0;
 		while (inicio <= quantidade) {
 			finalizarAnoLetivo.finalizar(inicio,quantidadeNoLote);
