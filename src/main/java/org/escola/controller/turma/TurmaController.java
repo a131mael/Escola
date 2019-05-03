@@ -29,9 +29,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-
 import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.escola.auth.AuthController;
 import org.escola.controller.OfficeDOCUtil;
@@ -42,7 +44,6 @@ import org.escola.enums.Serie;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
-import org.escola.model.AlunoTurma;
 import org.escola.model.Avaliacao;
 import org.escola.model.Professor;
 import org.escola.model.Turma;
@@ -56,10 +57,6 @@ import org.escola.util.ImpressoesUtils;
 import org.escola.util.Util;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
-
-import javax.inject.Named;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
 
 @Named
 @ViewScoped
@@ -106,6 +103,7 @@ public class TurmaController extends AuthController implements Serializable {
 	private Map<Aluno,List<AlunoAvaliacao>> alunoAvaliacaoCiencias;
 	private Map<Aluno,List<AlunoAvaliacao>> alunoAvaliacaoFormacaoCrista;
 	private Map<Aluno,List<AlunoAvaliacao>> alunoAvaliacaoArtes;
+	private Map<Aluno,List<AlunoAvaliacao>> alunoAvaliacaoEspanhol;
 
 	private DualListModel<Professor> professores;
 
@@ -651,6 +649,52 @@ public class TurmaController extends AuthController implements Serializable {
 				mostraNotas(media(maior(nota1RecArtes, nota1BimestreArtes), maior(nota2RecArtes, nota2BimestreArtes),
 						maior(nota3RecArtes, nota3BimestreArtes), maior(nota4RecArtes, nota4BimestreArtes))));
 		trocas.put("#narf", mostraNotas(notaRecFinalArtes));
+		
+		
+		
+		
+		// ESPANHOL
+		float nota1BimestreEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL,
+				BimestreEnum.PRIMEIRO_BIMESTRE, false);
+		float nota2BimestreEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL,
+				BimestreEnum.SEGUNDO_BIMESTRE, false);
+		float nota3BimestreEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL,
+				BimestreEnum.TERCEIRO_BIMESTRE, false);
+		float nota4BimestreEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL,
+				BimestreEnum.QUARTO_BIMESTRE, false);
+
+		float nota1RecEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.PRIMEIRO_BIMESTRE,
+				true);
+		float nota2RecEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.SEGUNDO_BIMESTRE,
+				true);
+		float nota3RecEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.TERCEIRO_BIMESTRE,
+				true);
+		float nota4RecEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.QUARTO_BIMESTRE,
+				true);
+		float notaRecFinalEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, true, true);
+
+		trocas.put("#ns1", mostraNotas(nota1BimestreEspanhol));
+		trocas.put("#ns2", mostraNotas(nota2BimestreEspanhol));
+		trocas.put("#ns3", mostraNotas(nota3BimestreEspanhol));
+		trocas.put("#ns4", mostraNotas(nota4BimestreEspanhol));
+		// rec
+		trocas.put("#nsr1", mostraNotas(nota1RecEspanhol));
+		trocas.put("#nsr2", mostraNotas(nota2RecEspanhol));
+		trocas.put("#nsr3", mostraNotas(nota3RecEspanhol));
+		trocas.put("#nsr4", mostraNotas(nota4RecEspanhol));
+		// mediaFinal
+		trocas.put("#ms1", mostraNotas(maior(nota1RecEspanhol, nota1BimestreEspanhol)));
+		trocas.put("#ms2", mostraNotas(maior(nota2RecEspanhol, nota2BimestreEspanhol)));
+		trocas.put("#ms3", mostraNotas(maior(nota3RecEspanhol, nota3BimestreEspanhol)));
+		trocas.put("#ms4", mostraNotas(maior(nota4RecEspanhol, nota4BimestreEspanhol)));
+		// Final do ano
+		trocas.put("#nsF",
+				mostraNotas(media(maior(nota1RecEspanhol, nota1BimestreEspanhol), maior(nota2RecEspanhol, nota2BimestreEspanhol),
+						maior(nota3RecEspanhol, nota3BimestreEspanhol), maior(nota4RecEspanhol, nota4BimestreEspanhol))));
+		trocas.put("#nsrf", mostraNotas(notaRecFinalEspanhol));
+
+		
+		
 
 		return trocas;
 	}
@@ -809,6 +853,8 @@ public class TurmaController extends AuthController implements Serializable {
 			alunoAvaliacaoCiencias = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.CIENCIAS, this.bimestreSelecionado,this.turma.getId());
 			alunoAvaliacaoFormacaoCrista = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.FORMACAO_CRISTA, this.bimestreSelecionado,this.turma.getId());
 			alunoAvaliacaoArtes = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.ARTES, this.bimestreSelecionado,this.turma.getId());
+			alunoAvaliacaoEspanhol = avaliacaoService.findAlunoAvaliacaoMap(null, null, DisciplinaEnum.ESPANHOL, this.bimestreSelecionado,this.turma.getId());
+	
 	}
 	
 	public Map<Aluno,List<AlunoAvaliacao>> getAlunoAvaliacaoPortugues() {
@@ -914,6 +960,15 @@ public class TurmaController extends AuthController implements Serializable {
 
 	public void setTotalAlunos(int totalAlunos) {
 		this.totalAlunos = totalAlunos;
+	}
+
+	public Map<Aluno,List<AlunoAvaliacao>> getAlunoAvaliacaoEspanhol() {
+		alunoAvaliacaoEspanhol.keySet();
+		return alunoAvaliacaoEspanhol;
+	}
+
+	public void setAlunoAvaliacaoEspanhol(Map<Aluno,List<AlunoAvaliacao>> alunoAvaliacaoEspanhol) {
+		this.alunoAvaliacaoEspanhol = alunoAvaliacaoEspanhol;
 	}
 
 }

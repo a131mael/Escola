@@ -272,6 +272,7 @@ public class FinanceiroEscolaService extends Service {
 			bol.setBaixaManual(boleto.getBaixaManual());
 			bol.setConciliacaoPorExtrato(boleto.getConciliacaoPorExtrato());
 			bol.setBaixaGerada(boleto.getBaixaGerada());
+			bol.setCnabCanceladoEnviado(boleto.getCnabCanceladoEnviado());
 			em.merge(bol);
 		}
 	}

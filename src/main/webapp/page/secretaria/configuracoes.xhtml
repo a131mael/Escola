@@ -31,50 +31,67 @@
 
 				<h:outputText value="Ano rematrícula:" />
 				<p:inputText value="#{configuracao.anoRematricula}">
-					<p:ajax event="blur" process="@this" listener="#{configuracaoController.salvar()}"/>
+					<p:ajax event="blur" process="@this"
+						listener="#{configuracaoController.salvar()}" />
 				</p:inputText>
 
-				<p:commandButton value="FINALIZAR ANO LETIVO" icon="ui-icon-pencil" ajax="false" action="#{secretariaController.finalizarAnoLetivo()}">
-					
+				<p:commandButton value="FINALIZAR ANO LETIVO" icon="ui-icon-pencil"
+					ajax="false" action="#{secretariaController.finalizarAnoLetivo()}">
+
 				</p:commandButton>
 
-				<p:commandButton value="Gerar CNAB Todos Alunos Matriculados" 
-								icon="ui-icon-pencil" 
-								ajax="false"
-								onclick="PrimeFaces.monitorDownload(start, stop);">
-				<p:fileDownload value="#{secretariaController.gerarCNAB240_TodosAlunos()}" />
+				<p:commandButton value="Gerar CNAB Todos Alunos Matriculados"
+					icon="ui-icon-pencil" ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);">
+					<p:fileDownload
+						value="#{secretariaController.gerarCNAB240_TodosAlunos()}" />
 				</p:commandButton>
-				
+
 			</h:panelGrid>
 
+			<br />
+			<br />
+			<br />
+			<h:outputText value="Gerar cnab do MES :" />
+			<p:inputText value="#{configuracaoController.mesGerarCNAB}">
+				<p:ajax event="blur" process="@this" />
+			</p:inputText>
 
-				<br/>
-				<br/>
-				<br/>				
-				<h:outputText value="Gerar cnab do MES :" />
-				<p:inputText value="#{configuracaoController.mesGerarCNAB}">
-					<p:ajax event="blur" process="@this" />
-				</p:inputText>
-				
-				<p:commandButton id="contrato" icon="ui-icon-contact" ajax="false"
-					value="Gerar CNABs do mes "
-						onclick="PrimeFaces.monitorDownload(start, stop);">
-					<p:fileDownload value="#{configuracaoController.gerarCNABDoMES(configuracaoController.mesGerarCNAB)}" />
-				</p:commandButton>
-				
-				
-				<br/>
-				<br/>
-				<br/>				
-				<h:outputText value="Gerar Historico :" />
-				<p:inputText value="#{configuracaoController.anohistorico}">
-					<p:ajax event="blur" process="@this" />
-				</p:inputText>
-				
-				<p:commandButton icon="ui-icon-contact" ajax="false"
-								action="#{configuracaoController.gerarHistoricoAno(configuracaoController.anohistorico)}"
-								value="Gerar Historico do ano "	>
-				</p:commandButton>
+			<p:commandButton id="contrato" icon="ui-icon-contact" ajax="false"
+				value="Gerar CNABs do mes "
+				onclick="PrimeFaces.monitorDownload(start, stop);">
+				<p:fileDownload
+					value="#{configuracaoController.gerarCNABDoMES(configuracaoController.mesGerarCNAB)}" />
+			</p:commandButton>
+
+			<br />
+			<br />
+			<br />
+			<h:outputText value="Gerar Historico :" />
+			<p:inputText value="#{configuracaoController.anohistorico}">
+				<p:ajax event="blur" process="@this" />
+			</p:inputText>
+
+			<p:commandButton icon="ui-icon-contact" ajax="false"
+				action="#{configuracaoController.gerarHistoricoAno(configuracaoController.anohistorico)}"
+				value="Gerar Historico do ano ">
+			</p:commandButton>
+			<br />
+			<br />
+			<br />
+
+			<h:outputText value="Gerar CNAB Cancelamento Mes :" />
+			<p:inputText
+				value="#{configuracaoController.mesGerarCNABCancelamento}">
+				<p:ajax event="blur" process="@this" />
+			</p:inputText>
+
+			<p:commandButton id="cancelados" icon="ui-icon-contact" ajax="false"
+				value="Gerar CNAB Cancelamento  "
+				onclick="PrimeFaces.monitorDownload(start, stop);">
+				<p:fileDownload
+					value="#{configuracaoController.gerarCNABCancelamentoDoMES(configuracaoController.mesGerarCNABCancelamento)}" />
+			</p:commandButton>
 
 
 		</h:form>

@@ -181,6 +181,8 @@ public class AvaliacaoController extends AuthController implements Serializable{
 					filtros.put("bimestre", configuracaoService.getConfiguracao().getBimestre());
 					filtros.put("professor", getLoggedUser().getProfessor());
 					
+					filtros.put("anoLetivo", configuracaoService.getConfiguracao().getAnoLetivo());
+					
 					/*filtros.put("removido", false);*/
 
 					String orderByParam = (order != null) ? order : "id";
@@ -213,6 +215,10 @@ public class AvaliacaoController extends AuthController implements Serializable{
 	public String salvar(){
 		if(getAvaliacao().getBimestre() == null){
 			getAvaliacao().setBimestre(configuracaoService.getConfiguracao().getBimestre());
+		}
+		
+		if(getAvaliacao().getAnoLetivo() == null){
+			getAvaliacao().setAnoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
 		}
 		
 		if(getAvaliacao().getSerie() == null){

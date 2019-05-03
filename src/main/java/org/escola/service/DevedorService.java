@@ -53,9 +53,9 @@ public class DevedorService extends Service {
 	}
 
 	public Aluno findById(Long id) {
-		Aluno dev =em.find(Aluno.class, id);
+		Aluno dev = em.find(Aluno.class, id);
 		dev.getContratos().size();
-		for(ContratoAluno contrato : dev.getContratos()){
+		for (ContratoAluno contrato : dev.getContratos()) {
 			contrato.getBoletos().size();
 		}
 		return dev;
@@ -71,15 +71,15 @@ public class DevedorService extends Service {
 			// feature in JPA 2.0
 			// criteria.select(member).orderBy(cb.asc(member.get(Member_.name)));
 			criteria.select(member).orderBy(cb.asc(member.get("nome")));
-			
+
 			List<Aluno> dvs = new ArrayList<>();
-			for(Aluno dev : em.createQuery(criteria).getResultList()){
-				for(ContratoAluno contrato : dev.getContratos()){
+			for (Aluno dev : em.createQuery(criteria).getResultList()) {
+				for (ContratoAluno contrato : dev.getContratos()) {
 					contrato.getBoletos().size();
 				}
 				dvs.add(dev);
 			}
-			
+
 			return dvs;
 
 		} catch (NoResultException nre) {
@@ -98,43 +98,36 @@ public class DevedorService extends Service {
 
 			if (aluno.getId() != null && aluno.getId() != 0L) {
 				user = findById(aluno.getId());
-			} 
-//			 user.setEnviadoParaCobrancaCDL(aluno.getEnviadoParaCobrancaCDL());
-//			user.setNomeAluno(aluno.getNomeAluno());
-//			user.setEndereco(aluno.getEndereco());
-//			user.setBairro(aluno.getBairro());
-//			user.setCep(aluno.getCep());
-//			user.setCidade(aluno.getCidade());
-//			user.setBairro(aluno.getBairro());
-//			user.setCep(aluno.getCep());
-//			user.setCidade(aluno.getCidade());
-//			user.setCpf(aluno.getCpf());
-//			user.setTelefoneCelular(aluno.getTelefoneCelular());
-//			user.setTelefoneCelular2(aluno.getTelefoneCelular2());
-//			user.setTelefoneResidencial(aluno.getTelefoneResidencial());
-//			user.setEnviadoSPC(aluno.getEnviadoSPC());
-//			user.setEnviadoParaCobrancaCDL(aluno.getEnviadoParaCobrancaCDL());
-//			user.setContratoTerminado(aluno.getContratoTerminado());
-//			user.setObservacao(aluno.getObservacao());
+			}
+			// user.setEnviadoParaCobrancaCDL(aluno.getEnviadoParaCobrancaCDL());
+			// user.setNomeAluno(aluno.getNomeAluno());
+			// user.setEndereco(aluno.getEndereco());
+			// user.setBairro(aluno.getBairro());
+			// user.setCep(aluno.getCep());
+			// user.setCidade(aluno.getCidade());
+			// user.setBairro(aluno.getBairro());
+			// user.setCep(aluno.getCep());
+			// user.setCidade(aluno.getCidade());
+			// user.setCpf(aluno.getCpf());
+			// user.setTelefoneCelular(aluno.getTelefoneCelular());
+			// user.setTelefoneCelular2(aluno.getTelefoneCelular2());
+			// user.setTelefoneResidencial(aluno.getTelefoneResidencial());
+			// user.setEnviadoSPC(aluno.getEnviadoSPC());
+			// user.setEnviadoParaCobrancaCDL(aluno.getEnviadoParaCobrancaCDL());
+			// user.setContratoTerminado(aluno.getContratoTerminado());
+			// user.setObservacao(aluno.getObservacao());
 			/*
-			List<Boleto> bs = new ArrayList<>();
-			if(aluno.getBoletos() != null){
-				for(Boleto b : aluno.getBoletos()){
-					if(b.getNumero() != null && !b.getNumero().equalsIgnoreCase("")){
-						bs.add(getBoletoAttached(b));
-					}
-				}
-			}
-			
-			if (aluno.getRemovido() == null) {
-				user.setRemovido(false);
-			} else {
-				user.setRemovido(aluno.getRemovido());
-			}
-
-
-			em.persist(user);
-			user.setBoletos(bs);*/
+			 * List<Boleto> bs = new ArrayList<>(); if(aluno.getBoletos() !=
+			 * null){ for(Boleto b : aluno.getBoletos()){ if(b.getNumero() !=
+			 * null && !b.getNumero().equalsIgnoreCase("")){
+			 * bs.add(getBoletoAttached(b)); } } }
+			 * 
+			 * if (aluno.getRemovido() == null) { user.setRemovido(false); }
+			 * else { user.setRemovido(aluno.getRemovido()); }
+			 * 
+			 * 
+			 * em.persist(user); user.setBoletos(bs);
+			 */
 
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues
@@ -155,40 +148,41 @@ public class DevedorService extends Service {
 		return null;
 	}
 
-	private Boleto getBoletoAttached(Boleto boleto){
-		/*String numero = boleto.getNumero();
-		String numeroContrato = boleto.getNumeroContrato();
-		Date dataGeracao =boleto.getDataGeracao();
-		Double valor = boleto.getValor();
-		
-		if(boleto.getId() != null){
-			boleto  =em.find(Boleto.class, boleto.getId());
-			boleto.setDataGeracao(dataGeracao);
-			boleto.setNumeroContrato(numeroContrato);
-			boleto.setDataGeracao(dataGeracao);
-			boleto.setValor(valor);*/
-	/*	}
-		return boleto;*/
+	private Boleto getBoletoAttached(Boleto boleto) {
+		/*
+		 * String numero = boleto.getNumero(); String numeroContrato =
+		 * boleto.getNumeroContrato(); Date dataGeracao
+		 * =boleto.getDataGeracao(); Double valor = boleto.getValor();
+		 * 
+		 * if(boleto.getId() != null){ boleto =em.find(Boleto.class,
+		 * boleto.getId()); boleto.setDataGeracao(dataGeracao);
+		 * boleto.setNumeroContrato(numeroContrato);
+		 * boleto.setDataGeracao(dataGeracao); boleto.setValor(valor);
+		 */
+		/*
+		 * } return boleto;
+		 */
 		return null;
 	}
-	
+
 	public String remover(Long idDevedor) {
-		/*Aluno al = findById(idDevedor);
-		al.setRemovido(true);
-		em.persist(al);*/
+		/*
+		 * Aluno al = findById(idDevedor); al.setRemovido(true); em.persist(al);
+		 */
 		return "ok";
 	}
 
 	public String restaurar(Long idDevedor) {
-		/*Devedor al = findById(idDevedor);
-		al.setRemovido(false);
-		em.persist(al);*/
+		/*
+		 * Devedor al = findById(idDevedor); al.setRemovido(false);
+		 * em.persist(al);
+		 */
 		return "ok";
 	}
 
-
 	@SuppressWarnings("unchecked")
-	public List<Aluno> find(int first, int size, String orderBy, String order, Map<String, Object> filtros) {
+	public List<Aluno> find(int first, int size, String orderBy, String order, Map<String, Object> filtros,
+			Date dataInicio, Date dataFim) {
 		try {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<Aluno> criteria = cb.createQuery(Aluno.class);
@@ -205,38 +199,81 @@ public class DevedorService extends Service {
 				} else {
 					pred = cb.equal(member.get(entry.getKey()), entry.getValue());
 				}
-				
+
 				predicates.add(pred);
 				// cq.where(pred);
 			}
-			
+
 			cq.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 			cq.orderBy((order.equals("asc") ? cb.asc(member.get(orderBy)) : cb.desc(member.get(orderBy))));
 			Query q = em.createQuery(criteria);
 			q.setFirstResult(first);
-		//	q.setMaxResults(size);
+			// q.setMaxResults(size);
 			boolean atrasado = false;
 			List<Aluno> ds = new LinkedList<>();
-			for(Aluno d : (List<Aluno>) q.getResultList()){
-				for(ContratoAluno contrato : d.getContratos()){
+			for (Aluno d : (List<Aluno>) q.getResultList()) {
+				for (ContratoAluno contrato : d.getContratos()) {
+
 					contrato.getBoletos().size();
-					for(Boleto b : contrato.getBoletos() ){
-						if(Verificador.getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)){
-							b.setAtrasado(true);
-							atrasado = true;
-							
-						}else{
-							b.setAtrasado(false);
+					for (Boleto b : contrato.getBoletos()) {
+
+						if (dataInicio != null && dataFim != null) {
+							if (dataInicio.before(b.getVencimento()) && dataFim.after(b.getVencimento())) {
+								if (Verificador.getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)) {
+									b.setAtrasado(true);
+									atrasado = true;
+									contrato.setAtrasado(true);
+								} else {
+									b.setAtrasado(false);
+								}
+
+							}
+
+						} else if (dataInicio == null && dataFim != null) {
+							if (dataFim.after(b.getVencimento())) {
+								if (Verificador.getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)) {
+
+									b.setAtrasado(true);
+									atrasado = true;
+									contrato.setAtrasado(true);
+								} else {
+									b.setAtrasado(false);
+								}
+
+							}
+
+						} else if (dataInicio != null && dataFim == null) {
+							if (dataInicio.before(b.getVencimento())) {
+								if (Verificador.getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)) {
+
+									b.setAtrasado(true);
+									atrasado = true;
+									contrato.setAtrasado(true);
+								} else {
+									b.setAtrasado(false);
+								}
+
+							}
+						} else {
+							if (Verificador.getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)) {
+
+								b.setAtrasado(true);
+								atrasado = true;
+								contrato.setAtrasado(true);
+							} else {
+								b.setAtrasado(false);
+							}
 						}
 					}
-					
+
 				}
-				if(atrasado){
+				if (atrasado) {
+
 					ds.add(d);
 				}
 				atrasado = false;
 			}
-			
+
 			return ds;
 
 		} catch (NoResultException nre) {
@@ -284,8 +321,7 @@ public class DevedorService extends Service {
 		Aluno aluno = findById(alunod.getId());
 		aluno.setObservacaoSecretaria(alunod.getObservacaoSecretaria());
 		em.merge(aluno);
-		
+
 	}
 
-	
 }

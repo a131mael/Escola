@@ -166,6 +166,7 @@ public class AlunoController implements Serializable {
 
 			} else {
 				aluno = new Aluno();
+				aluno.setCodigo(alunoService.getProximoCodigo() + "");
 			}
 		}
 
@@ -1106,6 +1107,54 @@ public class AlunoController implements Serializable {
 				mostraNotas(media(maior(nota1RecArtes, nota1BimestreArtes), maior(nota2RecArtes, nota2BimestreArtes),
 						maior(nota3RecArtes, nota3BimestreArtes), maior(nota4RecArtes, nota4BimestreArtes))));
 		trocas.put("#narf", mostraNotas(notaRecFinalArtes));
+		
+		
+		// ESPANHOL
+				float nota1BimestreEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL,
+						BimestreEnum.PRIMEIRO_BIMESTRE, false);
+				float nota2BimestreEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL,
+						BimestreEnum.SEGUNDO_BIMESTRE, false);
+				float nota3BimestreEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL,
+						BimestreEnum.TERCEIRO_BIMESTRE, false);
+				float nota4BimestreEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL,
+						BimestreEnum.QUARTO_BIMESTRE, false);
+
+				float nota1RecEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.PRIMEIRO_BIMESTRE,
+						true);
+				float nota2RecEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.SEGUNDO_BIMESTRE,
+						true);
+				float nota3RecEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.TERCEIRO_BIMESTRE,
+						true);
+				float nota4RecEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.QUARTO_BIMESTRE,
+						true);
+				float notaRecFinalEspanhol = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, true, true);
+
+				trocas.put("#ns1", mostraNotas(nota1BimestreEspanhol));
+				trocas.put("#ns2", mostraNotas(nota2BimestreEspanhol));
+				trocas.put("#ns3", mostraNotas(nota3BimestreEspanhol));
+				trocas.put("#ns4", mostraNotas(nota4BimestreEspanhol));
+				// rec
+				trocas.put("#nsr1", mostraNotas(nota1RecEspanhol));
+				trocas.put("#nsr2", mostraNotas(nota2RecEspanhol));
+				trocas.put("#nsr3", mostraNotas(nota3RecEspanhol));
+				trocas.put("#nsr4", mostraNotas(nota4RecEspanhol));
+				// mediaFinal
+				trocas.put("#ms1", mostraNotas(maior(nota1RecEspanhol, nota1BimestreEspanhol)));
+				trocas.put("#ms2", mostraNotas(maior(nota2RecEspanhol, nota2BimestreEspanhol)));
+				trocas.put("#ms3", mostraNotas(maior(nota3RecEspanhol, nota3BimestreEspanhol)));
+				trocas.put("#ms4", mostraNotas(maior(nota4RecEspanhol, nota4BimestreEspanhol)));
+				// Final do ano
+				trocas.put("#nsF",
+						mostraNotas(media(maior(nota1RecEspanhol, nota1BimestreEspanhol), maior(nota2RecEspanhol, nota2BimestreEspanhol),
+								maior(nota3RecEspanhol, nota3BimestreEspanhol), maior(nota4RecEspanhol, nota4BimestreEspanhol))));
+				trocas.put("#nsrf", mostraNotas(notaRecFinalEspanhol));
+
+				
+				
+
+		
+		
+		
 
 		return trocas;
 	}

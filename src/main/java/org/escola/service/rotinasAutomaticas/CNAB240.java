@@ -75,7 +75,7 @@ public class CNAB240 {
 		}
 		return null;
 	}
-	
+
 	public byte[] gerarCNB240(int projeto, ContratoAluno contrato, Boleto b) {
 		try {
 
@@ -109,7 +109,6 @@ public class CNAB240 {
 		}
 		return null;
 	}
-	
 
 	public byte[] gerarCNB240Baixa(int projeto, Boleto b) {
 		try {
@@ -154,17 +153,14 @@ public class CNAB240 {
 	}
 
 	public void gerarBaixaBoletosCancelados(Boleto b, String path) {
-		if ((b.getManterAposRemovido() != null && !b.getManterAposRemovido())) {
-			if (b.getCancelado() == null || !b.getCancelado()) {
-				byte[] arquivo = gerarCNB240Baixa(CONSTANTES.projeto, b);
-				String nomeArquivo = "CNAB240_" + b.getNossoNumero() + ".txt";
-				ImportadorArquivo.geraArquivoFisico(arquivo, path + nomeArquivo);
-				b.setBaixaGerada(true);
-				b.setCancelado(true);
-				b.setValorPago((double) 0);
-				financeiroService.save(b);
-			}
-		}
+		byte[] arquivo = gerarCNB240Baixa(CONSTANTES.projeto, b);
+		String nomeArquivo = "CNAB240_" + b.getNossoNumero() + ".txt";
+		ImportadorArquivo.geraArquivoFisico(arquivo, path + nomeArquivo);
+		b.setBaixaGerada(true);
+		b.setCancelado(true);
+		b.setValorPago((double) 0);
+		b.setCnabCanceladoEnviado(true);
+		financeiroService.save(b);
 	}
 
 	public void gerarCNABAlunos() {
@@ -172,7 +168,7 @@ public class CNAB240 {
 		for (Aluno al : alunosSemCNABENVIADO) {
 			for (ContratoAluno contrato : al.getContratosVigentes()) {
 				byte[] arquivo = gerarCNB240(CONSTANTES.projeto, al, contrato);
-				String nomeArquivo = "CNAB240_" + al.getCodigo() + ".txt";
+				String nomeArquivo = "CNAB240_" + al.getCodigo() + System.currentTimeMillis() + ".txt";
 				ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
 				financeiroService.saveCNABENviado(al);
 			}
@@ -180,40 +176,40 @@ public class CNAB240 {
 	}
 
 	public void gerarCNABAlunos(int quantidadeDeMeses) {
-		//FileUtils
+		// FileUtils
 		List<Boleto> boletosNAOEnviados = financeiroService.getBoletosCNABNaoEnviado(quantidadeDeMeses);
 		LocalDate data = LocalDate.now();
 		StringBuilder sb = new StringBuilder();
 		sb.append(data.getYear());
 		sb.append(data.getMonthValue());
 		sb.append(data.getDayOfMonth());
-		
+
 		int contador = 1;
 		for (Boleto b : boletosNAOEnviados) {
-			
-			ContratoAluno ca = configuracaoService.findContrato(b.getId()); 
-			
-			if(ca.getCpfResponsavel() != null && !ca.getCpfResponsavel().equalsIgnoreCase("")){
-				if(ca.getNomeResponsavel() != null && !ca.getNomeResponsavel().equalsIgnoreCase("")){
-					if(ca.getEndereco() != null && !ca.getEndereco().equalsIgnoreCase("")){
-						if(ca.getCep() == null || ca.getCep().equalsIgnoreCase("")){
-							ca.setCep("88132700");	
+
+			ContratoAluno ca = configuracaoService.findContrato(b.getId());
+
+			if (ca.getCpfResponsavel() != null && !ca.getCpfResponsavel().equalsIgnoreCase("")) {
+				if (ca.getNomeResponsavel() != null && !ca.getNomeResponsavel().equalsIgnoreCase("")) {
+					if (ca.getEndereco() != null && !ca.getEndereco().equalsIgnoreCase("")) {
+						if (ca.getCep() == null || ca.getCep().equalsIgnoreCase("")) {
+							ca.setCep("88132700");
 						}
-						if(ca.getBairro() == null || ca.getBairro().equalsIgnoreCase("")){
+						if (ca.getBairro() == null || ca.getBairro().equalsIgnoreCase("")) {
 							ca.setBairro("Bela Vista");
 						}
-						if(ca.getCidade() == null || ca.getCidade().equalsIgnoreCase("")){
+						if (ca.getCidade() == null || ca.getCidade().equalsIgnoreCase("")) {
 							ca.setCidade("Palhoca");
 						}
-						byte[] arquivo = gerarCNB240(CONSTANTES.projeto,ca, b);
-						String nomeArquivo = "COB_756_494960_"+sb+ contador+".REM";
+						byte[] arquivo = gerarCNB240(CONSTANTES.projeto, ca, b);
+						String nomeArquivo = "COB_756_494960_" + sb + contador + ".REM";
 						ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
 						financeiroService.saveCNABENviado(b);
 						contador++;
 					}
 				}
 			}
-			
+
 		}
 	}
 
@@ -253,7 +249,8 @@ public class CNAB240 {
 
 	public void importarPagamentosCNAB240() {
 		try {
-			List<Pagador> boletosImportados = CNAB240_RETORNO_SICOOB.imporCNAB240(Constante.LOCAL_ARMAZENAMENTO_REMESSA);
+			List<Pagador> boletosImportados = CNAB240_RETORNO_SICOOB
+					.imporCNAB240(Constante.LOCAL_ARMAZENAMENTO_REMESSA);
 			importarBoletos(boletosImportados, false);
 
 		} catch (Exception e) {

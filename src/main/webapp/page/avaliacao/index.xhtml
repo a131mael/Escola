@@ -86,6 +86,15 @@
 						<h:outputText value="#{avaliacaoTab.bimestre.name}" />
 					</p:column>
 					
+					<p:column filterBy="#{avaliacaoTab.anoLetivo}"
+                              sortBy="#{avaliacaoTab.anoLetivo}"
+					          >
+						<f:facet name="header">
+							<h:outputText value="Ano" />
+						</f:facet>
+						<h:outputText value="#{avaliacaoTab.anoLetivo}" />
+					</p:column>
+					
 					
 				</p:dataTable>
 

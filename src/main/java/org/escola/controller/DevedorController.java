@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -69,6 +70,10 @@ public class DevedorController implements Serializable {
 
 	private LazyDataModel<Aluno> lazyListDataModel;
 	
+	private Date dataInicio;
+	
+	private Date dataFim;
+	
 	@PostConstruct
 	private void init() {
 		if (getDevedor() == null) {
@@ -92,6 +97,10 @@ public class DevedorController implements Serializable {
 		}
 	}
 	
+	public void buscar(){
+		
+	}
+	
 	public void adicionarBoleto(){
 		Boleto ultimo = new Boleto();
 		if(devedor.getBoletos().size()>0){
@@ -105,7 +114,7 @@ public class DevedorController implements Serializable {
 	}
 	
 	public StreamedContent imprimirDevedores() throws IOException, DocumentException {
-		String nomeArquivo = "devedores.pdf";
+		/*String nomeArquivo = "devedores.pdf";
 		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+nomeArquivo;
 		Map<String, Object> filtros = new LinkedHashMap();
 		filtros.put("removido", false);
@@ -120,6 +129,9 @@ public class DevedorController implements Serializable {
 		
 		InputStream stream =  new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
+		*
+		*/
+		return null;
 	}
 
 	public LazyDataModel<Aluno> getLazyDataModel() {
@@ -165,7 +177,7 @@ public class DevedorController implements Serializable {
 					String orderByParam = (order != null) ? order : "id";
 					String orderParam = ("ASCENDING".equals(so.name())) ? "asc" : "desc";
 
-					List<Aluno> ol = getDevedorService().find(first, pageSize, orderByParam, orderParam, filtros);
+					List<Aluno> ol = getDevedorService().find(first, pageSize, orderByParam, orderParam, filtros,dataInicio, dataFim);
 
 					if (ol != null && ol.size() > 0) {
 						lazyListDataModel.setRowCount((int) getDevedorService().count(filtros));
@@ -319,6 +331,22 @@ public class DevedorController implements Serializable {
 
 	public void setDevedorService(DevedorService devedorService) {
 		this.devedorService = devedorService;
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
 	}
 	
 }

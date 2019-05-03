@@ -132,6 +132,7 @@ public class ConfiguracaoService extends Service {
 		sql.append(" where 1 = 1");
 		sql.append(" and (bol.baixaGerada = false or bol.baixaGerada is null)");
 		sql.append(" and (bol.cancelado = false or bol.cancelado is null)");
+		sql.append(" and (bol.cnabEnviado = false or bol.cnabEnviado is null)");
 		sql.append(" and (bol.valorPago = 0 or bol.valorPago is null)");
 		sql.append(" and bol.vencimento > '" + Util.getDataInicioMesString(mes, ano) + "'");
 		sql.append(" and bol.vencimento < '" + Util.getDataFimMesString(mes, ano) + "'");
@@ -156,6 +157,31 @@ public class ConfiguracaoService extends Service {
 		c.getBoletos().size();
 
 		return c;
+	}
+
+	public void mudarStatusParaCNABEnviado(Boleto b) {
+		b = em.find(Boleto.class, b.getId());
+		b.setCnabEnviado(true);
+		em.merge(b);
+		
+	}
+	
+	public List<Boleto> findBoletosCanceladosMes(int mes, int ano) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT distinct(bol) from Boleto bol ");
+		sql.append(" where 1 = 1");
+		sql.append(" and (bol.cancelado = true)");
+		sql.append(" and (bol.manterAposRemovido = false or manterAposRemovido is null)");
+		sql.append(" and (bol.cnabCanceladoEnviado = false or cnabCanceladoEnviado is null)");
+		sql.append(" and (bol.valorPago = 0 or bol.valorPago is null)");
+		sql.append(" and bol.vencimento > '" + Util.getDataInicioMesString(mes, ano) + "'");
+		sql.append(" and bol.vencimento < '" + Util.getDataFimMesString(mes, ano) + "'");
+
+		Query query = em.createQuery(sql.toString());
+		List<Boleto> t = (List<Boleto>) query.getResultList();
+
+		return t;
 	}
 	
 }

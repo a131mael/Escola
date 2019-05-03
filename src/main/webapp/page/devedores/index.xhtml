@@ -32,10 +32,26 @@
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{devedorController.editar()}" rendered="false"	alt="Editar" disabled="#{!devedorController.alunoSelecionado}"/>
 				<p:separator style=" height:25px;" rendered="false"/>
 				
-				<p:commandButton  ajax="false" value="Imprimir"
+				<p:commandButton  ajax="false" value="Imprimir" rendered="false"
 					onclick="PrimeFaces.monitorDownload(start, stop);">
 					<p:fileDownload value="#{devedorController.imprimirDevedores()}" />
 				</p:commandButton>
+				
+				<h:panelGrid id="panelFiltros" columns="5" style="margin-top: -5px; margin-left:-5px">
+					<h:outputLabel value="Vencimento inicio: " />
+					<p:calendar id="btInicio" value="#{devedorController.dataInicio}" showOn="button" >
+						<p:ajax event="change" process="@this"/>
+					</p:calendar>
+					<h:outputLabel value="Vencimento fim: " />
+					<p:calendar id="btFim" value="#{devedorController.dataFim}" showOn="button" >
+						<p:ajax event="change" process="@this"/>
+					</p:calendar>
+					
+					<p:commandButton  ajax="false" value="Buscar" action="#{devedorController.buscar()}" >
+						
+					</p:commandButton>
+				
+				</h:panelGrid>
 				
 				</h:panelGrid>
 
@@ -90,9 +106,19 @@
                               headerText="Nome "
                               width="15%"
                               styleClass="#{devedorController.marcarLinha(professorTab)}">
- 						<h:outputText value="#{professorTab.nomeResponsavel}" />
-						<br />
-						<h:outputText value="#{professorTab.cpfResponsavel}" />
+ 						
+ 						
+ 							<ui:repeat var="contratAlun" value="#{professorTab.contratos}" style="border:none">
+	                                <h:outputText value="#{contratAlun.nomeResponsavel}" rendered="#{contratAlun.atrasado}"/>
+									<p:panelGrid rendered="#{contratAlun.atrasado}">
+										<br/>
+									</p:panelGrid>
+
+									<h:outputText value="#{contratAlun.cpfResponsavel }" rendered="#{contratAlun.atrasado}"/>
+									<br />
+			                     </ui:repeat>
+			                     <br />
+ 						
 						<br />
 						<h:outputText value="#{professorTab.nomeAluno}" />
                         <br />
@@ -101,12 +127,6 @@
                         <h:outputText value="#{professorTab.irmao2.nomeAluno}" />
                         <br />
                         <h:outputText value="#{professorTab.irmao3.nomeAluno}" />
-                        <br />
-                        <h:outputText value="#{professorTab.endereco}" />
-                        <br/>
-                        <h:outputText value="#{professorTab.bairro}" />
-                        <br/>
-                        <h:outputText value="#{professorTab.cep}" />
 					</p:column>
 
 					<p:column filterBy="#{professorTab.cpfResponsavel}"
@@ -158,6 +178,10 @@
                               headerText="Boletos" >
                               
                               <ui:repeat var="contr" value="#{professorTab.contratos}" style="border:none">
+                             	  <h:outputText value="#{contr.nomeResponsavel}" rendered="#{contr.atrasado}"/>
+                              	 <h:outputText value=" " rendered="#{contr.atrasado}"/>
+                              	 <h:outputText value="#{contr.ano}" rendered="#{contr.atrasado}"/>
+                              
                               	<ui:repeat var="bole" value="#{contr.boletos}">
                               	<p:panelGrid rendered="#{bole.atrasado}" columns="5" 
                               					 columnClasses="tamanhoCelula"

@@ -99,7 +99,7 @@
 				        <p:column style="text-align: center">
 				             <p:commandButton  title="Baixar" actionListener="#{financeiroController.baixarBoleto(bols)}"
 				             					style="width:100px !important" 
-				             					disabled="#{financeiroController.isBoletoPago(bols)}">
+				             					disabled="#{financeiroController.isBoletoPago(bols) or bols.cancelado}">
 				             <p:ajax process="@this" update="form"/>
 				                <f:setPropertyActionListener value="#{bols}" target="#{financeiroController.alunoBaixaSelecionado}" />
 				                <p:confirm header="Confirmacao" message="Tem certeza que deseja baixar o boleto com vencimento #{financeiroController.formatarData(bols.vencimento)} ?" icon="ui-icon-alert" />

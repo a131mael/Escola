@@ -1,21 +1,6 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
- * contributors by the @authors tag. See the copyright.txt in the
- * distribution for a full listing of individual contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.escola.controller;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -54,6 +39,9 @@ public class ConfiguracaoController implements Serializable{
 	private Configuracao configuracao;
 	
 	private int mesGerarCNAB;
+	
+	private int mesGerarCNABCancelamento;
+	
 	private int anohistorico;
 	
 	@Inject
@@ -64,7 +52,10 @@ public class ConfiguracaoController implements Serializable{
 	
 	@Inject
 	private AlunoService alunoService;
-
+	
+	@Inject
+	private org.escola.service.rotinasAutomaticas.CNAB240 cnab240;
+	
 	@PostConstruct
 	private void init() {
 		List<Configuracao> confs =configuracaoService.findAll(); 
@@ -86,7 +77,49 @@ public class ConfiguracaoController implements Serializable{
 		}
 	}
 	
+	public StreamedContent gerarCNABCancelamentoDoMES(int mes) {
+		try {
+			Calendar calendario = Calendar.getInstance();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append(calendario.get(Calendar.YEAR));
+			sb.append(calendario.get(Calendar.MONTH));
+			
+			sb.append(calendario.get(Calendar.DAY_OF_MONTH));
+
+			List<Boleto> boletos = configuracaoService.findBoletosCanceladosMes(mesGerarCNABCancelamento, configuracao.getAnoRematricula());
+
+			String caminhoFinalPasta = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + sb+ File.separator;
+			CompactadorZip.createDir(caminhoFinalPasta);
+
+			for (Boleto b : boletos) {
+				gerarCNB240Cancelamento(b, caminhoFinalPasta);
+			}
+
+			String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + sb + "CNAB240.zip";
+			CompactadorZip.compactarParaZip(arquivoSaida, caminhoFinalPasta);
+
+			InputStream stream2 = new FileInputStream(arquivoSaida);
+			return FileDownload.getContentDoc(stream2, "escolaCNABSdoMes" + " ___ " + mesGerarCNABCancelamento + "___" + sb+".zip");
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
+	public void gerarCNB240Cancelamento(Boleto b, String caminhoArquivo) {
+		try {
+			cnab240.gerarBaixaBoletosCancelados(b, caminhoArquivo);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public StreamedContent gerarCNABDoMES(int mes) {
 		try {
@@ -99,7 +132,7 @@ public class ConfiguracaoController implements Serializable{
 
 			List<Boleto> boletos = configuracaoService.findBoletosMes(mesGerarCNAB, configuracao.getAnoRematricula());
 
-			String caminhoFinalPasta = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + sb;
+			String caminhoFinalPasta = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + sb;
 			CompactadorZip.createDir(caminhoFinalPasta);
 
 			for (Boleto b : boletos) {
@@ -123,13 +156,16 @@ public class ConfiguracaoController implements Serializable{
 						}
 					}
 				}
+				
+				configuracaoService.mudarStatusParaCNABEnviado(b);
+				
 			}
 
-			String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + sb + "CNAB240.zip";
+			String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + sb + "CNAB240.zip";
 			CompactadorZip.compactarParaZip(arquivoSaida, caminhoFinalPasta);
 
 			InputStream stream2 = new FileInputStream(arquivoSaida);
-			return FileDownload.getContentDoc(stream2, "escolarCNABSdoMes" +sb+".zip");
+			return FileDownload.getContentDoc(stream2, "escolaCNABSdoMes" +sb+".zip");
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -186,6 +222,14 @@ public class ConfiguracaoController implements Serializable{
 
 	public void setAnohistorico(int anohistorico) {
 		this.anohistorico = anohistorico;
+	}
+
+	public int getMesGerarCNABCancelamento() {
+		return mesGerarCNABCancelamento;
+	}
+
+	public void setMesGerarCNABCancelamento(int mesGerarCNABCancelamento) {
+		this.mesGerarCNABCancelamento = mesGerarCNABCancelamento;
 	}
 
 

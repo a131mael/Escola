@@ -790,6 +790,9 @@ public class AlunoService extends Service {
 			}
 			sql.append(" and  av.avaliacao.recuperacao = ");
 			sql.append(recupecacao);
+			
+			sql.append(" and  av.avaliacao.anoLetivo = ");
+			sql.append(configuracaoService.getConfiguracao().getAnoLetivo());
 			Query query = em.createQuery(sql.toString());
 
 			List<AlunoAvaliacao> notas = (List<AlunoAvaliacao>) query.getResultList();
@@ -1279,11 +1282,12 @@ public class AlunoService extends Service {
 
 	public Long getProximoCodigo() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT max(al.codigo)  from Aluno al ");
+		sql.append("SELECT max(cast(al.codigo AS integer))  from Aluno al ");
 
-		Query query = em.createQuery(sql.toString());
-		String codigo = (String) query.getSingleResult();
-		return Long.parseLong(codigo) + 1;
+		Query query = em.createNativeQuery(sql.toString());
+		Integer codigo = (Integer) query.getSingleResult();
+		
+		return codigo.longValue() + 1;
 	}
 
 	public Long getProximoNossoNumero() {
