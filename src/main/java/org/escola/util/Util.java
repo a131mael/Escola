@@ -157,4 +157,12 @@ public class Util {
 		return dataFormatada;
 	}
 	
+	public static boolean nullOrTrue(Boolean value) {
+		if (value == null) {
+			return false;
+		}
+		return value;
+
+	}
+	
 }

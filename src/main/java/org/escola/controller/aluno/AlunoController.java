@@ -1149,13 +1149,6 @@ public class AlunoController implements Serializable {
 								maior(nota3RecEspanhol, nota3BimestreEspanhol), maior(nota4RecEspanhol, nota4BimestreEspanhol))));
 				trocas.put("#nsrf", mostraNotas(notaRecFinalEspanhol));
 
-				
-				
-
-		
-		
-		
-
 		return trocas;
 	}
 

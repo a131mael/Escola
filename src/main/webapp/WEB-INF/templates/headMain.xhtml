@@ -89,6 +89,12 @@
 					url="../devedores/index.jsf" icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
 				
+				<p:menuitem value="Protestar" url="../secretaria/protestos.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+				
+				<p:menuitem value="Enviado para Protesto" url="../secretaria/protestados.jsf" icon="ui-icon-close" 
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
+				
 			
 			</p:submenu>
 			<p:submenu label="Secretaria"

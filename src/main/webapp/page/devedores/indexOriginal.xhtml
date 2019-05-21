@@ -32,11 +32,9 @@
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{devedorController.editar()}" rendered="false"	alt="Editar" disabled="#{!devedorController.alunoSelecionado}"/>
 				<p:separator style=" height:25px;" rendered="false"/>
 				
-				<p:commandButton  ajax="false" value="Imprimir"
-				rendered="false"
+				<p:commandButton  ajax="false" value="Imprimir" rendered="false"
 					onclick="PrimeFaces.monitorDownload(start, stop);">
-					<p:fileDownload value="#{devedorController.imprimirDevedores()}" 
-					/>
+					<p:fileDownload value="#{devedorController.imprimirDevedores()}" />
 				</p:commandButton>
 				
 				<h:panelGrid id="panelFiltros" columns="5" style="margin-top: -5px; margin-left:-5px">
@@ -50,7 +48,9 @@
 					</p:calendar>
 					
 					<p:commandButton  ajax="false" value="Buscar" action="#{devedorController.buscar()}" >
+						
 					</p:commandButton>
+				
 				</h:panelGrid>
 				
 				</h:panelGrid>
@@ -106,7 +106,9 @@
                               headerText="Nome "
                               width="15%"
                               styleClass="#{devedorController.marcarLinha2(professorTab)}">
-                                <ui:repeat var="contratAlun" value="#{professorTab.contratos}" style="border:none">
+ 						
+ 						
+ 							<ui:repeat var="contratAlun" value="#{professorTab.contratos}" style="border:none">
 	                                <h:outputText value="#{contratAlun.nomeResponsavel}" rendered="#{contratAlun.atrasado}"/>
 									<p:panelGrid rendered="#{contratAlun.atrasado}">
 										<br/>
@@ -116,15 +118,15 @@
 									<br />
 			                     </ui:repeat>
 			                     <br />
-                              	<h:outputText value="#{professorTab.nomeAluno}" />
-		                        <br />
-		                        <h:outputText value="#{professorTab.irmao1.nomeAluno}" />
-		                        <br />
-		                        <h:outputText value="#{professorTab.irmao2.nomeAluno}" />
-		                        <br />
-		                        <h:outputText value="#{professorTab.irmao3.nomeAluno}" />
-		                        <br />
  						
+						<br />
+						<h:outputText value="#{professorTab.nomeAluno}" />
+                        <br />
+                        <h:outputText value="#{professorTab.irmao1.nomeAluno}" />
+                        <br />
+                        <h:outputText value="#{professorTab.irmao2.nomeAluno}" />
+                        <br />
+                        <h:outputText value="#{professorTab.irmao3.nomeAluno}" />
 					</p:column>
 
 					<p:column filterBy="#{professorTab.cpfResponsavel}"
@@ -165,35 +167,26 @@
 							
 					</p:column>
 					
+					<p:column style="text-align:center;"
+                              headerText="SPC"
+                              filterOptions="#{CombosEspeciaisMB.simNaoNull}"
+                              width="4%">
+						<!-- <h:outputText value="#{professorTab.enviadoParaCobrancaCDL eq true?'Sim':'Não'}" /> -->
+					</p:column>
+					
 					<p:column style="text-align:center;" width="40%"
                               headerText="Boletos" >
                               
-                              <ui:repeat var="contr" value="#{professorTab.contratos}" style="border:none" >
-                              	 <h:outputText value="#{contr.nomeResponsavel}" rendered="#{contr.atrasado}"/>
+                              <ui:repeat var="contr" value="#{professorTab.contratos}" style="border:none">
+                             	  <h:outputText value="#{contr.nomeResponsavel}" rendered="#{contr.atrasado}"/>
                               	 <h:outputText value=" " rendered="#{contr.atrasado}"/>
                               	 <h:outputText value="#{contr.ano}" rendered="#{contr.atrasado}"/>
-                              	
-                              	
-                              	 <p:commandButton  ajax="false" value="x" rendered="#{false}" 
-                              						 onclick="PrimeFaces.monitorDownload(start, stop);">
-									<p:fileDownload value="#{devedorController.gerarArquivoProtesto(contr)}" />
+                              
+                              <p:commandButton icon="ui-icon-arrowthick-1-n" rendered="#{contr.atrasado}" 
+												actionLister="#{devedorController.enviarProtesto(contr)}" 
+												process="@this"
+												update="tbl">
 								</p:commandButton>
-								
-								 <p:commandButton value="Protestar" rendered="#{true}" icon="ui-icon-arrowthick-1-n" > 
-								 	<p:ajax event="click" listener="#{devedorController.enviarProtesto(contr)}" update="tbl">
-								 	</p:ajax>
-								</p:commandButton>
-								
-								<p:commandButton update="tbl" icon="ui-icon-arrowthick-1-n" rendered="#{false}" 
-												action="#{devedorController.enviarProtesto(contr)}" process="@this">
-										<p:confirm header="Confirmao" message="Enviado para protesto ?" icon="ui-icon-alert" />
-								</p:commandButton>
-                              	
-                              	<p:commandButton update="tbl" icon="ui-icon-arrowthick-1-n" rendered="#{false}" 
-												action="#{devedorController.enviarProtesto(contr)}" process="@this">
-										<p:confirm header="Confirmação" message="df" icon="ui-icon-alert" />
-								</p:commandButton>
-                              	
                               	<ui:repeat var="bole" value="#{contr.boletos}">
                               	<p:panelGrid rendered="#{bole.atrasado}" columns="5" 
                               					 columnClasses="tamanhoCelula"
@@ -264,13 +257,15 @@
 					</p:column>
 
 					
-					<p:column style="text-align: center; width:8%" width="5%" rendered="false">
+					<p:column style="text-align: center; width:8%" 
+					width="5%" rendered="false">
 						<f:facet name="header">
-							<h:outputText value="Protesto." />
+							<h:outputText value="Rem." />
 						</f:facet>
-						<p:commandButton update="tbl" icon="ui-icon-trash" action="#{devedorController.remover(professorTab.id)}" >
-							<p:confirm header="Confirmação" message="Enviado para protesto ?" icon="ui-icon-alert" />
-						</p:commandButton>
+						
+							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{devedorController.remover(professorTab.id)}" >
+								<p:confirm header="Confirmação" message="Tem certeza que deseja remover ?" icon="ui-icon-alert" />
+							</p:commandButton>
 					</p:column>
 
 				</p:dataTable>
