@@ -38,7 +38,7 @@ public class OfficeDOCUtil {
 			POIFSFileSystem fs = new POIFSFileSystem(
 					new FileInputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath(endereco)));
 			HWPFDocument doc = new HWPFDocument(fs);
-			writer = new FileOutputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"
+			writer = new FileOutputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
 					+ nomeArquivoSaida + ".doc");
 
 			// remove as clausulas nao utilizadas - Contrato escolar
@@ -129,7 +129,7 @@ public class OfficeDOCUtil {
 			XWPFDocument docx = new XWPFDocument(
 					new FileInputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath(endereco)));
 
-			writer = new FileOutputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"
+			writer = new FileOutputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
 					+ nomeArquivoSaida + ".doc");
 			// faz o replace do que esta no map
 			for (Map.Entry<String, String> entry : trocas.entrySet()) {

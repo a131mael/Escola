@@ -49,7 +49,9 @@
 								<h:outputLabel value="CPF Responsável: "
 									style="font-size: 13px; width:180px" />
 								<p:inputText value="#{contratoAlun.cpfResponsavel}"
-											style="font-size: 15px; width:275px">
+											style="font-size: 15px; width:275px"
+											validatorMessage="CPF INVÁLIDO.">
+											  <f:validator for="inputcpf" validatorId="org.escola.validator.CPFValidator" />
 								</p:inputText>
 								
 								<h:outputLabel value="RG Responsável: "

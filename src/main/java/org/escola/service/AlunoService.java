@@ -93,7 +93,6 @@ public class AlunoService extends Service {
 			}
 		}
 		
-		
 		if(contrato.getBoletos() != null){
 			contrato.getBoletos().size();
 		}
@@ -451,17 +450,20 @@ public class AlunoService extends Service {
 			e.printStackTrace();
 		}
 
-		if (saveBrother) {
-			if(aluno.getContratos() != null)
-			for(ContratoAluno cont :aluno.getContratos()){
-				if(cont.getCancelado() != null && !cont.getCancelado()){
-					em.merge(cont);
+		try {
+			if (saveBrother) {
+				if(aluno.getContratos() != null)
+				for(ContratoAluno cont :aluno.getContratos()){
+					if(cont.getCancelado() != null && !cont.getCancelado()){
+						em.merge(cont);
+					}
 				}
+				salvarIrmaos(user, aluno);
 			}
-			salvarIrmaos(user, aluno);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		
-
 		return user;
 	}
 

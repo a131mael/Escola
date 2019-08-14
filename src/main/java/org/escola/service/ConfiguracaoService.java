@@ -183,6 +183,35 @@ public class ConfiguracaoService extends Service {
 
 		return t;
 	}
+
+	public void mudarStatusParaProtestoEnviadoPorEmail(ContratoAluno ca) {
+		ca = em.find(ContratoAluno.class, ca.getId());
+		ca.setEnviadoPorEmailProtesto(true);
+		em.merge(ca);
+	}
+
+	public List<ContratoAluno> findContratosProtestados(boolean jaEnviadoPorEmail) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT distinct(ca) from ContratoAluno ca");
+		sql.append(" where 1 = 1");
+		sql.append(" and ca.enviadoProtestoDefinitivo  = true");
+		
+		if(jaEnviadoPorEmail){
+			sql.append(" and ca.enviadoPorEmailProtesto = true");
+		}else{
+			sql.append(" and (ca.enviadoPorEmailProtesto = false or ca.enviadoPorEmailProtesto is null)");
+		}
+		
+		Query query = em.createQuery(sql.toString());
+		List<ContratoAluno> cas = (List<ContratoAluno>) query.getResultList();
+		
+		for(ContratoAluno ca: cas){
+			ca.getBoletos().size();
+		}
+
+		return cas;
+	}
 	
 }
 

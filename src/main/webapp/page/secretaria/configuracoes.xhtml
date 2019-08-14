@@ -93,6 +93,16 @@
 					value="#{configuracaoController.gerarCNABCancelamentoDoMES(configuracaoController.mesGerarCNABCancelamento)}" />
 			</p:commandButton>
 
+			<br />
+			<br />
+			<h:outputText value="Gerar PROTESTOS :" />
+				<h:outputText value="" />
+				<p:commandButton icon="ui-icon-contact" ajax="false" value="Gerar Protestos "
+						onclick="PrimeFaces.monitorDownload(start, stop);">
+					<p:fileDownload value="#{configuracaoController.gerarProtestos()}" />
+				</p:commandButton>
+				
+
 
 		</h:form>
 	</ui:define>

@@ -64,6 +64,7 @@ import org.escola.util.Formatador;
 import org.escola.util.ImpressoesUtils;
 import org.escola.util.Util;
 import org.escola.util.Verificador;
+import org.escola.validator.CPFValidator;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -1646,7 +1647,7 @@ public class AlunoController implements Serializable {
 		} else {
 			nomeArquivo = "mb1.docx";
 		}
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 
 		InputStream stream = new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
@@ -1667,7 +1668,7 @@ public class AlunoController implements Serializable {
 			nomeArquivo = "modeloAtestadoFrequencia2017.docx";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 		InputStream stream = new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
 	}
@@ -1688,7 +1689,7 @@ public class AlunoController implements Serializable {
 			nomeArquivo = "modeloAtestadoMatricula2017.docx";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 		InputStream stream = new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
 	}
@@ -1709,7 +1710,7 @@ public class AlunoController implements Serializable {
 			nomeArquivo = "modeloNegativoDebito2017.docx";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 		InputStream stream = new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
 	}
@@ -1729,7 +1730,7 @@ public class AlunoController implements Serializable {
 			nomeArquivo = "modeloContrato2017.docx";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 		InputStream stream = new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
 	}
@@ -1748,7 +1749,7 @@ public class AlunoController implements Serializable {
 			nomeArquivo = "modeloContrato2017.docx";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 		InputStream stream = new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
 	}
@@ -1764,7 +1765,7 @@ public class AlunoController implements Serializable {
 			nomeArquivo = "modeloAtestadoVaga2017.docx";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 		InputStream stream = new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
 	}
@@ -1784,7 +1785,7 @@ public class AlunoController implements Serializable {
 			nomeArquivo = "historicoEscolar2017.docx";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 		InputStream stream = new FileInputStream(caminho);
 		return FileDownload.getContentDoc(stream, nomeArquivo);
 	}
@@ -2205,7 +2206,7 @@ public class AlunoController implements Serializable {
 	}
 
 	public void importarBoletos(List<Pagador> boletosImportados, boolean extratoBancario) throws ParseException {
-		int contador = 0;
+		/*int contador = 0;
 		for (Pagador pagador : boletosImportados) {
 			Boleto boletoCNAB = pagador.getBoletos().get(0);
 			String numeroDocumento = boletoCNAB.getNossoNumero();
@@ -2243,7 +2244,7 @@ public class AlunoController implements Serializable {
 					cce.printStackTrace();
 				}
 			}
-		}
+		}*/
 
 	}
 
@@ -2820,12 +2821,14 @@ public class AlunoController implements Serializable {
 	}
 
 	public void gerarBoletos(ContratoAluno contrato) {
-		ContratoAluno cont = alunoService.criarBoletos(contrato.getAluno(), contrato.getAno(),
-				contrato.getNumeroParcelas(), contrato);
-		contrato = cont;
-		Util.addAtributoSessao("contrato", contrato);
-		Util.addAtributoSessao("aluno", contrato.getAluno());
-		this.aluno = contrato.getAluno();
+		if(CPFValidator.isCPF(contrato.getCpfResponsavel())){
+			ContratoAluno cont = alunoService.criarBoletos(contrato.getAluno(), contrato.getAno(),
+					contrato.getNumeroParcelas(), contrato);
+			contrato = cont;
+			Util.addAtributoSessao("contrato", contrato);
+			Util.addAtributoSessao("aluno", contrato.getAluno());
+			this.aluno = contrato.getAluno();	
+		}
 	}
 
 	public Member getLoggedUser() {

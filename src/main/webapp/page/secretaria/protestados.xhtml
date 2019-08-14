@@ -65,8 +65,10 @@
 			<h:panelGrid width="99%">
 				<p:dataTable 
 					currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
-					emptyMessage="#Nenhum registro encontrado" selectionMode="single"
-					selection="#{devedorController.contratoS}" rowKey="#{contratoalunotab.id}"
+					emptyMessage="#Nenhum registro encontrado" 
+					selectionMode="single"
+					selection="#{devedorController.contratoS}" 
+					rowKey="#{contratoalunotab.id}"
 					filterEvent="enter" lazy="true" liveResize="true"
 					styleClass="tabela" pageLinks="5" paginator="true"
 					paginatorPosition="bottom"

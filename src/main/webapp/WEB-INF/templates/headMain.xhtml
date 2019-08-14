@@ -27,23 +27,34 @@
                       $('button').css('cursor','pointer');
                       $('a').css('cursor','pointer');" /> -->
 
-	<h:form style="width:100%; border:none !important">
-		<p:growl id="messages" />
+<h:form style="width:100%; border:none !important">
+	<p:growl id="messages" />
 
-		<p:menubar style="width:100%;margin-left: -16px;margin-top: -16px">
+	<p:menubar style="width:100%;margin-left: -16px;margin-top: -16px">
+
+		<p:submenu label="Crianças">
 			
 			<p:menuitem value="Alunos" url="../aluno/index.jsf"
 				icon="ui-icon-pencil"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
-		
+
+			<p:menuitem value="TODOS root" url="../aluno/indexRoot.jsf"
+				icon="ui-icon-pencil"
+				rendered="#{authController.hasPermission(authController.administrador,authController.mestre)}" />
+
 			<p:menuitem value="Todos" url="../aluno/indexFinanceiro.jsf"
 				icon="ui-icon-pencil"
-				rendered="#{authController.hasPermission(authController.financeiro)}"/>
-		
-		
-			<p:menuitem value="Canceladas" url="../aluno/canceladas.jsf"	icon="ui-icon-pencil" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
-		
+				rendered="#{authController.hasPermission(authController.financeiro)}" />
+
+
+			<p:menuitem value="Canceladas" url="../aluno/canceladas.jsf"
+				icon="ui-icon-pencil"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+			<p:menuitem value="Atrasadas" url="../financeiro/atrasados.jsf"
+				icon="ui-icon-pencil"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+		</p:submenu>
 
 			<p:menuitem value="Alunos" url="../professor/alunosProfessor.jsf"
 				icon="ui-icon-pencil"
@@ -70,32 +81,35 @@
 				icon="ui-icon-close"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
 
-			<p:submenu label="Financeiro" rendered="#{authController.hasPermission(authController.administrador,authController.financeiro)}">
-				
-				<p:menuitem value="Baixa"
-					url="../financeiro/baixaManual.jsf" icon="ui-icon-close"
+			<p:submenu label="Financeiro"
+				rendered="#{authController.hasPermission(authController.administrador,authController.financeiro)}">
+
+				<p:menuitem value="Baixa" url="../financeiro/baixaManual.jsf"
+					icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
 
 				<p:menuitem value="Importar CNAB"
 					url="../secretaria/importarCNAB.jsf" icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.mestre)}" />
-								
-				
+
+
 				<p:menuitem value="Previsao e Pago"
 					url="../financeiro/previsaoEPago.jsf" icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
-				
-				<p:menuitem value="Devedores"
-					url="../devedores/index.jsf" icon="ui-icon-close"
+
+				<p:menuitem value="Devedores" url="../devedores/index.jsf"
+					icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
-				
-				<p:menuitem value="Protestar" url="../secretaria/protestos.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
-				
-				<p:menuitem value="Enviado para Protesto" url="../secretaria/protestados.jsf" icon="ui-icon-close" 
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"/>
-				
-			
+
+				<p:menuitem value="Protestar" url="../secretaria/protestos.jsf"
+					icon="ui-icon-close"
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+				<p:menuitem value="Enviado para Protesto"
+					url="../secretaria/protestados.jsf" icon="ui-icon-close"
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+
 			</p:submenu>
 			<p:submenu label="Secretaria"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
@@ -119,7 +133,7 @@
 				<p:menuitem value="Usuarios" url="../admin/listarUsuarios.jsf"
 					icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador)}" />
-				
+
 				<p:menuitem value="Recados" url="../recado/index.jsf"
 					icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
@@ -134,7 +148,7 @@
 					<p:ajax process="@this" />
 				</h:commandButton>
 			</f:facet>
-		</p:menubar>
-	</h:form>
+	</p:menubar>
+</h:form>
 <!-- </f:view> -->
 </html>

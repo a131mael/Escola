@@ -230,6 +230,16 @@
    <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
     NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
     TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
+    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
+    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+  <PROCESS-ITEM
+   ID="rules:#page#secretaria#alunosUltimoAnoLetivo.xhtml:1"
+   NAME="item1" PATH="/page/secretaria/alunosUltimoAnoLetivo.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#page#aluno#indexFinanceiro.xhtml"
@@ -252,4 +262,20 @@
     TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="ok" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#aluno#indexRoot.xhtml"
+  PATH="/page/aluno/indexRoot.xhtml" SHAPE="624,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aluno#indexRoot.xhtml:0" NAME="item"
+   PATH="/page/aluno/indexRoot.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="cadastrar::#page#aluno#cadastrarAlunoRoot.xhtml" NAME="output"
+    PATH="/page/aluno/cadastrarAlunoRoot.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAlunoRoot.xhtml"
+    TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
+    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
+    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#aluno#cadastrarAlunoRoot.xhtml"
+  PATH="/page/aluno/cadastrarAlunoRoot.xhtml" SHAPE="880,513,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

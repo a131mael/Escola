@@ -1,0 +1,483 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			function start() {
+			    PF('statusDialog').show();
+			}
+			 
+			function stop() {
+			    PF('statusDialog').hide();
+			}
+		</script>
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage name="/gfx/preloader.gif" width="100" height="15" />
+		</p:dialog>
+		
+		<p:spacer width="500" height="10" /><h:outputText value=" CRIANÇAS COM BOLETOS ATRASADOS" 
+				  style="font-weight:bold;font-size:14px" />	
+				  
+		<h:form prependId="false" style="width:100%; border:none"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+			
+			<h:panelGrid width="98%">
+				<p:dataTable
+					currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+					emptyMessage="#Nenhum registro encontrado" 
+					filterEvent="enter" lazy="true" liveResize="true"
+					styleClass="tabela" pageLinks="5" paginator="true"
+					paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					resizableColumns="true" rows="20"
+					rowsPerPageTemplate="20,50,100,200,300" id="tbl" var="professorTab"
+					value="#{devedorController.lazyDataModelAtrasados}"
+					sortBy="#{professorTab.quantidadeMesAtrasado}">
+					<!-- rowsPerPageTemplate="25,50,100" -->
+					 
+
+						<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tblContac" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tblContac" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tblContac" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tblContac" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+					
+					
+					<p:column style="text-align: center; width:2.5%"
+							  styleClass="#{devedorController.marcarLinha2(professorTab)}" rendered="true">
+
+						<f:facet name="header">
+							<h:outputText value="Ver" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+
+						<p:commandButton update="tblContac" icon="ui-icon-search"
+							styleClass="#{devedorController.marcarLinha2(professorTab)}"
+							 tooltip="Visualizar Aluno"
+							id="visualizar"
+							action="#{devedorController.visualizar(professorTab.id)}"
+							onclick="window.open('/Escolar/page/aluno/cadastrarAluno.xhtml')">
+						</p:commandButton>
+						<p:tooltip for="visualizar" value="Visualizar " trackMouse="false" />
+						
+					</p:column>
+
+					<p:column style="text-align:center;"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}"
+						width="12%">
+						<f:facet name="header">
+							<h:outputText value="Responsável/Aluno" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.nomeResponsavel}" />
+						<br/>
+						<br/>
+						<h:outputText value="Aluno:" style="font-weight:bold;"/>
+						<h:outputText value="#{professorTab.irmao1.nomeAluno}" />
+						<br/>
+						<h:outputText value="#{professorTab.nomeAluno}" />
+						<br/>
+						<h:outputText value="#{professorTab.irmao2.nomeAluno}" />
+					</p:column>
+					
+					<p:column style="text-align:center;"
+                              styleClass="#{devedorController.marcarLinha2(professorTab)}"
+                              width="18%">
+                             <f:facet name="header">
+								<h:outputText value="Contatos" style="font-weight:bold;font-size:11px"/>
+							</f:facet>
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneCelularMae}" />
+									<h:outputText value="Celular mae" />
+	                        </p:panelGrid>
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneResidencialMae}" />
+									<h:outputText value="Resid. mae" />
+	                         </p:panelGrid>
+	                         <p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneEmpresaTrabalhaMae}" />
+									<h:outputText value="Telefone empr. mae" />
+	                         </p:panelGrid>
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneCelularPai}" />
+									<h:outputText value="Celeluar pai" />
+	                         </p:panelGrid>
+							
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneResidencialPai}" />
+									<h:outputText value="Resid. pai" />
+	                         </p:panelGrid>
+	                         <p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneEmpresaTrabalhaPai}" />
+									<h:outputText value="Telefone empr. pai" />
+	                         </p:panelGrid>
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefonecontatoSaidaEstabelecimento1}" />
+									<h:outputText value="#{professorTab.nomecontatoSaidaEstabelecimento1}" />
+	                         </p:panelGrid>
+							
+					</p:column>
+					
+					<p:column style="text-align:center;width:2%"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="N" style="font-weight:bold;font-size:9px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.quantidadeMesAtrasado}" />
+					</p:column>
+
+					<p:column style="text-align:center;width:5%"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Meses" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.mesesAtrasados}" />
+					</p:column>
+
+					<p:column style="text-align: center;width:4%;"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Total" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.valorTotalDevido}" >
+							<f:convertNumber minFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="text-align: center;width:8%;"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Contato/Promessa" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.dataContato}" >
+							<f:convertDateTime pattern="dd-mm-yyyy" />
+						</h:outputText>
+						<br/>
+						<h:outputText value="#{professorTab.dataPrometeuPagar}" >
+							<f:convertDateTime pattern="dd-mm-yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="text-align:center;width:20%"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Comentários" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.observacaoAtrasado}" />
+					</p:column>
+					
+					
+					
+					<p:column style="text-align: center;width:4%;"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Contatos" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.quantidadeContatos}" >
+						</h:outputText>
+					</p:column>
+
+					<p:column style="text-align: center; width:5%"
+							  styleClass="#{devedorController.marcarLinha2(professorTab)}" rendered="true">
+
+						<f:facet name="header">
+							<h:outputText value="Ações" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+
+						<p:commandButton icon="ui-icon-check" id="entrouCOntato"
+							 oncomplete="PF('confirmacaoAtrasado').show();"
+							process="@this"
+							update="myDialog">
+							<f:setPropertyActionListener value="#{professorTab}" target="#{devedorController.alunoDevedor}" />
+						</p:commandButton>
+						
+						<p:tooltip for="entrouCOntato" value="Conseguiu entrar em contato ? " trackMouse="false" />						
+						
+						<p:commandButton update="tblContac" icon="ui-icon-arrowthick-1-e" alt="Protestar aluno"
+							id="protesto"
+							action="#{devedorController.protestar(professorTab)}">
+							<p:confirm header="Confirmation"
+								message="Você deseja realmente protestar - #{professorTab.nomeResponsavel} ?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:tooltip for="protesto" value="PROTESTAR !!!" trackMouse="false" />
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+			
+			<br/>		
+			<br/>
+			<br/>
+			<br/>
+			  <h:outputText value="   "  />	
+				<p:spacer width="300" height="10" /> 
+				<h:outputText value=" CRIANÇAS COM BOLETOS ATRASADOS QUE JÁ FORAM CONTACTADAS NOS ULTIMOS 15 DIAS" 
+							style="font-weight:bold;font-size:14px"/>	
+			<br/>
+			
+			<h:panelGrid width="98%">
+				<p:dataTable
+					currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+					emptyMessage="#Nenhum registro encontrado" 
+					selectionMode="single"
+					selection="#{alunoController.aluno}" 
+					rowKey="#{professorTab.id}"
+					filterEvent="enter" lazy="true" liveResize="true"
+					styleClass="tabela" pageLinks="5" paginator="true"
+					paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					resizableColumns="true" rows="20"
+					rowsPerPageTemplate="20,50,100,200,300" id="tblContac" var="professorTab"
+					value="#{devedorController.lazyDataModelAtrasadosContactados}"
+					sortBy="#{professorTab.quantidadeMesAtrasado}">
+					<!-- rowsPerPageTemplate="25,50,100" -->
+					 
+
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tblContac" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tblContac" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tblContac" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tblContac" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+					
+					
+					<p:column style="text-align: center; width:2.5%"
+							  styleClass="#{devedorController.marcarLinha2(professorTab)}" rendered="true">
+
+						<f:facet name="header">
+							<h:outputText value="Ver" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+
+						<p:commandButton update="tblContac" icon="ui-icon-search"
+							styleClass="#{devedorController.marcarLinha2(professorTab)}"
+							 tooltip="Visualizar Aluno"
+							id="visualizar"
+							action="#{devedorController.visualizar(professorTab.id)}"
+							onclick="window.open('/Escolar/page/aluno/cadastrarAluno.xhtml')">
+						</p:commandButton>
+						<p:tooltip for="visualizar" value="Visualizar " trackMouse="false" />
+						
+					</p:column>
+
+					<p:column style="text-align:center;"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}"
+						width="12%">
+						<f:facet name="header">
+							<h:outputText value="Responsável/Aluno" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.nomeResponsavel}" />
+						<br/>
+						<br/>
+						<h:outputText value="Aluno:" style="font-weight:bold;"/>
+						<h:outputText value="#{professorTab.irmao1.nomeAluno}" />
+						<br/>
+						<h:outputText value="#{professorTab.nomeAluno}" />
+						<br/>
+						<h:outputText value="#{professorTab.irmao2.nomeAluno}" />
+					</p:column>
+					
+					<p:column style="text-align:center;"
+                              styleClass="#{devedorController.marcarLinha2(professorTab)}"
+                              width="14%">
+                             <f:facet name="header">
+								<h:outputText value="Contatos" style="font-weight:bold;font-size:11px"/>
+							</f:facet>
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone1)}">
+			                        <h:outputText value="#{professorTab.contatoNome1}" />
+									<h:outputText value="#{professorTab.contatoTelefone1}" />
+	                        </p:panelGrid>
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone2)}">
+			                        <h:outputText value="#{professorTab.contatoNome2}" />
+									<h:outputText value="#{professorTab.contatoTelefone2}" />
+	                         </p:panelGrid>
+	                         <p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone3)}">
+			                         <h:outputText value="#{professorTab.contatoNome3}" />
+									<h:outputText value="#{professorTab.contatoTelefone3}" />
+	                         </p:panelGrid>
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone4)}">
+			                         <h:outputText value="#{professorTab.contatoNome4}" />
+									<h:outputText value="#{professorTab.contatoTelefone4}" />
+	                         </p:panelGrid>
+							
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone5)}">
+			                        <h:outputText value="#{professorTab.contatoNome5}" />
+									<h:outputText value="#{professorTab.contatoTelefone5}" />
+	                         </p:panelGrid>
+							
+					</p:column>
+					
+					<p:column style="text-align:center;width:2%"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="N" style="font-weight:bold;font-size:9px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.quantidadeMesAtrasado}" />
+					</p:column>
+
+					<p:column style="text-align:center;width:5%"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Meses" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.mesesAtrasados}" />
+					</p:column>
+
+					<p:column style="text-align: center;width:4%;"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Total" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.valorTotalDevido}" >
+							<f:convertNumber minFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="text-align: center;width:8%;"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Contato/Promessa" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.dataContato}" >
+							<f:convertDateTime pattern="dd-mm-yyyy" />
+						</h:outputText>
+						<br/>
+						<h:outputText value="#{professorTab.dataPrometeuPagar}" >
+							<f:convertDateTime pattern="dd-mm-yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="text-align:center;width:20%"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Comentários" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.observacaoAtrasado}" />
+					</p:column>
+					
+					
+					
+					<p:column style="text-align: center;width:4%;"
+						styleClass="#{devedorController.marcarLinha2(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Contatos" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+						<h:outputText value="#{professorTab.quantidadeContatos}" >
+						</h:outputText>
+					</p:column>
+
+					<p:column style="text-align: center; width:5%"
+							  styleClass="#{devedorController.marcarLinha2(professorTab)}" rendered="true">
+
+						<f:facet name="header">
+							<h:outputText value="Ações" style="font-weight:bold;font-size:11px"/>
+						</f:facet>
+
+						<p:commandButton icon="ui-icon-check" id="entrouCOntato"
+							 oncomplete="PF('confirmacaoAtrasado').show();"
+							process="@this"
+							update="myDialog">
+							<f:setPropertyActionListener value="#{professorTab}" target="#{devedorController.alunoDevedor}" />
+						</p:commandButton>
+						
+						
+						<p:tooltip for="entrouCOntato" value="Conseguiu entrar em contato ? " trackMouse="false" />						
+						
+						<p:commandButton update="tblContac" icon="ui-icon-arrowthick-1-e" alt="Protestar aluno"
+							id="protesto"
+							action="#{devedorController.protestar(professorTab)}">
+							<p:confirm header="Confirmation"
+								message="Você deseja realmente protestar - #{professorTab.nomeResponsavel} ?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:tooltip for="protesto" value="PROTESTAR !!!" trackMouse="false" />
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Nao" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			
+			<p:dialog header="Confirmação" 
+					widgetVar="confirmacaoAtrasado"
+					 id="myDialog" 
+					modal="true" height="260">
+					<p:panelGrid id="panelGridDialog">
+						<h:outputText value="Confirmação de contato." style="font-weight:bold;font-size:14px"/>
+					    <br/>
+	   				    <br/>
+					    <p:inputTextarea rows="10" cols="30" value="#{alunoDevedor.observacaoAtrasado}" 
+					    queryDelay="750" minQueryLength="4" style="width:93%;height:90px"/>
+					    <br/>
+	  				    <br/>
+	   				    <br/>
+	   				    <h:outputText value="Prometeu pagar em :" style="font-weight:bold;font-size:11px"/>
+						<p:calendar id="button" value="#{alunoDevedor.dataPrometeuPagar}" showOn="button" navigator="true" pattern="dd/mm/yyyy"/>
+						<br/>
+	  				    <br/>
+	
+	   				    <br/>
+	   				    <p:spacer width="15" height="10" />
+					    <p:commandButton value="Sim" 
+					    				type="button"	
+					    				styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+					    				 onclick="PF('confirmacaoAtrasado').hide();$('#form').trigger('reset');">
+					    	<p:ajax event="click" process="myDialog" listener="#{devedorController.contactado(alunoDevedor)}" update="@form"/>				
+					    </p:commandButton>
+						<p:spacer width="65" height="10" />
+						<p:commandButton value="Nao" type="button"	
+										styleClass="ui-confirmdialog-no" 
+										icon="ui-icon-close" 
+										 onclick="PF('confirmacaoAtrasado').hide();$('#form').trigger('reset');"/>
+					
+					</p:panelGrid>
+				    					
+			</p:dialog> 
+
+		</h:form>
+	</ui:define>
+</ui:composition>

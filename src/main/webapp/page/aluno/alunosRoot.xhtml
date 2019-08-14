@@ -1,0 +1,283 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			function start() {
+			    PF('statusDialog').show();
+			}
+			 
+			function stop() {
+			    PF('statusDialog').hide();
+			}
+		</script>
+		
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" 
+				draggable="false" closable="false" resizable="false">
+    		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
+		</p:dialog>
+	
+		<h:form prependId="false" style="width:100%; border:none" 
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        		<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        		<p:commandButton value="Nao" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />		
+    		</p:confirmDialog>
+
+			<h:panelGrid id="panelFerramentas" columns="36" style="margin-top: -30px; margin-left:-20px">
+				<p:tooltip  for="adicionar" value="Adicionar um novo Aluno" position="top"/> 
+				<p:tooltip  for="boletim" value="Boletim" position="top"/> 
+				 <p:tooltip  for="editar" value="Editar" position="top"/>
+				<p:tooltip  for="negativoDebito" value="Negativo Debito" position="top"/>
+				<p:tooltip  for="contrato" value="Contrato" position="top"/>
+				<p:tooltip  for="atestadoVaga" value="Atestado de Vaga" position="top"/>
+				<p:tooltip  for="atestadoFrequencia" value="Atestado de Frequencia" position="top"/>
+				<p:tooltip  for="atestadoMatricula" value="Atestado e Matricula" position="top"/>
+				<p:tooltip  for="historico" value="Histórico" position="top"/>
+				<p:tooltip  for="rematricula" value="Rematricular" position="top"/>
+				<p:tooltip  for="desmatricular" value="Desmatricular" position="top"/>
+				<p:tooltip  for="enviarCnab" value="Enviar CNAB" position="top"
+							rendered="#{authController.hasPermission(authController.mestre)}" />
+				<p:tooltip  for="removerCnabEnviado" value="Remover CNAB ENVIADO" position="top"
+							rendered="#{authController.hasPermission(authController.mestre)}"/>
+				
+				<p:tooltip for="boleto" value="Boleto" position="top" />
+				<p:tooltip for="cnab" value="CNAB240" position="top" />
+				<!-- <p:tooltip for="gerarBoleto" value="GERAR BOLETOS" position="top" /> -->
+				<p:tooltip  for="gerarBaixa" value="Gerar arquivo Baixa" position="top"
+							rendered="#{authController.hasPermission(authController.mestre)}"/>
+				
+			
+				<p:commandButton id="adicionar" icon="ui-icon-plus" action="#{alunoController.adicionarNovo()}" />
+				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
+				<p:separator style=" height:25px;" />
+				<p:commandButton id="boletim" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 icon="ui-icon-bookmark"  
+								 disabled="#{!alunoController.alunoSelecionado}">
+								 <p:fileDownload value="#{alunoController.imprimirContratoAdonai()}" />
+								 </p:commandButton>
+				<p:commandButton id="negativoDebito"  ajax="false" icon="ui-icon-pencil" 
+								 onclick="PrimeFaces.monitorDownload(start, stop);"
+								  disabled="#{!alunoController.alunoSelecionado}">
+								  	<p:fileDownload value="#{alunoController.imprimirNegativoDebito()}" />
+								  </p:commandButton>
+				<p:commandButton id="contrato" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  
+								disabled="#{!alunoController.alunoSelecionado}">
+						<p:fileDownload value="#{alunoController.imprimirContrato()}" />
+				</p:commandButton>
+				<p:commandButton id="atestadoVaga" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+					 disabled="#{!alunoController.alunoSelecionado}">
+							<p:fileDownload value="#{alunoController.imprimirAtestadoVaga()}" />
+				</p:commandButton>
+				<p:commandButton id="atestadoMatricula" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+								  disabled="#{!alunoController.alunoSelecionado}">
+				<p:fileDownload value="#{alunoController.imprimirAtestadoMatricula()}" />
+				</p:commandButton>
+				<p:commandButton id="atestadoFrequencia" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 disabled="#{!alunoController.alunoSelecionado}">
+								<p:fileDownload value="#{alunoController.imprimirAtestadoFrequencia()}" />
+				</p:commandButton>
+				
+				<p:commandButton id="historico" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+								 disabled="#{!alunoController.alunoSelecionado}">
+								<p:fileDownload value="#{alunoController.imprimirHistorico()}" />
+				</p:commandButton>
+			
+				<p:commandButton id="boleto" icon="ui-icon-print" ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					disabled="#{!alunoController.alunoSelecionado}">
+					<p:fileDownload value="#{alunoController.gerarBoleto()}" />
+				</p:commandButton>
+
+				<p:commandButton id="cnab" icon="ui-icon-transfer-e-w" ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					disabled="#{!alunoController.alunoSelecionado}">
+					<p:fileDownload value="#{alunoController.gerarCNB240()}" />
+				</p:commandButton>
+				<p:commandButton id="gerarBoleto"
+					action="#{alunoController.gerarBoletoModel()}" alt="GerarBoleto"
+					rendered="#{authController.hasPermission(authController.mestre)}" />
+			
+				<p:commandButton id="rematricula" update="@form" icon="ui-icon-check" action="#{alunoController.rematricular()}" 
+								alt="Rematricular" disabled="#{!alunoController.alunoSelecionado}"
+								rendered="#{!alunoController.matriculado}">
+				 		<p:confirm header="Confirmacao" message="Deseja fazer a rematricula ?" icon="ui-icon-alert" />
+				</p:commandButton>
+			 
+			 	<p:commandButton id="desmatricular" update="@form" icon="ui-icon-check" action="#{alunoController.desmatricular()}"	
+			 					 alt="Desmatricular" disabled="#{!alunoController.alunoSelecionado}"
+			 					 rendered="#{alunoController.matriculado}">
+					<p:confirm header="Confirmacao" message="Deseja remover a rematricula ?" icon="ui-icon-alert" />
+				</p:commandButton>
+				
+				<p:commandButton id="enviarCnab" update="@form" icon="ui-icon-check" action="#{alunoController.enviarCnab()}" 
+								alt="Rematricular" disabled="#{!alunoController.alunoSelecionado}"
+								rendered="#{authController.hasPermission(authController.mestre) and !alunoController.cnabEnvado}">
+				 		<p:confirm header="Confirmacao" message="Deseja fazer a rematricula ?" icon="ui-icon-alert" />
+				</p:commandButton>
+			 
+			 	<p:commandButton id="removerCnabEnviado" update="@form" icon="ui-icon-check" action="#{alunoController.removerCnabEnviado()}"	
+			 					 alt="Desmatricular" disabled="#{!alunoController.alunoSelecionado}"
+			 					 rendered="#{authController.hasPermission(authController.mestre) and alunoController.cnabEnvado}">
+					<p:confirm header="Confirmacao" message="Deseja remover a rematricula ?" icon="ui-icon-alert" />
+				</p:commandButton>
+			 
+			 
+			 <p:commandButton id="salvarTodos" update="@form" icon="ui-icon-check" action="#{alunoController.salvarTodos()}"	
+			 					 alt="Desmatricular" 
+			 					 rendered="#{authController.hasPermission(authController.mestre)}">
+					<p:confirm header="Confirmacao" message="Atualizar Todas as Crianças ?" icon="ui-icon-alert" />
+				</p:commandButton>
+			 
+			 	 <p:commandButton id="gerarBaixa" update="@form" icon="ui-icon-check" 	
+			 					 alt="Gerar Baixa"
+			 					 ajax="false"
+			 					 onclick="PrimeFaces.monitorDownload(start, stop);" 
+			 					 rendered="#{authController.hasPermission(authController.mestre)}">
+					
+					<p:fileDownload value="#{alunoController.gerarArquivoBaixa()}" />
+				</p:commandButton>
+			 
+			 
+			</h:panelGrid>
+
+			<h:panelGrid width="98%">
+				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="#Nenhum registro encontrado"
+                             selectionMode="single" 
+                             selection="#{alunoController.aluno}"
+                             rowKey="#{professorTab.id}"
+                             filterEvent="enter" 
+                             lazy="true" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="20"
+                          
+  							 id="tbl" var="professorTab"
+							 value="#{alunoController.lazyDataModel}"
+							 sortBy="#{professorTab.codigo}">
+   <!-- rowsPerPageTemplate="25,50,100" -->
+   
+   					<p:ajax event="rowSelect"  update="panelFerramentas" />
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tbl" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+					<p:column style="width:10%; text-align:center;"
+						styleClass="#{alunoController.marcarLinha(professorTab)}"
+						headerText="Status ">
+						<table>
+							<tr>
+								<td style="border: none;">
+									<p:panelGrid
+										rendered="#{alunoController.cadastroOk(professorTab)}"
+										styleClass="semborda" style="border:none !important;padding:1px">
+										<img src="../../admin/resources/ico/ok.png" width="390"
+											style="width: 20px; height: 20px;" />
+									</p:panelGrid>
+									<p:panelGrid
+										rendered="#{!alunoController.cadastroOk(professorTab)}"
+										styleClass="semborda" style="border:none !important;padding:1px">
+										<img src="../../admin/resources/ico/alertRed.png" width="390"
+											style="width: 20px; height: 20px;" />
+									</p:panelGrid>
+								
+								</td>
+						
+								<td style="border: none;">
+									<p:panelGrid
+										rendered="#{alunoController.cnabEnviado(professorTab)}"
+										styleClass="semborda" style="border:none !important;padding:1px">
+										<img src="../../admin/resources/ico/cnabEnviado.png" width="390"
+											style="width: 20px; height: 20px;" />
+									</p:panelGrid>
+									<p:panelGrid
+										rendered="#{!alunoController.cnabEnviado(professorTab)}"
+										styleClass="semborda" style="border:none !important;padding:1px">
+										<img src="../../admin/resources/ico/enviarCnab.png" width="390"
+											style="width: 20px; height: 20px;" />
+									</p:panelGrid>
+								</td>
+						</tr>
+						</table>
+
+					</p:column>
+					
+					<p:column style="width:7%; text-align:center;" filterBy="#{professorTab.codigo}"
+                              styleClass="#{alunoController.marcarLinha(professorTab)}"
+                              sortBy="#{professorTab.codigo}" 
+                              headerText="Código ">
+						<h:outputText value="#{professorTab.codigo}" />
+					</p:column>
+
+					<p:column filterBy="#{professorTab.nomeAluno}"
+                              sortBy="#{professorTab.nomeAluno}" 
+                              style="text-align:center;"
+                              styleClass="#{alunoController.marcarLinha(professorTab)}"
+                              headerText="Nome ">
+						<h:outputText value="#{professorTab.nomeAluno}" />
+					</p:column>
+
+					<p:column filterBy="#{professorTab.periodo}"
+                              sortBy="#{professorTab.periodo}" 
+                              style="text-align:center;width:8%"
+                              styleClass="#{alunoController.marcarLinha(professorTab)}"
+                              headerText="Periodo "
+                              filterOptions="#{CombosEspeciaisMB.periodosSelectIItem}">
+						<h:outputText value="#{professorTab.periodo.name}" />
+					</p:column>
+					
+					<p:column filterBy="#{professorTab.serie}"
+                              sortBy="#{professorTab.serie}" 
+                              style="text-align: center;width:10%;"
+                              styleClass="#{alunoController.marcarLinha(professorTab)}"
+                              headerText="Série "
+                              filterOptions="#{CombosEspeciaisMB.seriesSelectIItem}">
+						<h:outputText value="#{professorTab.serie.name}" />
+					</p:column>	
+
+					<p:column style="text-align: center; width:8%" 
+					styleClass="#{alunoController.marcarLinha(professorTab)}">
+						<f:facet name="header">
+							<h:outputText value="Remover" />
+						</f:facet>
+						<p:commandButton update="tbl" icon="ui-icon-trash" 
+										 action="#{alunoController.remover(professorTab.id)}" >
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

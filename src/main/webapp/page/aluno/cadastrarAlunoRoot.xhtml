@@ -1,0 +1,374 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content"
+		rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		<h:form id="form" style="width:100%; border:none">
+
+			<h:panelGrid id="panelPrincipal" columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+
+				<p:tabView id="tabView">
+					<p:tab id="tabAluno" title="Dados do aluno">
+						
+					<h:panelGrid columns="2" border="0">
+						<h:commandButton id="adicionar" value="Adicionar" action="#{alunoController.adicionarIrmao()}" >
+							<p:ajax process="@this" update="form:tabView:panelIrmaos,tabView"/>
+						</h:commandButton>
+						<p:commandButton id="remover" icon="ui-icon-minusthick" action="#{alunoController.removerIrmao()}" ></p:commandButton>
+					</h:panelGrid>
+					
+					<h:panelGrid id="panelIrmaos" columns="1" border="0">
+					
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno}" />
+	    					<ui:param name="visible" value="#{true}" />
+						</ui:include>
+						
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno.irmao1}" />
+	    					<ui:param name="visible" value="#{alunoController.irmao1}" />
+						</ui:include>
+						
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno.irmao2}" />
+	    					<ui:param name="visible" value="#{alunoController.irmao2}" />
+						</ui:include>
+						
+						
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno.irmao3}" />
+	    					<ui:param name="visible" value="#{alunoController.irmao3}" />
+						</ui:include>
+						
+						
+						<ui:include src="cmpAluno.xhtml">
+	    					<ui:param name="parametro" value="#{aluno.irmao4}" />
+	    					<ui:param name="visible" value="#{alunoController.irmao4}" />
+						</ui:include>
+					
+					</h:panelGrid>
+					
+					</p:tab>
+					<p:tab title="Dados Pai do Aluno">
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="Nome Pai: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.nomePaiAluno}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Nome AVÔ Paterno: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.nomeAvoPaternoPai}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Nome AVÓ Paterno: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.nomeAvoHPaternoPai}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Naturalidade Pai: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.naturalidadePai}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="CPF Pai: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{aluno.cpfPai}" mask="999.999.999-99"
+								style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="RG Pai: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText value="#{aluno.rgPai}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Telefone Fixo Pai: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{aluno.telefoneResidencialPai}"
+								mask="(99)9999-9999" style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="Celular Pai: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{aluno.telefoneCelularPai}"
+								mask="(99) 9 9999-99 99" style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="Telefone Empresa Pai: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{aluno.telefoneEmpresaTrabalhaPai}"
+								mask="(99)9999-9999" style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="Email Pai: " style="font-size: 13px; width:180px" />
+							<h:inputText value="#{aluno.emailPai}" style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Email Pai: "
+								style="font-size: 13px; width:180px" rendered="false"/>
+							<h:inputText value="#{aluno.emailPai}"
+								style="font-size: 15px; width:280px" rendered="false"/>
+
+							<h:outputLabel value="Empresa trabalha Pai : "
+								style="font-size: 13px; width:180px" />
+							<h:inputText value="#{aluno.empresaTrabalhaPai}"
+								style="font-size: 15px; width:280px" />
+
+						</h:panelGrid>
+
+					</p:tab>
+					<p:tab title="Dados Mãe do Aluno">
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="Nome MÃE: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.nomeMaeAluno}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Nome AVÔ Materno: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.nomeAvoPaternoMae}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Nome AVÓ Materno: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.nomeAvoHPaternoMae}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Naturalidade Mãae: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.naturalidadeMae}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="CPF Mãe: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{aluno.cpfMae}" mask="999.999.999-99"
+								style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="RG Mãe: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText value="#{aluno.rgMae}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Telefone Fixo Mãe: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{aluno.telefoneResidencialMae}"
+								mask="(99)9999-9999" style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="Celular Mãe: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{aluno.telefoneCelularMae}"
+								mask="(99) 9 9999-99 99" style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="Telefone Empresa Mãe: "
+								style="font-size: 13px; width:180px" />
+							<p:inputMask value="#{aluno.telefoneEmpresaTrabalhaMae}"
+								mask="(99)9999-9999" style="font-size: 15px; width:275px" />
+
+							<h:outputLabel value="Email Mãe: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText value="#{aluno.emailMae}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Email Mãe: "
+								style="font-size: 13px; width:180px" rendered="false"/>
+							<h:inputText value="#{aluno.emailMae}"
+								style="font-size: 15px; width:280px" rendered="false"/>
+
+							<h:outputLabel value="Empresa trabalha Mãe : "
+								style="font-size: 13px; width:180px" />
+							<h:inputText value="#{aluno.empresaTrabalhaMae}"
+								style="font-size: 15px; width:280px" />
+
+						</h:panelGrid>
+
+					</p:tab>
+					<p:tab id="contratos" title="Contratos" rendered="#{alunoController.alunoCadastrado(aluno)}" >
+						<br/>
+						<h:panelGrid id="panelFerramentas" columns="36" style="margin-left:5px">
+								<p:commandButton id="adicionarNovoContrato" icon="ui-icon-plus" >
+										<p:ajax process="@form" update="form:tabView:contratos"	listener="#{alunoController.adicionarNovoContrato(aluno)}"/>
+								</p:commandButton>
+						</h:panelGrid>
+						<ui:include src="cmpContrato.xhtml" >
+		    				<ui:param name="contratos" value="#{aluno.contratos}" />
+		    				<ui:param name="visible" value="#{true}" />
+						</ui:include>
+					</p:tab>
+					
+					<p:tab id="tabHistorico" title="Histórico" rendered="#{alunoController.alunoCadastrado(aluno)}">
+						<h:panelGrid columns="2">
+							<h:commandButton action="#{alunoController.adicionarHistorico(historicoAluno)}"
+								value="Adicionar" />
+						</h:panelGrid>
+
+						<h:panelGrid id="panelAddNotas" columns="4" border="0">
+							<h:outputLabel value="Escola: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.escola}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="Ano: " style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.ano}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Município: " style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.municipio}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							<h:outputLabel value="Estado: " style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.estado}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+
+						</h:panelGrid>
+						<h:panelGrid columns="4" width="50%">
+						<h:outputLabel value="Serie: " style="font-size: 13px; width:120px" />
+							<p:selectOneMenu  style="width: 160px;"
+								value="#{historicoAluno.serie}">
+								<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
+									var="serie" itemLabel="#{serie.name}"
+									itemValue="#{serie}" />
+								<p:ajax event="change" process="@this" />
+							</p:selectOneMenu>
+							
+							<h:outputLabel value="Frequencia: " style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.frequencia}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+							
+							
+							<h:outputLabel value="Portugues: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaPortugues}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="Matematica: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaMatematica}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="História: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaHistoria}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="Geografia: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaGeografia}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="Artes: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaArtes}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="Ciências: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaCiencias}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="Ed. Fisica: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaEdFisica}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="Inglês: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaIngles}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+
+							<h:outputLabel value="For. Cristã: "
+								style="font-size: 13px; width:120px" />
+							<p:inputText value="#{historicoAluno.notaformacaoCrista}"
+								style="font-size: 15px; width:175px">
+							</p:inputText>
+						</h:panelGrid>
+						<h:panelGrid>
+							<p:dataTable id="tbl" var="historicoTab"
+									 value="#{alunoController.getHistoricoAluno(aluno)}"
+									 style="margin-bottom:20px; width:100%"
+									 rendered="#{alunoController.alunoCadastrado(aluno)}"
+									 emptyMessage="Nenhum histórico adicionado"
+									 >
+									 
+									 <p:column style="width:10%" headerText="Editar">
+										<p:commandButton update="@form" icon="ui-icon-pencil" action="#{alunoController.editarHistorico(historicoTab)}" />
+									</p:column>
+						
+									<p:column style="text-align: center;width:10%;" headerText="Escola">
+											<h:outputText value="#{historicoTab.escola}" />
+									</p:column>	
+									
+									<p:column style="text-align: center;width:10%;" headerText="Ano">
+										<h:outputText value="#{historicoTab.ano}" />
+									</p:column>	
+									
+									<p:column style="text-align: center;width:10%;" headerText="Serie">
+										<h:outputText value="#{historicoTab.serie.name}" />
+									</p:column>	
+
+									<p:column style="text-align: center;width:10%;" headerText="Município">
+										<h:outputText value="#{historicoTab.municipio}" />
+									</p:column>	
+									
+									<p:column style="text-align: center;width:10%;" headerText="Estado">
+										<h:outputText value="#{historicoTab.estado}" />
+									</p:column>	
+									
+									
+									<p:column style="text-align: center;width:10%;" headerText="remover ">
+										<p:commandButton update="tbl" icon="ui-icon-trash" action="#{alunoController.removerHistorico(historicoTab.id)}" />
+									</p:column>	
+						
+							</p:dataTable>
+						</h:panelGrid>
+					</p:tab>
+					<p:tab title="Observações">
+						<h:panelGrid columns="2" border="0">
+							<h:outputLabel value="Observações Secretaria: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{aluno.observacaoSecretaria}">
+
+							</p:inputTextarea>
+
+							<h:outputLabel value="Observações Professores "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea value="#{aluno.observacaoProfessores}">
+
+							</p:inputTextarea>
+
+
+						</h:panelGrid>
+
+					</p:tab>
+
+
+				</p:tabView>
+
+			</h:panelGrid>
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{alunoController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{alunoController.salvar()}" value="Salvar" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>
