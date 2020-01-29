@@ -41,18 +41,37 @@
 				</p:selectOneMenu>
 				
 			</h:panelGrid>	
-				
 			
 			<h:outputLabel for="name" value="Nome(*): "
 				style="font-size: 13px; width:240px" />
 			<p:inputText  title="" value="#{parametro.nomeAluno}"
 				style="font-size: 15px; width:280px" />
+				
+			<h:outputLabel for="name" value="CPF(*): "
+				style="font-size: 13px; width:240px" />
+			<p:inputText  title="" value="#{parametro.cpf}"
+				style="font-size: 15px; width:280px" />
 			
+			<h:outputLabel for="name" value="Rg: "
+				style="font-size: 13px; width:240px" />
+			<p:inputText  title="" value="#{parametro.rg}"
+				style="font-size: 15px; width:280px" />
+				
 			<h:outputLabel value="Nacionalidade: "
 				style="font-size: 13px; width:240px" />
 			<p:inputText value="#{parametro.nacionalidade}"
 				style="font-size: 15px; width:280px" />
 
+			<h:outputLabel value="Nome do Pai: "
+				style="font-size: 13px; width:240px" />
+			<p:inputText value="#{parametro.nomePaiAluno}"
+				style="font-size: 15px; width:280px" />
+			
+			<h:outputLabel value="Nome mãe: "
+				style="font-size: 13px; width:240px" />
+			<p:inputText value="#{parametro.nomeMaeAluno}"
+				style="font-size: 15px; width:280px" />
+			
 			<h:outputLabel value="Nascimento: "
 				style="font-size: 13px; width:240px" />
 			<p:calendar value="#{parametro.dataNascimento}" pattern="dd/MM/yyyy"
@@ -95,10 +114,10 @@
 			</h:panelGrid>
 			
 			<h:outputLabel value="Em caso de emergência ligar para: "
-				style="font-size: 13px; width:240px" />
+				style="font-size: 13px; width:240px" rendered="false"/>
 			
 				<p:inputText title="" value="#{parametro.emergenciaLigarPara}"
-				style="font-size: 15px; width:280px" />
+				style="font-size: 15px; width:280px" rendered="false"/>
 			
 										
 

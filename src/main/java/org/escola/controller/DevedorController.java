@@ -69,6 +69,10 @@ public class DevedorController implements Serializable {
 	@Produces
 	@Named
 	private List<Devedor> devedores;
+	
+	@Produces
+	@Named
+	private Aluno alunoDevedor;
 
 	@Inject
 	private DevedorService devedorService;
@@ -158,6 +162,20 @@ public class DevedorController implements Serializable {
 		return gerarArquivoProtesto(getContratoS());
 	}
 	
+	public String visualizar(Long idprof) {
+		alunoDevedor = alunoService.findById(idprof);
+		Util.addAtributoSessao("aluno", alunoDevedor);
+		return "cadastrar";
+	}
+
+	public void contactado(Aluno aluno) {
+		aluno.setDataContato(new Date());
+		aluno.setContactado(true);
+		aluno.setQuantidadeContatos(alunoDevedor.getQuantidadeContatos()+1);
+		alunoService.saveContactado(alunoDevedor);
+		
+	}
+	
 	public StreamedContent gerarArquivoProtesto(ContratoAluno ca) {
 		String nomeArquivo = "";
 		if (ca != null && ca.getId() != null) {
@@ -173,7 +191,7 @@ public class DevedorController implements Serializable {
 					modeloArq = "modelo_protesto11.docx";
 					break;
 				case 10:
-					modeloArq = "modelo_protest10.docx";
+					modeloArq = "modelo_protesto10.docx";
 					break;
 				case 9:
 					modeloArq = "modelo_protesto9.docx";
@@ -842,6 +860,10 @@ public class DevedorController implements Serializable {
 		return cor;
 	}
 	
+	public void protestar(Aluno al) {
+		devedorService.enviarParaProtesto(al);
+	}
+	
 	public void saveObservavao(Aluno aluno){
 		devedorService.saveObservacao(aluno);
 	}
@@ -1008,6 +1030,14 @@ public class DevedorController implements Serializable {
 
 	public void setDataFim(Date dataFim) {
 		this.dataFim = dataFim;
+	}
+
+	public Aluno getAlunoDevedor() {
+		return alunoDevedor;
+	}
+
+	public void setAlunoDevedor(Aluno alunoDevedor) {
+		this.alunoDevedor = alunoDevedor;
 	}
 	
 }

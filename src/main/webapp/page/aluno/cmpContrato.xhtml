@@ -172,6 +172,7 @@
 									<p:commandButton style="background:red"
 													action="#{alunoController.cancelar(contratoAlun)}"  
 													value="Cancelar Contrato" 
+													process="@this"
 													rendered="#{not contratoAlun.cancelado}">
 													
 									</p:commandButton>

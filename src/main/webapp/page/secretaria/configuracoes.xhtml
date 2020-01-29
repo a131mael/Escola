@@ -46,6 +46,13 @@
 					<p:fileDownload
 						value="#{secretariaController.gerarCNAB240_TodosAlunos()}" />
 				</p:commandButton>
+				
+				<p:commandButton value="Gerar REMATRICULA Todos Alunos Matriculados" 
+								icon="ui-icon-pencil" 
+								ajax="false"
+								onclick="PrimeFaces.monitorDownload(start, stop);">
+				<p:fileDownload value="#{alunoController.gerarRematricula_TodosAlunos()}" />
+			</p:commandButton>	
 
 			</h:panelGrid>
 

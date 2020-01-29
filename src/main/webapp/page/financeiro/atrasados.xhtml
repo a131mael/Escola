@@ -21,8 +21,12 @@
 			<p:graphicImage name="/gfx/preloader.gif" width="100" height="15" />
 		</p:dialog>
 		
+		<p:panelGrid>
 		<p:spacer width="500" height="10" /><h:outputText value=" CRIANÇAS COM BOLETOS ATRASADOS" 
-				  style="font-weight:bold;font-size:14px" />	
+				  style="font-weight:bold;font-size:14px" />
+				  	
+				  
+		</p:panelGrid>
 				  
 		<h:form prependId="false" style="width:100%; border:none"
 			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
@@ -36,7 +40,7 @@
 					paginatorPosition="bottom"
 					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
                                          {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					resizableColumns="true" rows="20"
+					resizableColumns="true" rows="100"
 					rowsPerPageTemplate="20,50,100,200,300" id="tbl" var="professorTab"
 					value="#{devedorController.lazyDataModelAtrasados}"
 					sortBy="#{professorTab.quantidadeMesAtrasado}">
@@ -171,11 +175,11 @@
 							<h:outputText value="Contato/Promessa" style="font-weight:bold;font-size:11px"/>
 						</f:facet>
 						<h:outputText value="#{professorTab.dataContato}" >
-							<f:convertDateTime pattern="dd-mm-yyyy" />
+							<f:convertDateTime pattern="dd-MM-yyyy" />
 						</h:outputText>
 						<br/>
 						<h:outputText value="#{professorTab.dataPrometeuPagar}" >
-							<f:convertDateTime pattern="dd-mm-yyyy" />
+							<f:convertDateTime pattern="dd-MM-yyyy" />
 						</h:outputText>
 					</p:column>
 					
@@ -215,8 +219,8 @@
 						<p:tooltip for="entrouCOntato" value="Conseguiu entrar em contato ? " trackMouse="false" />						
 						
 						<p:commandButton update="tblContac" icon="ui-icon-arrowthick-1-e" alt="Protestar aluno"
-							id="protesto"
-							action="#{devedorController.protestar(professorTab)}">
+							id="protesto" action="#{devedorController.protestar(professorTab)}" 
+							process="@this">
 							<p:confirm header="Confirmation"
 								message="Você deseja realmente protestar - #{professorTab.nomeResponsavel} ?"
 								icon="ui-icon-alert" />
@@ -317,32 +321,39 @@
 					
 					<p:column style="text-align:center;"
                               styleClass="#{devedorController.marcarLinha2(professorTab)}"
-                              width="14%">
+                              width="18%">
                              <f:facet name="header">
 								<h:outputText value="Contatos" style="font-weight:bold;font-size:11px"/>
 							</f:facet>
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone1)}">
-			                        <h:outputText value="#{professorTab.contatoNome1}" />
-									<h:outputText value="#{professorTab.contatoTelefone1}" />
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneCelularMae}" />
+									<h:outputText value="Celular mae" />
 	                        </p:panelGrid>
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone2)}">
-			                        <h:outputText value="#{professorTab.contatoNome2}" />
-									<h:outputText value="#{professorTab.contatoTelefone2}" />
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneResidencialMae}" />
+									<h:outputText value="Resid. mae" />
 	                         </p:panelGrid>
-	                         <p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone3)}">
-			                         <h:outputText value="#{professorTab.contatoNome3}" />
-									<h:outputText value="#{professorTab.contatoTelefone3}" />
+	                         <p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneEmpresaTrabalhaMae}" />
+									<h:outputText value="Telefone empr. mae" />
 	                         </p:panelGrid>
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone4)}">
-			                         <h:outputText value="#{professorTab.contatoNome4}" />
-									<h:outputText value="#{professorTab.contatoTelefone4}" />
-	                         </p:panelGrid>
-							
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(professorTab.contatoTelefone5)}">
-			                        <h:outputText value="#{professorTab.contatoNome5}" />
-									<h:outputText value="#{professorTab.contatoTelefone5}" />
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneCelularPai}" />
+									<h:outputText value="Celeluar pai" />
 	                         </p:panelGrid>
 							
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneResidencialPai}" />
+									<h:outputText value="Resid. pai" />
+	                         </p:panelGrid>
+	                         <p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefoneEmpresaTrabalhaPai}" />
+									<h:outputText value="Telefone empr. pai" />
+	                         </p:panelGrid>
+							<p:panelGrid columns="2">
+			                        <h:outputText value="#{professorTab.telefonecontatoSaidaEstabelecimento1}" />
+									<h:outputText value="#{professorTab.nomecontatoSaidaEstabelecimento1}" />
+	                         </p:panelGrid>
 					</p:column>
 					
 					<p:column style="text-align:center;width:2%"
@@ -377,11 +388,11 @@
 							<h:outputText value="Contato/Promessa" style="font-weight:bold;font-size:11px"/>
 						</f:facet>
 						<h:outputText value="#{professorTab.dataContato}" >
-							<f:convertDateTime pattern="dd-mm-yyyy" />
+							<f:convertDateTime pattern="dd-MM-yyyy" />
 						</h:outputText>
 						<br/>
 						<h:outputText value="#{professorTab.dataPrometeuPagar}" >
-							<f:convertDateTime pattern="dd-mm-yyyy" />
+							<f:convertDateTime pattern="dd-MM-yyyy" />
 						</h:outputText>
 					</p:column>
 					
@@ -392,8 +403,6 @@
 						</f:facet>
 						<h:outputText value="#{professorTab.observacaoAtrasado}" />
 					</p:column>
-					
-					
 					
 					<p:column style="text-align: center;width:4%;"
 						styleClass="#{devedorController.marcarLinha2(professorTab)}">
@@ -423,6 +432,7 @@
 						
 						<p:commandButton update="tblContac" icon="ui-icon-arrowthick-1-e" alt="Protestar aluno"
 							id="protesto"
+							process="@this"
 							action="#{devedorController.protestar(professorTab)}">
 							<p:confirm header="Confirmation"
 								message="Você deseja realmente protestar - #{professorTab.nomeResponsavel} ?"

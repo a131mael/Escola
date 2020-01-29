@@ -51,7 +51,8 @@
 				<!-- <p:tooltip for="gerarBoleto" value="GERAR BOLETOS" position="top" /> -->
 				<p:tooltip  for="gerarBaixa" value="Gerar arquivo Baixa" position="top"
 							rendered="#{authController.hasPermission(authController.mestre)}"/>
-				
+							
+				<p:tooltip  for="ficharematricula" value="Ficha de Rematrícula" position="top"/> 
 			
 				<p:commandButton id="adicionar" icon="ui-icon-plus" action="#{alunoController.adicionarNovo()}" />
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
@@ -70,6 +71,16 @@
 								disabled="#{!alunoController.alunoSelecionado}">
 						<p:fileDownload value="#{alunoController.imprimirContrato()}" />
 				</p:commandButton>
+				
+				<p:commandButton icon="ui-icon-arrowreturn-1-w" 
+							ajax="false"
+							alt="Ficha rematricula"
+							id="ficharematricula"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					disabled="#{!alunoController.alunoSelecionado}">
+					<p:fileDownload value="#{alunoController.imprimirFichaRematricula()}" />
+				</p:commandButton>
+				
 				<p:commandButton id="atestadoVaga" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
 					 disabled="#{!alunoController.alunoSelecionado}">
 							<p:fileDownload value="#{alunoController.imprimirAtestadoVaga()}" />
@@ -129,7 +140,7 @@
 			 
 			 
 			 <p:commandButton id="salvarTodos" update="@form" icon="ui-icon-check" action="#{alunoController.salvarTodos()}"	
-			 					 alt="Desmatricular" 
+			 					 alt="TESTE" 
 			 					 rendered="#{authController.hasPermission(authController.mestre)}">
 					<p:confirm header="Confirmacao" message="Atualizar Todas as Crianças ?" icon="ui-icon-alert" />
 				</p:commandButton>
@@ -142,7 +153,6 @@
 					
 					<p:fileDownload value="#{alunoController.gerarArquivoBaixa()}" />
 				</p:commandButton>
-			 
 			 
 			</h:panelGrid>
 

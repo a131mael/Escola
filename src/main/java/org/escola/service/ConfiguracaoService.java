@@ -20,6 +20,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.model.Aluno;
 import org.escola.model.Boleto;
 import org.escola.model.Configuracao;
 import org.escola.model.ContratoAluno;
@@ -54,9 +55,30 @@ public class ConfiguracaoService extends Service {
 	}
 
 	public Configuracao getConfiguracao(){
-		return findAll().get(0);
+		return find();
 	}
 	
+	public Configuracao getConfiguracao2(){
+		return find();
+	}
+	
+	private Configuracao find() {
+		try{
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT * from configuracao ");
+			sql.append(" where 1 = 1");
+			
+			Query query = em.createNativeQuery(sql.toString(),Configuracao.class);
+			Configuracao t = (Configuracao) query.getSingleResult();
+			
+			return t;	
+		}catch(Exception e){
+			System.out.println(e);
+			return null;
+		}
+		
+	}
+
 	public List<Configuracao> findAll() {
 		try{
 			CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -163,6 +185,7 @@ public class ConfiguracaoService extends Service {
 		b = em.find(Boleto.class, b.getId());
 		b.setCnabEnviado(true);
 		em.merge(b);
+		em.flush();
 		
 	}
 	
@@ -188,6 +211,8 @@ public class ConfiguracaoService extends Service {
 		ca = em.find(ContratoAluno.class, ca.getId());
 		ca.setEnviadoPorEmailProtesto(true);
 		em.merge(ca);
+		em.flush();
+		
 	}
 
 	public List<ContratoAluno> findContratosProtestados(boolean jaEnviadoPorEmail) {
@@ -211,6 +236,40 @@ public class ConfiguracaoService extends Service {
 		}
 
 		return cas;
+	}
+	
+	
+	public List<Aluno> findAlunosComContratoEm(int ano) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT distinct(ca.aluno) from ContratoAluno ca");
+		sql.append(" where 1 = 1");
+		sql.append(" and ca.ano = ");
+		sql.append(ano);
+		
+		Query query = em.createQuery(sql.toString());
+		List<Aluno> cas = (List<Aluno>) query.getResultList();
+
+		return cas;
+	}
+
+	public boolean temContratoNoAno(Aluno aluno, int anoRematricula) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("select count(ca.id) from ContratoAluno ca");
+		sql.append(" where 1 = 1");
+		sql.append(" and ca.ano = ");
+		sql.append(anoRematricula);
+		sql.append(" and ca.cancelado = false ");
+		sql.append(" and ca.aluno.id = ");
+		sql.append(aluno.getId());
+		
+		Query query = em.createQuery(sql.toString(),Long.class);
+		Long cas =  (Long) query.getSingleResult();
+		if(cas>0){
+			return true;
+		}
+		return false;
 	}
 	
 }

@@ -53,12 +53,14 @@ public class SecretariaController {
 	private AlunoService alunoService;
 
 	public void finalizarAnoLetivo() {
-		int quantidade = finalizarAnoLetivo.getAlunosAlunoLetivoAtual().size();
+		int anoLetivoAtual = finalizarAnoLetivo.getAnoLetivoAtual() -1;
+		List<Aluno> alunos = finalizarAnoLetivo.getAlunosAluno(anoLetivoAtual); 
+		int quantidade = alunos.size();
 		int gerados = 0;
 		int quantidadeNoLote = 100;
 		int inicio = 0;
 		while (inicio <= quantidade) {
-			finalizarAnoLetivo.finalizar(inicio,quantidadeNoLote);
+			finalizarAnoLetivo.finalizarAnoLetivo(alunos,inicio,quantidadeNoLote,anoLetivoAtual);
 			inicio +=quantidadeNoLote +1;
 		}
 		finalizarAnoLetivo.alterarConfiguracao();

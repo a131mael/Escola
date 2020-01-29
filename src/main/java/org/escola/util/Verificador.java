@@ -175,4 +175,20 @@ public class Verificador {
 			return (false);
 		}
 	}
+	
+	public static boolean possuiBoletoAberto(org.escola.model.ContratoAluno ca) {
+		boolean ativo = false;
+		for(Boleto b : ca.getBoletos()){
+			if(getStatusEnum(b).equals(StatusBoletoEnum.A_VENCER)){
+				ativo = true;
+			}
+			if(getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)){
+				ativo = true;
+			}
+			if(getStatusEnum(b).equals(StatusBoletoEnum.VENCE_HOJE)){
+				ativo = true;
+			}
+		}
+		return ativo;
+	}
 }

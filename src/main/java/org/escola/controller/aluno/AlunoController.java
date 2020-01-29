@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -54,6 +55,7 @@ import org.escola.model.Professor;
 import org.escola.service.AlunoService;
 import org.escola.service.AvaliacaoService;
 import org.escola.service.ConfiguracaoService;
+import org.escola.service.DevedorService;
 import org.escola.service.FinanceiroEscolaService;
 import org.escola.service.rotinasAutomaticas.EnviadorEmail;
 import org.escola.util.CompactadorZip;
@@ -102,6 +104,9 @@ public class AlunoController implements Serializable {
 
 	@Inject
 	private FinanceiroEscolaService financeiroEscolaService;
+	
+	@Inject
+	private DevedorService devedorService;
 
 	@Inject
 	private AvaliacaoService avaliacaoService;
@@ -437,6 +442,35 @@ public class AlunoController implements Serializable {
 
 		return lazyListDataModel;
 
+	}
+	
+	public StreamedContent imprimirFichaRematricula(Aluno aluno, ContratoAluno contrato) throws IOException {
+		if(contrato == null){
+			contrato = aluno.getIrmao1().getContratoVigente();
+		}
+		String nomeArquivo = gerarFichaRematricula(aluno, contrato);
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
+		InputStream stream = new FileInputStream(caminho);
+		return FileDownload.getContentDoc(stream, nomeArquivo);
+	}
+	
+	public StreamedContent imprimirFichaRematricula() throws IOException {
+		return imprimirFichaRematricula(aluno, aluno.getContratoVigente());
+	}
+	
+	public String gerarFichaRematricula(Aluno aluno, ContratoAluno contrato) throws IOException {
+		String nomeArquivo = "";
+		CompactadorZip.createDir(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator	+ configuracaoService.getConfiguracao().getAnoLetivo());
+		if (aluno != null && aluno.getId() != null) {
+			nomeArquivo = configuracaoService.getConfiguracao().getAnoLetivo() + File.separator + aluno.getCodigo()	+ contrato.getNomeResponsavel() + "R";
+			ImpressoesUtils.imprimirInformacoesAluno(aluno, "modeloRematriculaADONAI.docx",
+					montarContratoRematricula(aluno, contrato), nomeArquivo);
+			nomeArquivo += ".doc";
+		} else {
+			nomeArquivo = "modeloRematricula.docx";
+		}
+
+		return nomeArquivo;
 	}
 
 	public LazyDataModel<Aluno> getLazyDataModelExAlunos() {
@@ -2851,4 +2885,406 @@ public class AlunoController implements Serializable {
 		return null;
 	}
 
+	public String gerarFichaRematricula(Aluno aluno, ContratoAluno contrato,String finalArqui) throws IOException {
+		String nomeArquivo = "";
+		//CompactadorZip.createDir(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator	+ configuracaoService.getConfiguracao().getAnoLetivo() + File.separator + System.currentTimeMillis());
+		if (aluno != null && aluno.getId() != null) {
+			nomeArquivo = finalArqui + File.separator + aluno.getCodigo()	+ contrato.getNomeResponsavel() 
+			+ "R";
+			ImpressoesUtils.imprimirInformacoesAluno(aluno, "modeloRematriculaADONAI.docx",	montarContratoRematricula(aluno, contrato), nomeArquivo);
+			nomeArquivo += ".doc";
+		} else {
+			nomeArquivo = "modeloRematriculaADONAI.docx";
+		}
+
+		return nomeArquivo;
+	}
+	
+	public StreamedContent gerarRematricula_TodosAlunos() {
+		try {
+			Map<String, Object> parametros = new HashMap<>();
+			parametros.put("removido", false);
+			parametros.put("anoLetivo", configuracaoService.getConfiguracao().getAnoLetivo());
+			List<Aluno> todosAlunos = alunoService.findAlunoAlunoLetivo();
+
+			String caminhoFinalPasta = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator	;
+			String finalArq = configuracaoService.getConfiguracao().getAnoLetivo()+""+System.currentTimeMillis();
+			caminhoFinalPasta+=finalArq;
+			CompactadorZip.createDir(caminhoFinalPasta);
+
+			// todosAlunos.size();
+			// int i=0;i<200; i++
+			for (Aluno al : todosAlunos) {
+				// Aluno al = todosAlunos.get(i);
+			//	if (al.getBairroAluno() != null) {
+					String nome = gerarFichaRematricula(al, gerarContrato(al, true),finalArq); // todosAlunos.get(i)
+					String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
+							+ nome;
+					InputStream stream = new FileInputStream(caminho);
+
+					System.out.println(caminho);
+					FileUtils.inputStreamToFile(stream, nome);
+			//	}
+			}
+
+			String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
+					+ "escolatodasREMATRICULAS.zip";
+			CompactadorZip.compactarParaZip(arquivoSaida, caminhoFinalPasta);
+
+			InputStream stream2 = new FileInputStream(arquivoSaida);
+			return FileDownload.getContentDoc(stream2, "escolartodasREMATRICULAS.zip");
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
+	public ContratoAluno gerarContrato(Aluno aluno, boolean rematricula) {
+		ContratoAluno contrato = new ContratoAluno();
+		ContratoAluno ultimoContrato = aluno.getUltimoContrato();
+		boolean temContrato = ultimoContrato != null ? true : false;
+
+		contrato.setAluno(aluno);
+		if (rematricula) {
+			contrato.setAno(configuracao.getAnoRematricula());
+		} else {
+			contrato.setAno((short) configuracao.getAnoLetivo());
+		}
+		/*double valor = getValor(1, aluno);
+		contrato.setAnuidade(valor * 12);
+		contrato.setValorMensal(valor);*/
+
+		if (temContrato) {
+			contrato.setNomeResponsavel(ultimoContrato.getNomeResponsavel());
+			contrato.setBairro(ultimoContrato.getBairro());
+			contrato.setCep(ultimoContrato.getCep());
+			contrato.setCidade(ultimoContrato.getCidade());
+			contrato.setCpfResponsavel(ultimoContrato.getCpfResponsavel());
+			contrato.setDataCriacaoContrato(new Date());
+			contrato.setDiaVencimento(10);
+			contrato.setRgResponsavel(ultimoContrato.getRgResponsavel());
+			contrato.setEndereco(ultimoContrato.getEndereco());
+			contrato.setNomeMaeResponsavel(ultimoContrato.getNomeMaeResponsavel());
+			contrato.setNomePaiResponsavel(ultimoContrato.getNomePaiResponsavel());
+			contrato.setNumeroParcelas(12);
+		}
+
+		return contrato;
+	}
+
+
+	public HashMap<String, String> montarContratoRematricula(Aluno aluno, ContratoAluno contrato) {
+		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
+		String dataExtenso = formatador.format(new Date());
+		Calendar dataLim = Calendar.getInstance();
+		dataLim.add(Calendar.MONTH, 1);
+		int ano = configuracao.getAnoLetivo();
+		if (aluno.getRematricular() != null && aluno.getRematricular()) {
+			ano = configuracao.getAnoRematricula();
+		}
+		Calendar calendar = Calendar.getInstance();
+		DateFormat fomatadorData = DateFormat.getDateInstance(DateFormat.DEFAULT, new Locale("pt", "BR"));
+		int anoNascimento = 0;
+		String aniversario = null;
+		if (aluno.getDataNascimento() != null) {
+			Calendar calendarNascimento = Calendar.getInstance();
+			calendarNascimento.setTime(aluno.getDataNascimento());
+			anoNascimento = calendarNascimento.get(Calendar.YEAR);
+			aniversario = fomatadorData.format(aluno.getDataNascimento());
+
+		}
+		HashMap<String, String> trocas = new HashMap<>();
+		trocas.put("#ANOCONTRATO", ano + "");
+		trocas.put("#CONTRATANTECID", "Palhoca"); // TODO COLOCAR CIDADE DO
+													// Contratado
+		trocas.put("#DATAEXTENSO", dataExtenso);
+		
+		
+		if(aluno.getEnderecoAluno() == null){
+			trocas.put("ruadoaluno", "");
+		}else{
+			trocas.put("ruadoaluno", aluno.getEnderecoAluno());
+		}
+		if(aluno.getCpf() == null){
+			trocas.put("cpfaluno", "");
+		}else{
+			trocas.put("cpfaluno", aluno.getCpf());
+		}
+		if(aluno.getRg() == null){
+			trocas.put("rgaluno", "");
+		}else{
+			trocas.put("rgaluno", aluno.getRg());
+		}
+		if(aluno.getSexo() == null){
+			trocas.put("sexodoaluno", "");
+		}else{
+			trocas.put("sexodoaluno", aluno.getSexo().getName());
+		}
+		
+		if(aluno.getSerie() == null){
+			trocas.put("turmadoaluno", "");
+		}else{
+			trocas.put("turmadoaluno", Serie.values()[aluno.getSerie().ordinal() + 1].getName());
+		}
+		
+		if(aluno.getPeriodo() == null ){
+			trocas.put("periodoAluno", "");
+		}else{
+			trocas.put("periodoAluno", aluno.getPeriodo().getName());
+		}
+		
+		trocas.put("atencaodevum", "");
+		trocas.put("Atencaodevedordois", "");
+		trocas.put("Atencaodevedortres", "");
+		
+		if(aluno.getNomePaiAluno() == null){
+			trocas.put("nompaialun", "");
+		}else{
+			trocas.put("nompaialun", aluno.getNomePaiAluno().toUpperCase());
+		}
+		if(aluno.getNomeMaeAluno() == null){
+			trocas.put("nomemae", "");
+		}else{
+			trocas.put("nomemae", aluno.getNomeMaeAluno().toUpperCase());
+		}
+		
+		trocas.put("#CONTRATANTENOME", contrato.getNomeResponsavel());
+		trocas.put("#CONTRATANTERG", contrato.getRgResponsavel());
+		trocas.put("#CONTRATANTECPF", contrato.getCpfResponsavel());
+		trocas.put("#CONTRATANTERUA", contrato.getEndereco() + ", " + contrato.getBairro());
+		boolean devedor = devedorService.isdevedor(aluno);
+
+		if (devedor) {
+			trocas.put("atencaodevedor",
+					"ATENÇÃO! Consta em nosso sistema débitos pendentes relativos ao transporte escolar do ano letivo de "
+							+ ano + ".");
+
+			trocas.put("devedormensagem", "Caso já tenha efetuado o pagamento favor desconsiderar o aviso acima.");
+			trocas.put("finalmensagem",
+					"Informamos que a rematrícula do seu filho(a) está condicionada quitação total das parcelas em aberto até 31/12/"
+							+ ano
+							+ ". Para acertar os valores em aberto favor entrar em contato com o financeiro através dos telefones 3242-4194 ou 9 8837-5270.");
+		} else {
+			trocas.put("atencaodevedor", "");
+			trocas.put("devedormensagem", "");
+			trocas.put("finalmensagem", "");
+		}
+
+		trocas.put("cidaderesp", "");
+		if(aluno.getBairroAluno() != null){
+			trocas.put("BAIRROALUNO", aluno.getBairroAluno().getName());
+		}else{
+			trocas.put("BAIRROALUNO", "");
+		}
+		//trocas.put("valorjaneiro", getValor(1, aluno) + "");
+		//trocas.put("valorfevereiro", getValor(2, aluno) + "");
+		//trocas.put("valormarco", getValor(3, aluno) + "");
+
+		String nomeAluno = aluno.getNomeAluno();
+		if (aluno.getIrmao1() != null) {
+			nomeAluno += ", " + aluno.getIrmao1().getNomeAluno();
+		}
+		if (aluno.getIrmao2() != null) {
+			nomeAluno += ", " + aluno.getIrmao2().getNomeAluno();
+		}
+		if (aluno.getIrmao3() != null) {
+			nomeAluno += ", " + aluno.getIrmao3().getNomeAluno();
+		}
+		if (aluno.getIrmao4() != null) {
+			nomeAluno += ", " + aluno.getIrmao4().getNomeAluno();
+		}
+
+		trocas.put("#TRANSPORTADORUA", contrato.getEndereco() + ", " + contrato.getBairro());
+	//	trocas.put("#TRANSPORTADOESCOLA", aluno.getEscola().getName());
+	//	trocas.put("#escola", aluno.getEscola().getName());
+
+		if (aniversario != null) {
+			trocas.put("#nascimento", aniversario);
+		} else {
+			trocas.put("#nascimento", "");
+		}
+		trocas.put("#CONTRATANTERUA", contrato.getEndereco() + ", " + contrato.getBairro());
+		if (anoNascimento > 0) {
+			trocas.put("#idade", (ano - anoNascimento - 1) + "");
+		} else {
+			trocas.put("#idade", "");
+		}
+		//trocas.put("BAIRROESCOLA", aluno.getEscola().getBairro());
+		trocas.put("SERIEALUNO", aluno.getSerie().getName());
+		trocas.put("NOMERESPONSAVEL", contrato.getNomeResponsavel());
+		trocas.put("PAIRESPONSAVEL", contrato.getNomePaiResponsavel());
+		trocas.put("MAERESPONSAVEL", contrato.getNomeMaeResponsavel());
+		trocas.put("cpfresponsavel", contrato.getCpfResponsavel());
+		trocas.put("#RG", contrato.getRgResponsavel());
+		trocas.put("naturalidadealuno", "");
+		trocas.put("nascimentoresponsavel", " ");
+		trocas.put("estadocivil", " ");
+		trocas.put("nomeconjugue", " ");
+		trocas.put("enderecoresponsavel", contrato.getEndereco());
+		trocas.put("cepresponsavel", contrato.getCep());
+		trocas.put("cidaderesponsavel", contrato.getCidade());
+		trocas.put("#numero", " ");
+		trocas.put("#bairro", contrato.getBairro());
+		if(aluno.getContatoEmail1() != null){
+			trocas.put("#email1", aluno.getContatoEmail1());
+		}else{
+			trocas.put("#email1", "");
+		}
+		
+		if(aluno.getContatoEmail2() != null){
+			trocas.put("#email2", aluno.getContatoEmail2());
+		}else{
+			trocas.put("#email2", "");
+		}
+		if (aluno.getContatoTelefone1() != null) {
+			trocas.put("telefoneum", !aluno.getContatoTelefone1().equalsIgnoreCase("") ? aluno.getContatoTelefone1()
+					: "_______________");
+			trocas.put("contatoum",
+					!aluno.getContatoNome1().equalsIgnoreCase("") ? aluno.getContatoNome1() : "____________");
+		} else {
+			trocas.put("telefoneum", "_______________");
+			trocas.put("contatoum", "____________");
+		}
+		if (aluno.getContatoTelefone2() != null) {
+			trocas.put("telefonedois", !aluno.getContatoTelefone2().equalsIgnoreCase("") ? aluno.getContatoTelefone2()
+					: "_______________");
+			trocas.put("contatodois",
+					!aluno.getContatoNome2().equalsIgnoreCase("") ? aluno.getContatoNome2() : "____________");
+		} else {
+			trocas.put("telefonedois", "_______________");
+			trocas.put("contatodois", "____________");
+		}
+		if (aluno.getContatoTelefone3() != null) {
+			trocas.put("telefonetres", !aluno.getContatoTelefone3().equalsIgnoreCase("") ? aluno.getContatoTelefone3()
+					: "_______________");
+			trocas.put("contatotres",
+					!aluno.getContatoNome3().equalsIgnoreCase("") ? aluno.getContatoNome3() : "____________");
+		} else {
+			trocas.put("telefonetres", "_______________");
+			trocas.put("contatotres", "____________");
+		}
+		if (aluno.getContatoTelefone4() != null) {
+			trocas.put("telefonequatro", !aluno.getContatoTelefone4().equalsIgnoreCase("") ? aluno.getContatoTelefone4()
+					: "_______________");
+			trocas.put("contatoquatro",
+					!aluno.getContatoNome4().equalsIgnoreCase("") ? aluno.getContatoNome4() : "____________");
+		} else {
+			trocas.put("telefonequatro", "_______________");
+			trocas.put("contatoquatro", "____________");
+		}
+		if (aluno.getContatoTelefone5() != null) {
+			trocas.put("telefonecinco", !aluno.getContatoTelefone5().equalsIgnoreCase("") ? aluno.getContatoTelefone5()
+					: "_______________");
+			trocas.put("contatocinco",
+					!aluno.getContatoNome5().equalsIgnoreCase("") ? aluno.getContatoNome5() : "____________");
+		} else {
+			trocas.put("telefonecinco", "_______________");
+			trocas.put("contatocinco", "____________");
+		}
+		
+		trocas.put("#NOMEALUNO", nomeAluno);
+
+		String periodo1 = "";
+		if (aluno.getPeriodo().equals(PerioddoEnum.INTEGRAL) || aluno.getPeriodo().equals(PerioddoEnum.MANHA)) {
+			periodo1 = "06:30";
+		} else {
+			periodo1 = "11:30";
+		}
+		String periodo2 = "";
+		if (aluno.getPeriodo().equals(PerioddoEnum.INTEGRAL) || aluno.getPeriodo().equals(PerioddoEnum.TARDE)) {
+			periodo2 = "19:30";
+		} else {
+			periodo2 = "13:30";
+		}
+
+		trocas.put("#DADOSGERAISHORARIO1", periodo1);
+		trocas.put("#DADOSGERAISHORARIO2", periodo2);
+		trocas.put("#DADOSGERAISMES1", getMesInicioPagamento(aluno, contrato));
+		trocas.put("#DADOSGERAISMES2", "Dezembro");
+		trocas.put("#DADOSGERAISPARCELAS", contrato.getNumeroParcelas() + "");
+		// BigDecimal valorTotal = (new
+		// BigDecimal(contrato.getValorTotal())).multiply(((new
+		// BigDecimal(contrato.getParcelas()))));
+		// trocas.put("#DADOSGERAISTOTAL", valorTotal.toString());
+	//	trocas.put("#DADOSGERAISTOTAL", String.valueOf(valorTotal(aluno))); // TODO
+																			// ver
+		// contrato.setValorTotal(contrato.getValorTotal().replace(",", "."));
+	//	trocas.put("#DADOSGERAISTOTALEXTENSO", cw.write(new BigDecimal(valorTotal(aluno))));
+		trocas.put("#DADOSGERAISQTADEPARCELAS", contrato.getNumeroParcelas() + "");
+		trocas.put("#DADOSGERAISEXTENSOPARCELA", cw.write(new BigDecimal(contrato.getValorMensal())));
+		trocas.put("#DADOSGERAISPARCELA", contrato.getValorMensal() + "");/// valor
+																			/// da
+																			/// parcela
+
+		String idaEVolta = "CLAUSULA 6ª – O CONTRATANTE compromete-se a deixar o TRANSPORTADO pronto e aguardando pelo CONTRATADO no endereço e hora combinada, ou seja, na rua  #CONTRATANTERUA   as #DADOSGERAISHORARIO1,  não tolerando qualquer tipo de atraso ou mudança de endereço.";
+		String ida = "CLAUSULA 6ª - O CONTRATADO SO SE RESPONSABILIZARA PELO TRANSPORTE DE IDA PARA A ESCOLA, O TRANSPORTE DE VOLTA DA ESCOLA È DE RESPONSABILIDADE DO CONTRATANTE.";
+		String volta = "CLAUSULA 6ªB – O CONTRATADO SO SE RESPONSABILIZARA PELO TRANSPORTE DE VOLTA DA ESCOLA, O TRANSPORTE DE IDA PARA A ESCOLA È DE RESPONSABILIDADE DO CONTRATANTE.";
+
+		
+
+		return trocas;
+	}
+	
+	private String getMesInicioPagamento(Aluno aluno2, ContratoAluno contrato) {
+		String mes = "Janeiro";
+		switch (contrato.getNumeroParcelas()) {
+		case 12:
+			break;
+
+		case 11:
+			mes = "Fevereiro";
+			break;
+
+		case 10:
+			mes = "Março";
+			break;
+
+		case 9:
+			mes = "Abril";
+			break;
+
+		case 8:
+			mes = "Maio";
+			break;
+
+		case 7:
+			mes = "Junho";
+			break;
+
+		case 6:
+			mes = "Julho";
+			break;
+
+		case 5:
+			mes = "Agosto";
+			break;
+
+		case 4:
+			mes = "Setembro";
+			break;
+
+		case 3:
+			mes = "Outubro";
+			break;
+
+		case 2:
+			mes = "Novembro";
+			break;
+
+		case 1:
+			mes = "Dezembro";
+			break;
+
+		default:
+			break;
+		}
+		return mes;
+	}
+	
 }

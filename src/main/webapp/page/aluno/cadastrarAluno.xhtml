@@ -54,7 +54,7 @@
 					</h:panelGrid>
 					
 					</p:tab>
-					<p:tab title="Dados Pai do Aluno">
+					<p:tab title="Dados Pai do Aluno" rendered="false">
 						<h:panelGrid columns="2" border="0">
 
 							<h:outputLabel value="Nome Pai: "
@@ -118,7 +118,7 @@
 						</h:panelGrid>
 
 					</p:tab>
-					<p:tab title="Dados Mãe do Aluno">
+					<p:tab title="Dados Mãe do Aluno" rendered="false">
 						<h:panelGrid columns="2" border="0">
 
 							<h:outputLabel value="Nome MÃE: "
@@ -197,6 +197,78 @@
 						</ui:include>
 					</p:tab>
 					
+					<p:tab id="tabAutorizacao" title="Autorizacão Saída">
+					<ui:include src="cmpAutorizado.xhtml">
+	    					<ui:param name="parametro" value="#{aluno}" />
+	    					<ui:param name="visible" value="#{true}" />
+						</ui:include>
+					</p:tab>
+					<p:tab title="Contatos" >
+						<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="Email: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.contatoEmail1}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Email: "
+								style="font-size: 13px; width:180px" />
+							<h:inputText title="" value="#{aluno.contatoEmail2}"
+								style="font-size: 15px; width:280px" />
+						</h:panelGrid>
+						<h:panelGrid columns="4" border="0">
+							<h:outputLabel value="Telefone: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoTelefone1}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Falar com: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoNome1}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Telefone: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoTelefone2}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Falar com: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoNome2}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Telefone: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoTelefone3}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Falar com: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoNome3}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Telefone: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoTelefone4}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Falar com: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoNome4}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Telefone: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoTelefone5}"
+								style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel value="Falar com: "
+								style="font-size: 13px; width:80px" />
+							<h:inputText title="" value="#{aluno.contatoNome5}"
+								style="font-size: 15px; width:280px" />
+						</h:panelGrid>
+
+					</p:tab>
 					<p:tab id="tabHistorico" title="Histórico" rendered="#{alunoController.alunoCadastrado(aluno)}">
 						<h:panelGrid columns="2">
 							<h:commandButton action="#{alunoController.adicionarHistorico(historicoAluno)}"
@@ -355,8 +427,6 @@
 						</h:panelGrid>
 
 					</p:tab>
-
-
 				</p:tabView>
 
 			</h:panelGrid>

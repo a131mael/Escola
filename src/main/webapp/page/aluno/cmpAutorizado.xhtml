@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	
+	<h:panelGrid columns="2" border="0" rendered="#{visible}">
+							
+			<h:outputLabel value="O aluno está autorizado a sair com : "	style="font-size: 13px; width:240px" />
+			<h:outputLabel value=" "	style="font-size: 13px; width:240px" />
+			
+			<h:outputLabel value="Autorizado 1"	style="font-size: 13px; width:240px" />
+			<p:inputText title="" value="#{parametro.autorizadoASairCom1}" style="font-size: 15px; width:280px" />
+			
+			<h:outputLabel value="Autorizado 2"	style="font-size: 13px; width:240px" />
+			<p:inputText title="" value="#{parametro.autorizadoASairCom2}" style="font-size: 15px; width:280px" />
+			
+			<h:outputLabel value="Autorizado 3"	style="font-size: 13px; width:240px" />
+			<p:inputText title="" value="#{parametro.autorizadoASairCom2}" style="font-size: 15px; width:280px" />
+			
+			<h:outputLabel value="Autorizado 4"	style="font-size: 13px; width:240px" />
+			<p:inputText title="" value="#{parametro.autorizadoASairCom4}" style="font-size: 15px; width:280px" />
+			
+			<h:outputLabel value="Autorizado 5"	style="font-size: 13px; width:240px" />
+			<p:inputText title="" value="#{parametro.autorizadoASairCom5}" style="font-size: 15px; width:280px" />
+			
+			<h:outputLabel value="Autorizado 6"	style="font-size: 13px; width:240px" />
+			<p:inputText title="" value="#{parametro.autorizadoASairCom6}" style="font-size: 15px; width:280px" />
+			
+			<h:outputLabel value="Autorizado 7"	style="font-size: 13px; width:240px" />
+			<p:inputText title="" value="#{parametro.autorizadoASairCom7}" style="font-size: 15px; width:280px" />
+			
+			
+		
+		</h:panelGrid>
+
+	<h:panelGrid border="0" rendered="#{visible}" width="100%">
+		<hr/>
+	</h:panelGrid>
+
+</ui:composition>

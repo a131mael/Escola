@@ -837,6 +837,9 @@ public class DevedorService extends Service {
 				d.getIrmao4().getId();
 			}
 
+			if(d.getNomeAluno().equalsIgnoreCase("ALICE VICTORIA MELLO DA SILVA")){
+				System.out.println();
+			}
 			boolean devedor = possuiContratoComBoletoAtrasado(d, d.getContratos(), dataInicio, dataFim);
 			if (devedor) {
 				ds.add(d);
@@ -910,6 +913,7 @@ public class DevedorService extends Service {
 		for (Aluno d :  sAux) {
 			d.getId();
 			d.getNomeAluno();
+			
 			d.getContratos().size();
 			if (d.getIrmao1() != null) {
 				d.getIrmao1().getId();
@@ -922,6 +926,13 @@ public class DevedorService extends Service {
 			}
 			if (d.getIrmao4() != null) {
 				d.getIrmao4().getId();
+			}
+			
+			if(d.getNomeAluno().equalsIgnoreCase("alice victoria mello da silva")){
+				System.out.println("a");
+			}
+			if(d.getContratos() == null || d.getContratos().size() == 0){
+				d.setContratos(getContratoAluno(d.getId()));
 			}
 			
 			boolean devedor = possuiContratoComBoletoAtrasado(d, d.getContratos(), dataInicio, dataFim);
@@ -946,6 +957,62 @@ public class DevedorService extends Service {
 		}
 		return aux.subList(first, ultimoIndice);
 	}
+
+
+	private List<ContratoAluno> getContratoAluno(Long idALuno) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT distinct(ca) from  ContratoAluno ca ");
+		sql.append("where 1=1 ");
+		sql.append("and ca.aluno.id = ");
+		sql.append(idALuno);
+		
+		Query query = em.createQuery(sql.toString());
+
+		@SuppressWarnings("unchecked")
+		List<ContratoAluno> contratos = query.getResultList();
+		for (ContratoAluno ca : contratos) {
+			ca.getId();
+			ca.getBoletos().size();			
+		}
+
+		return contratos;
+	}
+
+	public boolean isdevedor(Aluno aluno) {
+		boolean atrasado = possuiBoletoAtrasado(aluno);
+		return atrasado;
+	}
+	
+	private boolean possuiBoletoAtrasado(Aluno al) {
+		//TODO CORRIGIR 
+		
+		
+		/*boolean atrasado = false;
+		al.getBoletos().size();
+		for (Boleto b : al.getBoletos()) {
+			if (Verificador.getStatusEnum(b).equals(StatusBoletoEnum.ATRASADO)) {
+				b.setAtrasado(true);
+				atrasado = true;
+
+			} else {
+				b.setAtrasado(false);
+			}
+		}
+		return atrasado;*/
+		return false;
+	}
+	
+	public void enviarParaProtesto(Aluno al) {
+		for(ContratoAluno ca : al.getContratos()){
+			boolean atras = possuiBoletoAtrasado(ca, null, null);
+			if(atras){
+				ContratoAluno caa = findByIdContratoAluno(ca.getId());
+				caa.setProtestado(true);
+				em.merge(caa);
+			}
+		}
+	}
+
 	
 	
 	

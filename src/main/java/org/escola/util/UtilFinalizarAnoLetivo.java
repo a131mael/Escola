@@ -18,6 +18,7 @@ import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.Serie;
 import org.escola.model.Aluno;
 import org.escola.model.Configuracao;
+import org.escola.model.ContratoAluno;
 import org.escola.model.Evento;
 import org.escola.model.HistoricoAluno;
 import org.escola.service.AlunoService;
@@ -48,8 +49,14 @@ public class UtilFinalizarAnoLetivo {
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
 	
-	public void finalizar(int inicio,int quantidade){
-		editarrAlunos(inicio,quantidade);
+	public void finalizar(int inicio,int quantidade, int anoLetivoAtual){
+		editarrAlunos(inicio,quantidade,anoLetivoAtual);
+		//alterarConfiguracao();
+		//mudarDataDosEventos();
+	}
+	
+	public void finalizarAnoLetivo(List<Aluno> alunos,int inicio,int quantidade,int anoLetivoAtual){
+		editarrAlunos(alunos,inicio,quantidade,anoLetivoAtual);
 		//alterarConfiguracao();
 		//mudarDataDosEventos();
 	}
@@ -130,112 +137,122 @@ public class UtilFinalizarAnoLetivo {
 			}
 
 			//Artes
-			float notaArtes1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaArtes1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaArtes2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaArtes2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaArtes3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaArtes3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaArtes4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaArtes4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.QUARTO_BIMESTRE, true);
+			float notaArtes1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.PRIMEIRO_BIMESTRE, false, ano);
+			float notaArtes1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaArtes2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaArtes2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaArtes3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaArtes3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaArtes4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaArtes4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ARTES, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaArtes = media(maior(notaArtes1, notaArtes1Rec),	maior(notaArtes2, notaArtes2Rec), maior(notaArtes3, notaArtes3Rec),	maior(notaArtes4, notaArtes4Rec));
 			historico.setNotaArtes(mostraNotas(notaArtes));
 			
 			//Ciencias
-			float notaCiencias1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaCiencias1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaCiencias2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaCiencias2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaCiencias3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaCiencias3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaCiencias4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaCiencias4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.QUARTO_BIMESTRE, true);
+			float notaCiencias1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaCiencias1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaCiencias2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaCiencias2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaCiencias3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaCiencias3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaCiencias4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaCiencias4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.CIENCIAS, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaCiencias = media(maior(notaCiencias1, notaCiencias1Rec),	maior(notaCiencias2, notaCiencias2Rec), maior(notaCiencias3, notaCiencias3Rec),	maior(notaCiencias4, notaCiencias4Rec));
 			historico.setNotaCiencias(notaCiencias);
 			
 			//EdFisica
-			float notaEdFisica1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaEdFisica1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaEdFisica2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaEdFisica2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaEdFisica3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaEdFisica3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaEdFisica4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaEdFisica4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.QUARTO_BIMESTRE, true);
+			float notaEdFisica1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaEdFisica1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaEdFisica2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaEdFisica2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaEdFisica3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaEdFisica3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaEdFisica4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaEdFisica4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.EDUCACAO_FISICA, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaEdFisica = media(maior(notaEdFisica1, notaEdFisica1Rec),	maior(notaEdFisica2, notaEdFisica2Rec), maior(notaEdFisica3, notaEdFisica3Rec),	maior(notaEdFisica4, notaEdFisica4Rec));
 			historico.setNotaEdFisica(notaEdFisica);
 			
 			//FORM CRISTA
-			float notaFORMACAO_CRISTA1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaFORMACAO_CRISTA1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaFORMACAO_CRISTA2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaFORMACAO_CRISTA2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaFORMACAO_CRISTA3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaFORMACAO_CRISTA3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaFORMACAO_CRISTA4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaFORMACAO_CRISTA4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.QUARTO_BIMESTRE, true);
+			float notaFORMACAO_CRISTA1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaFORMACAO_CRISTA1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaFORMACAO_CRISTA2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaFORMACAO_CRISTA2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaFORMACAO_CRISTA3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaFORMACAO_CRISTA3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaFORMACAO_CRISTA4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaFORMACAO_CRISTA4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.FORMACAO_CRISTA, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaFORMACAO_CRISTA = media(maior(notaFORMACAO_CRISTA1, notaFORMACAO_CRISTA1Rec),	maior(notaFORMACAO_CRISTA2, notaFORMACAO_CRISTA2Rec), maior(notaFORMACAO_CRISTA3, notaFORMACAO_CRISTA3Rec),	maior(notaFORMACAO_CRISTA4, notaFORMACAO_CRISTA4Rec));
 			historico.setNotaformacaoCrista(notaFORMACAO_CRISTA);
 			
 			//GEOGRAFIA
-			float notaGEOGRAFIA1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaGEOGRAFIA1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaGEOGRAFIA2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaGEOGRAFIA2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaGEOGRAFIA3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaGEOGRAFIA3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaGEOGRAFIA4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaGEOGRAFIA4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.QUARTO_BIMESTRE, true);
+			float notaGEOGRAFIA1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaGEOGRAFIA1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaGEOGRAFIA2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaGEOGRAFIA2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaGEOGRAFIA3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaGEOGRAFIA3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaGEOGRAFIA4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaGEOGRAFIA4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.GEOGRAFIA, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaGEOGRAFIA = media(maior(notaGEOGRAFIA1, notaGEOGRAFIA1Rec),	maior(notaGEOGRAFIA2, notaGEOGRAFIA2Rec), maior(notaGEOGRAFIA3, notaGEOGRAFIA3Rec),	maior(notaGEOGRAFIA4, notaGEOGRAFIA4Rec));
 			historico.setNotaGeografia(notaGEOGRAFIA);
 			
 			//HITORIA
-			float notaHISTORIA1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaHISTORIA1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaHISTORIA2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaHISTORIA2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaHISTORIA3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaHISTORIA3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaHISTORIA4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaHISTORIA4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.QUARTO_BIMESTRE, true);
+			float notaHISTORIA1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaHISTORIA1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaHISTORIA2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaHISTORIA2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaHISTORIA3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaHISTORIA3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaHISTORIA4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaHISTORIA4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.HISTORIA, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaHISTORIA = media(maior(notaHISTORIA1, notaHISTORIA1Rec),	maior(notaHISTORIA2, notaHISTORIA2Rec), maior(notaHISTORIA3, notaHISTORIA3Rec),	maior(notaHISTORIA4, notaHISTORIA4Rec));
 			historico.setNotaHistoria(notaHISTORIA);
-				
 			
-			//HITORIA
-			float notaINGLES1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaINGLES1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaINGLES2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaINGLES2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaINGLES3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaINGLES3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaINGLES4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaINGLES4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.QUARTO_BIMESTRE, true);
+			//Ingles
+			float notaINGLES1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaINGLES1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaINGLES2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaINGLES2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaINGLES3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaINGLES3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaINGLES4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaINGLES4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.INGLES, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaINGLES = media(maior(notaINGLES1, notaINGLES1Rec),	maior(notaINGLES2, notaINGLES2Rec), maior(notaINGLES3, notaINGLES3Rec),	maior(notaINGLES4, notaINGLES4Rec));
 			historico.setNotaIngles(notaINGLES);
-				
+			
+			//Espanhol
+			float notaEspanhols1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaEspanhols1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaEspanhols2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaEspanhols2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaEspanhols3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaEspanhols3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaEspanhols4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaEspanhols4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.ESPANHOL, BimestreEnum.QUARTO_BIMESTRE, true,ano);
+			Float notaEspanhols = media(maior(notaEspanhols1, notaEspanhols1Rec),	maior(notaEspanhols2, notaEspanhols2Rec), maior(notaEspanhols3, notaEspanhols3Rec),	maior(notaEspanhols4, notaEspanhols4Rec));
+			historico.setNotaEspanhol(notaEspanhols);
 			
 			//HITORIA
-			float notaMATEMATICA1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaMATEMATICA1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaMATEMATICA2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaMATEMATICA2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaMATEMATICA3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaMATEMATICA3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaMATEMATICA4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaMATEMATICA4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.QUARTO_BIMESTRE, true);
+			float notaMATEMATICA1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaMATEMATICA1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaMATEMATICA2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaMATEMATICA2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaMATEMATICA3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaMATEMATICA3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaMATEMATICA4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaMATEMATICA4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.MATEMATICA, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaMATEMATICA = media(maior(notaMATEMATICA1, notaMATEMATICA1Rec),	maior(notaMATEMATICA2, notaMATEMATICA2Rec), maior(notaMATEMATICA3, notaMATEMATICA3Rec),	maior(notaMATEMATICA4, notaMATEMATICA4Rec));
 			historico.setNotaMatematica(notaMATEMATICA);
 				
 			//HITORIA
-			float notaPORTUGUES1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.PRIMEIRO_BIMESTRE, false);
-			float notaPORTUGUES1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.PRIMEIRO_BIMESTRE, true);
-			float notaPORTUGUES2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.SEGUNDO_BIMESTRE, false);
-			float notaPORTUGUES2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.SEGUNDO_BIMESTRE, true);
-			float notaPORTUGUES3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.TERCEIRO_BIMESTRE, false);
-			float notaPORTUGUES3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.TERCEIRO_BIMESTRE, true);
-			float notaPORTUGUES4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.QUARTO_BIMESTRE, false);
-			float notaPORTUGUES4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.QUARTO_BIMESTRE, true);
+			float notaPORTUGUES1 = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.PRIMEIRO_BIMESTRE, false,ano);
+			float notaPORTUGUES1Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.PRIMEIRO_BIMESTRE, true,ano);
+			float notaPORTUGUES2 = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.SEGUNDO_BIMESTRE, false,ano);
+			float notaPORTUGUES2Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.SEGUNDO_BIMESTRE, true,ano);
+			float notaPORTUGUES3 = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.TERCEIRO_BIMESTRE, false,ano);
+			float notaPORTUGUES3Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.TERCEIRO_BIMESTRE, true,ano);
+			float notaPORTUGUES4 = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.QUARTO_BIMESTRE, false,ano);
+			float notaPORTUGUES4Rec = alunoService.getNota(aluno.getId(), DisciplinaEnum.PORTUGUES, BimestreEnum.QUARTO_BIMESTRE, true,ano);
 			Float notaPORTUGUES = media(maior(notaPORTUGUES1, notaPORTUGUES1Rec),	maior(notaPORTUGUES2, notaPORTUGUES2Rec), maior(notaPORTUGUES3, notaPORTUGUES3Rec),	maior(notaPORTUGUES4, notaPORTUGUES4Rec));
 			historico.setNotaPortugues(notaPORTUGUES);
 			
@@ -245,32 +262,51 @@ public class UtilFinalizarAnoLetivo {
 	}
 	
 	public void gerarHistorico(Aluno aluno){
-		gerarHistorico(aluno, configuracaoService.getConfiguracao().getAnoLetivo());
+		gerarHistorico(aluno, configuracaoService.getConfiguracao().getAnoLetivo() -1);
 	}
 	
-	public void mudarAnoLetivoAluno(Aluno aluno){
+	public void mudarAnoLetivoAluno(Aluno aluno,int anoRematricula){
 	
-		if(aluno.getRematricular() != null && aluno.getRematricular()){
-			aluno.setAnoLetivo(configuracaoService.getConfiguracao().getAnoLetivo()+1);
-		}else if(aluno.getAnoLetivo()< configuracaoService.getConfiguracao().getAnoLetivo()){
-			aluno.setRemovido(true);
+		if(temContratoProximoAno(aluno,anoRematricula)){
+			aluno.setAnoLetivo(anoRematricula);
 		}
+		
 		aluno.setRematricular(false);
 	}
 	
-	public void editarrAlunos(int inicio,int quantidade){
-		List<Aluno> alunos = getAlunosAlunoLetivoAtual();
+	private boolean temContratoProximoAno(Aluno aluno,int anoRematricula) {
+		return configuracaoService.temContratoNoAno(aluno,anoRematricula);
+	}
+
+	public void editarrAlunos(int inicio,int quantidade,int anoLetivoAtual){
+		List<Aluno> alunos = getAlunosAluno(anoLetivoAtual);
 		
 		for(int i=inicio;i<inicio+quantidade;i++){
 			try{
 				System.out.println("id : " + alunos.get(i).getId());
 				System.out.println("Nome : " + alunos.get(i).getNomeAluno());
-				mudarAnoLetivoAluno(alunos.get(i));
+				mudarAnoLetivoAluno(alunos.get(i),anoLetivoAtual);
 				gerarHistorico(alunos.get(i));
 				alunos.get(i).setSerie(Serie.values()[alunos.get(i).getSerie().ordinal()+1]);
 								
 			}catch(Exception e){
 				
+			}
+		}
+	}
+	
+	public void editarrAlunos(List<Aluno> alunos ,int inicio,int quantidade,int anoLetivoAtual){
+		Configuracao conf = configuracaoService.getConfiguracao2();
+		for(int i=inicio;i<inicio+quantidade;i++){
+			try{
+				System.out.println("id : " + alunos.get(i).getId());
+				System.out.println("Nome : " + alunos.get(i).getNomeAluno());
+				//mudarAnoLetivoAluno(alunos.get(i),conf.getAnoRematricula());
+				gerarHistorico(alunos.get(i));
+				alunos.get(i).setSerie(Serie.values()[alunos.get(i).getSerie().ordinal()+1]);
+								
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 		}
 	}
@@ -289,17 +325,27 @@ public class UtilFinalizarAnoLetivo {
 		}
 	}
 	
-	public List<Aluno> getAlunosAlunoLetivoAtual(){
+	public int getAnoLetivoAtual(){
+		return configuracaoService.getConfiguracao2().getAnoLetivo();
+	}
+	
+	public List<Aluno> getAlunosAluno(int ano){
 		
-		return getAlunosAlunoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
+		return getAlunosAlunoLetivo2(ano);
 	}
 	
 	public List<Aluno> getAlunosAlunoLetivo(int ano){
+
 		Map<String, Object> filtros = new HashMap<String, Object>();
 		
 		filtros.put("anoLetivo" ,ano);
 		filtros.put("removido" , false);
 		return  alunoService.find(1, 30000, "nomeAluno", "asc", filtros);
+	}
+	
+	public List<Aluno> getAlunosAlunoLetivo2(int ano){
+		
+		return  configuracaoService.findAlunosComContratoEm(ano);
 	}
 	
 	private Float media(Float... notas) {
