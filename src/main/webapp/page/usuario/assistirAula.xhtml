@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<style>
+* {
+	box-sizing: border-box;
+}
+
+.left {
+	padding: 5px;
+	float: left;
+	width: 30%; /* The width is 20%, by default */
+}
+
+.main {
+	padding: 5px;
+	float: left;
+	width: 70%; /* The width is 60%, by default */
+	min-height: 400px;
+	min-width: 400px
+}
+
+.right {
+	padding: 20px;
+	float: left;
+	width: 20%; /* The width is 20%, by default */
+}
+
+.top {
+	padding: 5px;
+	float: right;
+	width: 100%; /* The width is 60%, by default */
+	min-width: 600px
+}
+
+.ui-datatable table thead tr {
+    display: none;
+}
+
+.botaoGrande {
+	font-size: large !important;
+	width:150px;
+	height:50px;
+	background:orange;
+	font-size: large !import;
+	float: right !important;
+	margin: 0px;
+}
+
+/* Use a media query to add a break point at 800px: */
+@media screen and (max-width:800px) {
+	.left, .main, .right {
+		width: 100%;
+		/* The width is 100%, when the viewport is 800px or smaller */
+	}
+}
+</style>
+		<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+		             
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    <p:graphicImage name="/gfx/preloader.gif" />
+		</p:dialog>
+		<h:form id="form" style="width:100%; border:none; height:100%"
+			rendered="#{authController.hasPermission(authController.mestre,authController.aluno)}">
+
+			<p:growl id="messages" showDetail="true" />
+			<div class="top">
+			<h:outputLabel value="#{alunoAula.aula.disciplina.name}" style="font-size:22px;float:center;width:180px" />
+			<h:outputLabel value="#{alunoAula.aula.dataAula}" style="font-size:16px;width:150px">
+				<f:convertDateTime pattern="dd/MM/yyyy " />
+			</h:outputLabel>
+			<h:outputLabel value="#{alunoAula.aula.titulo}" style="font-size:16px;width:450px"/>
+			</div>
+
+			
+			<div class="left">
+				<h:panelGrid id="panelPrincipal"  >
+						<p:dataTable
+							currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+							emptyMessage="#Nenhum registro encontrado" selectionMode="single"
+							selection="#{alunoAulaController.alunoAula}" rowKey="#{professorTab.id}"
+							filterEvent="enter" lazy="true" liveResize="true"
+							styleClass="tabela,noHeader" pageLinks="5" paginator="true"
+							paginatorPosition="bottom"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							resizableColumns="true" rows="80" id="tbl" var="aulaTab"
+							style="height:100%"
+							sortOrder="DESCENDING"
+							
+							value="#{alunoAulaController.lazyListDataModelAlunoAula}">
+							
+							<p:ajax event="rowSelect" update="form" />
+
+							<p:column sortBy="#{aulaTab.aula.dataAula}" style="width:70px;">
+								<f:facet name="header" rendered="false">
+									<h:outputText value="Data" />
+								</f:facet>
+								<h:outputText value="#{aulaTab.aula.dataAula}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							
+							
+							<p:column sortBy="#{aulaTab.aula.titulo}" >
+								<h:outputText value="#{aulaTab.aula.titulo}" />
+							</p:column>
+							
+							<p:column sortBy="#{aulaTab.aula.disciplina.name}" style="width:95px;" rendered="#{alunoAulaController.exibirColunaDisciplina()}">
+								<h:outputText value="#{aulaTab.aula.disciplina.name}" />
+							</p:column>
+							
+							<p:column style="width:40px;" sortBy="#{aulaTab.assistiu}" >
+								<f:facet name="header">
+									<h:outputText value="Assistida" />
+								</f:facet>
+								<h:graphicImage  value="/resources/gfx/check_organge.png" width="20px" height="20px" rendered="#{aulaTab.assistiu}"/>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				
+			</div>
+
+			<div class="main">
+				<h:panelGrid id="panelVideo"  width="100%">
+						<iframe width="100%" height="100%" style="min-height: 420px;min-width: 420px;"
+							src="#{alunoAula.aula.linkYoutubeEmbed}" />
+							
+							<p:commandButton action="#{alunoAulaController.concluirAula()}" styleClass="botaoGrande"  value="Concluir Aula">
+								<p:ajax process="@this" update="@form"/>
+							</p:commandButton>
+							
+				</h:panelGrid>
+				
+			</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

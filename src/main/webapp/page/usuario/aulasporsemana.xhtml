@@ -1,0 +1,237 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.ui-panel, div.ui-state-hover {
+	margin-left: 50px;
+	margin-bottom: 30px;
+	width: 190px;
+}
+
+.ui-dashboard-column {
+	width: 210px;
+}
+</style>
+		<div style="height: 500px;" >
+				<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+				             
+				<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+				    <p:graphicImage name="/gfx/preloader.gif" />
+				</p:dialog>
+		
+			<h:form style="width: 98%">
+				<p:dashboard  style="width: 98%" id="board" model="#{alunoAulaController.model2}" >
+
+					<p:panel  id="semana1" header="Agosto" style="height: 100px;">
+						
+						<h:outputText value="Semana 03/08 a 07/08" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(1)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+
+					<p:panel id="semana2" header="Agosto" style="height: 100px;">
+						<h:outputText value="Semana 10/08 a 14/08" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(2)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+
+					<p:panel id="semana3" header="Agosto" style="height: 100px;">
+						<h:outputText value="Semana 17/08 a 21/08" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(3)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+
+					<p:panel id="semana4" header="Agosto" style="height: 100px;">
+						<h:outputText value="Semana 24/08 a 28/08" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(4)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana5" header="Setembro" style="height: 100px;">
+						<h:outputText value="Semana 31/08 a 04/09" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(5)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana6" header="Setembro" style="height: 100px;">
+						<h:outputText value="Semana 07/09 a 11/09" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(6)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana7" header="Setembro" style="height: 100px;">
+						<h:outputText value="Semana 14/09 a 18/09" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(7)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana8" header="Setembro" style="height: 100px;">
+						<h:outputText value="Semana 21/09 a 25/09" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(8)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					
+					<p:panel id="semana9" header="Outubro" style="height: 100px;">
+						<h:outputText value="Semana 28/09 a 02/10" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(9)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana10" header="Outubro" style="height: 100px;">
+						<h:outputText value="Semana 05/10 a 09/10" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(10)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana11" header="Outubro" style="height: 100px;">
+						<h:outputText value="Semana 12/10 a 16/10" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(11)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					<p:panel id="semana12" header="Outubro" style="height: 100px;">
+						<h:outputText value="Semana 19/10 a 23/10" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(12)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana13" header="Outubro" style="height: 100px;">
+						<h:outputText value="Semana 26/10 a 30/10" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(13)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana14" header="Novembro" style="height: 100px;">
+						<h:outputText value="Semana 02/11 a 06/11" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(14)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana15" header="Novembro" style="height: 100px;">
+						<h:outputText value="Semana 09/11 a 13/11" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(15)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana16" header="Novembro" style="height: 100px;">
+						<h:outputText value="Semana 16/11 a 20/11" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(16)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana17" header="Novembro" style="height: 100px;">
+						<h:outputText value="Semana 23/11 a 27/11" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(17)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana18" header="Dezembro" style="height: 100px;">
+						<h:outputText value="Semana 30/11 a 04/12" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(18)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana19" header="Dezembro" style="height: 100px;">
+						<h:outputText value="Semana 07/12 a 11/12" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(19)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana20" header="Dezembro" style="height: 100px;">
+						<h:outputText value="Semana 14/12 a 18/12" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(20)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					<p:panel id="semana21" header="Dezembro" style="height: 100px;">
+						<h:outputText value="Semana 21/12 a 25/12" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(21)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="semana22" header="Dezembro" style="height: 100px;">
+						<h:outputText value="Semana 28/12 a 02/01" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarSemana(22)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+
+					
+				</p:dashboard>
+
+				<div style="clear: both" />
+			</h:form>
+		</div>
+
+	</ui:define>
+</ui:composition>

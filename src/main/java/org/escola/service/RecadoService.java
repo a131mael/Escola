@@ -113,7 +113,9 @@ public class RecadoService extends Service {
 			user.setRespostaAberta(recado.getRespostaAberta());
 			user.setTipoDestinatario(recado.getTipoDestinatario());
 			user.setDataParaExibicao(recado.getDataInicio() != null ? recado.getDataInicio() : new Date());
-
+			user.setAprovado(recado.isAprovado());
+			user.setIdQuemPostou(recado.getIdQuemPostou());
+			
 			enviarMensagemAPP(recado);
 
 			em.persist(user);

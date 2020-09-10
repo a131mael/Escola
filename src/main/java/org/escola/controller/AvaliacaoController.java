@@ -179,7 +179,15 @@ public class AvaliacaoController extends AuthController implements Serializable{
 					}
 					
 					filtros.put("bimestre", configuracaoService.getConfiguracao().getBimestre());
-					filtros.put("professor", getLoggedUser().getProfessor());
+					if(!getLoggedUser().getTipoMembro().equals(TipoMembro.MESTRE) 
+							&& !getLoggedUser().getTipoMembro().equals(TipoMembro.ADMIM)
+							&& !getLoggedUser().getTipoMembro().equals(TipoMembro.SECRETARIA)){
+							
+						filtros.put("professor", getLoggedUser().getProfessor());
+					}
+
+					
+
 					
 					filtros.put("anoLetivo", configuracaoService.getConfiguracao().getAnoLetivo());
 					

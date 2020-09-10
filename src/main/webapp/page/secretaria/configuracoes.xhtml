@@ -109,6 +109,27 @@
 					<p:fileDownload value="#{configuracaoController.gerarProtestos()}" />
 				</p:commandButton>
 				
+				<br />
+			<br />
+				<h:outputText value="Gerar Usuario alunos:" />
+				<h:outputText value="" />
+				
+				<p:commandButton icon="ui-icon-contact" ajax="false"
+								action="#{configuracaoController.gerarUsuarioAluno()}"
+				value="Gerar Usuarios aluno ">
+			</p:commandButton>
+			
+			
+				<br />
+			<br />
+				<h:outputText value="Gerar aula dos alunos:" />
+				<h:outputText value="" />
+				
+				<p:commandButton icon="ui-icon-contact" ajax="false"
+								action="#{configuracaoController.corrigirAulasDuplicadas()}"
+				value="Gerar Aula dos alunos">
+			</p:commandButton>
+				
 
 
 		</h:form>

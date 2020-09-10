@@ -167,7 +167,7 @@ public class OfficeDOCUtil {
 			XWPFDocument docx = new XWPFDocument(
 					new FileInputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath(endereco)));
 
-			String caminhoFinalPasta = System.getProperty("java.io.tmpdir") + nomeArquivoSaida + ".doc";
+			String caminhoFinalPasta = System.getProperty("java.io.tmpdir") +  System.getProperty("file.separator") +  nomeArquivoSaida + ".doc";
 			writer = new FileOutputStream(caminhoFinalPasta);
 			// faz o replace do que esta no map
 			for (Map.Entry<String, String> entry : trocas.entrySet()) {
@@ -275,7 +275,9 @@ public class OfficeDOCUtil {
 	private static void replaceText(XWPFParagraph p, String findText, String replaceText) {
 		for (XWPFRun linha : p.getRuns()) {
 			if (linha != null && linha.text() != null && findText != null && replaceText != null) {
-				linha.setText(linha.text().replace(findText, replaceText), 0);
+				if(findText.equalsIgnoreCase(linha.text())){
+					linha.setText(linha.text().replace(findText, replaceText), 0);
+				}
 			}
 		}
 	}

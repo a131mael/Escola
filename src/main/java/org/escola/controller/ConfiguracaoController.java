@@ -20,10 +20,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.escola.model.Aula;
 import org.escola.model.Boleto;
 import org.escola.model.Configuracao;
 import org.escola.model.ContratoAluno;
 import org.escola.service.AlunoService;
+import org.escola.service.AulaService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.util.CompactadorZip;
 import org.escola.util.FileDownload;
@@ -62,6 +64,9 @@ public class ConfiguracaoController implements Serializable{
 	private AlunoService alunoService;
 	
 	@Inject
+	private AulaService aulaService;
+	
+	@Inject
 	private org.escola.service.rotinasAutomaticas.CNAB240 cnab240;
 	
 	@PostConstruct
@@ -84,6 +89,39 @@ public class ConfiguracaoController implements Serializable{
 			inicio +=quantidadeNoLote +1;
 		}
 	}
+	public void gerarUsuarioAluno(){
+		configuracaoService.gerarUsuariosAlunos();
+	}
+	
+	
+	public void corrigirAulasDuplicadas(){
+		List<Aula> all = aulaService.findAll();
+		int tamanhoBloco = 5;;
+		int iteradorAtual =0;
+		
+		while(iteradorAtual<=all.size()){
+			
+			for(int i = iteradorAtual; i<=tamanhoBloco+iteradorAtual;i++){
+				try{
+					aulaService.save(all.get(i),null);
+					
+				}catch(Exception e){
+					
+				}
+			}
+			
+			iteradorAtual++;
+			iteradorAtual+=tamanhoBloco;
+			
+			
+			
+		}
+		
+		
+		
+	}
+	
+	
 	
 	public StreamedContent gerarProtestos() {
 		try {

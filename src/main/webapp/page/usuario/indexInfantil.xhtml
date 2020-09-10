@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.ui-panel, div.ui-state-hover {
+	margin-left: 50px;
+	margin-bottom: 50px;
+	width: 240px;
+}
+
+.ui-dashboard-column {
+	width: 260px;
+}
+</style>
+		<div style="height: 500px;" >
+			<h:form style="width: 98%">
+				<p:dashboard  style="width: 98%" id="board" model="#{alunoAulaController.model}" >
+
+					<p:panel  id="portugues" header="Português" style="height: 100px;">
+						
+						<h:outputText value="Português" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(0)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+
+					<p:panel id="matematica" header="Matemática" style="height: 100px;">
+						<h:outputText value="Matemática" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(1)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+
+					<p:panel id="historia" header="Culinária" style="height: 100px;">
+							<h:outputText value="Culinária" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(10)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+
+					<p:panel id="geografia" header="LIVRO de EXPERIENCIAS" style="height: 100px;">
+							<h:outputText value="Livro de Experiências" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(11)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+
+					<p:panel id="ciencias" header="Brincadeiras das Artes" style="height: 100px;">
+							<h:outputText value="Brincadeiras das Artes" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(12)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="formacao" header="Formação Cristã" style="height: 100px;">
+						<h:outputText value="Formação cristã" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(7)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					
+					<p:panel id="letrar" header="Letrar" style="height: 100px;">
+						<h:outputText value="Letrar" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(13)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="numerar" header="Numerar" style="height: 100px;">
+						<h:outputText value="Numerar" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(14)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="investigar" header="Investigar" style="height: 100px;">
+						<h:outputText value="Investigar" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(15)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="desenhar" header="Desenhar" style="height: 100px;">
+						<h:outputText value="Desenhar" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(16)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					
+					<p:panel id="edfisica" header="Educação Física" style="height: 100px;">
+							<h:outputText value="Educação Física" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar " action="#{alunoAulaController.entrarDisciplina(4)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="ingles" header="Inglês" style="height: 100px;">
+						<h:outputText value="Inglês" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar" action="#{alunoAulaController.entrarDisciplina(3)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					<p:panel id="historiaemcena" header="História em cena" style="height: 100px;">
+						<h:outputText value="História em cena" />
+						<br/>
+						<br/>
+						<p:commandLink value="Entrar" action="#{alunoAulaController.entrarDisciplina(17)}" style="text-decoration:none;color:orange;font-size:20px;float: right;"/>
+						<br/> 
+						<br/> 
+					</p:panel>
+					
+					
+					
+				</p:dashboard>
+
+				<div style="clear: both" />
+			</h:form>
+		</div>
+
+	</ui:define>
+</ui:composition>

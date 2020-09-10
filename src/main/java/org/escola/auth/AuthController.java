@@ -139,8 +139,9 @@ public class AuthController implements Serializable {
 			UsernamePasswordToken token = new UsernamePasswordToken(authUser.getLogin(),
 					authUser.getSenha().toCharArray(), true);
 			SecurityUtils.getSubject().login(token);
-
-			return getLoggedUser().getTipoMembro().getName();
+			TipoMembro tpm = getLoggedUser().getTipoMembro();
+			
+			return tpm.getName();
 		} catch (Exception ex) {
 			// FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 			// "Erro", "Registration Fail");

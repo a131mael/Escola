@@ -18,6 +18,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.enums.Serie;
 import org.escola.model.ProfessorTurma;
 import org.escola.model.Turma;
 import org.escola.util.Service;
@@ -161,6 +162,42 @@ public class TurmaService extends Service {
 		}
 		
 		return turmasDoProfessor;
+	}
+	
+	public List<Serie> findAllSeries(Long idProfessor) {
+		List<Turma> turmasDoProfessor = new ArrayList<>();
+		List<Serie> series = new ArrayList<>();
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT pt from  ProfessorTurma pt ");
+		sql.append("where pt.professor.id =   ");
+		sql.append(idProfessor);
+		Query query = em.createQuery(sql.toString());
+		
+		 
+		try{
+			List<ProfessorTurma> professorTurmas = query.getResultList();
+			for(ProfessorTurma profT : professorTurmas){
+				Turma t = profT.getTurma();
+				turmasDoProfessor.add(t);
+			}
+			
+			for(Turma turma : turmasDoProfessor){
+				if(series.size()>0){
+					if(!series.contains(turma.getSerie())){
+						series.add(turma.getSerie());
+					}
+				}else{
+					series.add(turma.getSerie());
+				}
+			}
+		
+		}catch(NoResultException noResultException){
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return series;
 	}
 
 /*	public Usuario findMaiorPontuadorSemana() {

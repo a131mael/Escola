@@ -1,0 +1,146 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" style="width:100%; border:none">
+
+			<h:panelGrid id="panelFerramentas" columns="8" style="margin-top: -30px;">
+				<h:commandButton action="#{aulaController.adicionarNovo()}"	value="Adicionar" />
+				<h:commandButton actionListener="#{aulaController.setMostrarListagem()}"	value="Exibir" >
+					<p:ajax process="@this" update="@form"/>
+				</h:commandButton>
+				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{aulaController.editar()}"	alt="Editar" disabled="#{!aulaController.aulaSelecionada}"/>
+				<p:commandButton id="remover" icon="ui-icon-trash" action="#{aulaController.remover()}" alt="Remover" 
+									disabled="#{!aulaController.aulaSelecionada}" update="@form"/>
+				
+			</h:panelGrid>
+
+			<h:panelGrid id="panelPrincipal" width="98%" >
+			<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="#Nenhum registro encontrado"
+                             selectionMode="single" 
+                             selection="#{aulaController.aula}"
+                             rowKey="#{professorTab.id}"
+                             filterEvent="enter" 
+                             lazy="true" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="25"
+                             rowsPerPageTemplate="25,50,100"
+                          	 id="tbl" var="aulaTab"
+							 value="#{aulaController.lazyDataModel}"
+							 >
+					<p:ajax event="rowSelect"  update="form:panelFerramentas" />
+				
+					<p:column rendered="true" style="width:35px;" 
+							  filterBy="#{aulaTab.id}"
+                              sortBy="#{aulaTab.id}" >
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{aulaTab.id}" />
+					</p:column>
+					
+					<p:column filterBy="#{aulaTab.serie}" style="width:75px;" 
+                              sortBy="#{aulaTab.serie}"
+					          filterOptions="#{CombosEspeciaisMB.seriesSelectIItem}"
+					          rendered="#{aulaController.exibirSerie()}">
+						<f:facet name="header">
+							<h:outputText value="Serie" />
+						</f:facet>
+						<h:outputText value="#{aulaTab.serie.name}" />
+					</p:column>
+					
+					<p:column filterBy="#{aulaTab.disciplina}" style="width:85px;"
+                              sortBy="#{aulaTab.disciplina}"
+					          filterOptions="#{CombosEspeciaisMB.disciplinasSelectIItem}"
+					          rendered="#{aulaController.exibirSerie()}">
+						<f:facet name="header">
+							<h:outputText value="Disciplina" />
+						</f:facet>
+						<h:outputText value="#{aulaTab.disciplina.name}" />
+					</p:column>
+					
+					
+					<p:column filterBy="#{aulaTab.titulo}"
+                              sortBy="#{aulaTab.titulo}" >
+						<f:facet name="header">
+							<h:outputText value="Titulo" />
+						</f:facet>
+						<h:outputText value="#{aulaTab.titulo}" />
+					</p:column>
+					
+					<p:column filterBy="#{aulaTab.ordem}" style="width:185px;" 
+                              sortBy="#{aulaTab.ordem}" >
+						<f:facet name="header">
+							<h:outputText value="Sequência" />
+						</f:facet>
+						 <p:cellEditor>
+						
+						<f:facet name="output">
+							<p:selectOneMenu style="width: 56px;"	value="#{aulaTab.ordem}">
+								  <f:selectItem itemLabel="" itemValue="0" />
+								 <f:selectItem itemLabel="Primeira" itemValue="1" />
+								 <f:selectItem itemLabel="Segunda" itemValue="2" />
+								 <f:selectItem itemLabel="Terceira" itemValue="3" />
+								 <f:selectItem itemLabel="Quarta" itemValue="4" />
+								 <f:selectItem itemLabel="Quinta" itemValue="5" />
+								 <f:selectItem itemLabel="Sexta" itemValue="6" />
+								 <f:selectItem itemLabel="setima" itemValue="7" />
+								 <f:selectItem itemLabel="Oitava" itemValue="8" />
+								 <f:selectItem itemLabel="Nona" itemValue="9" />
+								 <f:selectItem itemLabel="Decima" itemValue="10" />
+								<p:ajax event="change" process="@this" listener="#{aulaController.saveOrder(aulaTab)}"/>
+							</p:selectOneMenu>
+						</f:facet>
+						 <f:facet name="input">
+							<p:selectOneMenu style="width: 56px;"	value="#{aulaTab.ordem}">
+								 <f:selectItem itemLabel="Primeira" itemValue="1" />
+								 <f:selectItem itemLabel="Segunda" itemValue="2" />
+								 <f:selectItem itemLabel="Terceira" itemValue="3" />
+								 <f:selectItem itemLabel="Quarta" itemValue="4" />
+								 <f:selectItem itemLabel="Quinta" itemValue="5" />
+								 <f:selectItem itemLabel="Sexta" itemValue="6" />
+								<p:ajax event="change" process="@this" listener="#{aulaController.saveOrder(aulaTab)}"/>
+							</p:selectOneMenu>
+						</f:facet>
+						</p:cellEditor>
+						
+					</p:column>
+					
+					<p:column filterBy="#{aulaTab.dataAula}" style="width:75px;"
+                              sortBy="#{aulaTab.dataAula}" >
+						<f:facet name="header">
+							<h:outputText value="Data" />
+						</f:facet>
+						<h:outputText value="#{aulaTab.dataAula}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column filterBy="#{aulaTab.linkYoutube}" 
+                              sortBy="#{aulaTab.linkYoutube}" >
+						<f:facet name="header">
+							<h:outputText value="Link" />
+						</f:facet>
+						<h:outputLink target="_blank" value="#{aulaTab.linkYoutubeEmbed}">#{aulaTab.linkYoutube}</h:outputLink>
+					</p:column>					
+					
+					
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

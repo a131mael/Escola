@@ -231,8 +231,10 @@ public class TurmaController extends AuthController implements Serializable {
 		Util.addAtributoSessao("turma", turma);
 		
 		String pasta = ""+System.currentTimeMillis();
-		String caminhoFinalPasta = System.getProperty("java.io.tmpdir") + pasta; 
-		//String caminhoFinalPasta = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+pasta; 
+		String caminhoFinalPasta = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + pasta; 
+		//String caminhoFinalPasta = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+pasta;
+		
+		System.out.println("Caminho final dapasta " + caminhoFinalPasta);
 		CompactadorZip.createDir(caminhoFinalPasta);
 		List<Aluno> alunos= alunoService.findAlunoTurmaBytTurma(idTurma);
 		for(Aluno al :alunos){
@@ -243,9 +245,10 @@ public class TurmaController extends AuthController implements Serializable {
 			}
 		}
 		
-		OfficeDOCUtil.unionDocs2(caminhoFinalPasta, turma.getNome()+".doc");
+		//OfficeDOCUtil.unionDocs2(caminhoFinalPasta, turma.getNome()+".doc");
 		
 		String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+turma.getNome()+".zip";
+		System.out.println("Caminho arquivoSaida " + arquivoSaida);
 		CompactadorZip.compactarParaZip(arquivoSaida, caminhoFinalPasta);
 		
 		InputStream stream =  new FileInputStream(arquivoSaida);
@@ -270,9 +273,9 @@ public class TurmaController extends AuthController implements Serializable {
 	private HashMap<String, String> montarBoletim(Aluno aluno) {
 		Professor prof = alunoService.getProfessor(aluno.getId());
 		HashMap<String, String> trocas = new HashMap<>();
-		trocas.put("#nomeAluno", aluno.getNomeAluno());
-		trocas.put("#nomeProfessor", prof.getNome());
-		trocas.put("#turma", aluno.getSerie().getName());
+		trocas.put("nomeAluno", aluno.getNomeAluno());
+		trocas.put("nomeProfessor", prof.getNome());
+		trocas.put("turma", aluno.getSerie().getName());
 		
 		//FALTAS
 		trocas.put("#f1", aluno.getFaltas1Bimestre() != null ?aluno.getFaltas1Bimestre().toString():"");
@@ -691,7 +694,7 @@ public class TurmaController extends AuthController implements Serializable {
 		trocas.put("#nsF",
 				mostraNotas(media(maior(nota1RecEspanhol, nota1BimestreEspanhol), maior(nota2RecEspanhol, nota2BimestreEspanhol),
 						maior(nota3RecEspanhol, nota3BimestreEspanhol), maior(nota4RecEspanhol, nota4BimestreEspanhol))));
-		trocas.put("#nsrf", mostraNotas(notaRecFinalEspanhol));
+		trocas.put("nsrf", mostraNotas(notaRecFinalEspanhol));
 
 		
 		
@@ -718,8 +721,12 @@ public class TurmaController extends AuthController implements Serializable {
 			String dx = df.format(nota);
 			
 			dx = dx.replace(",", ".");
-			
-			return String.valueOf((Math.round(Float.parseFloat(dx) / 0.5) * 0.5)) ;
+
+			String notaFinal = String.valueOf((Math.round(Float.parseFloat(dx) / 0.5) * 0.5));
+			if(notaFinal.length()>3){
+				notaFinal = notaFinal.substring(0, notaFinal.length()-2);
+			}
+			return  notaFinal;
 		}
 	}
 

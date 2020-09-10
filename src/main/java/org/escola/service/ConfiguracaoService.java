@@ -20,10 +20,12 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.Boleto;
 import org.escola.model.Configuracao;
 import org.escola.model.ContratoAluno;
+import org.escola.model.Member;
 import org.escola.util.Service;
 import org.escola.util.Util;
 
@@ -270,6 +272,27 @@ public class ConfiguracaoService extends Service {
 			return true;
 		}
 		return false;
+	}
+
+	public void gerarUsuariosAlunos() {
+		List<Aluno> als = findAlunosComContratoEm(getConfiguracao().getAnoLetivo());
+		
+		for(Aluno al : als){
+			Member m = new Member();
+			m.setName(al.getNomeAluno());
+			m.setIdCrianca1(al.getId()+"");
+			m.setSenha(al.getUltimoContrato().getCpfResponsavel());
+			m.setLogin(al.getUltimoContrato().getCpfResponsavel());
+			m.setTipoMembro(TipoMembro.ALUNO);
+			if(al.getSerie().ordinal()<4){
+				m.setInfantil(true);
+			}else{
+				m.setInfantil(false);
+			}
+			
+			em.persist(m);
+		}
+		
 	}
 	
 }

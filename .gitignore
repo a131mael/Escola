@@ -1,1 +1,7 @@
-/target/
+/target/Escola/
+/target/generated-sources/
+/target/lib/
+/target/m2e-wtp/
+/target/maven-archiver/
+/target/maven-status/
+

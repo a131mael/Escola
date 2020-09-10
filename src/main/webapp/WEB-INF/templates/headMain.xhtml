@@ -32,7 +32,7 @@
 
 	<p:menubar style="width:100%;margin-left: -16px;margin-top: -16px">
 
-		<p:submenu label="Crianças">
+		<p:submenu label="Crianças" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" >
 			
 			<p:menuitem value="Alunos" url="../aluno/index.jsf"
 				icon="ui-icon-pencil"
@@ -40,7 +40,7 @@
 
 			<p:menuitem value="TODOS root" url="../aluno/indexRoot.jsf"
 				icon="ui-icon-pencil"
-				rendered="#{authController.hasPermission(authController.administrador,authController.mestre)}" />
+				rendered="#{authController.hasPermission(authController.mestre)}" />
 
 			<p:menuitem value="Todos" url="../aluno/indexFinanceiro.jsf"
 				icon="ui-icon-pencil"
@@ -69,7 +69,23 @@
 				icon="ui-icon-close"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
 
+			<p:menuitem value="Aulas por Disciplina" url="../usuario/index.jsf"
+				icon="ui-icon-gear"
+				rendered="#{authController.hasPermission(authController.mestre,authController.aluno)}" />
+				
+			<p:menuitem value="Aulas por semana" url="../usuario/aulasporsemana.jsf"
+				icon="ui-icon-gear"
+				rendered="#{authController.hasPermission(authController.mestre,authController.aluno)}" />
+
 			<p:menuitem value="Turmas" url="../turma/index.jsf"
+				icon="ui-icon-gear"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
+
+			<p:menuitem value="Aulas" url="../aula/index.jsf"
+				icon="ui-icon-gear"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
+				
+			<p:menuitem value="Chamada" url="../chamada/index.jsf"
 				icon="ui-icon-gear"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
 

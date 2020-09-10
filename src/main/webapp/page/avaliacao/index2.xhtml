@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" style="width:100%; border:none">
+
+			<h:panelGrid id="panelFerramentas" columns="8" style="margin-top: -30px;">
+				<h:commandButton action="#{avaliacaoController.adicionarNovo()}"	value="Adicionar" />
+				<h:commandButton actionListener="#{avaliacaoController.setMostrarListagem()}"	value="Exibir" >
+					<p:ajax process="@this" update="@form"/>
+				</h:commandButton>
+				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{avaliacaoController.editar()}"	alt="Editar" disabled="#{!avaliacaoController.avaliacaoSelecionada}"/>
+				<p:commandButton id="remover" icon="ui-icon-trash" action="#{avaliacaoController.remover()}" alt="Remover" 
+									disabled="#{!avaliacaoController.avaliacaoSelecionada}" update="form:tbl"/>
+				
+			</h:panelGrid>
+
+			<h:panelGrid id="panelPrincipal" width="90%" rendered="#{avaliacaoController.mostrarListagem}">
+			<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="#Nenhum registro encontrado"
+                             selectionMode="single" 
+                             selection="#{avaliacaoController.avaliacao}"
+                             rowKey="#{professorTab.id}"
+                             filterEvent="enter" 
+                             lazy="true" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="20"
+                          	 id="tbl" var="avaliacaoTab"
+							 value="#{avaliacaoController.lazyDataModel}"
+							 >
+					<p:ajax event="rowSelect"  update="form:panelFerramentas" />
+				
+					<p:column style="width:10%" rendered="true"
+							  filterBy="#{avaliacaoTab.id}"
+                              sortBy="#{avaliacaoTab.id}" >
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{avaliacaoTab.id}" />
+					</p:column>
+
+					<p:column filterBy="#{avaliacaoTab.nome}"
+                              sortBy="#{avaliacaoTab.nome}" >
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{avaliacaoTab.nome}" />
+					</p:column>
+
+					<p:column filterBy="#{avaliacaoTab.disciplina}"
+                              sortBy="#{avaliacaoTab.disciplina}" 
+							  filterOptions="#{CombosEspeciaisMB.disciplinasSelectIItem}">
+						<f:facet name="header">
+							<h:outputText value="Disciplina	" />
+						</f:facet>
+						<h:outputText value="#{avaliacaoTab.disciplina.name}" />
+					</p:column>
+	
+					<p:column filterBy="#{avaliacaoTab.serie}"
+                              sortBy="#{avaliacaoTab.serie}"
+					          filterOptions="#{CombosEspeciaisMB.seriesSelectIItem}"
+					          rendered="#{avaliacaoController.exibirSerie()}">
+						<f:facet name="header">
+							<h:outputText value="Serie" />
+						</f:facet>
+						<h:outputText value="#{avaliacaoTab.serie.name}" />
+					</p:column>
+					
+					<p:column filterBy="#{avaliacaoTab.bimestre}"
+                              sortBy="#{avaliacaoTab.bimestre}"
+					          filterOptions="#{CombosEspeciaisMB.bimestreSelectIItem}">
+						<f:facet name="header">
+							<h:outputText value="Bimestre" />
+						</f:facet>
+						<h:outputText value="#{avaliacaoTab.bimestre.name}" />
+					</p:column>
+					
+					<p:column filterBy="#{avaliacaoTab.anoLetivo}"
+                              sortBy="#{avaliacaoTab.anoLetivo}"
+					          >
+						<f:facet name="header">
+							<h:outputText value="Ano" />
+						</f:facet>
+						<h:outputText value="#{avaliacaoTab.anoLetivo}" />
+					</p:column>
+					
+					
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

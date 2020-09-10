@@ -8,6 +8,20 @@
   <listener>
     <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
   </listener>
+  
+<context-param>
+    <param-name>primefaces.UPLOADER</param-name>
+    <param-value>auto</param-value>
+</context-param>
+<filter>
+    <filter-name>PrimeFaces FileUpload Filter</filter-name>
+    <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>PrimeFaces FileUpload Filter</filter-name>
+    <url-pattern>*.jsf</url-pattern>
+</filter-mapping>
+  
   <filter>
     <filter-name>ShiroFilter</filter-name>
     <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
@@ -28,6 +42,16 @@
     <dispatcher>INCLUDE</dispatcher>
     <dispatcher>ERROR</dispatcher>
   </filter-mapping>
+  
+<!--   <filter> -->
+<!--     <filter-name>PrimeFaces FileUpload Filter</filter-name> -->
+<!--     <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class> -->
+<!-- </filter> -->
+<!-- <filter-mapping> -->
+<!--     <filter-name>PrimeFaces FileUpload Filter</filter-name> -->
+<!--     <servlet-name>Faces Servlet</servlet-name> -->
+<!-- </filter-mapping> -->
+  
   <context-param>
     <param-name>menu.admin</param-name>
     <param-value> 

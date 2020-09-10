@@ -7,9 +7,10 @@
 
 	<ui:define name="content"
 		rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
-		<h:form style="width:100%; border:none" prependId="false">
+		
+		<h:form style="width:100%; border:none" prependId="false" enctype="multipart/form-data"> 
 
-			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+			<h:panelGrid columns="2" width="100%;" styleClass="alinharTopo"
 				style="margin-top: -30px;width:92%">
 
 				<p:tabView>
@@ -40,7 +41,11 @@
 									itemValue="#{country}" />
 								<p:ajax event="change" process="@this" />
 							</p:selectOneMenu>
-
+							
+							<h:outputLabel value="Imagem: "	style="font-size: 13px; width:180px" />
+							<p:fileUpload fileUploadListener="#{recadoController.handleFileUpload}" auto="false"/>
+							
+						
 
 							<h:outputLabel value="Descrição: "
 								style="font-size: 13px; width:180px" />
@@ -207,6 +212,7 @@
 
 			<h:commandButton id="salvarButtom"
 				style="margin-left:690px !important"
+				ajax="false"
 				action="#{recadoController.salvar()}" value="Salvar" />
 
 		</h:form>

@@ -11,19 +11,116 @@
     NAME="output" PATH="/page/turma/index.xhtml"
     SHAPE="73,144,88,144,88,288,303,288"
     TARGET="rules:#page#turma#index.xhtml" TITLE="Professor" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="Aluno::#page#usuario#aulasporsemana.xhtml"
+    NAME="output2" PATH="/page/usuario/aulasporsemana.xhtml"
+    TARGET="rules:#page#usuario#aulasporsemana.xhtml" TITLE="Aluno" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="AlunoInfantil::#page#usuario#indexInfantil.xhtml" NAME="output3"
+    PATH="/page/usuario/indexInfantil.xhtml"
+    TARGET="rules:#page#usuario#indexInfantil.xhtml"
+    TITLE="AlunoInfantil" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="Administrador::#page#secretaria#index.xhtml"
-    NAME="output2" PATH="/page/secretaria/index.xhtml"
+    NAME="output4" PATH="/page/secretaria/index.xhtml"
     TARGET="rules:#page#secretaria#index.xhtml" TITLE="Administrador" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="Mestre::#page#secretaria#index.xhtml"
-    NAME="output3" PATH="/page/secretaria/index.xhtml"
+    NAME="output5" PATH="/page/secretaria/index.xhtml"
     TARGET="rules:#page#secretaria#index.xhtml" TITLE="Mestre" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="Financeiro::#page#secretaria#index.xhtml"
-    NAME="output4" PATH="/page/secretaria/index.xhtml"
+    NAME="output6" PATH="/page/secretaria/index.xhtml"
     TARGET="rules:#page#secretaria#index.xhtml" TITLE="Financeiro" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#index.xhtml" PATH="/page/index.xhtml"
-  SHAPE="128,32,50,25" model-entity="JSFProcessGroup" persistent="true"/>
+ <PROCESS-ITEM NAME="rules:#page#aluno#index.xhtml"
+  PATH="/page/aluno/index.xhtml" SHAPE="296,176,50,41" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aluno#index.xhtml:0" NAME="item"
+   PATH="/page/aluno/index.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
+    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
+    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+  <PROCESS-ITEM ID="rules:#page#aluno#index.xhtml:1" NAME="item1"
+   PATH="/page/aluno/index.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#secretaria#alunosUltimoAnoLetivo.xhtml"
+  PATH="/page/secretaria/alunosUltimoAnoLetivo.xhtml"
+  SHAPE="1072,216,50,41" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM
+   ID="rules:#page#secretaria#alunosUltimoAnoLetivo.xhtml:0" NAME="item"
+   PATH="/page/secretaria/alunosUltimoAnoLetivo.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
+    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
+    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+  <PROCESS-ITEM
+   ID="rules:#page#secretaria#alunosUltimoAnoLetivo.xhtml:1"
+   NAME="item1" PATH="/page/secretaria/alunosUltimoAnoLetivo.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#aluno#indexRoot.xhtml"
+  PATH="/page/aluno/indexRoot.xhtml" SHAPE="624,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aluno#indexRoot.xhtml:0" NAME="item"
+   PATH="/page/aluno/indexRoot.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="cadastrar::#page#aluno#cadastrarAlunoRoot.xhtml" NAME="output"
+    PATH="/page/aluno/cadastrarAlunoRoot.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAlunoRoot.xhtml"
+    TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
+    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
+    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#aluno#indexFinanceiro.xhtml"
+  PATH="/page/aluno/indexFinanceiro.xhtml" SHAPE="352,849,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aluno#indexFinanceiro.xhtml:0"
+   NAME="item" PATH="/page/aluno/indexFinanceiro.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#aluno#cadastrarAluno.xhtml"
+  PATH="/page/aluno/cadastrarAluno.xhtml" SHAPE="496,192,50,57" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aluno#cadastrarAluno.xhtml:0"
+   NAME="item" PATH="/page/aluno/cadastrarAluno.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="exibirAluno::#page#aluno#exibirAluno.xhtml"
+    NAME="output" PATH="/page/aluno/exibirAluno.xhtml"
+    TARGET="rules:#page#aluno#exibirAluno.xhtml" TITLE="exibirAluno" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="index::#page#aluno#index.xhtml"
+    NAME="output1" PATH="/page/aluno/index.xhtml"
+    TARGET="rules:#page#aluno#index.xhtml" TITLE="index" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerContrato.xhtml"
+    NAME="output2" PATH="/page/aluno/removerContrato.xhtml"
+    TARGET="rules:#page#aluno#removerContrato.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="indexFinanceiro::#page#aluno#indexFinanceiro.xhtml"
+    NAME="output3" PATH="/page/aluno/indexFinanceiro.xhtml"
+    TARGET="rules:#page#aluno#indexFinanceiro.xhtml"
+    TITLE="indexFinanceiro" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#aluno#removerContrato.xhtml"
+  PATH="/page/aluno/removerContrato.xhtml" SHAPE="880,513,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aluno#removerContrato.xhtml:0"
+   NAME="item" PATH="/page/aluno/removerContrato.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="ok::#page#aluno#cadastrarAluno.xhtml"
+    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
+    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="ok" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#page#secretaria#index.xhtml"
   PATH="/page/secretaria/index.xhtml" SHAPE="136,200,50,89" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules:#page#secretaria#index.xhtml:0" NAME="item"
@@ -50,56 +147,6 @@
     TARGET="rules:#page#calendario#index.xhtml" TITLE="listagemEventos" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#aluno#cadastrarAluno.xhtml"
-  PATH="/page/aluno/cadastrarAluno.xhtml" SHAPE="496,192,50,57" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules:#page#aluno#cadastrarAluno.xhtml:0"
-   NAME="item" PATH="/page/aluno/cadastrarAluno.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="exibirAluno::#page#aluno#exibirAluno.xhtml"
-    NAME="output" PATH="/page/aluno/exibirAluno.xhtml"
-    TARGET="rules:#page#aluno#exibirAluno.xhtml" TITLE="exibirAluno" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT ID="index::#page#aluno#index.xhtml"
-    NAME="output1" PATH="/page/aluno/index.xhtml"
-    TARGET="rules:#page#aluno#index.xhtml" TITLE="index" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerContrato.xhtml"
-    NAME="output2" PATH="/page/aluno/removerContrato.xhtml"
-    TARGET="rules:#page#aluno#removerContrato.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT
-    ID="indexFinanceiro::#page#aluno#indexFinanceiro.xhtml"
-    NAME="output3" PATH="/page/aluno/indexFinanceiro.xhtml"
-    TARGET="rules:#page#aluno#indexFinanceiro.xhtml"
-    TITLE="indexFinanceiro" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#aluno#index.xhtml"
-  PATH="/page/aluno/index.xhtml" SHAPE="296,176,50,41" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules:#page#aluno#index.xhtml:0" NAME="item"
-   PATH="/page/aluno/index.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
-    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
-    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
-    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
-    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
-  <PROCESS-ITEM ID="rules:#page#aluno#index.xhtml:1" NAME="item1"
-   PATH="/page/aluno/index.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
-    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
-    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#aluno#exibirAluno.xhtml"
-  PATH="/page/aluno/exibirAluno.xhtml" SHAPE="752,160,50,25"
-  model-entity="JSFProcessGroup" persistent="true"/>
- <PROCESS-ITEM NAME="rules:#page#turma#index.xhtml"
-  PATH="/page/turma/index.xhtml" SHAPE="304,280,50,41" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules:#page#turma#index.xhtml:0" NAME="item"
-   PATH="/page/turma/index.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#turma#cadastrarTurma.xhtml"
-    NAME="output" PATH="/page/turma/cadastrarTurma.xhtml"
-    TARGET="rules:#page#turma#cadastrarTurma.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#page#professor#index.xhtml"
   PATH="/page/professor/index.xhtml" SHAPE="312,384,50,41" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules:#page#professor#index.xhtml:0" NAME="item"
@@ -111,13 +158,13 @@
     TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#professor#visualizarAluno.xhtml"
-  PATH="/page/professor/visualizarAluno.xhtml" SHAPE="552,448,50,41" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules:#page#professor#visualizarAluno.xhtml:0"
-   NAME="item" PATH="/page/professor/visualizarAluno.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="index::#page#professor#index.xhtml"
-    NAME="output" PATH="/page/professor/index.xhtml"
-    TARGET="rules:#page#professor#index.xhtml" TITLE="index" model-entity="JSFProcessItemOutput"/>
+ <PROCESS-ITEM NAME="rules:#page#turma#index.xhtml"
+  PATH="/page/turma/index.xhtml" SHAPE="304,280,50,41" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#turma#index.xhtml:0" NAME="item"
+   PATH="/page/turma/index.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#turma#cadastrarTurma.xhtml"
+    NAME="output" PATH="/page/turma/cadastrarTurma.xhtml"
+    TARGET="rules:#page#turma#cadastrarTurma.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#page#turma#cadastrarTurma.xhtml"
@@ -127,6 +174,15 @@
    <PROCESS-ITEM-OUTPUT ID="index::#page#turma#index.xhtml"
     NAME="output" PATH="/page/turma/index.xhtml"
     TARGET="rules:#page#turma#index.xhtml" TITLE="index" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#professor#visualizarAluno.xhtml"
+  PATH="/page/professor/visualizarAluno.xhtml" SHAPE="552,448,50,41" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#professor#visualizarAluno.xhtml:0"
+   NAME="item" PATH="/page/professor/visualizarAluno.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="index::#page#professor#index.xhtml"
+    NAME="output" PATH="/page/professor/index.xhtml"
+    TARGET="rules:#page#professor#index.xhtml" TITLE="index" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#page#avaliacao#index.xhtml"
@@ -140,9 +196,6 @@
     TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#avaliacao#cadastrarAvaliacao.xhtml"
-  PATH="/page/avaliacao/cadastrarAvaliacao.xhtml" SHAPE="488,120,50,25"
-  model-entity="JSFProcessGroup" persistent="true"/>
  <PROCESS-ITEM NAME="rules:#page#calendario#index.xhtml"
   PATH="/page/calendario/index.xhtml" SHAPE="320,512,50,41" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules:#page#calendario#index.xhtml:0" NAME="item"
@@ -174,9 +227,6 @@
     TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#professor#cadastrarProfessor.xhtml"
-  PATH="/page/professor/cadastrarProfessor.xhtml" SHAPE="536,384,50,25"
-  model-entity="JSFProcessGroup" persistent="true"/>
  <PROCESS-ITEM NAME="rules:#page#admin#listarUsuarios.xhtml"
   PATH="/page/admin/listarUsuarios.xhtml" SHAPE="736,96,50,41" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules:#page#admin#listarUsuarios.xhtml:0"
@@ -187,9 +237,6 @@
     TARGET="rules:#page#admin#cadastrarUsuario.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#admin#cadastrarUsuario.xhtml"
-  PATH="/page/admin/cadastrarUsuario.xhtml" SHAPE="944,120,50,25"
-  model-entity="JSFProcessGroup" persistent="true"/>
  <PROCESS-ITEM NAME="rules:#page#secretaria#exAlunos.xhtml"
   PATH="/page/secretaria/exAlunos.xhtml" SHAPE="851,311,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules:#page#secretaria#exAlunos.xhtml:0" NAME="item"
@@ -209,9 +256,6 @@
     TARGET="rules:#page#recado#cadastrarRecado.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#recado#cadastrarRecado.xhtml"
-  PATH="/page/recado/cadastrarRecado.xhtml" SHAPE="192,416,50,25"
-  model-entity="JSFProcessGroup" persistent="true"/>
  <PROCESS-ITEM NAME="rules:#page#aluno#canceladas.xhtml"
   PATH="/page/aluno/canceladas.xhtml" SHAPE="840,192,50,41" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules:#page#aluno#canceladas.xhtml:0" NAME="item"
@@ -221,61 +265,72 @@
     TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#secretaria#alunosUltimoAnoLetivo.xhtml"
-  PATH="/page/secretaria/alunosUltimoAnoLetivo.xhtml"
-  SHAPE="1072,216,50,41" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM
-   ID="rules:#page#secretaria#alunosUltimoAnoLetivo.xhtml:0" NAME="item"
-   PATH="/page/secretaria/alunosUltimoAnoLetivo.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
-    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
-    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
-    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
-    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
-  <PROCESS-ITEM
-   ID="rules:#page#secretaria#alunosUltimoAnoLetivo.xhtml:1"
-   NAME="item1" PATH="/page/secretaria/alunosUltimoAnoLetivo.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
-    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
-    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#aluno#indexFinanceiro.xhtml"
-  PATH="/page/aluno/indexFinanceiro.xhtml" SHAPE="352,849,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules:#page#aluno#indexFinanceiro.xhtml:0"
-   NAME="item" PATH="/page/aluno/indexFinanceiro.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aluno#cadastrarAluno.xhtml"
-    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
-    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#aluno#removerAluno.xhtml"
-  PATH="/page/aluno/removerAluno.xhtml" SHAPE="624,17,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#page#aluno#removerContrato.xhtml"
-  PATH="/page/aluno/removerContrato.xhtml" SHAPE="880,513,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules:#page#aluno#removerContrato.xhtml:0"
-   NAME="item" PATH="/page/aluno/removerContrato.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="ok::#page#aluno#cadastrarAluno.xhtml"
-    NAME="output" PATH="/page/aluno/cadastrarAluno.xhtml"
-    TARGET="rules:#page#aluno#cadastrarAluno.xhtml" TITLE="ok" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#page#aluno#indexRoot.xhtml"
-  PATH="/page/aluno/indexRoot.xhtml" SHAPE="624,17,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules:#page#aluno#indexRoot.xhtml:0" NAME="item"
-   PATH="/page/aluno/indexRoot.xhtml" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT
-    ID="cadastrar::#page#aluno#cadastrarAlunoRoot.xhtml" NAME="output"
-    PATH="/page/aluno/cadastrarAlunoRoot.xhtml"
-    TARGET="rules:#page#aluno#cadastrarAlunoRoot.xhtml"
-    TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT ID="remover::#page#aluno#removerAluno.xhtml"
-    NAME="output1" PATH="/page/aluno/removerAluno.xhtml"
-    TARGET="rules:#page#aluno#removerAluno.xhtml" TITLE="remover" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#admin#cadastrarUsuario.xhtml"
+  PATH="/page/admin/cadastrarUsuario.xhtml" SHAPE="944,120,50,25"
+  model-entity="JSFProcessGroup" persistent="true"/>
+ <PROCESS-ITEM NAME="rules:#page#professor#cadastrarProfessor.xhtml"
+  PATH="/page/professor/cadastrarProfessor.xhtml" SHAPE="536,384,50,25"
+  model-entity="JSFProcessGroup" persistent="true"/>
  <PROCESS-ITEM NAME="rules:#page#aluno#cadastrarAlunoRoot.xhtml"
   PATH="/page/aluno/cadastrarAlunoRoot.xhtml" SHAPE="880,513,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#page#recado#cadastrarRecado.xhtml"
+  PATH="/page/recado/cadastrarRecado.xhtml" SHAPE="192,416,50,25"
+  model-entity="JSFProcessGroup" persistent="true"/>
+ <PROCESS-ITEM NAME="rules:#page#aluno#removerAluno.xhtml"
+  PATH="/page/aluno/removerAluno.xhtml" SHAPE="624,17,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#page#aluno#exibirAluno.xhtml"
+  PATH="/page/aluno/exibirAluno.xhtml" SHAPE="752,160,50,25"
+  model-entity="JSFProcessGroup" persistent="true"/>
+ <PROCESS-ITEM NAME="rules:#page#avaliacao#cadastrarAvaliacao.xhtml"
+  PATH="/page/avaliacao/cadastrarAvaliacao.xhtml" SHAPE="488,120,50,25"
+  model-entity="JSFProcessGroup" persistent="true"/>
+ <PROCESS-ITEM NAME="rules:#page#index.xhtml" PATH="/page/index.xhtml"
+  SHAPE="128,32,50,25" model-entity="JSFProcessGroup" persistent="true"/>
+ <PROCESS-ITEM NAME="rules:#page#aula#index.xhtml"
+  PATH="/page/aula/index.xhtml" SHAPE="32,721,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aula#index.xhtml:0" NAME="item"
+   PATH="/page/aula/index.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#aula#cadastrarAula.xhtml"
+    NAME="output" PATH="/page/aula/cadastrarAula.xhtml"
+    TARGET="rules:#page#aula#cadastrarAula.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#aula#cadastrarAula.xhtml"
+  PATH="/page/aula/cadastrarAula.xhtml" SHAPE="240,993,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#aula#cadastrarAula.xhtml:0" NAME="item"
+   PATH="/page/aula/cadastrarAula.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="index::#page#aula#index.xhtml" NAME="output"
+    PATH="/page/aula/index.xhtml" TARGET="rules:#page#aula#index.xhtml"
+    TITLE="index" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#usuario#index.xhtml"
+  PATH="/page/usuario/index.xhtml" SHAPE="600,736,50,25" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#usuario#index.xhtml:0" NAME="item"
+   PATH="/page/usuario/index.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="entrar::#page#usuario#assistirAula3.xhtml"
+    NAME="output" PATH="/page/usuario/assistirAula3.xhtml"
+    TARGET="rules:#page#usuario#assistirAula3.xhtml" TITLE="entrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#usuario#indexInfantil.xhtml"
+  PATH="/page/usuario/indexInfantil.xhtml" SHAPE="336,881,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#usuario#indexInfantil.xhtml:0"
+   NAME="item" PATH="/page/usuario/indexInfantil.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="entrar::#page#usuario#assistirAula3.xhtml"
+    NAME="output" PATH="/page/usuario/assistirAula3.xhtml"
+    TARGET="rules:#page#usuario#assistirAula3.xhtml" TITLE="entrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#usuario#aulasporsemana.xhtml"
+  PATH="/page/usuario/aulasporsemana.xhtml" SHAPE="352,913,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#page#usuario#aulasporsemana.xhtml:0"
+   NAME="item" PATH="/page/usuario/aulasporsemana.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="entrar::#page#usuario#assistirAula3.xhtml"
+    NAME="output" PATH="/page/usuario/assistirAula3.xhtml"
+    TARGET="rules:#page#usuario#assistirAula3.xhtml" TITLE="entrar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#usuario#assistirAula3.xhtml"
+  PATH="/page/usuario/assistirAula3.xhtml" SHAPE="624,1233,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

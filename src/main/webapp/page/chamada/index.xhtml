@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" style="width:100%; border:none">
+
+			<h:panelGrid id="panelPrincipal" width="98%" >
+			<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
+                             emptyMessage="#Nenhum registro encontrado"
+                             selectionMode="single" 
+                             selection="#{aulaController.aula}"
+                             rowKey="#{professorTab.id}"
+                             filterEvent="enter" 
+                             lazy="true" 
+                             liveResize="true"
+                             styleClass="tabela"
+                             pageLinks="5"
+                             paginator="true"
+                             paginatorPosition="bottom"                                         
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             resizableColumns="true"
+                             rows="60"
+                             rowsPerPageTemplate="25,50,100"
+                          	 id="tbl" var="aulaTab"
+							 value="#{alunoAulaController.lazyListDataModelChamada}"
+							 sortBy="aulaTab.percentualAulasAssistidas"
+							 >
+				
+					
+					<p:column filterBy="#{aulaTab.nomeAluno}" style="width:75px;"
+					 			styleClass="#{alunoController.marcarLinhaChamada(aulaTab)}" 
+                              sortBy="#{aulaTab.nomeAluno}">
+						<f:facet name="header">
+							<h:outputText value="Aluno" />
+						</f:facet>
+						<h:outputText value="#{aulaTab.nomeAluno}" />
+					</p:column>
+					
+					<p:column style="width:75px;"
+					 styleClass="#{alunoController.marcarLinhaChamada(aulaTab)}">
+					
+						<f:facet name="header">
+							<h:outputText value="Ultima aula assistida" />
+						</f:facet>
+						<h:outputText value="#{aulaTab.dataUltimaAulaAssistida}" >
+							 <f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:75px;"
+					 styleClass="#{alunoController.marcarLinhaChamada(aulaTab)}"
+					 sortBy="#{aulaTab.percentualAulasAssistidas}">
+						<f:facet name="header">
+							<h:outputText value="Percentual assistido" />
+						</f:facet>
+						<h:outputText value="#{aulaTab.percentualAulasAssistidas}" />
+					</p:column>
+					
+					
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

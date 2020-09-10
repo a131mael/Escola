@@ -37,6 +37,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.escola.auth.AuthController;
 import org.escola.enums.BimestreEnum;
 import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.PerioddoEnum;
@@ -52,15 +53,17 @@ import org.escola.service.RecadoService;
 import org.escola.util.FileDownload;
 import org.escola.util.ImpressoesUtils;
 import org.escola.util.Util;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 
 @Named
 @ViewScoped
-public class RecadoController implements Serializable {
+public class RecadoController  extends AuthController implements Serializable {
 
 	/****/
 	private static final long serialVersionUID = 1L;
@@ -82,6 +85,9 @@ public class RecadoController implements Serializable {
 	private DisciplinaEnum disciplinaSel;
 
 	private LazyDataModel<Recado> lazyListDataModel;
+	
+	private UploadedFile file;
+	byte[] bts = null;
 	
 	public LazyDataModel<Recado> getLazyDataModel() {
 		if (lazyListDataModel == null) {
@@ -175,6 +181,13 @@ public class RecadoController implements Serializable {
 	public List<RecadoDestinatario> getMemberRespondeu(){
 		return recadoService.getMemberRespondeu(recado);
 	}
+	
+	public void upload() {
+        if (file != null) {
+            FacesMessage message = new FacesMessage("Successful", file.getFileName() + " is uploaded.");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+    }
 	
 	public int getPercentualProfessoresLeram(){
 		System.out.println("Total de professores resp : " +recadoService.getMemberRespondeu(recado,TipoMembro.PROFESSOR).size());
@@ -500,11 +513,24 @@ public class RecadoController implements Serializable {
 	}
 
 	public String salvar() {
-		recadoService.save(getRecado());
+		Recado rec = getRecado();
+		if(file != null){
+			rec.setFilePergunta(bts);
+		}
+		rec.setAprovado(true);
+		rec.setIdQuemPostou(getLoggedUser().getId());
+		recadoService.save(rec);
+		
 		Util.removeAtributoSessao("recado");
 		return "index";
 	}
-
+	
+	public void handleFileUpload(FileUploadEvent event) {
+		file = event.getFile();
+		bts = file.getContents();
+        //application code
+    }
+	
 	public String voltar() {
 		return "index";
 	}
@@ -637,6 +663,16 @@ public class RecadoController implements Serializable {
 
 	public void setRecado(Recado recado) {
 		this.recado = recado;
+	}
+
+
+	public UploadedFile getFile() {
+		return file;
+	}
+
+
+	public void setFile(UploadedFile file) {
+		this.file = file;
 	}
 	
 }

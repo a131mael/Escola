@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" style="width:100%; border:none">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+
+				<p:tabView>
+					<p:tab title="Dados do aluno">
+						<h:panelGrid id="panelGrid" columns="2" border="0">
+
+								<h:outputLabel value="Data da aula:(*) " style="font-size: 13px; width:180px" />
+								<p:calendar value="#{aula.dataAula}" pattern="dd/MM/yyyy" mask="true" style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel  id="link"  value="Link Youtube:(*) "	style="font-size: 13px; width:180px" />
+								<h:inputText for="link" required="true"  title="" value="#{aula.linkYoutube}"	style="font-size: 15px; width:280px" />
+								
+							
+								<h:outputLabel value="Serie:(*)" style="font-size: 13px; width:180px" />
+								<p:selectOneMenu style="width: 256px;" value="#{aula.serie}" >
+									<f:selectItems value="#{aulaController.getSeries()}"
+										var="country" itemLabel="#{country.name}"
+										itemValue="#{country}" />
+								</p:selectOneMenu>
+								
+								<h:outputLabel value="Disciplina:" style="font-size: 13px; width:180px" />
+								<p:selectOneMenu style="width: 256px;" value="#{aula.disciplina}">
+									<f:selectItems value="#{CombosEspeciaisMB.getDisciplinas()}"
+										var="country" itemLabel="#{country.name}"
+										itemValue="#{country}" />
+								</p:selectOneMenu>
+								
+								<h:outputLabel for="name" value="Titulo: "	style="font-size: 13px; width:180px" />
+								<h:inputText id="nome" title="" value="#{aula.titulo}"	style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel for="descricao" value="Descrição: "	style="font-size: 13px; width:180px" />
+								<h:inputText id="descricao" title="" value="#{aula.descricao}"	style="font-size: 15px; width:280px" />
+								
+								<h:outputLabel id="Ordem" value="Sequência do dia: "	style="font-size: 13px; width:180px" />
+								<p:selectOneMenu required="true" style="width: 256px;"	value="#{aula.ordem}">
+									 <f:selectItem itemLabel="Primeira" itemValue="1" itemDescription="Primeira" />
+									 <f:selectItem itemLabel="Segunda" itemValue="2" />
+									 <f:selectItem itemLabel="Terceira" itemValue="3" />
+									 <f:selectItem itemLabel="Quarta" itemValue="4" />
+									 <f:selectItem itemLabel="Quinta" itemValue="5" />
+									 <f:selectItem itemLabel="Sexta" itemValue="6" />
+									 <f:selectItem itemLabel="setima" itemValue="7" />
+									 <f:selectItem itemLabel="Oitava" itemValue="8" />
+									 <f:selectItem itemLabel="Nona" itemValue="9" />
+									 <f:selectItem itemLabel="Decima" itemValue="10" />
+		
+									<p:ajax event="change" process="@this" />
+									
+								</p:selectOneMenu>
+							
+						</h:panelGrid>
+
+					</p:tab>
+
+				</p:tabView>
+
+			</h:panelGrid>
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{aulaController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{aulaController.salvar()}" value="Salvar" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>
