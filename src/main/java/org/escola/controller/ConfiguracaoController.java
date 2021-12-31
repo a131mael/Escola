@@ -524,7 +524,7 @@ public class ConfiguracaoController implements Serializable{
 			sb.append(calendario.get(Calendar.MONTH));
 			sb.append(calendario.get(Calendar.DAY_OF_MONTH));
 
-			List<Boleto> boletos = configuracaoService.findBoletosMes(mesGerarCNAB, configuracao.getAnoRematricula());
+			List<Boleto> boletos = configuracaoService.findBoletosMes(mesGerarCNAB, configuracao.getAnoLetivo());
 
 			String caminhoFinalPasta = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + sb;
 			CompactadorZip.createDir(caminhoFinalPasta);

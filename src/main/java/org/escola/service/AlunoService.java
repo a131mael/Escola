@@ -1810,5 +1810,12 @@ public class AlunoService extends Service {
 	public void setAulaService(AulaService aulaService) {
 		this.aulaService = aulaService;
 	}
+	
+	public void setNfsEnviada(Long idBoleto) {
+		Boleto bol = findBoletoById(idBoleto);
+		bol.setNfsEnviada(true);
+		em.persist(bol);
+	}
+
 
 }

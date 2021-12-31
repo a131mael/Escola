@@ -29,7 +29,10 @@
         		<p:commandButton value="Nao" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />		
     		</p:confirmDialog>
 
-			<h:panelGrid id="panelFerramentas" columns="36" style="margin-top: -30px; margin-left:-20px">
+			<h:panelGrid id="panelFerramentas" columns="40" style="margin-top: -30px; margin-left:-20px">
+				
+				<p:messages id="messages" showDetail="true" closable="true" />
+				
 				<p:tooltip  for="adicionar" value="Adicionar um novo Aluno" position="top"/> 
 				<p:tooltip  for="boletim" value="Boletim" position="top"/> 
 				 <p:tooltip  for="editar" value="Editar" position="top"/>
@@ -53,6 +56,9 @@
 							rendered="#{authController.hasPermission(authController.mestre)}"/>
 							
 				<p:tooltip  for="ficharematricula" value="Ficha de Rematrícula" position="top"/> 
+				<p:tooltip for="gerarNFS" value="Gerar NFSe Prefeitura"
+					position="top" />
+			
 			
 				<p:commandButton id="adicionar" icon="ui-icon-plus" action="#{alunoController.adicionarNovo()}" />
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
@@ -152,6 +158,12 @@
 			 					 rendered="#{authController.hasPermission(authController.mestre)}">
 					
 					<p:fileDownload value="#{alunoController.gerarArquivoBaixa()}" />
+				</p:commandButton>
+				
+				<p:commandButton id="gerarNFS" update="@form" icon="ui-icon-check"
+					alt="Gerar NFS prefeitura" action="#{alunoController.gerarNFSe()}"
+					disabled="#{!alunoController.alunoSelecionado}">
+					<p:confirm header="Confirmacao" message="Deseja Gerar a Nota fiscal para o aluno selecionado ?" icon="ui-icon-alert" />
 				</p:commandButton>
 			 
 			</h:panelGrid>

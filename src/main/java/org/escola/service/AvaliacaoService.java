@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -140,6 +141,60 @@ public class AvaliacaoService extends Service {
 		}
 	}
 
+	public List<Avaliacao> find(Serie serie, PerioddoEnum periodo, Long idProfessor) {
+		try {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Avaliacao> criteria = cb.createQuery(Avaliacao.class);
+			Root<Avaliacao> member = criteria.from(Avaliacao.class);
+
+			Predicate whereSerie = null;
+			Predicate wherePeriodo = null;
+
+			StringBuilder sb = new StringBuilder();
+			if (serie != null) {
+				sb.append("A");
+				whereSerie = cb.equal(member.get("serie"), serie);
+			}
+
+			if (periodo != null) {
+				sb.append("B");
+				wherePeriodo = cb.equal(member.get("periodo"), periodo);
+			}
+
+			switch (sb.toString()) {
+
+			case "A":
+				criteria.select(member).where(whereSerie);
+				break;
+
+			case "B":
+				criteria.select(member).where(wherePeriodo);
+				break;
+
+			case "AB":
+				criteria.select(member).where(whereSerie, wherePeriodo);
+				break;
+			default:
+				break;
+			}
+
+			criteria.select(member).orderBy(cb.asc(member.get("nome")));
+			List<Avaliacao> avaliacoes = em.createQuery(criteria).getResultList();
+			
+			return avaliacoes
+					.stream()
+					.filter(e ->  (e.getProfessor() != null &&  e.getProfessor().getId() == idProfessor))
+					.collect(Collectors.toList()); 
+
+		} catch (NoResultException nre) {
+			return new ArrayList<>();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+
+	
 	public Avaliacao save(Avaliacao aluno, Long idProf) {
 		Avaliacao user = null;
 		try {

@@ -17,34 +17,20 @@
 package org.escola.controller;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Produces;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
-import org.escola.model.Evento;
-import org.escola.service.AlunoService;
-import org.escola.service.EventoService;
+import org.escola.model.Configuracao;
+import org.escola.service.ConfiguracaoService;
 import org.escola.service.RelatorioService;
-import org.primefaces.event.ScheduleEntryMoveEvent;
-import org.primefaces.event.ScheduleEntryResizeEvent;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.DefaultScheduleModel;
-import org.primefaces.model.ScheduleEvent;
-import org.primefaces.model.ScheduleModel;
 
 @Named
 @ViewScoped
@@ -55,10 +41,15 @@ public class RelatorioController implements Serializable{
 		
 	@Inject
     private RelatorioService relatorioService;
-
+	
+	@Inject
+	private ConfiguracaoService configuracaoService;
+	
+	private Configuracao configuracao;
 	
 	@PostConstruct
 	private void init() {
+		configuracao = configuracaoService.getConfiguracao();
 	}
 	
 	private Serie maternal;
@@ -75,26 +66,44 @@ public class RelatorioController implements Serializable{
 	private PerioddoEnum tarde;
 	private PerioddoEnum integral;
 	
+	private int mesSelecionado = 1;
 
+	public double getNotasEnviadas(int mes){
+		return relatorioService.getTotalNotasEmitidas(mes);
+	}
+	
+	public List<String> getResponsaveisNotasEnviadas(int mes){
+		return relatorioService.getResponsaveisNotasEnviadas(mes);
+	}
+	
+	public List<String> getResponsaveisNotasEnviadas(){
+		return relatorioService.getResponsaveisNotasEnviadas(mesSelecionado);
+	}
+	
 	public long getTotalAlunos(){
+		Map<String, Object> filtros = new HashMap<>();
+		filtros.put("anoLetivo", configuracao.getAnoLetivo());
 		return relatorioService.count(null);
 	}
 
 	public long getTotalAlunosManha(){
 		Map<String, Object> filtros = new HashMap<>();
 		filtros.put("periodo", PerioddoEnum.MANHA);
+		filtros.put("anoLetivo", configuracao.getAnoLetivo());
 		return relatorioService.count(filtros);
 	}
 	
 	public long getTotalAlunosTarde(){
 		Map<String, Object> filtros = new HashMap<>();
 		filtros.put("periodo", PerioddoEnum.TARDE);
+		filtros.put("anoLetivo", configuracao.getAnoLetivo());
 		return relatorioService.count(filtros);
 	}
 	
 	public long getTotalAlunosIntegral(){
 		Map<String, Object> filtros = new HashMap<>();
 		filtros.put("periodo", PerioddoEnum.INTEGRAL);
+		filtros.put("anoLetivo", configuracao.getAnoLetivo());
 		return relatorioService.count(filtros);
 	}
 
@@ -102,12 +111,14 @@ public class RelatorioController implements Serializable{
 		Map<String, Object> filtros = new HashMap<>();
 		filtros.put("serie", getSerie(serie));
 		filtros.put("periodo", getPeriodo(periodo));
+		filtros.put("anoLetivo", configuracao.getAnoLetivo());
 		return relatorioService.count(filtros);
 	}
 	
 	public long getTotalAlunos(Serie serie){
 		Map<String, Object> filtros = new HashMap<>();
 		filtros.put("serie", getSerie(serie));
+		filtros.put("anoLetivo", configuracao.getAnoLetivo());
 		return relatorioService.count(filtros);
 	}
 	
@@ -213,6 +224,14 @@ public class RelatorioController implements Serializable{
 
 	public void setIntegral(PerioddoEnum integral) {
 		this.integral = integral;
+	}
+
+	public int getMesSelecionado() {
+		return mesSelecionado;
+	}
+
+	public void setMesSelecionado(int mesSelecionado) {
+		this.mesSelecionado = mesSelecionado;
 	}
 	
 	

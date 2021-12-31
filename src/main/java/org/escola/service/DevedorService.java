@@ -218,6 +218,7 @@ public class DevedorService extends Service {
 		sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
 		sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
 		sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
+		sql.append(" and (bol.dividaPerdoada is null or bol.dividaPerdoada = false)");
 
 		Query query = em.createNativeQuery(sql.toString(), Aluno.class);
 		List<Aluno> boletos = query.getResultList();
@@ -540,6 +541,7 @@ public class DevedorService extends Service {
 			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
 			sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
 			sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
+			sql.append(" and (bol.dividaPerdoada is null or bol.dividaPerdoada = false)");
 			sql.append(" and ca.protestado = true");
 			sql.append(" and (ca.enviadoProtestoDefinitivo is null or ca.enviadoProtestoDefinitivo = false)");
 
@@ -802,6 +804,7 @@ public class DevedorService extends Service {
 		sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
 		sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
 		sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
+		sql.append(" and (bol.dividaPerdoada is null or bol.dividaPerdoada = false)");
 
 		sql.append(" and (al.contactado = true) ");
 
@@ -891,7 +894,7 @@ public class DevedorService extends Service {
 		sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
 		sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
 		sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
-		
+		sql.append(" and (bol.dividaPerdoada is null or bol.dividaPerdoada = false)");
 		sql.append(" and (al.contactado is null or al.contactado = false) ");
 		
 		

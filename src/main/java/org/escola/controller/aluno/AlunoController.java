@@ -4,9 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -27,7 +29,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
+import org.aaf.dto.nfs.ItemNFS;
+import org.aaf.dto.nfs.ListaItensNFS;
+import org.aaf.dto.nfs.NF;
+import org.aaf.dto.nfs.NFSeDTO;
+import org.aaf.dto.nfs.PrestadorNFS;
+import org.aaf.dto.nfs.TomadorNFS;
 import org.aaf.financeiro.model.Boleto;
 import org.aaf.financeiro.model.Pagador;
 import org.aaf.financeiro.sicoob.util.CNAB240_REMESSA_SICOOB;
@@ -36,6 +46,15 @@ import org.aaf.financeiro.sicoob.util.CNAB240_SICOOB;
 import org.aaf.financeiro.util.ImportadorArquivo;
 import org.aaf.financeiro.util.OfficeUtil;
 import org.aaf.financeiro.util.constantes.Constante;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.shiro.SecurityUtils;
 import org.escola.controller.OfficeDOCUtil;
 import org.escola.controller.OfficePDFUtil;
@@ -1694,6 +1713,132 @@ public class AlunoController implements Serializable {
 		}
 		return aluno.getVerificadoOk();
 	}
+	
+	public void gerarNFSe() {
+		try {
+			JAXBContext contextObj;
+			contextObj = JAXBContext.newInstance(NFSeDTO.class);
+
+			Marshaller marshallerObj = contextObj.createMarshaller();
+			marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			String nomeArquivo = System.currentTimeMillis()+ "__" + aluno.getContratoVigente().getNomeResponsavel().replace(" ", "")
+					+ ".xml";
+			String caminho = File.separator + "home" + File.separator + "servidor" + File.separator + "nfs" +  File.separator+ "adonai" +  File.separator + nomeArquivo;
+			marshallerObj.marshal(getNFSeDTO(aluno), new FileOutputStream(caminho));
+			
+			if(enviarNFS(caminho, org.aaf.dto.nfs.Contants.login, org.aaf.dto.nfs.Contants.senha)){
+				ContratoAluno contrato = aluno.getContratoVigente(configuracao.getAnoLetivo());
+				org.escola.model.Boleto boletoMesAtual = getBoletoMesAtual(contrato);
+				alunoService.setNfsEnviada(boletoMesAtual.getId());
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "NOTA GERADA do ALUNO " + aluno.getNomeAluno()));
+			}else{
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "NÃO GEROU A NOTA " + aluno.getNomeAluno()));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "NÃO GEROU A NOTA " + aluno.getNomeAluno()));
+		}
+	}
+	
+	public static synchronized boolean enviarNFS(String localNomeNotaGerada,String login,String senha) {
+		System.out.println("ENVIANDO NOTAS FISCAIS  ........");
+		
+		try {
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost(org.aaf.dto.nfs.Contants.URL);
+			File file = new File(localNomeNotaGerada);
+			MultipartEntity mpEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			ContentBody cbFile = new FileBody(file);
+			mpEntity.addPart("f1", cbFile);
+			mpEntity.addPart("login", new StringBody(login));
+			mpEntity.addPart("senha", new StringBody(senha));
+			mpEntity.addPart("cidade", new StringBody("8223"));
+			httppost.setEntity(mpEntity);
+			System.out.println("executing request " + httppost.getRequestLine());
+			System.out.println("Now uploading your file into uploadbox.com");
+			HttpResponse response = httpclient.execute(httppost);
+			System.out.println(response.getStatusLine().getStatusCode());
+			if(response.getStatusLine().getStatusCode()>=200 && response.getStatusLine().getStatusCode()<300){
+				return true;
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	private NFSeDTO getNFSeDTO(Aluno aluno) {
+		try {
+			ContratoAluno contrato = aluno.getContratoVigente(configuracao.getAnoLetivo());
+			org.escola.model.Boleto boletoMesAtual = getBoletoMesAtual(contrato);
+			String valor = String.valueOf(boletoMesAtual.getValorNominal() - 30);
+			valor = valor.replace(".0", ",00");
+
+			NF nf = new NF();
+			nf.setValor_total(valor);
+			PrestadorNFS prestador = new PrestadorNFS();
+
+			TomadorNFS tomador = new TomadorNFS();
+			tomador.setCpfcnpj(contrato.getCpfResponsavel());
+			tomador.setBairro(contrato.getBairro());
+			tomador.setCep(contrato.getCep().replaceAll("-", "").replaceAll(" ", ""));
+			tomador.setCidade(contrato.getCidade());
+			tomador.setEmail(aluno.getContatoEmail1());
+			tomador.setNome_razao_social(contrato.getNomeResponsavel());
+			tomador.setLogradouro(contrato.getEndereco());
+
+			ListaItensNFS listaItem = new ListaItensNFS();
+			listaItem.setValor_tributavel(valor);
+			listaItem.setUnidade_valor_unitario(valor);
+			ItemNFS item = new ItemNFS();
+			item.setLista(listaItem);
+			NFSeDTO nfs = new NFSeDTO();
+
+			nfs.setPrestador(prestador);
+			nfs.setTomador(tomador);
+			nfs.setNf(nf);
+			nfs.setItens(item);
+
+			nfs.setTeste(null);
+
+			return nfs;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	private org.escola.model.Boleto getBoletoMesAtual(ContratoAluno contrato) {
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+		Date primeiro = c.getTime();
+
+		Calendar c2 = Calendar.getInstance();
+		c2.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date ultimo = c2.getTime();
+
+		List<org.escola.model.Boleto> boletos = contrato.getBoletos();
+		for (org.escola.model.Boleto b : boletos) {
+			if (b.getVencimento().before(ultimo)) {
+				if(b.getVencimento().after(primeiro)){
+					return b;
+				}
+			}
+		}
+		return null;
+	}
 
 	public boolean isVerificadoOk(Long idAluno) {
 		Aluno a = alunoService.findById(idAluno);
@@ -2498,7 +2643,7 @@ public class AlunoController implements Serializable {
 		Calendar tomorrow = Calendar.getInstance();
 		tomorrow.set(Calendar.DAY_OF_MONTH, tomorrow.get(Calendar.DAY_OF_MONTH) + 1);
 		if (boleto.getVencimento().compareTo(tomorrow.getTime()) == 1) {
-			return 20d;
+			return 30d;
 		} else {
 			return 0d;
 		}
@@ -2866,16 +3011,29 @@ public class AlunoController implements Serializable {
 				}
 			} else {
 				if (contrato.getDataCriacaoContrato() != null) {
-					cancelado = "        Ativo " + formatador.format(contrato.getDataCriacaoContrato());
+					cancelado = "        Ativo " + formatador.format(contrato.getDataCriacaoContrato()) ;
 				} else {
 					cancelado = "        Ativo ";
 				}
 			}
-			return " -  " + contrato.getNumero() + " -  " + cancelado;
+			return " -  " + contrato.getNumero() + " -  " + cancelado + " ANO LETIVO : " + contrato.getAno();
 		}
 		return "";
 	}
 
+	public void perdoarDivida(org.escola.model.Boleto boleto) {
+		try {
+
+			boleto.setDividaPerdoada(true);
+			financeiroEscolaService.save(boleto);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Divida foi perdoada"));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "Erro ao perdoar"));
+		}
+	}
+	
 	public void gerarBoletos(ContratoAluno contrato) {
 		if (CPFValidator.isCPF(contrato.getCpfResponsavel())) {
 			ContratoAluno cont = alunoService.criarBoletos(contrato.getAluno(), contrato.getAno(),

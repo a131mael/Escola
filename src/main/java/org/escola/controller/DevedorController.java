@@ -16,6 +16,7 @@
  */
 package org.escola.controller;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -236,7 +237,7 @@ public class DevedorController implements Serializable {
 			nomeArquivo = "modelo_protesto.docx";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\" + nomeArquivo;
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator + nomeArquivo;
 		InputStream stream = null;
 		try {
 			stream = new FileInputStream(caminho);

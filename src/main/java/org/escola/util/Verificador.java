@@ -21,7 +21,7 @@ public class Verificador {
 		Calendar tomorrow = Calendar.getInstance();
 		tomorrow.set(Calendar.DAY_OF_MONTH, tomorrow.get(Calendar.DAY_OF_MONTH) + 1);
 		if (boleto.getVencimento().compareTo(tomorrow.getTime()) == 1) {
-			return 20d;
+			return 30d;
 		} else {
 			return 0d;
 		}
@@ -71,6 +71,8 @@ public class Verificador {
 			return StatusBoletoEnum.PAGO;
 		}else if(baixado(boleto) || cancelado(boleto)){	
 			return StatusBoletoEnum.CANCELADO;
+		} else if (boleto.getDividaPerdoada() != null && boleto.getDividaPerdoada()) {
+			return StatusBoletoEnum.DIVIDA_PERDOADA;
 		} else if (diasVencimento > 3) {
 			return StatusBoletoEnum.ATRASADO;
 		} else if (diasVencimento == 0) {
@@ -85,10 +87,10 @@ public class Verificador {
 			Date vencimento = Formatador.formatDateSomenteDiaMesAno(boleto.getVencimento());
 			Date pagamento = Formatador.formatDateSomenteDiaMesAno(boleto.getDataPagamento());
 			if (vencimento.after(pagamento) || vencimento.equals(pagamento)) {
-				if (boleto.getValorNominal() -20 <= (boleto.getValorPago())) {
+				if (boleto.getValorNominal() -30 <= (boleto.getValorPago())) {
 					return true;
 				}
-			}else if(boleto.getValorNominal() -20 <= boleto.getValorPago()){
+			}else if(boleto.getValorNominal() -30 <= boleto.getValorPago()){
 				return true;
 			}
 		}

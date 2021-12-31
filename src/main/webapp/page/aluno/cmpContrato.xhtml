@@ -141,7 +141,7 @@
 									
 									<br/>
 									<br/>
-									<h:panelGrid columns="3" border="0">
+									<h:panelGrid columns="5" border="0">
 										<p:commandButton id="contrato" icon="ui-icon-print"
 														value="Download Contrato"  
 														ajax="false"
@@ -164,6 +164,17 @@
 												<p:fileDownload value="#{alunoController.gerarCNB240(contratoAlun)}" />
 										</p:commandButton>
 				
+				
+										<p:commandButton icon="ui-icon-arrowthick-1-e" alt="Protestar contrato" 
+														id="protesto" process="@this" value="PROTESTAR"
+														actionListener="#{devedorController.enviarProtesto(contratoAlun)}"
+														rendered="#{not contratoAlun.protestado}">
+											<p:confirm header="Confirmation" message="Você deseja realmente protestar  ?" 
+													  icon="ui-icon-alert" >
+										   </p:confirm>
+										</p:commandButton>
+										<p:tooltip for="protesto" value="PROTESTAR !!!" trackMouse="false"  rendered="#{not contratoAlun.protestado}"/>
+										
 										
 									</h:panelGrid>
 									<br/>
@@ -176,7 +187,10 @@
 													rendered="#{not contratoAlun.cancelado}">
 													
 									</p:commandButton>
-														
+										
+										<br/>
+									<br/>
+									<h:outputLabel value="CONTRATO PROTESTADO" style="font-size:25px" rendered="#{contratoAlun.protestado}"/>				
 									
 							</h:panelGrid>
 					</h:panelGrid>

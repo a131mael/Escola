@@ -174,7 +174,7 @@ public class TurmaController extends AuthController implements Serializable {
 	public void verificarTodosAlunosTemAvaliacao(Long idTurma){
 		List<Aluno> alunosTurma = alunoService.findAlunoTurmaBytTurma(idTurma);
 		if(alunosTurma != null && !alunosTurma.isEmpty()){
-			List<Avaliacao> avaliacoesTurma = avaliacaoService.find(alunosTurma.get(0).getSerie(), null);
+			List<Avaliacao> avaliacoesTurma = avaliacaoService.find(alunosTurma.get(0).getSerie(), null,getLoggedUser().getProfessor().getId());
 			for(Aluno aluno :alunosTurma){
 				for(Avaliacao avaliacao :avaliacoesTurma){
 					List<AlunoAvaliacao> alav = avaliacaoService.findAlunoAvaliacaoby(aluno.getId(), avaliacao.getId(), null, null, null); 

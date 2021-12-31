@@ -82,13 +82,25 @@
 						<h:outputText value="#{alunoController.getStatus(professorTab)}" />
 					</p:column>
 					
-					<p:column style="width:7%; text-align:center;" headerText="Downloand">
-						<p:commandButton id="cnab" icon="ui-icon-print"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  
+					<p:column style="width:7%; text-align:center;" headerText="Download">
+						<p:commandButton id="cnab" icon="ui-icon-print" alt="Imprimir"  
+						ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  
 								disabled="#{!alunoController.alunoSelecionado}">
 						<p:fileDownload value="#{alunoController.downloadBoleto(professorTab)}" />
 					</p:commandButton>
-					
 					</p:column>
+					
+					<p:column style="width:7%; text-align:center;" headerText="Perdoar">
+						<p:commandButton id="perdoar" update="@form" icon="ui-icon-check"
+							alt="Perdoar Divida" action="#{alunoController.perdoarDivida(professorTab)}"
+							disabled="#{!alunoController.alunoSelecionado}">
+							<p:confirm header="Confirmacao"
+								message="Deseja perdoar essa divida ?" icon="ui-icon-alert" />
+						</p:commandButton>
+						
+					</p:column>
+					
+					
 				</p:dataTable>
 
 			</h:panelGrid>
