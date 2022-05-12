@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Comparator;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
@@ -145,6 +147,19 @@ public class TurmaController extends AuthController implements Serializable {
 		alunosDisponiveisSet.addAll(alunosDisponiveis);
 		alunosDisponiveis.clear();
 		alunosDisponiveis.addAll(alunosDisponiveisSet);
+		alunosDisponiveis.stream().sorted(new Comparator<Aluno>() {
+		    @Override
+		    public int compare(Aluno o1, Aluno o2) {
+		        return o1.getNomeAluno().compareTo(o2.getNomeAluno());
+		    }
+		}).collect(Collectors.toList()); 
+		
+		alunosSelecionados.stream().sorted(new Comparator<Aluno>() {
+		    @Override
+		    public int compare(Aluno o1, Aluno o2) {
+		        return o1.getNomeAluno().compareTo(o2.getNomeAluno());
+		    }
+		}).collect(Collectors.toList()); 
 		
 		alunos = new DualListModel<Aluno>(alunosDisponiveis, alunosSelecionados);
 		
@@ -174,15 +189,17 @@ public class TurmaController extends AuthController implements Serializable {
 	public void verificarTodosAlunosTemAvaliacao(Long idTurma){
 		List<Aluno> alunosTurma = alunoService.findAlunoTurmaBytTurma(idTurma);
 		if(alunosTurma != null && !alunosTurma.isEmpty()){
-			List<Avaliacao> avaliacoesTurma = avaliacaoService.find(alunosTurma.get(0).getSerie(), null,getLoggedUser().getProfessor().getId());
-			for(Aluno aluno :alunosTurma){
-				for(Avaliacao avaliacao :avaliacoesTurma){
-					List<AlunoAvaliacao> alav = avaliacaoService.findAlunoAvaliacaoby(aluno.getId(), avaliacao.getId(), null, null, null); 
-					if(alav== null || alav.isEmpty()){
-						avaliacaoService.createAlunoAvaliacao(aluno,avaliacao);
+			if(getLoggedUser().getProfessor() != null){
+				List<Avaliacao> avaliacoesTurma = avaliacaoService.find(alunosTurma.get(0).getSerie(), null,getLoggedUser().getProfessor().getId());
+				for(Aluno aluno :alunosTurma){
+					for(Avaliacao avaliacao :avaliacoesTurma){
+						List<AlunoAvaliacao> alav = avaliacaoService.findAlunoAvaliacaoby(aluno.getId(), avaliacao.getId(), null, null, null); 
+						if(alav== null || alav.isEmpty()){
+							avaliacaoService.createAlunoAvaliacao(aluno,avaliacao);
+						}
 					}
-				}
-			}	
+				}	
+			}
 		}
 		
 	}

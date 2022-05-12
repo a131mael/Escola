@@ -172,6 +172,7 @@ form {
   font: 80%/1 sans-serif;
   width: 575px;
   border: 1px solid #D5D5D5;
+  vertical-align: top;
 }
 label {
   float: left;

@@ -113,6 +113,15 @@
 				
 			</h:panelGrid>
 			
+			<h:outputLabel value="Emitir NFSe ? : "
+				style="font-size: 13px; width:240px" />
+				<h:panelGrid columns="4">
+					<h:selectBooleanCheckbox value="#{parametro.gerarNFSe}" >
+					<p:ajax process="@this" update="@this"/>
+					</h:selectBooleanCheckbox>
+				
+			</h:panelGrid>
+			
 			<h:outputLabel value="Em caso de emergência ligar para: "
 				style="font-size: 13px; width:240px" rendered="false"/>
 			

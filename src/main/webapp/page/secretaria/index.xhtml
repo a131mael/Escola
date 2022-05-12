@@ -2,57 +2,360 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	template="/WEB-INF/templates/templateADM.xhtml"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
 
 	<ui:define name="content">
-		<h:form style="width:100%; border:none"
-			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
-			<center>
-				<h1>ADONAI</h1>
-				<div>
-					<p>Escola Adonai do maternal ao fundamental.</p>
-				</div>
-
-			</center>
-
-			<br />
-			<h:panelGrid columns="2">
-				<h:commandButton id="ContratoEscolar"
-					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
-					action="#{secretariaController.linkAlunos()}" value="Alunos"
-					styleClass="alinharFooter "
-					 image="/resources/gfx/icone_alunos.png" />
-
-
-				<h:commandButton id="ContratoFretamento"
-					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
-					action="#{secretariaController.linkProfessores()}"
-					value="Professores" 
-					styleClass="alinharDireita"
-					image="/resources/gfx/icone_professores.png" />
-
-
-				<h:commandButton id="ContratoAdonai"
-					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
-					action="#{secretariaController.linkTurmas()}" value="Turmas"
-					styleClass="alinharFooter"
-					 image="/resources/gfx/icones_turmas.png" />
-
-				<h:commandButton id="calendario"
-					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
-					action="#{secretariaController.linkCalendario()}" value="Turmas"
-					styleClass="alinharFooter"
-					image="/resources/gfx/icones_calaendarios.png" />
-
-				<h:commandButton id="recados"
-					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
-					action="#{contratoController.irContratoAdonai()}" value="Turmas"
-					styleClass="alinharFooter"
-					image="/resources/gfx/icones_calaendarios.png" rendered="false" />
-
-			</h:panelGrid>>
+		<h:form style="width:100%; border:none" 
+		rendered="#{authController.hasPermission(authController.administrador)}">
+		
+		<h:panelGrid columns="3" width="100%">
+			<h:outputLabel value="Ano: " style="font-size: 13px;float: right; width:180px" />
+			<p:selectOneMenu style="width: 256px;" value="#{relatorioController.anoSelecionado}">
+				<f:selectItems value="#{CombosEspeciaisMB.getAnos()}"
+					var="country" itemLabel="#{country}" itemValue="#{country}" 
+					/>
+			<p:ajax event="change" process="@form" update="@form" />
+		</p:selectOneMenu>	
+		
+	
+		<h:panelGrid columns="2" width="100%">
+			<h:outputLabel value="MES: " style="font-size: 13px;float: right; width:180px" />
+			<p:selectOneMenu style="width: 256px;" value="#{relatorioController.mesSelecionadoRelatorio}">
+				<f:selectItems value="#{CombosEspeciaisMB.getMesesValorInteiroCorreto()}"
+					var="country" itemLabel="#{country}" itemValue="#{country}" 
+					/>
+			<p:ajax event="change" process="@this" listener="#{graficosController.remontarGraficosComMes()}" update="panelGrupos" />
+		</p:selectOneMenu>	
+		</h:panelGrid>
+		
+		</h:panelGrid>
+	
+		<br />
+		
+		
+		<h:panelGrid columns="4" width="100%">
+		
+			<p:panel header="Qtdade atrasados/quantidade" >
+			<p:panelGrid columns="2" >
+				<h:outputText value="-" />
+				<h:outputText value=" " />
+				
+				<h:commandLink action="#{relatorioController.rotaQuantidade(1)}"  value="1 Mês Atrasado" />
+				<h:commandLink action="#{relatorioController.rotaQuantidade(1)}"  value="#{relatorioController.getQuantidadeAtrasadosPorQuantidade(1)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaQuantidade(2)}" value="2 Meses Atrasado" width="80%"/>
+				<h:commandLink action="#{relatorioController.rotaQuantidade(2)}" value="#{relatorioController.getQuantidadeAtrasadosPorQuantidade(2)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaQuantidade(3)}" value="3 Meses Atrasados" width="80%"/>
+				<h:commandLink action="#{relatorioController.rotaQuantidade(3)}" value="#{relatorioController.getQuantidadeAtrasadosPorQuantidade(3)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaQuantidade(4)}" value="4 Meses Atrasados" width="80%"/>
+				<h:commandLink action="#{relatorioController.rotaQuantidade(4)}" value="#{relatorioController.getQuantidadeAtrasadosPorQuantidade(4)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaQuantidade(5)}" value="5 Meses Atrasados" width="80%"/>
+				<h:commandLink action="#{relatorioController.rotaQuantidade(5)}" value="#{relatorioController.getQuantidadeAtrasadosPorQuantidade(5)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaQuantidade(6)}" value="6 Meses Atrasados" width="80%"/>
+				<h:commandLink action="#{relatorioController.rotaQuantidade(6)}" value="#{relatorioController.getQuantidadeAtrasadosPorQuantidade(6)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaQuantidade(7)}" value="Mais de 6 Meses Atrasados" width="80%"/>
+				<h:commandLink action="#{relatorioController.rotaQuantidade(7)}" value="#{relatorioController.getQuantidadeAtrasadosPorQuantidade(7)}" width="20%"/>
 			
+				<h:outputText value="Total de Boletos em atraso" width="80%"/>
+				<h:outputText value="#{relatorioController.getQuantidadeBoletosAtrasados()}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaQuantidade(0)}" value="Total de Crianças em atraso" width="80%"/>
+				<h:commandLink action="#{relatorioController.rotaQuantidade(0)}" value="#{relatorioController.getQuantidadeAtrasadosPorQuantidade(0)}" width="20%"/>
+				
+				<h:outputText value="Valor Total Atrasado" width="80%"/>
+				<h:outputText value="#{relatorioController.getValorTotalBoletosAtrasados()}" width="20%">
+					<f:convertNumber currencySymbol = "R$" type = "currency" />
+				</h:outputText>
+			
+				<h:outputText value="-" />
+				<h:outputText value=" " />
+			</p:panelGrid>
+			</p:panel>
+			
+		<p:panel header="Qtdade de boletros abertos por mes e total" >
+			<p:panelGrid columns="3" width="100%" >
+				<h:commandLink action="#{relatorioController.rotaMes(1)}" value="Janeiro" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(1)}" value="#{relatorioController.getTotalCriancasDevendo(1)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(1)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(1)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(2)}" value="Fevereiro" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(2)}" value="#{relatorioController.getTotalCriancasDevendo(2)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(2)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(2)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(3)}" value="Março" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(3)}" value="#{relatorioController.getTotalCriancasDevendo(3)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(3)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(3)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(4)}" value="Abril" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(4)}" value="#{relatorioController.getTotalCriancasDevendo(4)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(4)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(4)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(5)}" value="Maio" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(5)}" value="#{relatorioController.getTotalCriancasDevendo(5)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(5)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(5)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(6)}" value="Junho" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(6)}" value="#{relatorioController.getTotalCriancasDevendo(6)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(6)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(6)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(7)}" value="Julho" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(7)}" value="#{relatorioController.getTotalCriancasDevendo(7)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(7)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(7)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(8)}" value="Agosto" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(8)}" value="#{relatorioController.getTotalCriancasDevendo(8)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(8)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(8)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(9)}" value="Setembro" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(9)}" value="#{relatorioController.getTotalCriancasDevendo(9)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(9)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(9)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(10)}" value="Outubro" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(10)}" value="#{relatorioController.getTotalCriancasDevendo(10)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(10)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(10)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(11)}" value="Novembro" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(11)}" value="#{relatorioController.getTotalCriancasDevendo(11)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(11)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(11)}" width="20%"/>
+				
+				<h:commandLink action="#{relatorioController.rotaMes(12)}" value="Dezembro" width="100%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(12)}" value="#{relatorioController.getTotalCriancasDevendo(12)}" width="20%"/>
+				<h:commandLink action="#{relatorioController.rotaMes(12)}" value="#{relatorioController.getValorBoletosAtrasadosPorMes(12)}" width="20%"/>
+			</p:panelGrid>
+		</p:panel>
+		
+		<p:panel header="Maiores devedores " >
+			<p:panelGrid columns="2" width="100%" >
+				<h:commandLink action="#{relatorioController.verDevedor(0)}"  value="#{relatorioController.getNomeDevedor(0)}"  style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(0)}" >
+					<f:convertNumber pattern="#0.00" />
+				</h:outputText>
+				<h:commandLink action="#{relatorioController.verDevedor(1)}"  value="#{relatorioController.getNomeDevedor(1)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(1)}" >
+					<f:convertNumber pattern="#0.00" />
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(2)}"  value="#{relatorioController.getNomeDevedor(2)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(2)}" >
+						<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(3)}"  value="#{relatorioController.getNomeDevedor(3)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(3)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+
+				<h:commandLink action="#{relatorioController.verDevedor(4)}"  value="#{relatorioController.getNomeDevedor(4)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(4)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(5)}"  value="#{relatorioController.getNomeDevedor(5)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(5)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(6)}"  value="#{relatorioController.getNomeDevedor(6)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(6)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(7)}"  value="#{relatorioController.getNomeDevedor(7)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(7)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(8)}"  value="#{relatorioController.getNomeDevedor(8)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(8)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(9)}" value="#{relatorioController.getNomeDevedor(9)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(9)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(10)}" value="#{relatorioController.getNomeDevedor(10)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(10)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(11)}" value="#{relatorioController.getNomeDevedor(11)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(11)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+			</p:panelGrid>
+		</p:panel>
+		
+		
+		<p:panel header="Maiores devedores  " >
+			<p:panelGrid columns="2" width="100%" >
+				<h:commandLink action="#{relatorioController.verDevedor(12)}" value="#{relatorioController.getNomeDevedor(12)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(12)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				<h:commandLink action="#{relatorioController.verDevedor(13)}" value="#{relatorioController.getNomeDevedor(13)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(13)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(14)}" value="#{relatorioController.getNomeDevedor(14)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(14)}" >
+						<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(15)}" value="#{relatorioController.getNomeDevedor(15)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(15)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+
+				<h:commandLink action="#{relatorioController.verDevedor(16)}" value="#{relatorioController.getNomeDevedor(16)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(16)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(17)}" value="#{relatorioController.getNomeDevedor(17)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(17)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(18)}" value="#{relatorioController.getNomeDevedor(18)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(18)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(19)}" value="#{relatorioController.getNomeDevedor(19)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(19)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(20)}" value="#{relatorioController.getNomeDevedor(20)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(20)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(21)}" value="#{relatorioController.getNomeDevedor(21)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(21)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(22)}" value="#{relatorioController.getNomeDevedor(22)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(22)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+				<h:commandLink action="#{relatorioController.verDevedor(23)}" value="#{relatorioController.getNomeDevedor(23)}" style="font-size: 9px" />
+				<h:outputText value="#{relatorioController.getValorDevidoDevedor(23)}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
+				</h:outputText>
+				
+			</p:panelGrid>
+			</p:panel>
+
+	</h:panelGrid>	
+	
+	<br/>
+	
+	
+	<h:panelGrid id="panelGrupos" columns="2" styleClass="alinharTopo"> 
+				<h:outputLabel value="Gastos" />
+				<h:outputLabel value="Receitas" />
+				<p:dataTable  styleClass="alinharTopo" style="width:100%" sortField="#{gasto.value}" sortBy="#{gasto.value}" var="gasto" value="#{graficosController.getGastosPorGrupo()}"  >
+					<p:column headerText="Grupo">
+						<h:outputText value="#{gasto.key}" />
+						<f:facet name="footer">
+	              		  <h:outputText value="Total"/>
+	            		</f:facet>
+					</p:column>
+					<p:column headerText="Valor">
+						<h:outputText value="#{gasto.value}" >
+							<f:convertNumber type="currency" currencySymbol="R$" />
+						</h:outputText>
+						<f:facet name="footer">
+	              		  <h:outputText value="#{graficosController.totalGastoGrupoMes}">
+	              		  	<f:convertNumber type="currency" currencySymbol="R$" />	
+	              		  </h:outputText>
+	            		</f:facet>
+					</p:column>
+				</p:dataTable>
+				
+				<p:dataTable style="width:100%;  " 
+							 sortField="#{gasto.value}" sortBy="#{gasto.value}" var="gasto" 
+							 value="#{graficosController.getReceitasPorGrupo()}" styleClass="alinharTopo"  >
+					<p:column headerText="Grupo">
+						<h:outputText value="#{gasto.key}" />
+						<f:facet name="footer">
+	              		  <h:outputText value="Total"/>
+	            		</f:facet>
+					</p:column>
+					<p:column headerText="Valor">
+						<h:outputText value="#{gasto.value}"  >
+							<f:convertNumber type="currency" currencySymbol="R$" />
+						</h:outputText>
+						<f:facet name="footer">
+	              		  <h:outputText value="#{graficosController.totalReceitaGrupoMes}">
+	              		  	<f:convertNumber type="currency" currencySymbol="R$" />
+	              		  </h:outputText>
+	            		</f:facet>
+					</p:column>
+				</p:dataTable>
+			
+			</h:panelGrid>
+
+
+		<h:panelGrid columns="2" width="100%">
+			<h:outputLabel value="Faturamento atual" width="100%"/>
+			<h:outputLabel value="#{graficosController.faturamentoAtual}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Janeiro" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(1)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Fevereiro" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(2)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Março" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(3)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Abril" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(4)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Maio" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(5)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Junho" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(6)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Julho" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(7)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Agosto" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(8)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Setembro" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(9)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Outubro" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(10)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Novembro" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(11)}" width="20%"/>
+			
+			<h:outputLabel value="Faturamento Dezembro" width="100%"/>
+			<h:outputLabel value="#{graficosController.getFaturamentoAtual(12)}" width="20%"/>
+			
+			<h:outputLabel value="Quantidade de contratos" width="100%"/>
+			<h:outputLabel value="#{graficosController.quantidadeContratos}" width="20%"/>
+			
+			<h:outputLabel value="Quantidade de alunos" width="100%"/>
+			<h:outputLabel value="#{graficosController.quantidadeAlunos}" width="20%"/>
+		</h:panelGrid>
 
 		</h:form>
 	</ui:define>

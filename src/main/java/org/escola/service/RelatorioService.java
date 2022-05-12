@@ -81,59 +81,59 @@ public class RelatorioService extends Service {
 	}
 	
 	private String getInicioMes(int mesDoAno) {
-		String mes = "2021-01-01";
+		String mes = "2022-01-01";
 		switch (mesDoAno) {
 
 		case 12:
-			mes = "'2021-12-01'";
+			mes = "'2022-12-01'";
 			break;
 
 		case 11:
-			mes = "'2021-11-01'";
+			mes = "'2022-11-01'";
 			break;
 
 		case 10:
-			mes = "'2021-10-01'";
+			mes = "'2022-10-01'";
 			break;
 
 		case 9:
-			mes = "'2021-09-01'";
+			mes = "'2022-09-01'";
 			break;
 
 		case 8:
-			mes = "'2021-08-01'";
+			mes = "'2022-08-01'";
 			break;
 
 		case 7:
-			mes = "'2021-07-01'";
+			mes = "'2022-07-01'";
 			break;
 
 		case 6:
-			mes = "'2021-06-01'";
+			mes = "'2022-06-01'";
 			break;
 
 		case 5:
-			mes = "'2021-05-01'";
+			mes = "'2022-05-01'";
 			break;
 
 		case 4:
-			mes = "'2021-04-01'";
+			mes = "'2022-04-01'";
 			break;
 
 		case 3:
-			mes = "'2021-03-01'";
+			mes = "'2022-03-01'";
 			break;
 
 		case 2:
-			mes = "'2021-02-01'";
+			mes = "'2022-02-01'";
 			break;
 
 		case 1:
-			mes = "'2021-01-01'";
+			mes = "'2022-01-01'";
 			break;
 
 		default:
-			mes = "'2021-12-01'";
+			mes = "'2022-12-01'";
 			break;
 		}
 
@@ -141,59 +141,59 @@ public class RelatorioService extends Service {
 	}
 	
 	private String getFimMes(int mesDoAno) {
-		String mes = "2021-01-31";
+		String mes = "2022-01-31";
 		switch (mesDoAno) {
 
 		case 12:
-			mes = "'2021-12-31'";
+			mes = "'2022-12-31'";
 			break;
 
 		case 11:
-			mes = "'2021-11-30'";
+			mes = "'2022-11-30'";
 			break;
 
 		case 10:
-			mes = "'2021-10-31'";
+			mes = "'2022-10-31'";
 			break;
 
 		case 9:
-			mes = "'2021-09-30'";
+			mes = "'2022-09-30'";
 			break;
 
 		case 8:
-			mes = "'2021-08-31'";
+			mes = "'2022-08-31'";
 			break;
 
 		case 7:
-			mes = "'2021-07-31'";
+			mes = "'2022-07-31'";
 			break;
 
 		case 6:
-			mes = "'2021-06-30'";
+			mes = "'2022-06-30'";
 			break;
 
 		case 5:
-			mes = "'2021-05-31'";
+			mes = "'2022-05-31'";
 			break;
 
 		case 4:
-			mes = "'2021-04-30'";
+			mes = "'2022-04-30'";
 			break;
 
 		case 3:
-			mes = "'2021-03-31'";
+			mes = "'2022-03-31'";
 			break;
 
 		case 2:
-			mes = "'2021-02-28'";
+			mes = "'2022-02-28'";
 			break;
 
 		case 1:
-			mes = "'2021-01-31'";
+			mes = "'2022-01-31'";
 			break;
 
 		default:
-			mes = "'2021-12-31'";
+			mes = "'2022-12-31'";
 			break;
 		}
 

@@ -73,7 +73,7 @@ public class Verificador {
 			return StatusBoletoEnum.CANCELADO;
 		} else if (boleto.getDividaPerdoada() != null && boleto.getDividaPerdoada()) {
 			return StatusBoletoEnum.DIVIDA_PERDOADA;
-		} else if (diasVencimento > 3) {
+		} else if (diasVencimento > 0) {
 			return StatusBoletoEnum.ATRASADO;
 		} else if (diasVencimento == 0) {
 			return StatusBoletoEnum.VENCE_HOJE;

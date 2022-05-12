@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content"
+		rendered="#{authController.hasPermission(authController.administrador)}">
+		<h:form style="width:100%; border:none">
+
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin-top: -30px;width:92%">
+
+					<h:panelGrid columns="2" border="0">
+
+							<h:outputLabel value="Codigo(*): "
+								style="font-size: 13px; width:180px" />
+							<p:inputText title="" value="#{extratoBancario.codigoEntrada}"
+								style="font-size: 15px; width:280px" />
+
+							<h:outputLabel value="Data "
+								style="font-size: 13px; width:180px" />
+							<p:calendar value="#{extratoBancario.dataEvento}" pattern="dd/MM/yyyy"
+								mask="true" style="font-size: 15px; width:280px" />
+							
+							<h:outputLabel value="Valor: "
+								style="font-size: 13px; width:180px" />
+							<p:inputText value="#{extratoBancario.valor}"
+								rendered="#{authController.hasPermission(authController.administrador)}"
+								style="font-size: 15px; width:275px">
+							</p:inputText>
+							
+							<h:outputLabel value="Tipo Entrada/ Saida: "
+								style="font-size: 13px; width:180px" />
+								
+							<p:selectOneMenu id="tipoEntradasaida" style="width: 130px;"	value="#{extratoBancario.tipoEntradaSaida}">
+								<f:selectItems value="#{CombosEspeciaisMB.getExtratoTiposEntradaSaidaEnum()}"	var="country" itemLabel="#{country.nome}" 
+											 itemValue="#{country}" />
+							</p:selectOneMenu>
+							
+							<h:outputLabel value="Tipo: "
+								style="font-size: 13px; width:180px" />
+								
+							<p:selectOneMenu style="width: 130px;"	value="#{extratoBancario.tipoEntrada}">
+								<f:selectItems value="#{CombosEspeciaisMB.getExtratoTiposEntradaEnum()}" var="country" itemLabel="#{country.nameReal}" 
+											 itemValue="#{country}" />
+							</p:selectOneMenu>
+							
+							<h:outputLabel value="Observacao: "
+								style="font-size: 13px; width:180px" />
+							<p:inputTextarea title="" value="#{extratoBancario.observacao}"
+								style="font-size: 15px; width:280px" />
+							
+						</h:panelGrid>
+			
+			</h:panelGrid>
+			
+			
+		
+
+			<h:commandButton id="voltarButtom" immediate="true"
+				action="#{professorController.voltar()}" value="Voltar" />
+
+
+			<h:commandButton id="salvarButtom"
+				style="margin-left:690px !important"
+				action="#{financeiroController.saveExtrato()}" value="Salvar" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

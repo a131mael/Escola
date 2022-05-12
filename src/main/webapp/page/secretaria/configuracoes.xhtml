@@ -129,6 +129,15 @@
 								action="#{configuracaoController.corrigirAulasDuplicadas()}"
 				value="Gerar Aula dos alunos">
 			</p:commandButton>
+			
+				<br />
+			<h:outputText value="Gerar NFSE DO Mes Atual :" />
+				<p:inputText value="#{configuracao.valorNotas}" disabled="fale">
+					<p:ajax event="change" process="@this"	 />
+				</p:inputText>
+				<p:commandButton icon="ui-icon-contact" ajax="false" value="Gerar Notas Fiscais Mes Atual "
+					action="#{configuracaoController.gerarNFSEDoMesAtual()}">
+				</p:commandButton>
 				
 
 

@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/templateADM.xhtml"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
+			<center>
+				<h1>ADONAI</h1>
+				<div>
+					<p>Escola Adonai do maternal ao fundamental.</p>
+				</div>
+
+			</center>
+
+			<br />
+			<h:panelGrid columns="2">
+				<h:commandButton id="ContratoEscolar"
+					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
+					action="#{secretariaController.linkAlunos()}" value="Alunos"
+					styleClass="alinharFooter "
+					 image="/resources/gfx/icone_alunos.png" />
+
+
+				<h:commandButton id="ContratoFretamento"
+					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
+					action="#{secretariaController.linkProfessores()}"
+					value="Professores" 
+					styleClass="alinharDireita"
+					image="/resources/gfx/icone_professores.png" />
+
+
+				<h:commandButton id="ContratoAdonai"
+					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
+					action="#{secretariaController.linkTurmas()}" value="Turmas"
+					styleClass="alinharFooter"
+					 image="/resources/gfx/icones_turmas.png" />
+
+				<h:commandButton id="calendario"
+					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
+					action="#{secretariaController.linkCalendario()}" value="Turmas"
+					styleClass="alinharFooter"
+					image="/resources/gfx/icones_calaendarios.png" />
+
+				<h:commandButton id="recados"
+					style="alinharFooter width: 75px;height: 75px;padding-left: 100px"
+					action="#{contratoController.irContratoAdonai()}" value="Turmas"
+					styleClass="alinharFooter"
+					image="/resources/gfx/icones_calaendarios.png" rendered="false" />
+
+			</h:panelGrid>>
+			
+
+		</h:form>
+	</ui:define>
+</ui:composition>

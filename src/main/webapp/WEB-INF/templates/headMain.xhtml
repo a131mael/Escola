@@ -31,6 +31,10 @@
 	<p:growl id="messages" />
 
 	<p:menubar style="width:100%;margin-left: -16px;margin-top: -16px">
+	
+	<p:menuitem value="Home" url="../secretaria/index.jsf"
+			icon="ui-icon-search" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}"/>
+		
 
 		<p:submenu label="Crianças" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" >
 			
@@ -102,6 +106,10 @@
 
 				<p:menuitem value="Baixa" url="../financeiro/baixaManual.jsf"
 					icon="ui-icon-close"
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
+
+				<p:menuitem value="Extrato Bancario"
+					url="../financeiro/extratoBancario.jsf" icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
 
 				<p:menuitem value="Importar CNAB"

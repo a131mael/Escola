@@ -10,6 +10,11 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -29,9 +34,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.aaf.dto.nfs.Contants;
 import org.aaf.dto.nfs.ItemNFS;
 import org.aaf.dto.nfs.ListaItensNFS;
 import org.aaf.dto.nfs.NF;
@@ -46,15 +56,30 @@ import org.aaf.financeiro.sicoob.util.CNAB240_SICOOB;
 import org.aaf.financeiro.util.ImportadorArquivo;
 import org.aaf.financeiro.util.OfficeUtil;
 import org.aaf.financeiro.util.constantes.Constante;
+import org.apache.axis.encoding.Base64;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContexts;
+import org.apache.http.ssl.TrustStrategy;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.escola.controller.OfficeDOCUtil;
 import org.escola.controller.OfficePDFUtil;
@@ -287,6 +312,40 @@ public class AlunoController implements Serializable {
 		configuracao = configuracaoService.getConfiguracao();
 	}
 
+	public void gerarNFSe(Aluno aluno) {
+		try {
+			JAXBContext contextObj;
+			contextObj = JAXBContext.newInstance(NFSeDTO.class);
+
+			Marshaller marshallerObj = contextObj.createMarshaller();
+			marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			String nomeArquivo = System.currentTimeMillis() + "__"
+					+ aluno.getContratoVigente().getNomeResponsavel().replace(" ", "") + ".xml";
+			String caminho = File.separator + "home" + File.separator + "servidor" + File.separator + "nfs"
+					+ File.separator + "adonai" + File.separator + nomeArquivo;
+			marshallerObj.marshal(getNFSeDTO(aluno), new FileOutputStream(caminho));
+
+			if (enviarNFS(caminho, Contants.login, Contants.senha)) {
+				ContratoAluno contrato = aluno.getContratoVigente(configuracao.getAnoLetivo());
+				org.escola.model.Boleto boletoMesAtual = getBoletoMesAtual(contrato);
+				alunoService.setNfsEnviada(boletoMesAtual.getId());
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info",
+						"NOTA GERADA do ALUNO " + aluno.getNomeAluno()));
+
+			} else {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info",
+						"NÃO GEROU A NOTA " + aluno.getNomeAluno()));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "NÃO GEROU A NOTA " + aluno.getNomeAluno()));
+		}
+	}
+	
+	
 	public ContratoAluno getContrato() {
 		Object obj = Util.getAtributoSessao("contrato");
 		ContratoAluno contrato = null;
@@ -1725,6 +1784,7 @@ public class AlunoController implements Serializable {
 			String nomeArquivo = System.currentTimeMillis()+ "__" + aluno.getContratoVigente().getNomeResponsavel().replace(" ", "")
 					+ ".xml";
 			String caminho = File.separator + "home" + File.separator + "servidor" + File.separator + "nfs" +  File.separator+ "adonai" +  File.separator + nomeArquivo;
+			
 			marshallerObj.marshal(getNFSeDTO(aluno), new FileOutputStream(caminho));
 			
 			if(enviarNFS(caminho, org.aaf.dto.nfs.Contants.login, org.aaf.dto.nfs.Contants.senha)){
@@ -1742,25 +1802,91 @@ public class AlunoController implements Serializable {
 		}
 	}
 	
-	public static synchronized boolean enviarNFS(String localNomeNotaGerada,String login,String senha) {
+	private static void aceptallSSL() {
+		// Create a trust manager that does not validate certificate chains
+		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+
+			@Override
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return new X509Certificate[0];
+			}
+
+			@Override
+			public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+				// TODO Auto-generated method stub
+
+			}
+
+		} };
+
+		// Install the all-trusting trust manager
+		try {
+			SSLContext sc = SSLContext.getInstance("TLS");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())  ;
+		} catch (Exception e) {
+		}
+//		// Now you can access an https URL without having the certificate in the
+//		// truststore
+//		try {
+//			URL url = new URL("https://hostname/index.html");
+//		} catch (MalformedURLException e) {
+//		}
+	}
+	
+	private CloseableHttpClient getHttpCliente(){
+		 try {
+			 TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
+			SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+			Registry<ConnectionSocketFactory> socketFactoryRegistry = 
+				      RegistryBuilder.<ConnectionSocketFactory> create()
+				      .register("https", sslsf)
+				      .register("http", new PlainConnectionSocketFactory())
+				      .build();
+			BasicHttpClientConnectionManager connectionManager = 
+				      new BasicHttpClientConnectionManager(socketFactoryRegistry);
+			 CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(sslsf)
+				      .setConnectionManager(connectionManager).build();
+			 
+			 return httpClient;
+
+			
+		} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public synchronized boolean enviarNFS(String localNomeNotaGerada, String login, String senha) {
 		System.out.println("ENVIANDO NOTAS FISCAIS  ........");
+
+		aceptallSSL();
 		
 		try {
-			DefaultHttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost(org.aaf.dto.nfs.Contants.URL);
-			File file = new File(localNomeNotaGerada);
-			MultipartEntity mpEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			ContentBody cbFile = new FileBody(file);
-			mpEntity.addPart("f1", cbFile);
-			mpEntity.addPart("login", new StringBody(login));
-			mpEntity.addPart("senha", new StringBody(senha));
-			mpEntity.addPart("cidade", new StringBody("8223"));
-			httppost.setEntity(mpEntity);
+			//DefaultHttpClient httpclient = new DefaultHttpClient();
+			CloseableHttpClient httpclient = getHttpCliente();
+			HttpPost httppost = new HttpPost(Contants.URL);
+			httppost.setHeader("Authorization",	"Basic " + new String(java.util.Base64.getEncoder().encode((login + ":" + senha).getBytes())));
+			 File file = new File(localNomeNotaGerada);
+			 HttpEntity entity = MultipartEntityBuilder.create()
+                     .addPart("f1", new FileBody(file))
+                     .build();
+			 httppost.setEntity(entity);
 			System.out.println("executing request " + httppost.getRequestLine());
 			System.out.println("Now uploading your file into uploadbox.com");
 			HttpResponse response = httpclient.execute(httppost);
 			System.out.println(response.getStatusLine().getStatusCode());
-			if(response.getStatusLine().getStatusCode()>=200 && response.getStatusLine().getStatusCode()<300){
+			System.out.println(EntityUtils.toString(response.getEntity(), "UTF-8"));
+			
+			if (response.getStatusLine().getStatusCode() >= 200 && response.getStatusLine().getStatusCode() < 300) {
 				return true;
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -1776,7 +1902,7 @@ public class AlunoController implements Serializable {
 
 		return false;
 	}
-
+ 
 	private NFSeDTO getNFSeDTO(Aluno aluno) {
 		try {
 			ContratoAluno contrato = aluno.getContratoVigente(configuracao.getAnoLetivo());
@@ -1820,7 +1946,7 @@ public class AlunoController implements Serializable {
 
 	}
 
-	private org.escola.model.Boleto getBoletoMesAtual(ContratoAluno contrato) {
+	public org.escola.model.Boleto getBoletoMesAtual(ContratoAluno contrato) {
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
 		Date primeiro = c.getTime();
@@ -2164,6 +2290,16 @@ public class AlunoController implements Serializable {
 
 		}
 		// alunoService.removerBoleto(idBoleto);
+	}
+	
+	public String getNomeResponsavelDevedor(Aluno al){
+		String nomeResponsavelDev = "";
+		for(ContratoAluno ca: al.getContratos()){
+			nomeResponsavelDev += ca.getNomeResponsavel();
+			nomeResponsavelDev += "// \n";
+		}
+		return nomeResponsavelDev;
+		
 	}
 
 	public String removerAluno() {

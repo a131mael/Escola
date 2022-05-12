@@ -84,6 +84,59 @@ public class AlunoService extends Service {
 		return al;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Aluno> findAlunoDoAnoLetivoComLzyContrato() {
+		List<Aluno> alunos = new ArrayList<>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT al from  Aluno al ");
+		sql.append("where 1=1 ");
+		sql.append(" and al.removido = false ");
+		sql.append(" and al.anoLetivo = ");
+		sql.append(configuracaoService.getConfiguracao().getAnoLetivo());
+		Query query = em.createQuery(sql.toString());
+
+		alunos = query.getResultList();
+		List<Aluno> alunos2 = new ArrayList<>();
+		for(Aluno al :alunos){
+			if(al.getContratos() != null){
+				for(ContratoAluno c : al.getContratos()){
+					c.getId();
+					c.getBoletos().size();
+				}
+			}
+			alunos2.add(al);
+		}
+		return alunos2;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Aluno> findAlunoPrioritariosNFSeComLzyContrato() {
+		List<Aluno> alunos = new ArrayList<>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT al from  Aluno al ");
+		sql.append("where 1=1 ");
+		sql.append(" and al.removido = false ");
+		sql.append(" and al.gerarNFSe = true ");
+		sql.append(" and al.anoLetivo = ");
+		sql.append(configuracaoService.getConfiguracao().getAnoLetivo());
+		Query query = em.createQuery(sql.toString());
+
+		alunos = query.getResultList();
+		List<Aluno> alunos2 = new ArrayList<>();
+		for(Aluno al :alunos){
+			if(al.getContratos() != null){
+				for(ContratoAluno c : al.getContratos()){
+					c.getId();
+					c.getBoletos().size();
+				}
+			}
+			alunos2.add(al);
+		}
+		return alunos2;
+	}
+	
 	public Boleto findBoletoById(Long id) {
 		Boleto boleto = em.find(Boleto.class, id);
 		return boleto;
@@ -435,6 +488,7 @@ public class AlunoService extends Service {
 
 			user.setDoenca(aluno.getDoenca());
 			user.setAlergico(aluno.getAlergico());
+			user.setGerarNFSe(aluno.getGerarNFSe());
 			user.setNomeAlergias(aluno.getNomeAlergias());
 			user.setNomeDoencas(aluno.getNomeDoencas());
 			user.setObservacaoProfessores(aluno.getObservacaoProfessores());
@@ -1817,5 +1871,21 @@ public class AlunoService extends Service {
 		em.persist(bol);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Aluno> findAlunoDoAnoLetivo() {
+		List<Aluno> alunos = new ArrayList<>();
 
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT al from  Aluno al ");
+		sql.append("where 1=1 ");
+		sql.append(" and al.removido = false ");
+		sql.append(" and al.anoLetivo = ");
+		sql.append(configuracaoService.getConfiguracao().getAnoLetivo());
+		Query query = em.createQuery(sql.toString());
+
+		alunos = query.getResultList();
+
+		return alunos;
+	}
+	
 }

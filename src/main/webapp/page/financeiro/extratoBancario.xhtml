@@ -1,0 +1,210 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none">
+
+			<h:panelGrid columns="8" style="margin-top: -30px;">
+					
+					<p:commandButton id="adicionar" icon="ui-icon-plus"
+						action="#{financeiroController.adicionarExtrato()}" />
+					
+					<p:commandButton rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"
+								 update="tbl" icon="ui-icon-pencil" action="#{financeiroController.editarExtrato()}">
+						<p:ajax process="@this"/>
+					</p:commandButton>
+					
+					<p:commandButton update="tbl" icon="ui-icon-trash" action="#{financeiroController.removerExtrato()}" />
+						
+					<h:panelGrid columns="2" width="100%">
+						<h:outputLabel value="Ano: " style="font-size: 13px;float: right; width:180px" />
+						<p:selectOneMenu style="width: 256px;" value="#{financeiroController.anoSelecionado}">
+							<f:selectItems value="#{CombosEspeciaisMB.getAnos()}"
+								var="country" itemLabel="#{country}" itemValue="#{country}" 
+								/>
+							<p:ajax event="change" process="@form" update="@form" />
+						</p:selectOneMenu>	
+						</h:panelGrid>
+						<h:panelGrid columns="2" width="100%">
+							<h:outputLabel value="Mês: " style="font-size: 13px;float: right; width:180px" />
+							<p:selectOneMenu style="width: 256px;" value="#{financeiroController.mesSelecionado}">
+								<f:selectItems value="#{CombosEspeciaisMB.getMeses()}"	var="mesel" itemLabel="#{mesel}" itemValue="#{mesel}"	/>
+							<p:ajax event="change" process="@form" update="@form" />
+						</p:selectOneMenu>	
+						</h:panelGrid>
+			</h:panelGrid>
+
+			<h:panelGrid width="98%" style="border: none !important">
+				<p:dataTable id="tbl" var="custotab"
+					value="#{financeiroController.getLazyDataModelExtrato()}" paginator="true"
+					style="margin-bottom:20px; width:100%" paginatorPosition="bottom"
+					rowKey="#{custotab.id}" filterEvent="enter" lazy="true"
+					liveResize="true" styleClass="tabela" pageLinks="5"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
+                    {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					resizableColumns="true" rows="30"
+					selectionMode="single"
+					selection="#{financeiroController.itemExtrato}" 
+					>
+
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage name="/gfx/excel.png" width="24" />
+							<p:dataExporter type="xls" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/pdf.png" width="24" />
+							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/csv.png" width="24" />
+							<p:dataExporter type="csv" target="tbl" fileName="cars" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/gfx/xml.png" width="24" />
+							<p:dataExporter type="xml" target="tbl" fileName="cars" />
+						</h:commandLink>
+					</f:facet>
+
+					<p:column id="colunaCodigo" style="width:3%" sortBy="#{custotab.codigoEntrada}" styleClass="#{financeiroController.marcarLinhaExtrato(custotab)}">
+						<f:facet name="header">
+							<h:outputText value="Codigo" />
+						</f:facet>
+						<h:outputText value="#{custotab.codigoEntrada}" />
+					</p:column>
+
+					<p:column style="width:5%" sortBy="#{custotab.dataEvento}">
+						<f:facet name="header">
+							<h:outputText value="Data" />
+						</f:facet>
+						<h:outputText value="#{custotab.dataEvento}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+
+				<p:column style="width:5%" sortBy="#{custotab.valor}">
+					<f:facet name="header">
+						<h:outputText value="Valor" />
+					</f:facet>
+					<h:outputText value=" R$ #{custotab.valor}" >
+						<f:convertNumber pattern="#,##0.00" type="currency" locale="pt_BR" currencyCode="BRL"/>
+					</h:outputText>
+				</p:column>
+
+				<p:column filterBy="#{custotab.tipoEntradaSaida}" style="width:135px;" 
+                              sortBy="#{custotab.tipoEntradaSaida}" 
+                               filterOptions="#{CombosEspeciaisMB.getExtratoTiposEntradaSaidaSelectItem()}">
+						<f:facet name="header">
+							<h:outputText value="Entrada/Saida ?" />
+						</f:facet>
+						 <p:cellEditor>
+						
+						<f:facet name="output">
+							<p:selectOneMenu id="tipoEntradasaida" style="width: 130px;"	value="#{custotab.tipoEntradaSaida}">
+								<f:selectItems value="#{CombosEspeciaisMB.getExtratoTiposEntradaSaidaEnum()}"	var="country" itemLabel="#{country.nome}" 
+											 itemValue="#{country}" />
+								<p:ajax event="change"  process="@this" listener="#{financeiroController.saveExtrato(custotab)}"/>
+							</p:selectOneMenu>
+								
+						</f:facet>
+						
+						 <f:facet name="input">
+							<p:selectOneMenu  style="width: 130px;"	value="#{custotab.tipoEntradaSaida}">
+								<f:selectItems value="#{CombosEspeciaisMB.getExtratoTiposEntradaSaidaEnum()}"	var="country" itemLabel="#{country.nome}" 
+											 itemValue="#{country}" />
+								<p:ajax event="change"  process="@this" listener="#{financeiroController.saveExtrato(custotab)}"/>
+							</p:selectOneMenu>
+						</f:facet>
+						</p:cellEditor>
+					</p:column>
+						
+					<p:column filterBy="#{custotab.tipoEntrada}" style="width:145px;" 
+                              sortBy="#{custotab.tipoEntrada}" 
+                               filterOptions="#{CombosEspeciaisMB.getExtratoTiposEntradaSelectItem()}" >
+						<f:facet name="header">
+							<h:outputText value="Tipo Entrada Extrato" />
+						</f:facet>
+						 <p:cellEditor>
+						
+						<f:facet name="output">
+							<p:selectOneMenu style="width: 130px;"	value="#{custotab.tipoEntrada}">
+								<f:selectItems value="#{CombosEspeciaisMB.getExtratoTiposEntradaEnum()}" var="country" itemLabel="#{country.nameReal}" 
+											 itemValue="#{country}" />
+								<p:ajax event="change"  process="@this" listener="#{financeiroController.saveExtrato(custotab)}"/>
+							</p:selectOneMenu>
+								
+						</f:facet>
+						
+						 <f:facet name="input">
+							<p:selectOneMenu style="width: 130px;"	value="#{custotab.tipoEntrada}">
+								<f:selectItems value="#{CombosEspeciaisMB.getExtratoTiposEntradaEnum()}"	var="country" itemLabel="#{country.nameReal}" 
+											 itemValue="#{country}" />
+								<p:ajax event="change"  process="@this" listener="#{financeiroController.saveExtrato(custotab)}"/>
+							</p:selectOneMenu>
+						</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column filterBy="#{custotab.grupoRecebimento}" style="width:155px;" 
+	                              sortBy="#{custotab.grupoRecebimento}" 
+	                              filterOptions="#{CombosEspeciaisMB.getExtratoGruposPagamentoRecebimentoEnumSelectItem()}">
+							<f:facet name="header">
+								<h:outputText value="Grupo" />
+							</f:facet>
+							 <p:cellEditor>
+							
+							<f:facet name="output">
+								<p:selectOneMenu style="width: 140px;"	value="#{custotab.grupoRecebimento}">
+									<f:selectItems value="#{CombosEspeciaisMB.getExtratoGruposPagamentoRecebimentoEnum()}"	var="country" itemLabel="#{country.nome}" 
+												 itemValue="#{country}" />
+									<p:ajax event="change"  process="@this" update="tbl" listener="#{financeiroController.saveExtrato(custotab)}"/>
+								</p:selectOneMenu>
+									
+							</f:facet>
+							
+							 <f:facet name="input">
+								<p:selectOneMenu style="width: 140px;"	value="#{custotab.grupoRecebimento}">
+									<f:selectItems value="#{CombosEspeciaisMB.getExtratoGruposPagamentoRecebimentoEnum()}"	var="country" itemLabel="#{country.nome}" 
+												 itemValue="#{country}" />
+									<p:ajax event="change"  process="@this"   update="tbl" listener="#{financeiroController.saveExtrato(custotab)}"/>
+								</p:selectOneMenu>
+							</f:facet>
+							</p:cellEditor>
+							
+					</p:column>
+
+					<p:column style="width:20%">
+						<f:facet name="header">
+							<h:outputText value="Observacao" />
+						</f:facet>
+						 <p:cellEditor>
+							 <f:facet name="output">
+							  	<p:inputText value="#{custotab.observacao}" >
+							  		<p:ajax event="blur" process="@this"  update="tbl" listener="#{financeiroController.saveExtrato(custotab)}"/>
+							  	</p:inputText>
+							 </f:facet>
+							 
+							  <f:facet name="input">
+							  	<p:inputText value="#{custotab.observacao}" >
+							  		<p:ajax event="blur"  process="@this"  update="tbl" listener="#{financeiroController.saveExtrato(custotab)}"/>
+							  	</p:inputText>
+							  </f:facet>
+						 
+						 </p:cellEditor>
+						
+					</p:column>
+
+				</p:dataTable>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

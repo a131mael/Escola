@@ -134,6 +134,65 @@ public class AuthController implements Serializable {
 
 	}
 	
+	public boolean hasPermission(TipoMembro m1, TipoMembro m2, TipoMembro m3, TipoMembro m4, TipoMembro m5) {
+		if(getLoggedUser() == null){
+			return false;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m1)) {
+			return true;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m2)) {
+			return true;
+		}
+		
+		if (getLoggedUser().getTipoMembro().equals(m3)) {
+			return true;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m4)) {
+			return true;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m5)) {
+			return true;
+		}
+		
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.MESTRE)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean hasPermission(TipoMembro m1, TipoMembro m2, TipoMembro m3, TipoMembro m4, TipoMembro m5, TipoMembro m6) {
+		if(getLoggedUser() == null){
+			return false;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m1)) {
+			return true;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m2)) {
+			return true;
+		}
+		
+		if (getLoggedUser().getTipoMembro().equals(m3)) {
+			return true;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m4)) {
+			return true;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m5)) {
+			return true;
+		}
+		if (getLoggedUser().getTipoMembro().equals(m6)) {
+			return true;
+		}
+		
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.MESTRE)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public String login() throws Exception {
 		try {
 			UsernamePasswordToken token = new UsernamePasswordToken(authUser.getLogin(),

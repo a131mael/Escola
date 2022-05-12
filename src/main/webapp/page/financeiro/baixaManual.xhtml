@@ -40,7 +40,7 @@
 		            <h:outputText value="#{alun.codigo}" />
 		        </p:column>
 		        <p:column headerText="Crianca" styleClass="#{financeiroController.marcarLinha(alun)}">
-		            <h:outputText value="#{alun.nomeAluno}" />
+		        	<h:commandLink target="_blank" value="#{alun.nomeAluno}" action="#{financeiroController.verAluno(alun.id)}" />
 		        </p:column>
 		        <p:column headerText="Responsavel" styleClass="#{financeiroController.marcarLinha(alun)}">
 		            <h:outputText value="#{alun.nomeResponsavel}" />
@@ -48,6 +48,25 @@
 		        <p:column headerText="CPF Responsavel" styleClass="#{financeiroController.marcarLinha(alun)}">
 		            <h:outputText value="#{alun.cpfResponsavel}" />
 		        </p:column>
+		        <p:column headerText="Contatos" styleClass="#{financeiroController.marcarLinha(alun)}">
+		            <h:outputText value="#{alun.contatoTelefone1}" />
+		             <h:outputText value=" " />
+		             <h:outputText value="#{alun.contatoNome1}" />
+		             <br/>
+		             <h:outputText value="#{alun.contatoTelefone2}" />
+		             <h:outputText value=" " />
+		             <h:outputText value="#{alun.contatoNome2}" />
+		             <br/>
+		             <h:outputText value="#{alun.contatoTelefone3}" />
+		             <h:outputText value=" " />
+		             <h:outputText value="#{alun.contatoNome3}" />
+		             <br/>
+		             <h:outputText value="#{alun.contatoTelefone4}" />
+		             <h:outputText value=" " />
+		             <h:outputText value="#{alun.contatoNome4}" />
+		        </p:column>
+		        
+		        
 		        <p:column style="text-align: center" styleClass="#{financeiroController.marcarLinha(alun)}">
 		             <p:commandButton process="@this" update="form:panelBoletos" icon="ui-icon-search" title="Ver">
 		                <f:setPropertyActionListener value="#{alun}" target="#{financeiroController.alunoBaixaSelecionado}" />

@@ -20,6 +20,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.escola.model.Aluno;
 import org.escola.model.Aula;
 import org.escola.model.Boleto;
 import org.escola.model.Configuracao;
@@ -27,10 +28,12 @@ import org.escola.model.ContratoAluno;
 import org.escola.service.AlunoService;
 import org.escola.service.AulaService;
 import org.escola.service.ConfiguracaoService;
+import org.escola.service.RelatorioService;
 import org.escola.util.CompactadorZip;
 import org.escola.util.FileDownload;
 import org.escola.util.FileUtils;
 import org.escola.util.UtilFinalizarAnoLetivo;
+import org.escola.controller.aluno.AlunoController;
 import org.escola.enums.StatusBoletoEnum;
 import org.escola.util.ImpressoesUtils;
 import org.escola.util.Util;
@@ -67,7 +70,13 @@ public class ConfiguracaoController implements Serializable{
 	private AulaService aulaService;
 	
 	@Inject
+	private RelatorioService relatorioService;
+	
+	@Inject
 	private org.escola.service.rotinasAutomaticas.CNAB240 cnab240;
+	
+	@Inject
+	private AlunoController alunoController;
 	
 	@PostConstruct
 	private void init() {
@@ -248,6 +257,64 @@ public class ConfiguracaoController implements Serializable{
 
 	}
 	
+	
+	public void gerarNFSEDoMesAtual() {
+		Calendar c = Calendar.getInstance();
+		double limitNota = configuracao.getValorNotas();
+		Double totalGerado = relatorioService.getTotalNotasEmitidas(c.get(Calendar.MONTH)+1);
+		List<Aluno> todosAlunos = alunoService.findAlunoDoAnoLetivoComLzyContrato();
+		
+		List<Aluno> alunosPrioritarios = alunoService.findAlunoPrioritariosNFSeComLzyContrato();
+		
+		totalGerado = emitirNota(alunosPrioritarios,totalGerado,limitNota);
+		emitirNota(todosAlunos,totalGerado,limitNota);
+	}
+	
+	private Double emitirNota(List<Aluno> alunos, Double totalGerado, double limite) {
+		for (Aluno al : alunos) {
+			if (totalGerado < limite) {
+				if (!notaMesAtualGerada(al)) {
+					if (boletoMesPago(al)) {
+						totalGerado += al.getContratoVigente(configuracao.getAnoLetivo()).getValorMensal();
+						alunoController.gerarNFSe(al);
+					}
+				}
+			} else {
+				break;
+			}
+		}
+		
+		return totalGerado;
+	}
+	
+	private boolean notaMesAtualGerada(Aluno al) {
+		ContratoAluno contratoatual = al.getContratoVigente(configuracao.getAnoLetivo());
+		if(contratoatual == null){
+			return false;
+		}
+		Boleto boletoMesAual = alunoController.getBoletoMesAtual(contratoatual);
+		if(boletoMesAual == null){
+			return true;
+		}
+		Boolean notaGerada = boletoMesAual.getNfsEnviada();
+		return (notaGerada != null && notaGerada) ?true:false;
+	}
+	
+	private boolean boletoMesPago(Aluno al) {
+		ContratoAluno contratoatual = al.getContratoVigente(configuracao.getAnoLetivo());
+		if(contratoatual == null){
+			return false;
+		}
+		Boleto boletoMes = alunoController.getBoletoMesAtual(contratoatual);
+		if(boletoMes == null || boletoMes.getValorPago() == null){
+			return false;
+		}
+		if (boletoMes.getValorPago() > 200) {
+			return true;
+		}
+		return false;
+	}
+
 	public HashMap<String, String> montarArquivoProtesto(ContratoAluno contratoAluno) {
 		DateFormat formatador = DateFormat.getDateInstance(DateFormat.DATE_FIELD, new Locale("pt", "BR"));
 		String dataExtenso = formatador.format(new Date());
