@@ -136,6 +136,31 @@ public class TurmaService extends Service {
 		return "ok";
 	}
 
+	
+	public String removeProfessorTurma(Long idProfTurma) {
+		/**CASCADE*/
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT pt from  ProfessorTurma pt ");
+		sql.append("where pt.id =   ");
+		sql.append(idProfTurma);
+
+		Query query = em.createQuery(sql.toString());
+		
+		try{
+			List<ProfessorTurma> professorTurmas = query.getResultList();
+			for(ProfessorTurma profT : professorTurmas){
+				em.remove(profT);
+			}
+			
+		}catch(NoResultException noResultException){
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "ok";
+	}
+	
 	public List<Turma> findAll(Long idProfessor) {
 		List<Turma> turmasDoProfessor = new ArrayList<>();
 		

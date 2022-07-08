@@ -71,6 +71,20 @@
 							onerror="statusDialog.hide();
                       $('button').css('cursor','pointer');
                       $('a').css('cursor','pointer');" />
+                      
+                      	<p:commandButton ajax="true" icon="ui-icon-search"
+							action="#{turmaController.editarNovo(alunoTab.id)}"
+							rendered="#{authController.isTeacher()}"
+							onstart="
+                      $('button').css('cursor','progress');
+                      $('a').css('cursor','progress');
+                      statusDialog.show();"
+							oncomplete="statusDialog.hide();
+                      $('button').css('cursor','pointer');
+                      $('a').css('cursor','pointer');"
+							onerror="statusDialog.hide();
+                      $('button').css('cursor','pointer');
+                      $('a').css('cursor','pointer');" />
 
 					</p:column>
 

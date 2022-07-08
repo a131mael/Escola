@@ -177,6 +177,11 @@
 			<to-view-id>/page/turma/cadastrarTurma.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>cadastrarNovo</from-outcome>
+			<to-view-id>/page/turma/digitarNota.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/page/turma/cadastrarTurma.xhtml</from-view-id>

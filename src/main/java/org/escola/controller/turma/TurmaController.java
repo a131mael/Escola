@@ -20,15 +20,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.Comparator;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
@@ -37,8 +38,8 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.escola.auth.AuthController;
-import org.escola.controller.OfficeDOCUtil;
 import org.escola.enums.BimestreEnum;
 import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.PerioddoEnum;
@@ -47,10 +48,13 @@ import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
 import org.escola.model.Avaliacao;
+import org.escola.model.Configuracao;
 import org.escola.model.Professor;
+import org.escola.model.ProfessorTurma;
 import org.escola.model.Turma;
 import org.escola.service.AlunoService;
 import org.escola.service.AvaliacaoService;
+import org.escola.service.ConfiguracaoService;
 import org.escola.service.ProfessorService;
 import org.escola.service.TurmaService;
 import org.escola.util.CompactadorZip;
@@ -59,6 +63,21 @@ import org.escola.util.ImpressoesUtils;
 import org.escola.util.Util;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.BeanUtil;
+
+import br.com.aaf.base.base.Constantes;
+import br.com.aaf.base.base.ConstantesEscolaApi;
+import br.com.aaf.base.comunicadores.EnviadorJson;
+import br.com.aaf.base.whats.model.Parametro;
+import br.com.api.alunoavaliacao.dto.api.alunoavaliiacao.AlunoAvaliacaoDTO;
+import br.com.api.alunoavaliacao.dto.api.alunoavaliiacao.AlunoDTO;
+import br.com.api.alunoavaliacao.dto.api.alunoavaliiacao.AvaliacaoDTO;
+import br.com.api.alunoavaliacao.dto.api.alunoavaliiacao.RetornoAlunosAvaliacaoDTO;
 
 @Named
 @ViewScoped
@@ -113,7 +132,17 @@ public class TurmaController extends AuthController implements Serializable {
 	/* private DualListModel<Professor> professores; */
 	
 	private List<AlunoAvaliacao> alunosAvaliacao;
+	
+	private int indice = 0;
 
+	private List<AlunoAvaliacaoDTO> alunosAvaliacaoNovo;
+	
+	@Inject
+	private ConfiguracaoService configuracaoService;
+	private Configuracao configuracao;
+	private ProfessorTurma professorTurmaNovo;
+	
+	
 	@PostConstruct
 	private void init() {
 		// TODO SOMENTE CARREGAR OS PICKLISTA pra quem tem permissao de ver
@@ -126,12 +155,100 @@ public class TurmaController extends AuthController implements Serializable {
 				turma = new Turma();
 			}
 		}
+		
 
 		montarPickListProfessor();
 		montarPickListAluno(turma.getSerie(), turma.getPeriodo());
-		popularAlunoAvaliacao();
+	//	popularAlunoAvaliacao();
+		
+		configuracao = configuracaoService.getConfiguracao();
+		String  bimestre = String.valueOf(configuracao.getBimestre().ordinal());
+		String disciplina = disciplinaSelecionada != null ? String.valueOf(disciplinaSelecionada.ordinal()) :"0";
+		if(turma.getId() != null ){
+			setAlunosAvaliacaoNovo(getAlunosAvaliacoes(turma.getId()+"",configuracao.getAnoLetivo()+"",bimestre, disciplina).getAlunosAvaliacao());
+		}
+		
+		if(professorTurmaNovo == null) {
+			professorTurmaNovo = new ProfessorTurma();
+		}
+		
 	}
 
+	private AlunoAvaliacao converte(AlunoAvaliacaoDTO avDTO){
+		AlunoAvaliacao av = new AlunoAvaliacao();
+		Aluno al = new Aluno();
+		Avaliacao ava = new Avaliacao();
+		av.setId(avDTO.getId());
+		al.setId(avDTO.getAluno().getId());
+		ava.setId(avDTO.getAvaliacao().getId());
+		
+		av.setAluno(al);
+		av.setAvaliacao(ava);
+		
+		av.setNota(avDTO.getNota());
+		
+		return av;
+	}
+	
+	public void salvarNota(){
+		saveAvaliacaoAluno(converte(getAlunosAvaliacaoNovo().get(indice)));
+		indice++;
+		if(indice>getAlunosAvaliacaoNovo().size()-1){
+			indice = 0;
+		}
+	}
+	
+	public void atualizarListaAlunosNota(){
+		String  bimestre = String.valueOf(configuracao.getBimestre().ordinal());
+		String disciplina = disciplinaSelecionada != null ? String.valueOf(disciplinaSelecionada.ordinal()) :"0";
+		setAlunosAvaliacaoNovo(getAlunosAvaliacoes(turma.getId()+"",configuracao.getAnoLetivo()+"",bimestre,disciplina).getAlunosAvaliacao());
+		indice = 0;
+	}
+	
+	public AlunoAvaliacaoDTO getAlunoAvaliacaoAtual(){
+		if(getAlunosAvaliacaoNovo() == null || getAlunosAvaliacaoNovo().size() ==0){
+			AlunoDTO  a = new AlunoDTO();
+			AvaliacaoDTO b = new  AvaliacaoDTO();
+			AlunoAvaliacaoDTO av = new AlunoAvaliacaoDTO();
+			av.setAluno(a);
+			av.setAvaliacao(b);
+			return av;
+		}
+		return getAlunosAvaliacaoNovo().get(indice);
+	}
+	
+	public RetornoAlunosAvaliacaoDTO getAlunosAvaliacoes(String idTurma, String anoLetivo, String bimestre, String disciplina) {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+		String endpoint = ConstantesEscolaApi.URL+ ConstantesEscolaApi.getAlunosAvaliacao;
+		Parametro p1 = new Parametro("idTurma", idTurma);
+		Parametro p2 = new Parametro("anoletivo", anoLetivo);
+		Parametro p3 = new Parametro("bimestre", bimestre);
+		Parametro p4 = new Parametro("disciplina", disciplina);
+		//Parametro p1 = new Parametro("idAluno", 15065);
+		List<Parametro> parametros = new ArrayList<>();
+		parametros.add(p1);
+		parametros.add(p2);
+		parametros.add(p3);
+		parametros.add(p4);
+		String retornoJson = EnviadorJson.get2(endpoint, Constantes.TOKEN, parametros);
+		RetornoAlunosAvaliacaoDTO retorno = new RetornoAlunosAvaliacaoDTO();
+		try {
+			retorno = mapper.readValue(retornoJson, RetornoAlunosAvaliacaoDTO.class);
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return retorno;
+	}
+	
 	private void montarPickListAluno(Serie serie, PerioddoEnum periodo) {
 
 		/** MONTANDO O PICKLIST */
@@ -210,6 +327,10 @@ public class TurmaController extends AuthController implements Serializable {
 				: new ArrayList<Professor>();
 	}
 
+	public List<ProfessorTurma> getProfessoresTurma(){
+		return professorService.findProfessorTurmaBytTurma2(turma.getId());
+	}
+	
 	private List<Aluno> getAlunosSelecionados() {
 
 		return turma.getId() != null ? alunoService.findAlunoTurmaBytTurma(turma.getId()) : new ArrayList<Aluno>();
@@ -241,6 +362,16 @@ public class TurmaController extends AuthController implements Serializable {
 		turma = turmaService.findById(idTurma);
 		Util.addAtributoSessao("turma", turma);
 		return "cadastrar";
+	}
+	
+	public String editarNovo(Long idTurma) {
+		turma = turmaService.findById(idTurma);
+		Util.addAtributoSessao("turma", turma);
+		return "cadastrarNovo";
+	}
+	
+	public void adicionarProfessorTurma(ProfessorTurma proft) {
+		professorService.saveProfessorTurma2(proft);
 	}
 	
 	public  StreamedContent imprimirBoletinsTurma(Long idTurma) throws IOException {
@@ -766,6 +897,10 @@ public class TurmaController extends AuthController implements Serializable {
 		turmaService.remove(idTurma);
 		return "index";
 	}
+	
+	public void removerProfessorTurma(Long idTurma) {
+		turmaService.removeProfessorTurma(idTurma);
+	}
 
 	private void saveProfessorTurma() {
 		professorService.saveProfessorTurma(professores.getTarget(), turma);
@@ -994,5 +1129,22 @@ public class TurmaController extends AuthController implements Serializable {
 	public void setAlunoAvaliacaoEspanhol(Map<Aluno,List<AlunoAvaliacao>> alunoAvaliacaoEspanhol) {
 		this.alunoAvaliacaoEspanhol = alunoAvaliacaoEspanhol;
 	}
+
+	public List<AlunoAvaliacaoDTO> getAlunosAvaliacaoNovo() {
+		return alunosAvaliacaoNovo;
+	}
+
+	public void setAlunosAvaliacaoNovo(List<AlunoAvaliacaoDTO> alunosAvaliacaoNovo) {
+		this.alunosAvaliacaoNovo = alunosAvaliacaoNovo;
+	}
+
+	public ProfessorTurma getProfessorTurmaNovo() {
+		return professorTurmaNovo;
+	}
+
+	public void setProfessorTurmaNovo(ProfessorTurma professorTurmaNovo) {
+		this.professorTurmaNovo = professorTurmaNovo;
+	}
+
 
 }

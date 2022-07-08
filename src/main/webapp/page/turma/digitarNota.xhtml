@@ -1,0 +1,98 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none" prependId="false">
+		<p:hotkey bind="crtl+enter" update="panelNota" process="@this" actionListener="#{turmaController.salvarNota()}" />
+		<p:focus for="j_idt87"/> 
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin: -10px;margin-top: -25px;">
+				<h:panelGrid border="1" style="width:100%">
+					<center>Turma</center>
+					<h:panelGrid columns="2" title="Contratante" border="0">
+
+						<h:outputLabel for="nome" value="Nome: " />
+						<h:inputText id="nome" value="#{turma.nome}"
+							style="font-size: 15px; width:280px"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+						<h:outputLabel for="serie" value="Serie:" />
+						<p:selectOneMenu id="serie" style="width: 256px;"
+							value="#{turma.serie}"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}">
+							<f:selectItem itemLabel="Todas" />
+							<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Periodo:" />
+						<p:selectOneMenu style="width: 256px;" value="#{turma.periodo}"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}">
+							<f:selectItem itemLabel="Todas" />
+							<f:selectItems value="#{CombosEspeciaisMB.getPeriodos()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Disciplina:"
+							rendered="#{authController.hasPermission(authController.professor)}" />
+						<p:selectOneMenu style="width: 256px;"
+							value="#{turmaController.disciplinaSelecionada}"
+							rendered="#{authController.hasPermission(authController.professor)}">
+							<f:selectItem itemLabel="Selecione uma disciplina" />
+							<f:selectItems value="#{CombosEspeciaisMB.getDisciplinas()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+
+							<p:ajax event="change" process="@this" update="@form" listener="#{turmaController.atualizarListaAlunosNota()}"/>
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+					
+				</h:panelGrid>
+				
+				<h:panelGrid id="panelNota" columns="4">
+					<h:outputLabel value="#{turmaController.getAlunoAvaliacaoAtual().aluno.nomeAluno}" style="width:150px"/>
+					<h:outputLabel label="nota" value="#{turmaController.getAlunoAvaliacaoAtual().avaliacao.nome}" />
+					<p:inputText value="#{turmaController.getAlunoAvaliacaoAtual().nota}">
+						<p:ajax event="change" process="@this" global="false"/>
+						<f:convertNumber pattern="#0.0" minIntegerDigits="0"/>
+					</p:inputText>
+					
+					<h:commandButton id="proximo" style="background:green" 	actionListener="#{turmaController.salvarNota()}" value="próximo" />
+				
+				</h:panelGrid>
+				
+				<h:panelGrid id="notasFeitas" columns="1">
+				<p:dataTable var="alunoAv" styleClass="alinharTopo" value="#{turmaController.alunosAvaliacaoNovo}" style="width:100%">
+					<p:column headerText="nome">
+						<h:outputText value="#{alunoAv.aluno.nomeAluno}" />
+					</p:column>
+					<p:column headerText="Nota">
+						<h:outputText value="#{alunoAv.nota}" />
+					</p:column>
+				
+				</p:dataTable>
+				
+				</h:panelGrid>
+				
+				<table>
+					<tr>
+						<td><h:commandButton id="voltarButtom"
+								action="#{turmaController.voltar()}" value="Voltar" /></td>
+
+						<td><h:commandButton id="salvarButtom"
+								rendered="#{authController.hasPermission(authController.administrador)}"
+								style="margin-left:690px !important;"
+								action="#{turmaController.salvar()}" value="Salvar" /></td>
+					</tr>
+
+				</table>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

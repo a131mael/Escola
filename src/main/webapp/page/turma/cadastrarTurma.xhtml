@@ -66,27 +66,53 @@
 								update="@form" />
 						</p:selectOneMenu>
 
-
-						<h:outputLabel for="pickList" value="Professor:"
-							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
-						<p:pickList id="pickList" value="#{turmaController.professores}"
-							var="plProfessor" itemValue="#{plProfessor}"
-							converter="converterProfessor"
-							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
-
-							<f:facet name="sourceCaption">Todos Professores</f:facet>
-							<f:facet name="targetCaption">Professores desta turma</f:facet>
-
-							<p:column style="width:80%;">
-								<h:outputText value="#{plProfessor.nome}" />
+					<h:outputLabel  value="Adicionar professor disciplina:" style="float: inherit; width:80px" />
+					<h:panelGrid columns="5">
+							<h:outputLabel value="Professor:"
+								rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+						
+							<p:selectOneMenu style="width: 256px;" value="#{turmaController.professorTurmaNovo.professor}"	
+								rendered="#{!authController.hasPermission(authController.professor)}">
+								<f:selectItem itemLabel="Todos" />
+								<f:selectItems value="#{CombosEspeciaisMB.getProfessores()}"
+									var="country" itemLabel="#{country.nome}" itemValue="#{country}" />
+									<p:ajax process="@this"/>
+							</p:selectOneMenu>
+							
+							<h:outputLabel value="Disciplina:" value="#{turmaController.professorTurmaNovo.disciplina}"
+								rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+						
+						
+							<p:selectOneMenu style="width: 256px;"	
+								rendered="#{!authController.hasPermission(authController.professor)}">
+								<f:selectItem itemLabel="Todos" />
+								<f:selectItems value="#{CombosEspeciaisMB.getDisciplinasSelectIItem()}"
+									var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+									<p:ajax process="@this"/>
+							</p:selectOneMenu>
+							<h:commandButton rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"
+									action="#{turmaController.adicionarProfessorTurma(turmaController.professorTurmaNovo)}" value="Adicionar" />
+							
+						</h:panelGrid>	
+						
+						<h:outputLabel value="Professores:"
+								rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+						
+						<p:dataTable id="tabelaprofessordisiciplina" var="professorDisciplina" value="#{turmaController.getProfessoresTurma()}">
+							<p:column headerText="nome">
+								<h:outputText value="#{professorDisciplina.professor.nome}" />
 							</p:column>
-
-							<p:column style="width:20%;">
-								<h:outputText value="#{plProfessor.especialidade.name}" />
+							
+							<p:column headerText="disciplina">
+								<h:outputText value="#{professorDisciplina.disciplina.name}" />
 							</p:column>
-
-						</p:pickList>
-
+							
+							<p:column headerText="remover">
+								<p:commandButton update="tabelaprofessordisiciplina" icon="ui-icon-trash" action="#{turmaController.removerProfessorTurma(professorDisciplina.id)}" />
+							</p:column>
+						
+						</p:dataTable>
+							
 						<h:outputLabel for="pickListAlunos" value="Alunos:"
 							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
 

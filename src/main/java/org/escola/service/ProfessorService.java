@@ -37,13 +37,13 @@ public class ProfessorService extends Service {
 
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
-	
+
 	@Inject
 	private EventoService eventoService;
-	
+
 	@Inject
 	private MemberRegistration memberRegistration;
-	
+
 	@Inject
 	private UtilFinalizarAnoLetivo finalizarAnoLetivo;
 
@@ -54,14 +54,14 @@ public class ProfessorService extends Service {
 	public Professor findById(Long id) {
 		return em.find(Professor.class, id);
 	}
-	
-	public String remover(Long idTurma){
+
+	public String remover(Long idTurma) {
 		em.remove(findById(idTurma));
 		return "index";
 	}
 
 	public List<Professor> findAll() {
-		try{
+		try {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<Professor> criteria = cb.createQuery(Professor.class);
 			Root<Professor> member = criteria.from(Professor.class);
@@ -71,10 +71,10 @@ public class ProfessorService extends Service {
 			// criteria.select(member).orderBy(cb.asc(member.get(Member_.name)));
 			criteria.select(member).orderBy(cb.asc(member.get("id")));
 			return em.createQuery(criteria).getResultList();
-	
-		}catch(NoResultException nre){
+
+		} catch (NoResultException nre) {
 			return new ArrayList<>();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<>();
 		}
@@ -85,13 +85,13 @@ public class ProfessorService extends Service {
 		try {
 
 			log.info("Registering " + professor.getNome());
-		
+
 			if (professor.getId() != null && professor.getId() != 0L) {
 				user = findById(professor.getId());
 			} else {
 				user = new Professor();
 			}
-			
+
 			user.setCodigo(professor.getCodigo());
 			user.setCpf(professor.getCpf());
 			user.setEmail(professor.getEmail());
@@ -108,39 +108,39 @@ public class ProfessorService extends Service {
 			user.setEspecialidade(professor.getEspecialidade());
 			user.setLogin(professor.getLogin());
 			user.setSenha(professor.getSenha());
-			
+
 			em.persist(user);
 			Member m = null;
-			if(user.getMember() != null && user.getMember().getId() != null){
+			if (user.getMember() != null && user.getMember().getId() != null) {
 				m = memberRegistration.findById(user.getMember().getId());
-			}else{
-				m = new Member();	
+			} else {
+				m = new Member();
 			}
-			
+
 			m.setLogin(professor.getLogin());
 			m.setSenha(professor.getSenha());
 			m.setName(professor.getNome());
 			m.setTipoMembro(TipoMembro.PROFESSOR);
 			em.persist(m);
-			
+
 			user.setMember(m);
 			m.setProfessor(user);
-			
-			if(professor.getNascimento() != null){
+
+			if (professor.getNascimento() != null) {
 				Evento aniversario = eventoService.findByCodigo(professor.getCodigo());
-				if(aniversario == null){
+				if (aniversario == null) {
 					aniversario = new Evento();
-					
+
 				}
 				aniversario.setCodigo(professor.getCodigo());
-				aniversario.setDescricao(" Aniversário do(a) professor(a) " + user.getNome());		
+				aniversario.setDescricao(" Aniversário do(a) professor(a) " + user.getNome());
 				aniversario.setNome(" Aniversário do(a) professor(a) " + user.getNome());
 				aniversario.setDataFim(finalizarAnoLetivo.mudarAno(professor.getNascimento(), Constant.anoLetivoAtual));
-				aniversario.setDataInicio(finalizarAnoLetivo.mudarAno(professor.getNascimento(), Constant.anoLetivoAtual));
-				em.persist(aniversario);	
+				aniversario
+						.setDataInicio(finalizarAnoLetivo.mudarAno(professor.getNascimento(), Constant.anoLetivoAtual));
+				em.persist(aniversario);
 			}
-			
-			
+
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues
 			// builder = createViolationResponse(ce.getConstraintViolations());
@@ -163,61 +163,79 @@ public class ProfessorService extends Service {
 	@SuppressWarnings("unchecked")
 	public List<Professor> findProfessorTurmaBytTurma(long idTurma) {
 		List<Professor> professors = new ArrayList<>();
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT pt from  ProfessorTurma pt ");
 		sql.append("where pt.turma.id =   ");
 		sql.append(idTurma);
 
 		Query query = em.createQuery(sql.toString());
-		
-		 
-		try{
+
+		try {
 			List<ProfessorTurma> professorTurmas = query.getResultList();
-			for(ProfessorTurma profT : professorTurmas){
+			for (ProfessorTurma profT : professorTurmas) {
 				Professor pro = profT.getProfessor();
 				professors.add(pro);
 			}
-			
-		}catch(NoResultException noResultException){
-			
-		}catch (Exception e) {
+
+		} catch (NoResultException noResultException) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return professors;
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<ProfessorTurma> findProfessorTurmaBytTurma2(long idTurma) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT pt from  ProfessorTurma pt ");
+		sql.append("where pt.turma.id =   ");
+		sql.append(idTurma);
+
+		try {
+			Query query = em.createQuery(sql.toString());
+			List<ProfessorTurma> professorTurmas = query.getResultList();
+			return professorTurmas;
+
+		} catch (NoResultException noResultException) {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
+
+	@SuppressWarnings("unchecked")
 	public List<Turma> findTurmaByProfessor(long idProfessor) {
 		List<Turma> turmas = new ArrayList<>();
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT pt from  ProfessorTurma pt ");
 		sql.append("where pt.professor.id =   ");
 		sql.append(idProfessor);
 
 		Query query = em.createQuery(sql.toString());
-		
-		 
-		try{
+
+		try {
 			List<ProfessorTurma> professorTurmas = query.getResultList();
-			for(ProfessorTurma profT : professorTurmas){
+			for (ProfessorTurma profT : professorTurmas) {
 				Turma pro = profT.getTurma();
 				turmas.add(pro);
 			}
-			
-		}catch(NoResultException noResultException){
-			
-		}catch (Exception e) {
+
+		} catch (NoResultException noResultException) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		return turmas;
 
 	}
 
-	
 	public void saveProfessorTurma(List<Professor> target, Turma turma) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT pt from  ProfessorTurma pt ");
@@ -225,56 +243,55 @@ public class ProfessorService extends Service {
 		sql.append(turma.getId());
 
 		Query query = em.createQuery(sql.toString());
-		
-		 
-		try{
+
+		try {
 			List<ProfessorTurma> professorTurmas = query.getResultList();
-			for(ProfessorTurma profT :professorTurmas){
+			for (ProfessorTurma profT : professorTurmas) {
 				em.remove(profT);
 				em.flush();
 			}
 
-			for(Professor prof : target){
+			for (Professor prof : target) {
 				ProfessorTurma pt = new ProfessorTurma();
 				pt.setProfessor(prof);
 				pt.setTurma(em.find(Turma.class, turma.getId()));
 				em.persist(pt);
 			}
-			
-		}catch(NoResultException noResultException){
-			
-		}catch (Exception e){
+
+		} catch (NoResultException noResultException) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	}
-
-/*	public Usuario findMaiorPontuadorSemana() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT u from  Usuario u ");
-		sql.append("where pontosSemana =  (SELECT MAX(pontosSemana) FROM Usuario) ");
-
-		Query query = em.createQuery(sql.toString());
-		return (Usuario) query.getResultList().get(0);
-	}
-
-	public Usuario findMaiorPontuadorMes() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT u from  Usuario u ");
-		sql.append("where pontosMes =  (SELECT MAX(pontosMes) FROM Usuario) ");
-
-		Query query = em.createQuery(sql.toString());
-		return (Usuario) query.getResultList().get(0);
 
 	}
-
-	public Usuario findMaiorPontuadorGeral() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT u from  Usuario u ");
-		sql.append("where pontosGeral =  (SELECT MAX(pontosGeral) FROM Usuario) ");
-
-		Query query = em.createQuery(sql.toString());
-		return (Usuario) query.getResultList().get(0);
+	
+	public void saveProfessorTurma2(ProfessorTurma pt) {
+		em.persist(pt);
 	}
-*/
+
+	/*
+	 * public Usuario findMaiorPontuadorSemana() { StringBuilder sql = new
+	 * StringBuilder(); sql.append("SELECT u from  Usuario u ");
+	 * sql.append("where pontosSemana =  (SELECT MAX(pontosSemana) FROM Usuario) ");
+	 * 
+	 * Query query = em.createQuery(sql.toString()); return (Usuario)
+	 * query.getResultList().get(0); }
+	 * 
+	 * public Usuario findMaiorPontuadorMes() { StringBuilder sql = new
+	 * StringBuilder(); sql.append("SELECT u from  Usuario u ");
+	 * sql.append("where pontosMes =  (SELECT MAX(pontosMes) FROM Usuario) ");
+	 * 
+	 * Query query = em.createQuery(sql.toString()); return (Usuario)
+	 * query.getResultList().get(0);
+	 * 
+	 * }
+	 * 
+	 * public Usuario findMaiorPontuadorGeral() { StringBuilder sql = new
+	 * StringBuilder(); sql.append("SELECT u from  Usuario u ");
+	 * sql.append("where pontosGeral =  (SELECT MAX(pontosGeral) FROM Usuario) ");
+	 * 
+	 * Query query = em.createQuery(sql.toString()); return (Usuario)
+	 * query.getResultList().get(0); }
+	 */
 }

@@ -139,6 +139,10 @@
    <PROCESS-ITEM-OUTPUT ID="cadastrar::#page#turma#cadastrarTurma.xhtml"
     NAME="output" PATH="/page/turma/cadastrarTurma.xhtml"
     TARGET="rules:#page#turma#cadastrarTurma.xhtml" TITLE="cadastrar" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="cadastrarNovo::#page#turma#digitarNota.xhtml" NAME="output1"
+    PATH="/page/turma/digitarNota.xhtml"
+    TARGET="rules:#page#turma#digitarNota.xhtml" TITLE="cadastrarNovo" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#page#turma#cadastrarTurma.xhtml"
@@ -417,4 +421,6 @@
     TITLE="indexExtrato" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#page#turma#digitarNota.xhtml"
+  PATH="/page/turma/digitarNota.xhtml" SHAPE="576,17,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>
