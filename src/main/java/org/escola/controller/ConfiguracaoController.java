@@ -89,15 +89,15 @@ public class ConfiguracaoController implements Serializable{
 		}
 	}
 	
-	public void gerarHistoricoAno(int ano){
-		int quantidade = alunoService.findAll().size();
-		int quantidadeNoLote = 50;
-		int inicio = 0;
-		while (inicio <= quantidade) {
-			finalizarAnoLetivo.gerarHistorico(inicio,quantidadeNoLote,ano);
-			inicio +=quantidadeNoLote +1;
-		}
-	}
+//	public void gerarHistoricoAno(int ano){
+//		int quantidade = alunoService.findAll().size();
+//		int quantidadeNoLote = 50;
+//		int inicio = 0;
+//		while (inicio <= quantidade) {
+//			finalizarAnoLetivo.gerarHistorico(inicio,quantidadeNoLote,ano);
+//			inicio +=quantidadeNoLote +1;
+//		}
+//	}
 	public void gerarUsuarioAluno(){
 		configuracaoService.gerarUsuariosAlunos();
 	}

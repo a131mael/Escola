@@ -372,6 +372,42 @@ public class AvaliacaoService extends Service {
 		return null;
 
 	}
+	
+	public List<Avaliacao> findAvaliacaoby(DisciplinaEnum disciplina, BimestreEnum bimestre, Serie serie, int anoletivo) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT av from  Avaliacao av ");
+		sql.append("where 1=1 ");
+		if (disciplina != null) {
+			sql.append(" and av.disciplina =   ");
+			sql.append(disciplina.ordinal());
+		}
+		if (bimestre != null) {
+			sql.append(" and av.bimestre =   ");
+			sql.append(bimestre.ordinal());
+		}
+
+		if (serie != null) {
+			sql.append(" and av.serie =   ");
+			sql.append(serie.ordinal());
+		}
+		
+		sql.append(" and av.anoLetivo =   ");
+		sql.append(anoletivo);
+
+		Query query = em.createQuery(sql.toString());
+
+		try {
+			return (List<Avaliacao>) query.getResultList();
+
+		} catch (NoResultException noResultException) {
+			return new ArrayList<>();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 
 	public void saveAlunoAvaliacao(AlunoAvaliacao alunoAvaliacao) {
 		alunoAvaliacao.setAluno(em.find(Aluno.class, alunoAvaliacao.getAluno().getId()));

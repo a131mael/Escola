@@ -20,15 +20,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Model;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import org.escola.enums.Serie;
 import org.escola.model.Aluno;
 import org.escola.model.ContratoAluno;
 import org.escola.service.AlunoService;
@@ -39,61 +44,65 @@ import org.escola.util.FileUtils;
 import org.escola.util.UtilFinalizarAnoLetivo;
 import org.primefaces.model.StreamedContent;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.aaf.base.base.Constantes;
+import br.com.aaf.base.base.ConstantesEscolaApi;
+import br.com.aaf.base.comunicadores.EnviadorJson;
+import br.com.aaf.base.whats.model.Parametro;
+import br.com.api.alunoavaliacao.dto.api.alunoavaliiacao.RetornoAlunosAvaliacaoDTO;
+
 @Model
 @ViewScoped
 public class SecretariaController {
 
 	@Inject
 	private UtilFinalizarAnoLetivo finalizarAnoLetivo;
-	
+
 	@Inject
 	private ConfiguracaoService configuracaoService;
-	
+
 	@Inject
 	private AlunoService alunoService;
 
 	public void finalizarAnoLetivo() {
-		int anoLetivoAtual = finalizarAnoLetivo.getAnoLetivoAtual() -1;
-		List<Aluno> alunos = finalizarAnoLetivo.getAlunosAluno(anoLetivoAtual); 
-		int quantidade = alunos.size();
-		int gerados = 0;
-		int quantidadeNoLote = 100;
-		int inicio = 0;
-		while (inicio <= quantidade) {
-			finalizarAnoLetivo.finalizarAnoLetivo(alunos,inicio,quantidadeNoLote,anoLetivoAtual);
-			inicio +=quantidadeNoLote +1;
-		}
-		finalizarAnoLetivo.alterarConfiguracao();
+		String endpoint = ConstantesEscolaApi.URL+ ConstantesEscolaApi.FINALIZAR_ANO_LETIVO;
+		List<Parametro> parametros = new ArrayList<>();
+		EnviadorJson.get2(endpoint, Constantes.TOKEN, parametros);
 	}
 
-	
 	public StreamedContent gerarCNAB240_TodosAlunos() {
 		try {
-			Map<String,Object> parametros = new HashMap<>();
+			Map<String, Object> parametros = new HashMap<>();
 			parametros.put("removido", false);
 			List<Aluno> todosAlunos = alunoService.findAll(parametros);
-			long sequencialArquivo = configuracaoService.getSequencialArquivo() ;
-			String pasta = ""+System.currentTimeMillis();
+			long sequencialArquivo = configuracaoService.getSequencialArquivo();
+			String pasta = "" + System.currentTimeMillis();
 			String caminhoFinalPasta = System.getProperty("java.io.tmpdir") + pasta;
 			CompactadorZip.createDir(caminhoFinalPasta);
-			
-			for(Aluno al : todosAlunos){
-				for(ContratoAluno contrato : al.getContratosVigentes()){
-					String nomeArquivo = caminhoFinalPasta +System.getProperty("file.separator")+ "CNAB240_" + al.getCodigo() + ".txt";
-					InputStream stream = FileUtils.gerarCNB240(sequencialArquivo+"", nomeArquivo, al, contrato);
+
+			for (Aluno al : todosAlunos) {
+				for (ContratoAluno contrato : al.getContratosVigentes()) {
+					String nomeArquivo = caminhoFinalPasta + System.getProperty("file.separator") + "CNAB240_"
+							+ al.getCodigo() + ".txt";
+					InputStream stream = FileUtils.gerarCNB240(sequencialArquivo + "", nomeArquivo, al, contrato);
 					configuracaoService.incrementaSequencialArquivoCNAB();
 					sequencialArquivo++;
-					
+
 					FileUtils.inputStreamToFile(stream, nomeArquivo);
 				}
 			}
-			
-			String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"+"escolartodasCriancasCNAB.zip";
+
+			String arquivoSaida = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + "\\"
+					+ "escolartodasCriancasCNAB.zip";
 			CompactadorZip.compactarParaZip(arquivoSaida, caminhoFinalPasta);
-			
-			InputStream stream2 =  new FileInputStream(arquivoSaida);
+
+			InputStream stream2 = new FileInputStream(arquivoSaida);
 			return FileDownload.getContentDoc(stream2, "escolartodasCriancasCNAB.zip");
-			
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,7 +113,7 @@ public class SecretariaController {
 		return null;
 
 	}
-	
+
 	public String linkAlunos() {
 		return "listagemAlunos";
 	}

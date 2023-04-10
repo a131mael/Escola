@@ -66,39 +66,44 @@
 								update="@form" />
 						</p:selectOneMenu>
 
-					<h:outputLabel  value="Adicionar professor disciplina:" style="float: inherit; width:80px" />
-					<h:panelGrid columns="5">
-							<h:outputLabel value="Professor:"
+					<h:outputLabel  value="Adicionar professor disciplina:" style="float: inherit; width:80px" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+				
+				
+					<p:panelGrid id="panelProfDIsci" columns="5" style="width : 100%">
+							
+							<h:outputLabel value="Disciplina:"
 								rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
 						
-							<p:selectOneMenu style="width: 256px;" value="#{turmaController.professorTurmaNovo.professor}"	
+							<p:selectOneMenu style="width: 256px;" value="#{turmaController.professorTurmaNovo.disciplina}"	
 								rendered="#{!authController.hasPermission(authController.professor)}">
-								<f:selectItem itemLabel="Todos" />
-								<f:selectItems value="#{CombosEspeciaisMB.getProfessores()}"
-									var="country" itemLabel="#{country.nome}" itemValue="#{country}" />
-									<p:ajax process="@this"/>
+								<f:selectItem itemLabel="Todas" />
+								<f:selectItems value="#{CombosEspeciaisMB.getDisciplinasSelectIItem()}"	var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+									<p:ajax event="change" process="@this"/>
 							</p:selectOneMenu>
 							
-							<h:outputLabel value="Disciplina:" value="#{turmaController.professorTurmaNovo.disciplina}"
-								rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
+							<h:outputLabel value="Professor:" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
 						
-						
-							<p:selectOneMenu style="width: 256px;"	
-								rendered="#{!authController.hasPermission(authController.professor)}">
+							<p:selectOneMenu style="width: 256px;" value="#{turmaController.professorTurmaNovo.professor}"
+								converter="converterProfessor"	rendered="#{!authController.hasPermission(authController.professor)}">
 								<f:selectItem itemLabel="Todos" />
-								<f:selectItems value="#{CombosEspeciaisMB.getDisciplinasSelectIItem()}"
-									var="country" itemLabel="#{country.name}" itemValue="#{country}" />
-									<p:ajax process="@this"/>
+								<f:selectItems value="#{CombosEspeciaisMB.getProfessores()}" var="country" itemLabel="#{country.nome}" itemValue="#{country}" />
+									<p:ajax event="change" process="@this"/>
 							</p:selectOneMenu>
-							<h:commandButton rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}"
-									action="#{turmaController.adicionarProfessorTurma(turmaController.professorTurmaNovo)}" value="Adicionar" />
 							
-						</h:panelGrid>	
+						
+						
+							
+							<p:commandButton rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" value="Adicionar" >
+								<p:ajax event="click" process="@this" update="@form" listener="#{turmaController.adicionarProfessorTurma(turmaController.professorTurmaNovo)}"/>		
+							</p:commandButton>
+							
+						</p:panelGrid>	
 						
 						<h:outputLabel value="Professores:"
 								rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
 						
-						<p:dataTable id="tabelaprofessordisiciplina" var="professorDisciplina" value="#{turmaController.getProfessoresTurma()}">
+						<p:dataTable id="tabelaprofessordisiciplina" var="professorDisciplina" value="#{turmaController.getProfessoresTurma()}"
+							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" >
 							<p:column headerText="nome">
 								<h:outputText value="#{professorDisciplina.professor.nome}" />
 							</p:column>
@@ -108,7 +113,7 @@
 							</p:column>
 							
 							<p:column headerText="remover">
-								<p:commandButton update="tabelaprofessordisiciplina" icon="ui-icon-trash" action="#{turmaController.removerProfessorTurma(professorDisciplina.id)}" />
+								<p:commandButton process="@this" update="tabelaprofessordisiciplina" icon="ui-icon-trash" actionListener="#{turmaController.removerProfessorTurma(professorDisciplina.id)}" />
 							</p:column>
 						
 						</p:dataTable>
@@ -116,7 +121,7 @@
 						<h:outputLabel for="pickListAlunos" value="Alunos:"
 							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
 
-						<p:pickList id="pickListAlunos" value="#{turmaController.alunos}"
+						<p:pickList id="pickListAlunos" value="#{turmaController.alunos}" style="height:150px"
 							var="plAluno" itemValue="#{plAluno}" converter="converterAluno"
 							rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
 

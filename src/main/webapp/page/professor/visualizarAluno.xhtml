@@ -14,7 +14,7 @@
 			<p:tabView>
 	        	<p:tab title="Aluno" >
 	        	
-	        	<h:panelGrid columns="2">
+	        	<h:panelGrid columns="3">
 					
 					
 					<h:panelGrid columns="2"  border="0">
@@ -126,6 +126,10 @@
 		        			<h:outputText value="Artes:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
 		        			<h:outputText value="#{alunoController.getNota(alunoController.artes,alunoController.primeiroBimestre)}" 
 		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        						  
+		        			 <h:outputText value="Filosofia:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.filosofia,alunoController.primeiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
 		        		</h:panelGrid>
 		        		
 		        		<h:panelGrid columns="2">
@@ -169,6 +173,10 @@
 		        			<h:outputText value="Artes:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
 		        			<h:outputText value="#{alunoController.getNota(alunoController.artes,alunoController.segundoBimestre)}" 
 		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+
+							<h:outputText value="Filosofia:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.filosofia,alunoController.segundoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>		        						  
 		        			        		
 		        		</h:panelGrid>
 		        	
@@ -213,6 +221,10 @@
 		        			<h:outputText value="Artes:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
 		        			<h:outputText value="#{alunoController.getNota(alunoController.artes,alunoController.terceiroBimestre)}" 
 		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        						  
+		        			<h:outputText value="Filosofia:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        			<h:outputText value="#{alunoController.getNota(alunoController.filosofia,alunoController.terceiroBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>
 		        						  	        		
 		        		</h:panelGrid>
 		        		
@@ -256,35 +268,46 @@
 		        			
 		        			<h:outputText value="Artes:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
 		        			<h:outputText value="#{alunoController.getNota(alunoController.artes,alunoController.quartoBimestre)}" 
+		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>		
+		        						  
+		        		  <h:outputText value="Filosofia:" style="width:100%;text-align: right;float:left;; font-size:11px"/>
+		        		  <h:outputText value="#{alunoController.getNota(alunoController.filosofia,alunoController.quartoBimestre)}" 
 		        						  style="width:100%;text-align: right;float:left;; font-size:11px"/>		        		
 		        		</h:panelGrid>
 									        	
 		        	</h:panelGrid>
+		        	
+		        	<h:commandButton style="margin-left:90px !important" action="#{alunoController.gerarNotasQueFaltaramDOAluno(aluno)}" value="Gerar Notas que faltam"	/>
+		        	
 	        	</h:panelGrid>
 				<p:separator style="width:100%;" />
 					
 			<h:panelGrid style="border:none">
 												
 		        	
-		        	<h:panelGrid rendered="#{alunoController.renderDisciplina(0)}">
+		        	<h:panelGrid rendered="#{alunoController.renderDisciplina(0)}" style="border: none">
 							<h:outputLabel value="Portugues" />
 							<p:dataTable
 								value="#{alunoController.getAlunoAvaliacaoPortugues().keySet()}"
-								var="mapAlunoAva">
-								<p:column>
-									<p:dataTable value="#{mapAlunoAva}" var="alun">
-										<p:column>
+								var="mapAlunoAva"
+								styleClass="removerCabecalhoTabela">
+								<p:column  style="border:none !importante">
+									<p:dataTable value="#{mapAlunoAva}" var="alun" styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !importante">
 											<p:dataTable
 												value="#{alunoController.getAlunoAvaliacaoPortugues().get(alun)}"
 												var="alunoAva" sortBy="#{alunoAva.avaliacao.nome}">
 
-												<p:column>
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAva.avaliacao.bimestre.name}" />
 													<h:outputLabel value="#{alunoAva.avaliacao.nome}" />
-													<p:inputText value="#{alunoAva.nota}">
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAva.nota}" >
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAva)}"></p:ajax>
 													</p:inputText>
+												
 												</p:column>
+													
 											</p:dataTable>
 										</p:column>
 									</p:dataTable>
@@ -317,12 +340,14 @@
 												<p:column style="border:none !importante">
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" style="border:none !importante; "/>
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" style="border:none !importante"/>
-													<p:inputText value="#{alunoAvaIngles.nota}" 
-																 style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda"  >
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaIngles.nota}" 
+																  >
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
 													</p:inputText>
 												</p:column>
+												
+												
 											</p:dataTable>
 										</p:column>
 									</p:dataTable>
@@ -337,22 +362,25 @@
 							<h:outputLabel value="Matematica" />
 							<p:dataTable
 								value="#{alunoController.getAlunoAvaliacaoMatematica().keySet()}"
-								var="mapAlunoAvaIngles">
-								<p:column>
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
-										<p:column>
+								var="mapAlunoAvaIngles"
+								styleClass="removerCabecalhoTabela">
+								<p:column style="border:none !importante">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !importante">
 											<p:dataTable
 												value="#{alunoController.getAlunoAvaliacaoMatematica().get(alunIngles)}"
 												var="alunoAvaIngles"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}">
 
-												<p:column>
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" />
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
-													<p:inputText value="#{alunoAvaIngles.nota}">
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaIngles.nota}">
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
 													</p:inputText>
 												</p:column>
+												
 											</p:dataTable>
 										</p:column>
 									</p:dataTable>
@@ -367,22 +395,25 @@
 							<h:outputLabel value="História" />
 							<p:dataTable
 								value="#{alunoController.getAlunoAvaliacaoHistoria().keySet()}"
-								var="mapAlunoAvaIngles">
-								<p:column>
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
-										<p:column>
+								var="mapAlunoAvaIngles"
+								styleClass="removerCabecalhoTabela">
+								<p:column style="border:none !importante">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !importante">
 											<p:dataTable
 												value="#{alunoController.getAlunoAvaliacaoHistoria().get(alunIngles)}"
 												var="alunoAvaIngles"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}">
 
-												<p:column>
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" />
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
-													<p:inputText value="#{alunoAvaIngles.nota}">
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaIngles.nota}">
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
 													</p:inputText>
 												</p:column>
+											
 											</p:dataTable>
 										</p:column>
 									</p:dataTable>
@@ -398,22 +429,25 @@
 							<h:outputLabel value="Geografia" />
 							<p:dataTable
 								value="#{alunoController.getAlunoAvaliacaoGeografia().keySet()}"
-								var="mapAlunoAvaIngles">
-								<p:column>
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
-										<p:column>
+								var="mapAlunoAvaIngles"
+								styleClass="removerCabecalhoTabela">
+								<p:column style="border:none !importante">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !importante">
 											<p:dataTable
 												value="#{alunoController.getAlunoAvaliacaoGeografia().get(alunIngles)}"
 												var="alunoAvaIngles"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}">
 
-												<p:column>
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" />
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
-													<p:inputText value="#{alunoAvaIngles.nota}">
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaIngles.nota}">
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
 													</p:inputText>
 												</p:column>
+													
 											</p:dataTable>
 										</p:column>
 									</p:dataTable>
@@ -431,24 +465,28 @@
 							
 							<p:dataTable
 								value="#{alunoController.getAlunoAvaliacaoCiencias().keySet()}"
-								var="mapAlunoAvaIngles">
-								<p:column>
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
-										<p:column>
+								var="mapAlunoAvaIngles"
+								styleClass="removerCabecalhoTabela">
+								<p:column style="border:none !importante">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !importante">
 											<p:dataTable
 												value="#{alunoController.getAlunoAvaliacaoCiencias().get(alunIngles)}"
 												var="alunoAvaIngles"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}">
 
-												<p:column>
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" />
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
-													<p:inputText value="#{alunoAvaIngles.nota}">
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaIngles.nota}">
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
 										</p:column>
+										
+										
 									</p:dataTable>
 								</p:column>
 
@@ -463,24 +501,27 @@
 							
 							<p:dataTable
 								value="#{alunoController.getAlunoAvaliacaoFormacaoCrista().keySet()}"
-								var="mapAlunoAvaIngles">
-								<p:column>
-									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
-										<p:column>
+								var="mapAlunoAvaIngles" styleClass="removerCabecalhoTabela">
+								<p:column style="border:none !importante">
+									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles" styleClass="removerCabecalhoTabela">
+										<p:column style="border:none !importante">
 											<p:dataTable
 												value="#{alunoController.getAlunoAvaliacaoFormacaoCrista().get(alunIngles)}"
 												var="alunoAvaIngles"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}">
 
-												<p:column>
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" />
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
-													<p:inputText value="#{alunoAvaIngles.nota}">
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaIngles.nota}">
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
 										</p:column>
+										
+													
 									</p:dataTable>
 								</p:column>
 
@@ -494,25 +535,28 @@
 							<h:outputLabel value="Artes" />
 							
 							<p:dataTable
-								value="#{alunoController.getAlunoAvaliacaoArtes().keySet()}"
+								value="#{alunoController.getAlunoAvaliacaoArtes().keySet()}" styleClass="removerCabecalhoTabela"
 								var="mapAlunoAvaIngles">
-								<p:column>
+								<p:column style="border:none !importante">
 									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
-										<p:column>
+										<p:column style="border:none !importante">
 											<p:dataTable
-												value="#{alunoController.getAlunoAvaliacaoArtes().get(alunIngles)}"
+												value="#{alunoController.getAlunoAvaliacaoArtes().get(alunIngles)}" styleClass="removerCabecalhoTabela"
 												var="alunoAvaIngles"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}">
 
-												<p:column>
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" />
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
-													<p:inputText value="#{alunoAvaIngles.nota}">
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaIngles.nota}">
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
 													</p:inputText>
 												</p:column>
 											</p:dataTable>
 										</p:column>
+										
+													
 									</p:dataTable>
 								</p:column>
 
@@ -525,23 +569,60 @@
 							<!-- ED Fisica -->
 							<h:outputLabel value="Educação Fisica" />
 							<p:dataTable
-								value="#{alunoController.getAlunoAvaliacaoEDFisica().keySet()}"
+								value="#{alunoController.getAlunoAvaliacaoEDFisica().keySet()}" styleClass="removerCabecalhoTabela"
 								var="mapAlunoAvaIngles">
-								<p:column>
+								<p:column style="border:none !importante">
 									<p:dataTable value="#{mapAlunoAvaIngles}" var="alunIngles">
-										<p:column>
-											<p:dataTable
+										<p:column style="border:none !importante">
+											<p:dataTable styleClass="removerCabecalhoTabela"
 												value="#{alunoController.getAlunoAvaliacaoEDFisica().get(alunIngles)}"
 												var="alunoAvaIngles"
 												sortBy="#{alunoAvaIngles.avaliacao.nome}">
 
-												<p:column>
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaIngles.avaliacao.bimestre.name}" />
 													<h:outputLabel value="#{alunoAvaIngles.avaliacao.nome}" />
-													<p:inputText value="#{alunoAvaIngles.nota}">
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaIngles.nota}">
 														<p:ajax event="change"
 															listener="#{alunoController.saveAvaliacaoAluno(alunoAvaIngles)}"></p:ajax>
 													</p:inputText>
 												</p:column>
+											</p:dataTable>
+										</p:column>
+										
+									</p:dataTable>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+						
+						
+						<h:panelGrid rendered="#{alunoController.renderDisciplina(9)}">
+							<!-- Filosofia -->
+							<h:outputLabel value="Filosofia" />
+							
+							<p:dataTable
+								value="#{alunoController.getAlunoAvaliacaoFilosofia().keySet()}" styleClass="removerCabecalhoTabela"
+								var="mapAlunoAvaFilosofia">
+								<p:column style="border:none !importante">
+									<p:dataTable value="#{mapAlunoAvaFilosofia}" var="alunFilosofia">
+										<p:column style="border:none !importante">
+											<p:dataTable
+												value="#{alunoController.getAlunoAvaliacaoFilosofia().get(alunFilosofia)}"
+												var="alunoAvaFilosofia"
+												styleClass="removerCabecalhoTabela"
+												sortBy="#{alunoAvaFilosofia.avaliacao.nome}">
+
+												<p:column style="border:none !importante">
+													<h:outputLabel value="#{alunoAvaFilosofia.avaliacao.bimestre.name}" />
+													<h:outputLabel value="#{alunoAvaFilosofia.avaliacao.nome}" />
+													<p:inputText style="border:none !importante; width:20px !important;" styleClass="alinharEsquerda" value="#{alunoAvaFilosofia.nota}">
+														<p:ajax event="change" listener="#{alunoController.saveAvaliacaoAluno(alunoAvaFilosofia)}"></p:ajax>
+													</p:inputText>
+												</p:column>
+												
+													
 											</p:dataTable>
 										</p:column>
 									</p:dataTable>
@@ -550,6 +631,11 @@
 							</p:dataTable>
 
 						</h:panelGrid>
+						
+						
+						
+						
+						
 		        	
 		        	
 		        	

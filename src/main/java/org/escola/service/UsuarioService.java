@@ -1,4 +1,3 @@
-
 package org.escola.service;
 
 import java.io.Serializable;
@@ -20,10 +19,8 @@ import javax.persistence.criteria.Root;
 
 import org.escola.enums.Serie;
 import org.escola.enums.TipoDestinatario;
-import org.escola.enums.TipoMembro;
 import org.escola.model.Member;
 import org.escola.model.Professor;
-import org.escola.model.ProfessorTurma;
 import org.escola.util.Service;
 
 @Stateless
@@ -54,6 +51,7 @@ public class UsuarioService extends Service implements Serializable {
 
 	public String remover(Long idTurma) {
 		em.remove(findById(idTurma));
+		em.flush();
 		return "index";
 	}
 
@@ -139,6 +137,7 @@ public class UsuarioService extends Service implements Serializable {
 			user.setSenha(member.getSenha());
 			user.setTipoMembro(member.getTipoMembro());
 
+			em.flush();
 			em.persist(user);
 
 		} catch (Exception e) {

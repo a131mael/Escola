@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -162,16 +163,36 @@ public class TurmaController extends AuthController implements Serializable {
 	//	popularAlunoAvaliacao();
 		
 		configuracao = configuracaoService.getConfiguracao();
-		String  bimestre = String.valueOf(configuracao.getBimestre().ordinal());
-		String disciplina = disciplinaSelecionada != null ? String.valueOf(disciplinaSelecionada.ordinal()) :"0";
+	//	String  bimestre = String.valueOf(configuracao.getBimestre().ordinal());
+	//	String disciplina = disciplinaSelecionada != null ? String.valueOf(disciplinaSelecionada.ordinal()) :"0";
 		if(turma.getId() != null ){
-			setAlunosAvaliacaoNovo(getAlunosAvaliacoes(turma.getId()+"",configuracao.getAnoLetivo()+"",bimestre, disciplina).getAlunosAvaliacao());
+			//setAlunosAvaliacaoNovo(getAlunosAvaliacoes(turma.getId()+"",configuracao.getAnoLetivo()+"",bimestre, disciplina).getAlunosAvaliacao());
 		}
 		
 		if(professorTurmaNovo == null) {
 			professorTurmaNovo = new ProfessorTurma();
 		}
 		
+		if(getLoggedUser().getProfessor() != null) {
+			disciplinaSelecionada = getDisciplinasProfessor().get(0);
+			atualizarListaAlunosNota();
+		}
+		
+	}
+	
+	public void popularAlunoAvaliacaoNovo() {
+		String  bimestre = String.valueOf(configuracao.getBimestre().ordinal());
+		String disciplina = disciplinaSelecionada != null ? String.valueOf(disciplinaSelecionada.ordinal()) :"0";
+		setAlunosAvaliacaoNovo(getAlunosAvaliacoes(turma.getId()+"",configuracao.getAnoLetivo()+"",bimestre, disciplina).getAlunosAvaliacao());
+	}
+	
+	public  List<DisciplinaEnum> getDisciplinasProfessor() {
+		Professor professorLogado = getLoggedUser().getProfessor();
+		if(professorLogado != null && turma != null && turma.getId() != null) {
+			
+			return  turmaService.getDisciplinaBy(professorLogado.getId(), turma.getId());
+		}
+		return  Arrays.asList(DisciplinaEnum.values());
 	}
 
 	private AlunoAvaliacao converte(AlunoAvaliacaoDTO avDTO){
@@ -194,6 +215,43 @@ public class TurmaController extends AuthController implements Serializable {
 		saveAvaliacaoAluno(converte(getAlunosAvaliacaoNovo().get(indice)));
 		indice++;
 		if(indice>getAlunosAvaliacaoNovo().size()-1){
+			indice = 0;
+		}
+	}
+	
+	public void salvarFalta(){
+		
+		int bimestre = configuracao.getBimestre().ordinal() +1;
+		
+		Aluno al = converte(getAlunosAvaliacaoNovo().get(indice)).getAluno();
+		if(bimestre ==1) {
+			al.setFaltas1Bimestre(getAlunosAvaliacaoNovo().get(indice).getFaltas());
+			getAlunosAvaliacaoNovo().get(indice).getAluno().setFaltas1Bimestre(getAlunosAvaliacaoNovo().get(indice).getFaltas());
+		}else if(bimestre == 2) {
+			al.setFaltas2Bimestre(getAlunosAvaliacaoNovo().get(indice).getFaltas());
+			getAlunosAvaliacaoNovo().get(indice).getAluno().setFaltas2Bimestre(getAlunosAvaliacaoNovo().get(indice).getFaltas());
+		}else if(bimestre == 3) {
+			al.setFaltas3Bimestre(getAlunosAvaliacaoNovo().get(indice).getFaltas());
+			getAlunosAvaliacaoNovo().get(indice).getAluno().setFaltas3Bimestre(getAlunosAvaliacaoNovo().get(indice).getFaltas());
+		}else if(bimestre == 4) {
+			al.setFaltas4Bimestre(getAlunosAvaliacaoNovo().get(indice).getFaltas());
+			getAlunosAvaliacaoNovo().get(indice).getAluno().setFaltas4Bimestre(getAlunosAvaliacaoNovo().get(indice).getFaltas());
+		}
+		
+		alunoService.saveFalta(al);
+		
+		indice++;
+		if(indice>getAlunosAvaliacaoNovo().size()-1){
+			indice = 0;
+		}
+		
+		
+	}
+	
+	public void salvarNotaEVoltar(){
+		saveAvaliacaoAluno(converte(getAlunosAvaliacaoNovo().get(indice)));
+		indice--;
+		if(indice<0){
 			indice = 0;
 		}
 	}
@@ -221,6 +279,8 @@ public class TurmaController extends AuthController implements Serializable {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 		String endpoint = ConstantesEscolaApi.URL+ ConstantesEscolaApi.getAlunosAvaliacao;
+		//String endpoint = "http://localhost:1414"+ ConstantesEscolaApi.getAlunosAvaliacao;
+		
 		Parametro p1 = new Parametro("idTurma", idTurma);
 		Parametro p2 = new Parametro("anoletivo", anoLetivo);
 		Parametro p3 = new Parametro("bimestre", bimestre);
@@ -328,7 +388,10 @@ public class TurmaController extends AuthController implements Serializable {
 	}
 
 	public List<ProfessorTurma> getProfessoresTurma(){
-		return professorService.findProfessorTurmaBytTurma2(turma.getId());
+		if(turma.getId()!= null) {
+			return professorService.findProfessorTurmaBytTurma2(turma.getId());
+		}
+		return new ArrayList<ProfessorTurma>();
 	}
 	
 	private List<Aluno> getAlunosSelecionados() {
@@ -351,7 +414,7 @@ public class TurmaController extends AuthController implements Serializable {
 
 	public String salvar() {
 		turma = turmaService.save(turma);
-		saveProfessorTurma();
+		//saveProfessorTurma();
 		saveAlunoTurma();
 		verificarTodosAlunosTemAvaliacao(turma.getId());
 
@@ -370,8 +433,18 @@ public class TurmaController extends AuthController implements Serializable {
 		return "cadastrarNovo";
 	}
 	
+	public String editarFaltas(Long idTurma) {
+		turma = turmaService.findById(idTurma);
+		Util.addAtributoSessao("turma", turma);
+		return "cadastrarFaltas";
+	}
+	
 	public void adicionarProfessorTurma(ProfessorTurma proft) {
-		professorService.saveProfessorTurma2(proft);
+		if(proft.getProfessor()!= null && proft.getDisciplina() != null) {
+			proft.setTurma(turma);
+			professorService.saveProfessorTurma2(proft);
+			this.professorTurmaNovo = new ProfessorTurma();
+		}
 	}
 	
 	public  StreamedContent imprimirBoletinsTurma(Long idTurma) throws IOException {
@@ -1122,7 +1195,7 @@ public class TurmaController extends AuthController implements Serializable {
 	}
 
 	public Map<Aluno,List<AlunoAvaliacao>> getAlunoAvaliacaoEspanhol() {
-		alunoAvaliacaoEspanhol.keySet();
+		//alunoAvaliacaoEspanhol.keySet();
 		return alunoAvaliacaoEspanhol;
 	}
 

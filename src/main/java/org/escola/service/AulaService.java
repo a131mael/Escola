@@ -196,6 +196,7 @@ public class AulaService extends Service {
 		AlunoAula a = findAlunoAulaById(alau.getId());
 		a.setAssistiu(true);
 		em.persist(a);
+		em.flush();
 	}
 
 	public void createAlunoAula(final Aluno al, final Aula aula) {

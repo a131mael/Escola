@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf16645405428470" configfile="/Escola/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="index.xhtml" x="122" y="3910" id="pf16645405889991" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf16645405889992 pf16645405889993 pf16645405889994 pf16645405889995 pf16645405889996 pf16645405889997 pf16645405889998" path="/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/secretaria/index.xhtml" x="338" y="3526" id="pf16645405889999" referenceLink="//@navigationRule.29/@navigationCase.1/@toViewId|" outlinks="pf166454058899910 pf166454058899911 pf166454058899912 pf166454058899913 pf166454058899914 pf166454058899915 pf166454058899916 pf166454058899917" inlinks="pf16645405889992 pf16645405889996 pf16645405889997 pf16645405889998 pf166454058899918 pf166454058899919" path="/page/secretaria/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/turma/index.xhtml" x="554" y="5191" id="pf166454058900020" referenceLink="//@navigationRule.10/@fromViewId|" outlinks="pf166454058900021 pf166454058900022 pf166454058900023" inlinks="pf16645405889993 pf166454058899911 pf166454058900024" path="/page/turma/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/usuario/aulasporsemana.xhtml" x="338" y="3910" id="pf166454058900025" referenceLink="//@navigationRule.25/@fromViewId|" outlinks="pf166454058900026" inlinks="pf16645405889994" path="/page/usuario/aulasporsemana.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/usuario/indexInfantil.xhtml" x="338" y="4294" id="pf166454058900027" referenceLink="//@navigationRule.26/@fromViewId|" outlinks="pf166454058900028" inlinks="pf16645405889995" path="/page/usuario/indexInfantil.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/index.xhtml" x="554" y="2887" id="pf166454058900029" referenceLink="//@navigationRule.8/@navigationCase.0/@toViewId|" outlinks="pf166454058900030 pf166454058900031 pf166454058900032" inlinks="pf166454058900033 pf166454058899910" path="/page/aluno/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/cadastrarAluno.xhtml" x="770" y="2098" id="pf166454058900034" referenceLink="//@navigationRule.30/@navigationCase.0/@toViewId|" outlinks="pf166454058900035 pf166454058900033 pf166454058900036 pf166454058900037" inlinks="pf166454058900030 pf166454058900038 pf166454058900032 pf166454058900039 pf166454058900040 pf166454058900041 pf166454058900042 pf166454058900043 pf166454058899917 pf166454058900044 pf166454058900045 pf166454058900046" path="/page/aluno/cadastrarAluno.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/removerAluno.xhtml" x="770" y="3271" id="pf166454058900047" referenceLink="//@navigationRule.3/@navigationCase.1/@toViewId|" inlinks="pf166454058900031 pf166454058900048 pf166454058900049" path="/page/aluno/removerAluno.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/secretaria/alunosUltimoAnoLetivo.xhtml" x="554" y="3271" id="pf166454058900050" referenceLink="//@navigationRule.23/@fromViewId|" outlinks="pf166454058900038 pf166454058900048 pf166454058900043" path="/page/secretaria/alunosUltimoAnoLetivo.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/indexRoot.xhtml" x="554" y="4423" id="pf166454058900051" referenceLink="//@navigationRule.3/@fromViewId|" outlinks="pf166454058900052 pf166454058900049" path="/page/aluno/indexRoot.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/cadastrarAlunoRoot.xhtml" x="770" y="4423" id="pf166454058900053" referenceLink="//@navigationRule.3/@navigationCase.0/@toViewId|" inlinks="pf166454058900052" path="/page/aluno/cadastrarAlunoRoot.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/indexFinanceiro.xhtml" x="554" y="178" id="pf166454058900054" referenceLink="//@navigationRule.6/@navigationCase.3/@toViewId|" outlinks="pf166454058900039" inlinks="pf166454058900037" path="/page/aluno/indexFinanceiro.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/exibirAluno.xhtml" x="986" y="2098" id="pf166454058900055" referenceLink="//@navigationRule.6/@navigationCase.0/@toViewId|" inlinks="pf166454058900035" path="/page/aluno/exibirAluno.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/removerContrato.xhtml" x="554" y="562" id="pf166454058900056" referenceLink="//@navigationRule.7/@fromViewId|" outlinks="pf166454058900040" inlinks="pf166454058900036" path="/page/aluno/removerContrato.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/professor/index.xhtml" x="554" y="4039" id="pf166454058900057" referenceLink="//@navigationRule.12/@navigationCase.0/@toViewId|" outlinks="pf166454058900058" inlinks="pf166454058899912 pf166454058900059" path="/page/professor/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/avaliacao/index.xhtml" x="554" y="3655" id="pf166454058900060" referenceLink="//@navigationRule.13/@fromViewId|" outlinks="pf166454058900061" inlinks="pf166454058899913" path="/page/avaliacao/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/calendario/index.xhtml" x="554" y="5575" id="pf166454058900062" referenceLink="//@navigationRule.17/@navigationCase.0/@toViewId|" outlinks="pf166454058900063" inlinks="pf166454058899914 pf166454058900064" path="/page/calendario/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/professor/cadastrarProfessor.xhtml" x="770" y="4039" id="pf166454058900065" referenceLink="//@navigationRule.9/@navigationCase.0/@toViewId|" inlinks="pf166454058900058" path="/page/professor/cadastrarProfessor.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/turma/cadastrarTurma.xhtml" x="338" y="5191" id="pf166454058900066" referenceLink="//@navigationRule.11/@fromViewId|" outlinks="pf166454058900024" inlinks="pf166454058900021" path="/page/turma/cadastrarTurma.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/turma/digitarNota.xhtml" x="770" y="5191" id="pf166454058900067" referenceLink="//@navigationRule.10/@navigationCase.2/@toViewId|" inlinks="pf166454058900022" path="/page/turma/digitarNota.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/professor/visualizarAluno.xhtml" x="338" y="4678" id="pf166454058900168" referenceLink="//@navigationRule.18/@navigationCase.0/@toViewId|" outlinks="pf166454058900059" inlinks="pf166454058900169" path="/page/professor/visualizarAluno.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/avaliacao/cadastrarAvaliacao.xhtml" x="770" y="3655" id="pf166454058900170" referenceLink="//@navigationRule.13/@navigationCase.0/@toViewId|" inlinks="pf166454058900061" path="/page/avaliacao/cadastrarAvaliacao.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aula/index.xhtml" x="338" y="1809" id="pf166454058900171" referenceLink="//@navigationRule.15/@navigationCase.0/@toViewId|" outlinks="pf166454058900172" inlinks="pf166454058900173" path="/page/aula/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aula/cadastrarAula.xhtml" x="122" y="1809" id="pf166454058900174" referenceLink="//@navigationRule.15/@fromViewId|" outlinks="pf166454058900173" inlinks="pf166454058900172" path="/page/aula/cadastrarAula.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/calendario/cadastrarEvento.xhtml" x="338" y="5575" id="pf166454058900175" referenceLink="//@navigationRule.17/@fromViewId|" outlinks="pf166454058900064" inlinks="pf166454058900063" path="/page/calendario/cadastrarEvento.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/professor/alunosProfessor.xhtml" x="122" y="4678" id="pf166454058900176" referenceLink="//@navigationRule.18/@fromViewId|" outlinks="pf166454058900169" path="/page/professor/alunosProfessor.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/admin/listarUsuarios.xhtml" x="122" y="2193" id="pf166454058900177" referenceLink="//@navigationRule.19/@fromViewId|" outlinks="pf166454058900178" path="/page/admin/listarUsuarios.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/admin/cadastrarUsuario.xhtml" x="338" y="2193" id="pf166454058900179" referenceLink="//@navigationRule.19/@navigationCase.0/@toViewId|" inlinks="pf166454058900178" path="/page/admin/cadastrarUsuario.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/secretaria/exAlunos.xhtml" x="554" y="946" id="pf166454058900180" referenceLink="//@navigationRule.20/@fromViewId|" outlinks="pf166454058900041" path="/page/secretaria/exAlunos.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/recado/index.xhtml" x="122" y="2577" id="pf166454058900181" referenceLink="//@navigationRule.21/@fromViewId|" outlinks="pf166454058900182" path="/page/recado/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/recado/cadastrarRecado.xhtml" x="338" y="2577" id="pf166454058900183" referenceLink="//@navigationRule.21/@navigationCase.0/@toViewId|" inlinks="pf166454058900182" path="/page/recado/cadastrarRecado.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/aluno/canceladas.xhtml" x="554" y="1330" id="pf166454058900184" referenceLink="//@navigationRule.22/@fromViewId|" outlinks="pf166454058900042" path="/page/aluno/canceladas.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/usuario/index.xhtml" x="338" y="4786" id="pf166454058900185" referenceLink="//@navigationRule.24/@fromViewId|" outlinks="pf166454058900186" path="/page/usuario/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/usuario/assistirAula3.xhtml" x="554" y="4807" id="pf166454058900187" referenceLink="//@navigationRule.26/@navigationCase.0/@toViewId|" inlinks="pf166454058900186 pf166454058900026 pf166454058900028" path="/page/usuario/assistirAula3.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/secretaria/devedoresSelecionadosQuantidade.xhtml" x="554" y="2098" id="pf166454058900188" referenceLink="//@navigationRule.28/@fromViewId|" outlinks="pf166454058900044 pf166454058899918" inlinks="pf166454058899915" path="/page/secretaria/devedoresSelecionadosQuantidade.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/secretaria/devedoresSelecionadosMes.xhtml" x="554" y="2482" id="pf166454058900189" referenceLink="//@navigationRule.29/@fromViewId|" outlinks="pf166454058900045 pf166454058899919" inlinks="pf166454058899916" path="/page/secretaria/devedoresSelecionadosMes.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/financeiro/baixaManual.xhtml" x="554" y="1714" id="pf166454058900190" referenceLink="//@navigationRule.30/@fromViewId|" outlinks="pf166454058900046" path="/page/financeiro/baixaManual.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/financeiro/extratoBancario.xhtml" x="338" y="2961" id="pf166454058900191" referenceLink="//@navigationRule.32/@navigationCase.0/@toViewId|" outlinks="pf166454058900192" inlinks="pf166454058900193" path="/page/financeiro/extratoBancario.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/financeiro/cadastrarExtratoBancario.xhtml" x="122" y="2961" id="pf166454058900194" referenceLink="//@navigationRule.32/@fromViewId|" outlinks="pf166454058900193" inlinks="pf166454058900192" path="/page/financeiro/cadastrarExtratoBancario.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="page/turma/digitarFaltas.xhtml" id="pf166454058900195" referenceLink="//@navigationRule.10/@navigationCase.2/@toViewId|" inlinks="pf166454058900023" path="/page/turma/digitarFaltas.xhtml"/>
+  <links id="pf16645405889992" target="pf16645405889999" source="pf16645405889991" outcome="Secretaria" redirect="true"/>
+  <links id="pf16645405889993" target="pf166454058900020" source="pf16645405889991" outcome="Professor" redirect="true"/>
+  <links id="pf16645405889994" target="pf166454058900025" source="pf16645405889991" outcome="Aluno" redirect="true"/>
+  <links id="pf16645405889995" target="pf166454058900027" source="pf16645405889991" outcome="AlunoInfantil" redirect="true"/>
+  <links id="pf16645405889996" target="pf16645405889999" source="pf16645405889991" outcome="Administrador" redirect="true"/>
+  <links id="pf16645405889997" target="pf16645405889999" source="pf16645405889991" outcome="Mestre" redirect="true"/>
+  <links id="pf16645405889998" target="pf16645405889999" source="pf16645405889991" outcome="Financeiro" redirect="true"/>
+  <links id="pf166454058900030" target="pf166454058900034" source="pf166454058900029" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900031" target="pf166454058900047" source="pf166454058900029" outcome="remover" redirect="true"/>
+  <links id="pf166454058900038" target="pf166454058900034" source="pf166454058900050" outcome="cadastrar"/>
+  <links id="pf166454058900048" target="pf166454058900047" source="pf166454058900050" outcome="remover" redirect="true"/>
+  <links id="pf166454058900052" target="pf166454058900053" source="pf166454058900051" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900049" target="pf166454058900047" source="pf166454058900051" outcome="remover" redirect="true"/>
+  <links id="pf166454058900032" target="pf166454058900034" source="pf166454058900029" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900039" target="pf166454058900034" source="pf166454058900054" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900035" target="pf166454058900055" source="pf166454058900034" outcome="exibirAluno" redirect="true"/>
+  <links id="pf166454058900033" target="pf166454058900029" source="pf166454058900034" outcome="index" redirect="true"/>
+  <links id="pf166454058900036" target="pf166454058900056" source="pf166454058900034" outcome="remover" redirect="true"/>
+  <links id="pf166454058900037" target="pf166454058900054" source="pf166454058900034" outcome="indexFinanceiro" redirect="true"/>
+  <links id="pf166454058900040" target="pf166454058900034" source="pf166454058900056" outcome="ok" redirect="true"/>
+  <links id="pf166454058899910" target="pf166454058900029" source="pf16645405889999" outcome="listagemAlunos" redirect="true"/>
+  <links id="pf166454058899911" target="pf166454058900020" source="pf16645405889999" outcome="listagemTurmas" redirect="true"/>
+  <links id="pf166454058899912" target="pf166454058900057" source="pf16645405889999" outcome="listagemProfessores" redirect="true"/>
+  <links id="pf166454058899913" target="pf166454058900060" source="pf16645405889999" outcome="listagemAvaliacoes"/>
+  <links id="pf166454058899914" target="pf166454058900062" source="pf16645405889999" outcome="listagemEventos"/>
+  <links id="pf166454058900058" target="pf166454058900065" source="pf166454058900057" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900021" target="pf166454058900066" source="pf166454058900020" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900022" target="pf166454058900067" source="pf166454058900020" outcome="cadastrarNovo" redirect="true"/>
+  <links id="pf166454058900024" target="pf166454058900020" source="pf166454058900066" outcome="index" redirect="true"/>
+  <links id="pf166454058900059" target="pf166454058900057" source="pf166454058900168" outcome="index" redirect="true"/>
+  <links id="pf166454058900061" target="pf166454058900170" source="pf166454058900060" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900172" target="pf166454058900174" source="pf166454058900171" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900173" target="pf166454058900171" source="pf166454058900174" outcome="index" redirect="true"/>
+  <links id="pf166454058900063" target="pf166454058900175" source="pf166454058900062" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900064" target="pf166454058900062" source="pf166454058900175" outcome="index" redirect="true"/>
+  <links id="pf166454058900169" target="pf166454058900168" source="pf166454058900176" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058900178" target="pf166454058900179" source="pf166454058900177" outcome="cadastrar"/>
+  <links id="pf166454058900041" target="pf166454058900034" source="pf166454058900180" outcome="cadastrar"/>
+  <links id="pf166454058900182" target="pf166454058900183" source="pf166454058900181" outcome="cadastrar"/>
+  <links id="pf166454058900042" target="pf166454058900034" source="pf166454058900184" outcome="cadastrar"/>
+  <links id="pf166454058900043" target="pf166454058900034" source="pf166454058900050" outcome="cadastrar"/>
+  <links id="pf166454058900186" target="pf166454058900187" source="pf166454058900185" outcome="entrar"/>
+  <links id="pf166454058900026" target="pf166454058900187" source="pf166454058900025" outcome="entrar"/>
+  <links id="pf166454058900028" target="pf166454058900187" source="pf166454058900027" outcome="entrar"/>
+  <links id="pf166454058899915" target="pf166454058900188" source="pf16645405889999" outcome="listagemAlunosAtrasadosQuantidade" redirect="true"/>
+  <links id="pf166454058899916" target="pf166454058900189" source="pf16645405889999" outcome="listagemAlunosAtrasadosMes" redirect="true"/>
+  <links id="pf166454058899917" target="pf166454058900034" source="pf16645405889999" outcome="verdevedor" redirect="true"/>
+  <links id="pf166454058900044" target="pf166454058900034" source="pf166454058900188" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058899918" target="pf16645405889999" source="pf166454058900188" outcome="dashboard" redirect="true"/>
+  <links id="pf166454058900045" target="pf166454058900034" source="pf166454058900189" outcome="cadastrar" redirect="true"/>
+  <links id="pf166454058899919" target="pf16645405889999" source="pf166454058900189" outcome="dashboard" redirect="true"/>
+  <links id="pf166454058900046" target="pf166454058900034" source="pf166454058900190" outcome="veraluno" redirect="true"/>
+  <links id="pf166454058900192" target="pf166454058900194" source="pf166454058900191" outcome="editarExtrato" redirect="true"/>
+  <links id="pf166454058900193" target="pf166454058900191" source="pf166454058900194" outcome="indexExtrato" redirect="true"/>
+  <links id="pf166454058900023" target="pf166454058900195" source="pf166454058900020" outcome="cadastrarFaltas" redirect="true"/>
+</pageflow:Pageflow>

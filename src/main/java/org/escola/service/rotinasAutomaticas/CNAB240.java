@@ -4,8 +4,6 @@ d * To change this template, choose Tools | Templates
  */
 package org.escola.service.rotinasAutomaticas;
 
-import java.io.File;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,7 +25,6 @@ import org.escola.model.Boleto;
 import org.escola.model.ContratoAluno;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.FinanceiroEscolaService;
-import org.escola.util.FileUtils;
 import org.escola.util.Verificador;
 
 /**

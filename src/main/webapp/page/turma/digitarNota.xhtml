@@ -7,8 +7,9 @@
 
 	<ui:define name="content">
 		<h:form style="width:100%; border:none" prependId="false">
-		<p:hotkey bind="crtl+enter" update="panelNota" process="@this" actionListener="#{turmaController.salvarNota()}" />
-		<p:focus for="j_idt87"/> 
+		<p:focus for="notaAluno"/>
+		<p:hotkey bind="crtl + right" update="panelNota" action="#{turmaController.salvarNota()}"/>
+		<p:hotkey bind="crtl + left" update="panelNota" action="#{turmaController.salvarNotaEVoltar()}"/>
 			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
 				style="margin: -10px;margin-top: -25px;">
 				<h:panelGrid border="1" style="width:100%">
@@ -43,7 +44,7 @@
 							value="#{turmaController.disciplinaSelecionada}"
 							rendered="#{authController.hasPermission(authController.professor)}">
 							<f:selectItem itemLabel="Selecione uma disciplina" />
-							<f:selectItems value="#{CombosEspeciaisMB.getDisciplinas()}"
+							<f:selectItems value="#{turmaController.getDisciplinasProfessor()}"
 								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
 
 							<p:ajax event="change" process="@this" update="@form" listener="#{turmaController.atualizarListaAlunosNota()}"/>
@@ -56,7 +57,8 @@
 				<h:panelGrid id="panelNota" columns="4">
 					<h:outputLabel value="#{turmaController.getAlunoAvaliacaoAtual().aluno.nomeAluno}" style="width:150px"/>
 					<h:outputLabel label="nota" value="#{turmaController.getAlunoAvaliacaoAtual().avaliacao.nome}" />
-					<p:inputText value="#{turmaController.getAlunoAvaliacaoAtual().nota}">
+					
+					<p:inputText id="notaAluno" onkeyup="eventoEnterLeftRight(this,event)" value="#{turmaController.getAlunoAvaliacaoAtual().nota}">
 						<p:ajax event="change" process="@this" global="false"/>
 						<f:convertNumber pattern="#0.0" minIntegerDigits="0"/>
 					</p:inputText>
@@ -94,5 +96,13 @@
 			</h:panelGrid>
 
 		</h:form>
+		
+		<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+
+	    <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+	        <div class="text-center">
+	            <i class="pi pi-spin pi-spinner loading-icon" aria-hidden="true"></i>
+	        </div>
+	    </p:dialog>
 	</ui:define>
 </ui:composition>

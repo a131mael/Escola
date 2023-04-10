@@ -42,7 +42,7 @@
 						</h:commandLink>
 					</f:facet>
 
-					<p:column style="width:8%">
+					<p:column style="width:20%">
 						<p:tooltip for="boletim" value="Boletim" position="top" />
 						<f:facet name="header">
 							<h:outputText value="Ações" />
@@ -60,31 +60,47 @@
 						<p:commandButton ajax="true" icon="ui-icon-search"
 							action="#{turmaController.editar(alunoTab.id)}"
 							actionListener="#{turmaController.verificarTodosAlunosTemAvaliacao(alunoTab.id)}"
-							rendered="#{authController.isTeacher()}"
+							rendered="#{authController.isTeacher() and false}"
 							onstart="
-                      $('button').css('cursor','progress');
-                      $('a').css('cursor','progress');
-                      statusDialog.show();"
-							oncomplete="statusDialog.hide();
-                      $('button').css('cursor','pointer');
-                      $('a').css('cursor','pointer');"
-							onerror="statusDialog.hide();
-                      $('button').css('cursor','pointer');
-                      $('a').css('cursor','pointer');" />
-                      
-                      	<p:commandButton ajax="true" icon="ui-icon-search"
+			                      $('button').css('cursor','progress');
+			                      $('a').css('cursor','progress');
+			                      statusDialog.show();"
+										oncomplete="statusDialog.hide();
+			                      $('button').css('cursor','pointer');
+			                      $('a').css('cursor','pointer');"
+										onerror="statusDialog.hide();
+			                      $('button').css('cursor','pointer');
+			                      $('a').css('cursor','pointer');" />
+			                      
+                      	<p:commandButton ajax="true" icon="ui-icon-info"
+                      		value="Notas"
 							action="#{turmaController.editarNovo(alunoTab.id)}"
 							rendered="#{authController.isTeacher()}"
 							onstart="
-                      $('button').css('cursor','progress');
-                      $('a').css('cursor','progress');
-                      statusDialog.show();"
-							oncomplete="statusDialog.hide();
-                      $('button').css('cursor','pointer');
-                      $('a').css('cursor','pointer');"
-							onerror="statusDialog.hide();
-                      $('button').css('cursor','pointer');
-                      $('a').css('cursor','pointer');" />
+			                      $('button').css('cursor','progress');
+			                      $('a').css('cursor','progress');
+			                      statusDialog.show();"
+										oncomplete="statusDialog.hide();
+			                      $('button').css('cursor','pointer');
+			                      $('a').css('cursor','pointer');"
+										onerror="statusDialog.hide();
+			                      $('button').css('cursor','pointer');
+			                      $('a').css('cursor','pointer');" />
+			                      
+			            <p:commandButton ajax="true" icon="ui-icon-person"
+			            value="Faltas"
+							action="#{turmaController.editarFaltas(alunoTab.id)}"
+							rendered="#{authController.isTeacher()}"
+							onstart="
+			                      $('button').css('cursor','progress');
+			                      $('a').css('cursor','progress');
+			                      statusDialog.show();"
+										oncomplete="statusDialog.hide();
+			                      $('button').css('cursor','pointer');
+			                      $('a').css('cursor','pointer');"
+										onerror="statusDialog.hide();
+			                      $('button').css('cursor','pointer');
+			                      $('a').css('cursor','pointer');" />
 
 					</p:column>
 

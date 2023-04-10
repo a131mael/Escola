@@ -91,6 +91,7 @@ import org.escola.enums.StatusBoletoEnum;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
+import org.escola.model.Avaliacao;
 import org.escola.model.Configuracao;
 import org.escola.model.ContratoAluno;
 import org.escola.model.HistoricoAluno;
@@ -163,6 +164,7 @@ public class AlunoController implements Serializable {
 	private Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoMatematica;
 	private Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoHistoria;
 	private Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoEDFisica;
+	private Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoFilosofia;
 	private Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoGeografia;
 	private Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoCiencias;
 	private Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoFormacaoCrista;
@@ -303,6 +305,18 @@ public class AlunoController implements Serializable {
 				;
 			}
 		}
+		
+		if (getAlunoAvaliacaoFilosofia() == null) {
+			Object obj = Util.getAtributoSessao("alunoAvaliacaoFilosofia");
+			if (obj != null) {
+				setAlunoAvaliacaoFilosofia((Map<Aluno, List<AlunoAvaliacao>>) obj);
+			} else {
+				setAlunoAvaliacaoFilosofia(new LinkedHashMap<>());
+				
+			}
+		}
+		
+		
 
 		if (historicoAluno == null) {
 			historicoAluno = new HistoricoAluno();
@@ -312,6 +326,50 @@ public class AlunoController implements Serializable {
 		configuracao = configuracaoService.getConfiguracao();
 	}
 
+	public void enviarProtesto(ContratoAluno ca) {
+		devedorService.enviarParaProtesto(ca);
+	}
+	
+	
+	public void gerarNotasQueFaltaramDOAluno(Aluno alunoFa) {
+		
+		DisciplinaEnum[] disciplinas = new DisciplinaEnum[10];
+		
+		disciplinas[0] = DisciplinaEnum.PORTUGUES;
+		disciplinas[1] = DisciplinaEnum.MATEMATICA;
+		disciplinas[2] = DisciplinaEnum.HISTORIA;
+		disciplinas[3] = DisciplinaEnum.INGLES;
+		disciplinas[4] = DisciplinaEnum.EDUCACAO_FISICA;
+		disciplinas[5] = DisciplinaEnum.GEOGRAFIA;
+		disciplinas[6] = DisciplinaEnum.CIENCIAS;
+		disciplinas[7] = DisciplinaEnum.FORMACAO_CRISTA;
+		disciplinas[8] = DisciplinaEnum.ARTES;
+		disciplinas[9] = DisciplinaEnum.ESPANHOL;//Filosofia
+		
+		for(DisciplinaEnum disciplina : disciplinas) {
+			for(int i =0;i< configuracao.getBimestre().ordinal();i++) {
+				
+				List<Avaliacao>  avaliacoes = avaliacaoService.findAvaliacaoby(disciplina, BimestreEnum.values()[i], aluno.getSerie(), configuracao.getAnoLetivo());
+				boolean possuiAValiacao = false;
+				if(avaliacoes != null && !avaliacoes.isEmpty()) {
+					for(Avaliacao av : avaliacoes) {
+					List<AlunoAvaliacao> avs =avaliacaoService.findAlunoAvaliacaoby(aluno.getId(), av.getId(), disciplina, bimestreSel, aluno.getSerie());
+						if(avs != null && !avs.isEmpty()) {
+							possuiAValiacao = true;
+						}
+					}
+				}
+				if(!possuiAValiacao) {
+					if(avaliacoes != null) {
+						avaliacaoService.createAlunoAvaliacao(alunoFa, avaliacoes.get(0));
+					}	
+				}
+				
+				
+			}
+		}
+	}
+	
 	public void gerarNFSe(Aluno aluno) {
 		try {
 			JAXBContext contextObj;
@@ -828,6 +886,11 @@ public class AlunoController implements Serializable {
 				DisciplinaEnum.FORMACAO_CRISTA, this.getBimestreSel(), aluno.getSerie()));
 		setAlunoAvaliacaoArtes(avaliacaoService.findAlunoAvaliacaoMap(aluno.getId(), null, DisciplinaEnum.ARTES,
 				this.getBimestreSel(), aluno.getSerie()));
+		
+		setAlunoAvaliacaoFilosofia(avaliacaoService.findAlunoAvaliacaoMap(aluno.getId(), null, DisciplinaEnum.ESPANHOL,
+				this.getBimestreSel(), aluno.getSerie()));
+		
+		
 	}
 
 	public boolean renderDisciplina(int ordinal) {
@@ -2178,12 +2241,15 @@ public class AlunoController implements Serializable {
 		Util.addAtributoSessao("alunoAvaliacaoIngles", alunoAvaliacaoIngles);
 		Util.addAtributoSessao("alunoAvaliacaoArtes", alunoAvaliacaoArtes);
 		Util.addAtributoSessao("alunoAvaliacaoCiencias", alunoAvaliacaoCiencias);
-		Util.addAtributoSessao("alunoAvaliacaoEdFisica", alunoAvaliacaoEDFisica);
+		Util.addAtributoSessao("alunoAvaliacaoEDFisica", alunoAvaliacaoEDFisica);
 		Util.addAtributoSessao("alunoAvaliacaoFormacaoCrista", alunoAvaliacaoFormacaoCrista);
 		Util.addAtributoSessao("alunoAvaliacaoGeografia", alunoAvaliacaoGeografia);
 		Util.addAtributoSessao("alunoAvaliacaoHistoria", alunoAvaliacaoHistoria);
 		Util.addAtributoSessao("alunoAvaliacaoMatematica", alunoAvaliacaoMatematica);
 		Util.addAtributoSessao("alunoAvaliacaoPortugues", alunoAvaliacaoPortugues);
+		
+		Util.addAtributoSessao("alunoAvaliacaoFilosofia", alunoAvaliacaoFilosofia);
+		
 
 		aluno = alunoService.findById(aluno.getId());
 		Util.addAtributoSessao("aluno", aluno);
@@ -2389,6 +2455,10 @@ public class AlunoController implements Serializable {
 	public Map<Aluno, List<AlunoAvaliacao>> getAlunoAvaliacaoEDFisica() {
 		return alunoAvaliacaoEDFisica;
 	}
+	
+	public Map<Aluno, List<AlunoAvaliacao>> getAlunoAvaliacaoFilosofia() {
+		return alunoAvaliacaoFilosofia;
+	}
 
 	public void setAlunoAvaliacaoEDFisica(Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoEDFisica) {
 		this.alunoAvaliacaoEDFisica = alunoAvaliacaoEDFisica;
@@ -2492,6 +2562,10 @@ public class AlunoController implements Serializable {
 
 	public DisciplinaEnum getArtes() {
 		return DisciplinaEnum.ARTES;
+	}
+	
+	public DisciplinaEnum getFilosofia() {
+		return DisciplinaEnum.ESPANHOL;
 	}
 
 	public StreamedContent downloadBoleto(org.escola.model.Boleto boleto) {
@@ -3604,6 +3678,10 @@ public class AlunoController implements Serializable {
 			break;
 		}
 		return mes;
+	}
+
+	public void setAlunoAvaliacaoFilosofia(Map<Aluno, List<AlunoAvaliacao>> alunoAvaliacaoFilosofia) {
+		this.alunoAvaliacaoFilosofia = alunoAvaliacaoFilosofia;
 	}
 
 }

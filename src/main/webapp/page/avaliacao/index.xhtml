@@ -17,6 +17,9 @@
 				<p:commandButton id="remover" icon="ui-icon-trash" action="#{avaliacaoController.remover()}" alt="Remover" 
 									disabled="#{!avaliacaoController.avaliacaoSelecionada}" update="form:tbl"/>
 				
+				
+				<h:commandButton action="#{avaliacaoController.gerarAvaliacoes()}"	value="Gerar Avaliaçoes" />
+				
 			</h:panelGrid>
 
 			<h:panelGrid id="panelPrincipal" width="90%" rendered="#{avaliacaoController.mostrarListagem}">

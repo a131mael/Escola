@@ -37,10 +37,12 @@ import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
 import org.escola.enums.TipoMembro;
+import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
 import org.escola.model.Avaliacao;
 import org.escola.model.Member;
 import org.escola.model.Turma;
+import org.escola.service.AlunoService;
 import org.escola.service.AvaliacaoService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.TurmaService;
@@ -73,6 +75,9 @@ public class AvaliacaoController extends AuthController implements Serializable{
 	
 	private Boolean mostrarListagem = false;
 	
+	@Inject
+	private AlunoService alunoService;
+	
 	@PostConstruct
 	private void init() {
 		if(getAvaliacao() == null){
@@ -103,6 +108,35 @@ public class AvaliacaoController extends AuthController implements Serializable{
 			return false;
 		}
 		return getAvaliacao().getId() != null ? true : false;
+	}
+	
+	
+	public void gerarAvaliacoes() {
+		if (getLoggedUser().getProfessor() != null) {
+			List<Turma> turmas = turmaService.findAll(getLoggedUser().getProfessor().getId());
+
+			for(Turma t : turmas) {
+				verificarTodosAlunosTemAvaliacao(t.getId());
+			}
+		} 
+	}
+	
+	public void verificarTodosAlunosTemAvaliacao(Long idTurma){
+		List<Aluno> alunosTurma = alunoService.findAlunoTurmaBytTurma(idTurma);
+		if(alunosTurma != null && !alunosTurma.isEmpty()){
+			if(getLoggedUser().getProfessor() != null){
+				List<Avaliacao> avaliacoesTurma = avaliacaoService.find(alunosTurma.get(0).getSerie(), null,getLoggedUser().getProfessor().getId());
+				for(Aluno aluno :alunosTurma){
+					for(Avaliacao avaliacao :avaliacoesTurma){
+						List<AlunoAvaliacao> alav = avaliacaoService.findAlunoAvaliacaoby(aluno.getId(), avaliacao.getId(), null, null, null); 
+						if(alav== null || alav.isEmpty()){
+							avaliacaoService.createAlunoAvaliacao(aluno,avaliacao);
+						}
+					}
+				}	
+			}
+		}
+		
 	}
 	
 	public LazyDataModel<Avaliacao> getLazyDataModel() {

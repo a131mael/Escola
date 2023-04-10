@@ -15,20 +15,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
-import org.apache.xmlbeans.impl.xb.xmlconfig.impl.NamespaceListImpl.MemberImpl2.ItemImpl;
 import org.escola.model.extrato.ItemExtrato;
 import org.escola.service.rotinasAutomaticas.CONSTANTES;
 import org.escola.util.Service;
 
-import br.com.aaf.base.base.Constantes;
 import br.com.aaf.base.constantes.ConstantesEXTRATO;
 import br.com.aaf.base.importacao.extrato.ExtratoGruposPagamentoRecebimentoAdonaiEnum;
-import br.com.aaf.base.importacao.extrato.ExtratoGruposPagamentoRecebimentoEnum;
 import br.com.aaf.base.importacao.extrato.ExtratoTiposEntradaEnum;
 import br.com.aaf.base.importacao.extrato.ExtratoTiposEntradaSaidaEnum;
 import br.com.aaf.base.util.OfficeUtil;
@@ -52,6 +45,7 @@ public class ExtratoBancarioService extends Service {
 			edit(id);
 		} else {
 			em.persist(id);
+			em.flush();
 		}
 	}
 	
@@ -226,6 +220,7 @@ public class ExtratoBancarioService extends Service {
 		persistido.setValor(itemAlterado.getValor());
 		persistido.setAtualizado(true);
 		em.merge(persistido);
+		em.flush();
 		
 	}
 

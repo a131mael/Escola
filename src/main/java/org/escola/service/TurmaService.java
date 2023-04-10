@@ -18,6 +18,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.Serie;
 import org.escola.model.ProfessorTurma;
 import org.escola.model.Turma;
@@ -104,6 +105,7 @@ public class TurmaService extends Service {
 			e.printStackTrace();
 		}
 
+		em.flush();
 		return user;
 	}
 
@@ -132,7 +134,7 @@ public class TurmaService extends Service {
 		}
 		
 		
-		
+		em.flush();
 		return "ok";
 	}
 
@@ -150,6 +152,7 @@ public class TurmaService extends Service {
 			List<ProfessorTurma> professorTurmas = query.getResultList();
 			for(ProfessorTurma profT : professorTurmas){
 				em.remove(profT);
+				em.flush();
 			}
 			
 		}catch(NoResultException noResultException){
@@ -176,7 +179,9 @@ public class TurmaService extends Service {
 			for(ProfessorTurma profT : professorTurmas){
 				Turma t = profT.getTurma();
 				t.setTotalAlunos(alunoService.findAlunoTurmaBytTurma(t.getId()).size());
-				turmasDoProfessor.add(t);
+				if(!turmasDoProfessor.contains(t)) {
+					turmasDoProfessor.add(t);
+				}
 				
 			}
 		
@@ -188,6 +193,39 @@ public class TurmaService extends Service {
 		
 		return turmasDoProfessor;
 	}
+	
+	public List<DisciplinaEnum> getDisciplinaBy(Long idProfessor, Long idTurma) {
+		List<DisciplinaEnum> turmasDoProfessor = new ArrayList<>();
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT pt from  ProfessorTurma pt ");
+		sql.append("where pt.professor.id =   ");
+		sql.append(idProfessor);
+		sql.append(" and pt.turma.id =   ");
+		sql.append(idTurma);
+		Query query = em.createQuery(sql.toString());
+		
+		 
+		try{
+			List<ProfessorTurma> professorTurmas = query.getResultList();
+			for(ProfessorTurma profT : professorTurmas){
+				DisciplinaEnum d = profT.getDisciplina();
+				if(!turmasDoProfessor.contains(d)) {
+					turmasDoProfessor.add(d);
+				}
+				
+			}
+		
+		}catch(NoResultException noResultException){
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return turmasDoProfessor;
+	}
+
+	
 	
 	public List<Serie> findAllSeries(Long idProfessor) {
 		List<Turma> turmasDoProfessor = new ArrayList<>();

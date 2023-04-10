@@ -20,6 +20,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.escola.enums.Serie;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.Boleto;
@@ -80,6 +81,32 @@ public class ConfiguracaoService extends Service {
 		}
 		
 	}
+	
+	public List<Aluno> findAlunosAlunoLetivo(int anoletivo, Serie serie) {
+		try{
+			StringBuilder sql = new StringBuilder();
+			sql.append("select distinct (aluno) from AlunoAvaliacao alunoavaliacao");
+			sql.append(" left join alunoavaliacao.avaliacao avaliacao");
+			sql.append(" left join alunoavaliacao.aluno aluno ");
+			sql.append(" where alunoavaliacao.anoLetivo =");
+			sql.append(anoletivo);
+			sql.append(" and disciplina = 1");
+			sql.append(" and bimestre = 3");
+			sql.append(" and avaliacao.serie = ");
+			sql.append(serie.ordinal());
+			
+			
+			Query query = em.createQuery(sql.toString(), Aluno.class);
+			List<Aluno> t = query.getResultList();
+			
+			return t;	
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println(e);
+			return null;
+		}
+		
+	}
 
 	public List<Configuracao> findAll() {
 		try{
@@ -118,6 +145,7 @@ public class ConfiguracaoService extends Service {
 			user.setAnoRematricula(configuracao.getAnoRematricula());
 			
 			em.persist(user);
+			em.flush();
 			
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues
@@ -291,6 +319,7 @@ public class ConfiguracaoService extends Service {
 			}
 			
 			em.persist(m);
+			em.flush();
 		}
 		
 	}

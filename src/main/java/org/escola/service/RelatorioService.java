@@ -1,4 +1,3 @@
-
 package org.escola.service;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.escola.model.Aluno;
-import org.escola.model.Configuracao;
 import org.escola.util.Service;
 
 

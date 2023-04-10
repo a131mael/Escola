@@ -2,7 +2,6 @@ package org.escola.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -216,7 +215,9 @@ public class AlunoService extends Service {
 	}
 
 	public HistoricoAluno findHistoricoById(Long id) {
-		return em.find(HistoricoAluno.class, id);
+		HistoricoAluno hist = em.find(HistoricoAluno.class, id);
+		em.flush();
+		return hist; 
 	}
 
 	public List<Aluno> findAll() {
@@ -407,6 +408,34 @@ public class AlunoService extends Service {
 		return saveAluno(aluno, true);
 	}
 
+	public void saveFalta(Aluno al) {
+		Aluno m = findById(al.getId());
+		if(al.getFaltas1Bimestre() != null) {
+			m.setFaltas1Bimestre(al.getFaltas1Bimestre());
+		}
+		if(al.getFaltas2Bimestre() != null) {
+			m.setFaltas2Bimestre(al.getFaltas2Bimestre());
+		}
+		if(al.getFaltas3Bimestre() != null) {
+			m.setFaltas3Bimestre(al.getFaltas3Bimestre());
+		}
+		if(al.getFaltas4Bimestre() != null) {
+			m.setFaltas4Bimestre(al.getFaltas4Bimestre());
+		}
+		em.merge(m);
+		em.flush();
+	}
+	
+	public void saveSerie(Aluno al) {
+		Aluno m = findById(al.getId());
+		m.setSerie(al.getSerie());
+
+		em.merge(m);
+		em.flush();;
+	}
+	
+	
+	
 	public String removeCaracteresEspeciais(String texto) {
 		texto = texto.replaceAll("[^aA-zZ-Z0-9 ]", "");
 		return texto;
@@ -574,6 +603,7 @@ public class AlunoService extends Service {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+		em.flush();
 		return user;
 	}
 
@@ -1136,6 +1166,7 @@ public class AlunoService extends Service {
 
 	public void removerHistorico(long idHistorico) {
 		em.remove(findHistoricoById(idHistorico));
+		em.flush();
 	}
 
 	public boolean estaEmUmaTUrma(long idAluno) {

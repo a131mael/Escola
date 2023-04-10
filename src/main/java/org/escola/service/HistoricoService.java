@@ -20,7 +20,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
 import org.escola.model.Aluno;
-import org.escola.model.Evento;
 import org.escola.model.HistoricoAluno;
 import org.escola.util.Service;
 
@@ -111,7 +110,7 @@ public class HistoricoService extends Service {
 
 			e.printStackTrace();
 		}
-
+		em.flush();
 		return evento;
 	}
 

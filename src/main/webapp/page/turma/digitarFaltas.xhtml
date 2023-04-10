@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form style="width:100%; border:none" prependId="false">
+		<p:focus for="notaAluno"/>
+		<p:hotkey bind="crtl + right" update="panelNota" action="#{turmaController.salvarNota()}"/>
+		<p:hotkey bind="crtl + left" update="panelNota" action="#{turmaController.salvarNotaEVoltar()}"/>
+			<h:panelGrid columns="0" width="100%;" styleClass="alinharTopo"
+				style="margin: -10px;margin-top: -25px;">
+				<h:panelGrid border="1" style="width:100%">
+					<center>Turma</center>
+					#{turmaController.popularAlunoAvaliacaoNovo()}
+					<h:panelGrid columns="2" title="Contratante" border="0">
+
+						<h:outputLabel for="nome" value="Nome: " />
+						<h:inputText id="nome" value="#{turma.nome}"
+							style="font-size: 15px; width:280px"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
+						<h:outputLabel for="serie" value="Serie:" />
+						<p:selectOneMenu id="serie" style="width: 256px;"
+							value="#{turma.serie}"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}">
+							<f:selectItem itemLabel="Todas" />
+							<f:selectItems value="#{CombosEspeciaisMB.getSeries()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Periodo:" />
+						<p:selectOneMenu style="width: 256px;" value="#{turma.periodo}"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}">
+							<f:selectItem itemLabel="Todas" />
+							<f:selectItems value="#{CombosEspeciaisMB.getPeriodos()}"
+								var="country" itemLabel="#{country.name}" itemValue="#{country}" />
+						</p:selectOneMenu>
+
+
+					</h:panelGrid>
+					
+				</h:panelGrid>
+				
+				<h:panelGrid id="panelNota" columns="4">
+				
+					<h:outputLabel value="#{turmaController.getAlunoAvaliacaoAtual().aluno.nomeAluno}" style="width:150px"/>
+					
+					<h:outputLabel id="notaAluno" label="notaAluno" value="Faltas: " />
+					
+					<p:inputText id="faltasaluno" onkeyup="eventoEnterLeftRight(this,event)" value="#{turmaController.getAlunoAvaliacaoAtual().faltas}">
+						<p:ajax event="change" process="@this" global="false"/>
+						<f:convertNumber pattern="#0.0" minIntegerDigits="0"/>
+					</p:inputText>
+					
+					<h:commandButton id="proximo" style="background:green" 	actionListener="#{turmaController.salvarFalta()}" value="próximo" />
+				
+				</h:panelGrid>
+				
+				<h:panelGrid id="notasFeitas" columns="1">
+				<p:dataTable var="alunoAv" styleClass="alinharTopo" value="#{turmaController.alunosAvaliacaoNovo}" style="width:100%">
+					<p:column headerText="nome">
+						<h:outputText value="#{alunoAv.aluno.nomeAluno}" />
+					</p:column>
+					<p:column headerText="faltas 1º bim">
+						<h:outputText value="#{alunoAv.aluno.faltas1Bimestre}" />
+					</p:column>
+					<p:column headerText="faltas 2º bim">
+						<h:outputText value="#{alunoAv.aluno.faltas2Bimestre}" />
+					</p:column>
+					<p:column headerText="faltas 3º bim">
+						<h:outputText value="#{alunoAv.aluno.faltas3Bimestre}" />
+					</p:column>
+					<p:column headerText="faltas 4º bim">
+						<h:outputText value="#{alunoAv.aluno.faltas4Bimestre}" />
+					</p:column>
+				
+				</p:dataTable>
+				
+				</h:panelGrid>
+				
+				<table>
+					<tr>
+						<td><h:commandButton id="voltarButtom"
+								action="#{turmaController.voltar()}" value="Voltar" /></td>
+
+						<td><h:commandButton id="salvarButtom"
+								rendered="#{authController.hasPermission(authController.administrador)}"
+								style="margin-left:690px !important;"
+								action="#{turmaController.salvar()}" value="Salvar" /></td>
+					</tr>
+
+				</table>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

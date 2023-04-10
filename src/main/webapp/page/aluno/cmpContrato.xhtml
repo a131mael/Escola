@@ -164,14 +164,15 @@
 												<p:fileDownload value="#{alunoController.gerarCNB240(contratoAlun)}" />
 										</p:commandButton>
 				
-				
+										
 										<p:commandButton icon="ui-icon-arrowthick-1-e" alt="Protestar contrato" 
 														id="protesto" process="@this" value="PROTESTAR"
-														actionListener="#{devedorController.enviarProtesto(contratoAlun)}"
-														rendered="#{not contratoAlun.protestado}">
-											<p:confirm header="Confirmation" message="Você deseja realmente protestar  ?" 
-													  icon="ui-icon-alert" >
-										   </p:confirm>
+														rendered="#{not contratoAlun.protestado}"
+														action="#{alunoController.enviarProtesto(contratoAlun)}"
+														>
+											
+										   <p:confirm header="Confirmacao" message="Você deseja realmente protestar  ? ?" icon="ui-icon-alert" />
+										   
 										</p:commandButton>
 										<p:tooltip for="protesto" value="PROTESTAR !!!" trackMouse="false"  rendered="#{not contratoAlun.protestado}"/>
 										
@@ -213,5 +214,9 @@
 	<h:panelGrid border="0" rendered="#{visible}" width="100%">
 		<hr/>
 	</h:panelGrid>
+	 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			    </p:confirmDialog>
 
 </ui:composition>

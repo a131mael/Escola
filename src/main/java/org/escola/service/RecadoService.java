@@ -56,6 +56,7 @@ public class RecadoService extends Service {
 
 	public String remover(Long idRecado) {
 		em.remove(findById(idRecado));
+		em.flush();
 		return "index";
 	}
 
@@ -135,7 +136,7 @@ public class RecadoService extends Service {
 
 			e.printStackTrace();
 		}
-
+		em.flush();
 		return user;
 	}
 

@@ -157,6 +157,7 @@ public class ProfessorService extends Service {
 			e.printStackTrace();
 		}
 
+		em.flush();
 		return user;
 	}
 
@@ -206,8 +207,6 @@ public class ProfessorService extends Service {
 		return null;
 	}
 
-	
-
 	@SuppressWarnings("unchecked")
 	public List<Turma> findTurmaByProfessor(long idProfessor) {
 		List<Turma> turmas = new ArrayList<>();
@@ -256,6 +255,7 @@ public class ProfessorService extends Service {
 				pt.setProfessor(prof);
 				pt.setTurma(em.find(Turma.class, turma.getId()));
 				em.persist(pt);
+				
 			}
 
 		} catch (NoResultException noResultException) {
@@ -264,10 +264,23 @@ public class ProfessorService extends Service {
 			e.printStackTrace();
 		}
 
+		em.flush();
 	}
 	
 	public void saveProfessorTurma2(ProfessorTurma pt) {
-		em.persist(pt);
+		try {
+			Turma t = em.find(Turma.class, pt.getTurma().getId());
+			Professor p = em.find(Professor.class, pt.getProfessor().getId());
+			
+			pt.setProfessor(p);
+			pt.setTurma(t);
+			
+			em.persist(pt);	
+			em.flush();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	/*

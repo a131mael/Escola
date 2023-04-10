@@ -292,6 +292,7 @@ public class FinanceiroEscolaService extends Service {
 			bol.setBaixaGerada(boleto.getBaixaGerada());
 			bol.setCnabCanceladoEnviado(boleto.getCnabCanceladoEnviado());
 			em.merge(bol);
+			em.flush();
 		}
 	}
 
@@ -301,6 +302,7 @@ public class FinanceiroEscolaService extends Service {
 		boletoMerged.setVencimento(boleto.getVencimento());
 		boletoMerged.setValorNominal(boleto.getValorNominal());
 		em.merge(boletoMerged);
+		em.flush();
 	}
 
 
@@ -309,12 +311,14 @@ public class FinanceiroEscolaService extends Service {
 		ContratoAluno contrato = al.getContratoVigente();
 		contrato.setCnabEnviado(true);
 		em.merge(contrato);
+		em.flush();
 	}
 	
 	public void saveCNABENviado(Boleto b){
 		Boleto al =  em.find(Boleto.class, b.getId());
 		al.setCnabEnviado(true);
 		em.merge(al);
+		em.flush();
 	}
 	
 	public List<ContratoAluno> getAlunosRemovidos() {
@@ -635,8 +639,6 @@ public class FinanceiroEscolaService extends Service {
 			
 			return alunos;
 	}
-	
-	
 	
 	@SuppressWarnings("unchecked")
 	public List<Aluno> findAlunoQuantidade(int first, int size, String orderBy, String order,	Map<String, Object> filtros) {

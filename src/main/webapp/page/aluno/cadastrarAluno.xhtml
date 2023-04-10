@@ -299,7 +299,7 @@
 							
 
 						</h:panelGrid>
-						<h:panelGrid columns="4" width="50%">
+						<h:panelGrid  id="panelnotasbaixo" columns="4" width="50%">
 						<h:outputLabel value="Serie: " style="font-size: 13px; width:120px" />
 							<p:selectOneMenu  style="width: 160px;"
 								value="#{historicoAluno.serie}">
@@ -369,7 +369,7 @@
 								style="font-size: 15px; width:175px">
 							</p:inputText>
 						</h:panelGrid>
-						<h:panelGrid>
+						<h:panelGrid id="panelHistorico">
 							<p:dataTable id="tbl" var="historicoTab"
 									 value="#{alunoController.getHistoricoAluno(aluno)}"
 									 style="margin-bottom:20px; width:100%"
@@ -378,7 +378,7 @@
 									 >
 									 
 									 <p:column style="width:10%" headerText="Editar">
-										<p:commandButton update="@form" icon="ui-icon-pencil" action="#{alunoController.editarHistorico(historicoTab)}" />
+										<p:commandButton update="form:tabView:panelAddNotas,form:tabView:panelnotasbaixo" process="@this" icon="ui-icon-pencil" actionListener="#{alunoController.editarHistorico(historicoTab)}" />
 									</p:column>
 						
 									<p:column style="text-align: center;width:10%;" headerText="Escola">
@@ -403,7 +403,7 @@
 									
 									
 									<p:column style="text-align: center;width:10%;" headerText="remover ">
-										<p:commandButton update="tbl" icon="ui-icon-trash" action="#{alunoController.removerHistorico(historicoTab.id)}" />
+										<p:commandButton update="form:tabView:panelAddNotas,form:tabView:panelnotasbaixo,form:tabView:tbl" process="@this" icon="ui-icon-trash" actionListener="#{alunoController.removerHistorico(historicoTab.id)}" />
 									</p:column>	
 						
 							</p:dataTable>

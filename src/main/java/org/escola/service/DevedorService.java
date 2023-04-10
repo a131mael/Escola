@@ -537,6 +537,13 @@ public class DevedorService extends Service {
 				sql.append(getDataFim());
 				sql.append("'");
 			}
+			
+			if(filtros.get("nomeResponsavel") != null  ) {
+				sql.append(" and UPPER(ca.nomeresponsavel) like UPPER('%");
+				sql.append(filtros.get("nomeResponsavel"));
+				sql.append("%')");
+			}
+			
 			sql.append(" and (bol.valorpago<bol.valornominal -20 or bol.valorpago is null)");
 			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
 			sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
@@ -574,6 +581,7 @@ public class DevedorService extends Service {
 		Aluno aluno = findById(alunod.getId());
 		aluno.setObservacaoSecretaria(alunod.getObservacaoSecretaria());
 		em.merge(aluno);
+		em.flush();
 
 	}
 
@@ -581,18 +589,21 @@ public class DevedorService extends Service {
 		ContratoAluno caa = findByIdContratoAluno(ca.getId());
 		caa.setProtestado(true);
 		em.merge(caa);
+		em.flush();
 	}
 
 	public void enviarPodeEnviarProtestoFina(ContratoAluno ca) {
 		ContratoAluno caa = findByIdContratoAluno(ca.getId());
 		caa.setPodeProtestarFinal(true);
 		em.merge(caa);
+		em.flush();
 	}
 
 	public void enviadoProtestoDefinitivo(ContratoAluno ca) {
 		ContratoAluno caa = findByIdContratoAluno(ca.getId());
 		caa.setEnviadoProtestoDefinitivo(true);
 		em.merge(caa);
+		em.flush();
 	}
 
 	public Date getDataInicio() {
@@ -633,6 +644,11 @@ public class DevedorService extends Service {
 				sql.append(" and bol.vencimento < '");
 				sql.append(dataFim);
 				sql.append("'");
+			}
+			if(filtros.get("nomeResponsavel") != null  ) {
+				sql.append(" and UPPER(ca.nomeresponsavel) like UPPER('%");
+				sql.append(filtros.get("nomeResponsavel"));
+				sql.append("%')");
 			}
 			sql.append(" and (bol.valorpago<bol.valornominal -20 or bol.valorpago is null)");
 			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
