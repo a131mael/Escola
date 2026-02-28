@@ -2,6 +2,7 @@
 package org.escola.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -584,27 +585,27 @@ public class DevedorService extends Service {
 		em.flush();
 
 	}
-
-	public void enviarParaProtesto(ContratoAluno ca) {
-		ContratoAluno caa = findByIdContratoAluno(ca.getId());
-		caa.setProtestado(true);
-		em.merge(caa);
-		em.flush();
-	}
-
-	public void enviarPodeEnviarProtestoFina(ContratoAluno ca) {
-		ContratoAluno caa = findByIdContratoAluno(ca.getId());
-		caa.setPodeProtestarFinal(true);
-		em.merge(caa);
-		em.flush();
-	}
-
-	public void enviadoProtestoDefinitivo(ContratoAluno ca) {
-		ContratoAluno caa = findByIdContratoAluno(ca.getId());
-		caa.setEnviadoProtestoDefinitivo(true);
-		em.merge(caa);
-		em.flush();
-	}
+//
+//	public void enviarParaProtesto(ContratoAluno ca) {
+//		ContratoAluno caa = findByIdContratoAluno(ca.getId());
+//		caa.setProtestado(true);
+//		em.merge(caa);
+//		em.flush();
+//	}
+//
+//	public void enviarPodeEnviarProtestoFina(ContratoAluno ca) {
+//		ContratoAluno caa = findByIdContratoAluno(ca.getId());
+//		caa.setPodeProtestarFinal(true);
+//		em.merge(caa);
+//		em.flush();
+//	}
+//
+//	public void enviadoProtestoDefinitivo(ContratoAluno ca) {
+//		ContratoAluno caa = findByIdContratoAluno(ca.getId());
+//		caa.setEnviadoProtestoDefinitivo(true);
+//		em.merge(caa);
+//		em.flush();
+//	}
 
 	public Date getDataInicio() {
 		return dataInicio;
@@ -621,66 +622,65 @@ public class DevedorService extends Service {
 	public void setDataFim(Date dataFim) {
 		this.dataFim = dataFim;
 	}
-
-	@SuppressWarnings("unchecked")
-	public List<ContratoAluno> findProtestoEnviado(int first, int size, String orderBy, String order,
-			Map<String, Object> filtros) {
-		try {
-			StringBuilder sql = new StringBuilder();
-			sql.append("select bol.* from boleto bol ");
-			sql.append("left join contratoaluno ca ");
-			sql.append("on bol.contrato_id = ca.id ");
-			sql.append("where ");
-			sql.append("bol.vencimento < '");
-			sql.append(new Date());
-			sql.append("'");
-			if (dataInicio != null) {
-				sql.append(" and bol.vencimento > '");
-				sql.append(dataInicio);
-				sql.append("'");
-			}
-
-			if (dataFim != null) {
-				sql.append(" and bol.vencimento < '");
-				sql.append(dataFim);
-				sql.append("'");
-			}
-			if(filtros.get("nomeResponsavel") != null  ) {
-				sql.append(" and UPPER(ca.nomeresponsavel) like UPPER('%");
-				sql.append(filtros.get("nomeResponsavel"));
-				sql.append("%')");
-			}
-			sql.append(" and (bol.valorpago<bol.valornominal -20 or bol.valorpago is null)");
-			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
-			sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
-			sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
-			sql.append(" and ca.protestado = true");
-			sql.append(" and (ca.enviadoProtestoDefinitivo = true)");
-
-			Query query = em.createNativeQuery(sql.toString(), Boleto.class);
-			query.setFirstResult(first);
-			List<Boleto> boletos = query.getResultList();
-			if (boletos == null) {
-				boletos = new ArrayList<Boleto>();
-			}
-
-			Set<ContratoAluno> ds = new LinkedHashSet();
-			List<ContratoAluno> aux = new ArrayList<>();
-			for (Boleto b : boletos) {
-				b.getContrato().getId();
-				b.getContrato().getBoletos().size();
-				ds.add(b.getContrato());
-				b.setAtrasado(true);
-
-			}
-			if (ds != null && !ds.isEmpty()) {
-				aux.addAll(ds);
-			}
-			return aux;
-		} catch (Exception e) {
-			return null;
-		}
-	}
+//
+//	@SuppressWarnings("unchecked")
+//	public List<ContratoAluno> findProtestoEnviado(int first, int size, String orderBy, String order,Map<String, Object> filtros) {
+//		try {
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("select bol.* from boleto bol ");
+//			sql.append("left join contratoaluno ca ");
+//			sql.append("on bol.contrato_id = ca.id ");
+//			sql.append("where ");
+//			sql.append("bol.vencimento < '");
+//			sql.append(new Date());
+//			sql.append("'");
+//			if (dataInicio != null) {
+//				sql.append(" and bol.vencimento > '");
+//				sql.append(dataInicio);
+//				sql.append("'");
+//			}
+//
+//			if (dataFim != null) {
+//				sql.append(" and bol.vencimento < '");
+//				sql.append(dataFim);
+//				sql.append("'");
+//			}
+//			if(filtros.get("nomeResponsavel") != null  ) {
+//				sql.append(" and UPPER(ca.nomeresponsavel) like UPPER('%");
+//				sql.append(filtros.get("nomeResponsavel"));
+//				sql.append("%')");
+//			}
+//			sql.append(" and (bol.valorpago<bol.valornominal -20 or bol.valorpago is null)");
+//			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
+//			sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
+//			sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
+//			sql.append(" and ca.protestado = true");
+//			sql.append(" and (ca.enviadoProtestoDefinitivo = true)");
+//
+//			Query query = em.createNativeQuery(sql.toString(), Boleto.class);
+//			query.setFirstResult(first);
+//			List<Boleto> boletos = query.getResultList();
+//			if (boletos == null) {
+//				boletos = new ArrayList<Boleto>();
+//			}
+//
+//			Set<ContratoAluno> ds = new LinkedHashSet();
+//			List<ContratoAluno> aux = new ArrayList<>();
+//			for (Boleto b : boletos) {
+//				b.getContrato().getId();
+//				b.getContrato().getBoletos().size();
+//				ds.add(b.getContrato());
+//				b.setAtrasado(true);
+//
+//			}
+//			if (ds != null && !ds.isEmpty()) {
+//				aux.addAll(ds);
+//			}
+//			return aux;
+//		} catch (Exception e) {
+//			return null;
+//		}
+//	}
 
 	private boolean possuiContratoComBoletoAtrasado(Aluno aluno, List<ContratoAluno> contratos, Date dataInicio2,
 			Date dataFim2) {
@@ -1020,20 +1020,265 @@ public class DevedorService extends Service {
 		return atrasado;*/
 		return false;
 	}
+//	
+//	public void enviarParaProtesto(Aluno al) {
+//		for(ContratoAluno ca : al.getContratos()){
+//			boolean atras = possuiBoletoAtrasado(ca, null, null);
+//			if(atras){
+//				ContratoAluno caa = findByIdContratoAluno(ca.getId());
+//				caa.setProtestado(true);
+//				em.merge(caa);
+//			}
+//		}
+//	}
+//	
+//	@SuppressWarnings("unchecked")
+//	public List<ContratoAluno> findProtesto(int first, int size, String orderBy, String order, Map<String, Object> filtros) {
+//		try {
+//			Calendar c = Calendar.getInstance();
+//			c.add(Calendar.YEAR, -1);
+//			
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("select bol.* from boleto bol ");   
+//			sql.append("left join contratoaluno ca ");
+//			sql.append("on bol.contrato_id = ca.id ");
+//			sql.append("where ");
+//			sql.append("bol.vencimento < '");
+//			sql.append(new Date());
+//			sql.append("'");
+//			
+//			sql.append(" and bol.vencimento > '");
+//			sql.append(c.getTime());
+//			sql.append("'");
+//			
+//			
+//			if(dataInicio != null){
+//				sql.append(" and bol.vencimento > '");
+//				sql.append(dataInicio);
+//				sql.append("'");
+//			}
+//			
+//			if(dataFim != null){
+//				sql.append(" and bol.vencimento < '");
+//				sql.append(dataFim);
+//				sql.append("'");
+//			}
+//			if(filtros != null){
+//				if(filtros.get("nomeResponsavel") != null){
+//					sql.append(" and ca.nomeResponsavel like '%");
+//					sql.append(filtros.get("nomeResponsavel"));
+//					sql.append("%'");
+//				}
+//				if(filtros.get("enviadoParaCobrancaCDL") != null){
+//					sql.append(" and ca.enviadoParaCobrancaCDL = ");
+//					sql.append(filtros.get("enviadoParaCobrancaCDL"));
+//				}
+//			}
+//			
+//			sql.append(" and (ca.confirmadoEnvioPorWebService is null or ca.confirmadoEnvioPorWebService = false)");
+//			
+//			sql.append(" and (bol.valorpago<bol.valornominal -20 or bol.valorpago is null)");
+//			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
+//			sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
+//			sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
+//			sql.append(" and (bol.dividaPerdoada is null or bol.dividaPerdoada = false)");
+//			sql.append(" and ca.protestado = true");
+//			sql.append(" and (ca.enviadoProtestoDefinitivo is null or ca.enviadoProtestoDefinitivo = false)");
+//			
+//			Query query = em.createNativeQuery(sql.toString(),Boleto.class);
+//			query.setFirstResult(first);
+//			List<Boleto> boletos = query.getResultList();
+//			if(boletos == null){
+//				boletos = new ArrayList<Boleto>();
+//			}
+//			
+//			Set<ContratoAluno> ds = new LinkedHashSet(); 
+//			List<ContratoAluno> aux = new ArrayList<>(); 
+//			for(Boleto b : boletos){
+//				b.getContrato().getId();
+//				b.getContrato().getBoletos().size();
+//				ds.add(b.getContrato());
+//				b.setAtrasado(true);
+//				
+//			}
+//			if(ds != null && !ds.isEmpty()){
+//				 aux.addAll(ds);
+//			}
+//			return aux;
+//		}catch(Exception e){
+//			return null;
+//		}
+//	}
+
+	@SuppressWarnings("unchecked")
+	public List<ContratoAluno> findProtestoConfirmado(int first, int size, String orderBy, String order, Map<String, Object> filtros) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("select bol.* from boleto bol ");   
+			sql.append("left join contratoaluno ca ");
+			sql.append("on bol.contrato_id = ca.id ");
+			sql.append("where ");
+			sql.append("bol.vencimento < '");
+			sql.append(new Date());
+			sql.append("'");
+			if(dataInicio != null){
+				sql.append(" and bol.vencimento > '");
+				sql.append(dataInicio);
+				sql.append("'");
+			}
+			
+			if(dataFim != null){
+				sql.append(" and bol.vencimento < '");
+				sql.append(dataFim);
+				sql.append("'");
+			}
+			if(filtros != null){
+				if(filtros.get("nomeResponsavel") != null){
+					sql.append(" and ca.nomeResponsavel like '%");
+					sql.append(filtros.get("nomeResponsavel"));
+					sql.append("%'");
+				}
+				if(filtros.get("enviadoParaCobrancaCDL") != null){
+					sql.append(" and ca.enviadoParaCobrancaCDL = ");
+					sql.append(filtros.get("enviadoParaCobrancaCDL"));
+				}
+			}
+			
+			sql.append(" and (ca.confirmadoEnvioPorWebService = true)");
+			
+			sql.append(" and (bol.valorpago<bol.valornominal -20 or bol.valorpago is null)");
+			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
+			sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
+			sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
+			sql.append(" and (bol.dividaPerdoada is null or bol.dividaPerdoada = false)");
+			sql.append(" and ca.protestado = true");
+			sql.append(" and (ca.enviadoProtestoDefinitivo is null or ca.enviadoProtestoDefinitivo = false)");
+			sql.append(" limit ");
+			sql.append((size*2.5));
+			
+			Query query = em.createNativeQuery(sql.toString(),Boleto.class);
+			query.setFirstResult(first);
+			List<Boleto> boletos = query.getResultList();
+			if(boletos == null){
+				boletos = new ArrayList<Boleto>();
+			}
+			
+			Set<ContratoAluno> ds = new LinkedHashSet(); 
+			List<ContratoAluno> aux = new ArrayList<>(); 
+			for(Boleto b : boletos){
+				b.getContrato().getId();
+				b.getContrato().getBoletos().size();
+				ds.add(b.getContrato());
+				b.setAtrasado(true);
+				
+			}
+			if(ds != null && !ds.isEmpty()){
+				 aux.addAll(ds);
+			}
+			return aux;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
+	
+	public void enviarParaProtesto(ContratoAluno ca) {
+		ContratoAluno caa = findByIdContratoAluno(ca.getId());
+		caa.setProtestado(true);
+		caa.setEnviadoParaCobrancaCDL(true);
+		em.merge(caa);
+		em.flush();
+	}
+
+	public void enviarPodeEnviarProtestoFina(ContratoAluno ca) {
+		ContratoAluno caa = findByIdContratoAluno(ca.getId());
+		caa.setPodeProtestarFinal(true);
+		em.merge(caa);
+		em.flush();
+	}
+
+	public void enviadoProtestoDefinitivo(ContratoAluno ca) {
+		ContratoAluno caa = findByIdContratoAluno(ca.getId());
+		caa.setEnviadoProtestoDefinitivo(true);
+		em.merge(caa);
+		em.flush();
+	}
+
+	public void saveComentario(ContratoAluno ca) {
+		ContratoAluno ca2 = findByIdContratoAluno(ca.getId());
+		ca2.setComentario(ca.getComentario());
+		em.merge(ca2);
+		em.flush();
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ContratoAluno> findProtestoEnviado(int first, int size, String orderBy, String order, Map<String, Object> filtros) {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("select bol.* from boleto bol ");   
+			sql.append("left join contratoaluno ca ");
+			sql.append("on bol.contrato_id = ca.id ");
+			sql.append("where ");
+			sql.append("bol.vencimento < '");
+			sql.append(new Date());
+			sql.append("'");
+			if(dataInicio != null){
+				sql.append(" and bol.vencimento > '");
+				sql.append(dataInicio);
+				sql.append("'");
+			}
+			
+			if(dataFim != null){
+				sql.append(" and bol.vencimento < '");
+				sql.append(dataFim);
+				sql.append("'");
+			}
+			sql.append(" and (bol.valorpago<bol.valornominal -20 or bol.valorpago is null)");
+			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
+			sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
+			sql.append(" and (bol.cancelado is null or bol.cancelado = false)");
+			sql.append(" and ca.protestado = true");
+			sql.append(" and (ca.enviadoProtestoDefinitivo = true)");
+			
+			Query query = em.createNativeQuery(sql.toString(),Boleto.class);
+			query.setFirstResult(first);
+			List<Boleto> boletos = query.getResultList();
+			if(boletos == null){
+				boletos = new ArrayList<Boleto>();
+			}
+			
+			Set<ContratoAluno> ds = new LinkedHashSet(); 
+			List<ContratoAluno> aux = new ArrayList<>(); 
+			for(Boleto b : boletos){
+				b.getContrato().getId();
+				b.getContrato().getBoletos().size();
+				ds.add(b.getContrato());
+				b.setAtrasado(true);
+				
+			}
+			if(ds != null && !ds.isEmpty()){
+				 aux.addAll(ds);
+			}
+			return aux;
+		}catch(Exception e){
+			return null;
+		}
+	}
+
 	public void enviarParaProtesto(Aluno al) {
 		for(ContratoAluno ca : al.getContratos()){
 			boolean atras = possuiBoletoAtrasado(ca, null, null);
 			if(atras){
 				ContratoAluno caa = findByIdContratoAluno(ca.getId());
 				caa.setProtestado(true);
+				caa.setEnviadoParaCobrancaCDL(true);
 				em.merge(caa);
 			}
 		}
+		em.flush();
 	}
 
-	
-	
-	
 
 }

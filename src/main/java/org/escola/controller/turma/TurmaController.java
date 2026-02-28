@@ -279,7 +279,7 @@ public class TurmaController extends AuthController implements Serializable {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 		String endpoint = ConstantesEscolaApi.URL+ ConstantesEscolaApi.getAlunosAvaliacao;
-		//String endpoint = "http://localhost:1414"+ ConstantesEscolaApi.getAlunosAvaliacao;
+//		String endpoint = "http://localhost:1616"+ "/api/alunosavaliacoes";;
 		
 		Parametro p1 = new Parametro("idTurma", idTurma);
 		Parametro p2 = new Parametro("anoletivo", anoLetivo);

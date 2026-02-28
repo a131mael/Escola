@@ -69,7 +69,8 @@ public class SecretariaController {
 	private AlunoService alunoService;
 
 	public void finalizarAnoLetivo() {
-		String endpoint = ConstantesEscolaApi.URL+ ConstantesEscolaApi.FINALIZAR_ANO_LETIVO;
+		String endpoint = ConstantesEscolaApi.URL_SERVICES_ESCOLA+ ConstantesEscolaApi.FINALIZAR_ANO_LETIVO;
+	//	String endpoint = "http://localhost:1616/servicesEscola-0.0.1-SNAPSHOT/api/anoLetivoFinalizado";
 		List<Parametro> parametros = new ArrayList<>();
 		EnviadorJson.get2(endpoint, Constantes.TOKEN, parametros);
 	}

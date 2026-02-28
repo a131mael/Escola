@@ -46,6 +46,9 @@ public class ProfessorService extends Service {
 
 	@Inject
 	private UtilFinalizarAnoLetivo finalizarAnoLetivo;
+	
+	@Inject
+	private TurmaService turmaservice;
 
 	public Professor findById(EntityManager em, Long id) {
 		return em.find(Professor.class, id);
@@ -58,6 +61,10 @@ public class ProfessorService extends Service {
 	public String remover(Long idTurma) {
 		em.remove(findById(idTurma));
 		return "index";
+	}
+	
+	public List<Turma> getTodasTurmas(){
+		return turmaservice.findAll();
 	}
 
 	public List<Professor> findAll() {

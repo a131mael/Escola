@@ -88,6 +88,7 @@ import org.escola.enums.DisciplinaEnum;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
 import org.escola.enums.StatusBoletoEnum;
+import org.escola.enums.TipoBoleto;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.AlunoAvaliacao;
@@ -329,6 +330,11 @@ public class AlunoController implements Serializable {
 	public void enviarProtesto(ContratoAluno ca) {
 		devedorService.enviarParaProtesto(ca);
 	}
+	
+	public void salvarNumeroCasa(ContratoAluno contrato) {
+		alunoService.saveNumeroCasa(contrato);
+	}
+	
 	
 	
 	public void gerarNotasQueFaltaramDOAluno(Aluno alunoFa) {
@@ -1416,6 +1422,9 @@ public class AlunoController implements Serializable {
 		HistoricoAluno historico4Ano = getHistorico(historicoAlunos, Serie.QUARTO_ANO);
 		HistoricoAluno historico5Ano = getHistorico(historicoAlunos, Serie.QUINTO_ANO);
 		HistoricoAluno historico6Ano = getHistorico(historicoAlunos, Serie.SEXTO_ANO);
+		HistoricoAluno historico7Ano = getHistorico(historicoAlunos, Serie.SETIMO_ANO);
+		HistoricoAluno historico8Ano = getHistorico(historicoAlunos, Serie.OITAVO_ANO);
+		HistoricoAluno historico9Ano = getHistorico(historicoAlunos, Serie.NONO_ANO);
 
 		HashMap<String, String> trocas = new HashMap<>();
 		trocas.put("nomealunoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
@@ -1433,6 +1442,9 @@ public class AlunoController implements Serializable {
 		trocas.put("a4", historico4Ano != null ? "" + historico4Ano.getAno() : "");
 		trocas.put("a5", historico5Ano != null ? "" + historico5Ano.getAno() : "");
 		trocas.put("a6", historico6Ano != null ? "" + historico6Ano.getAno() : "");
+		trocas.put("a7", historico7Ano != null ? "" + historico7Ano.getAno() : "");
+		trocas.put("a8", historico8Ano != null ? "" + historico8Ano.getAno() : "");
+		trocas.put("a9", historico9Ano != null ? "" + historico9Ano.getAno() : "");
 
 		// Frequencia
 		trocas.put("fb", historico1Ano != null ? historico1Ano.getFrequencia() : "");
@@ -1441,6 +1453,9 @@ public class AlunoController implements Serializable {
 		trocas.put("fg", historico4Ano != null ? historico4Ano.getFrequencia() : "");
 		trocas.put("fh", historico5Ano != null ? historico5Ano.getFrequencia() : "");
 		trocas.put("fj", historico6Ano != null ? historico6Ano.getFrequencia() : "");
+		trocas.put("fk", historico7Ano != null ? historico7Ano.getFrequencia() : "");
+		trocas.put("fl", historico8Ano != null ? historico8Ano.getFrequencia() : "");
+		trocas.put("fm", historico9Ano != null ? historico9Ano.getFrequencia() : "");
 
 		// aprovado
 		trocas.put("aprovado1", historico1Ano != null ? "Aprovado" : "");
@@ -1449,6 +1464,9 @@ public class AlunoController implements Serializable {
 		trocas.put("aproxdk4", historico4Ano != null ? "Aprovado" : "");
 		trocas.put("aprovado5", historico5Ano != null ? "Aprovado" : "");
 		trocas.put("aprovado6", historico6Ano != null ? "Aprovado" : "");
+		trocas.put("aprovado7", historico7Ano != null ? "Aprovado" : "");
+		trocas.put("aprovado8", historico8Ano != null ? "Aprovado" : "");
+		trocas.put("aprovado9", historico9Ano != null ? "Aprovado" : "");
 
 		// ESCOLA
 		trocas.put("e1", historico1Ano != null ? "" + historico1Ano.getEscola() : "");
@@ -1457,6 +1475,9 @@ public class AlunoController implements Serializable {
 		trocas.put("e4", historico4Ano != null ? "" + historico4Ano.getEscola() : "");
 		trocas.put("e5", historico5Ano != null ? "" + historico5Ano.getEscola() : "");
 		trocas.put("e6", historico6Ano != null ? "" + historico6Ano.getEscola() : "");
+		trocas.put("e7", historico7Ano != null ? "" + historico7Ano.getEscola() : "");
+		trocas.put("e8", historico8Ano != null ? "" + historico8Ano.getEscola() : "");
+		trocas.put("e9", historico9Ano != null ? "" + historico9Ano.getEscola() : "");
 
 		// Municipio
 		trocas.put("m1", historico1Ano != null ? "" + historico1Ano.getMunicipio() : "");
@@ -1465,6 +1486,9 @@ public class AlunoController implements Serializable {
 		trocas.put("m4", historico4Ano != null ? "" + historico4Ano.getMunicipio() : "");
 		trocas.put("m5", historico5Ano != null ? "" + historico5Ano.getMunicipio() : "");
 		trocas.put("m6", historico6Ano != null ? "" + historico6Ano.getMunicipio() : "");
+		trocas.put("m7", historico7Ano != null ? "" + historico7Ano.getMunicipio() : "");
+		trocas.put("m8", historico8Ano != null ? "" + historico8Ano.getMunicipio() : "");
+		trocas.put("m9", historico9Ano != null ? "" + historico9Ano.getMunicipio() : "");
 
 		// Estado
 		trocas.put("es1", historico1Ano != null ? "" + historico1Ano.getEstado() : "");
@@ -1473,6 +1497,9 @@ public class AlunoController implements Serializable {
 		trocas.put("es4", historico4Ano != null ? "" + historico4Ano.getEstado() : "");
 		trocas.put("es5", historico5Ano != null ? "" + historico5Ano.getEstado() : "");
 		trocas.put("es6", historico6Ano != null ? "" + historico6Ano.getEstado() : "");
+		trocas.put("es7", historico7Ano != null ? "" + historico7Ano.getEstado() : "");
+		trocas.put("es8", historico8Ano != null ? "" + historico8Ano.getEstado() : "");
+		trocas.put("es9", historico9Ano != null ? "" + historico9Ano.getEstado() : "");
 
 		// notar Portugues
 		trocas.put("hp1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaPortugues()) : "");
@@ -1481,6 +1508,9 @@ public class AlunoController implements Serializable {
 		trocas.put("hp4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaPortugues()) : "");
 		trocas.put("hp5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaPortugues()) : "");
 		trocas.put("hp6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaPortugues()) : "");
+		trocas.put("hp7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaPortugues()) : "");
+		trocas.put("hp8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaPortugues()) : "");
+		trocas.put("hp9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaPortugues()) : "");
 
 		// notar Matematica
 		trocas.put("hm1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaMatematica()) : "");
@@ -1489,6 +1519,9 @@ public class AlunoController implements Serializable {
 		trocas.put("hm4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaMatematica()) : "");
 		trocas.put("hm5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaMatematica()) : "");
 		trocas.put("hm6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaMatematica()) : "");
+		trocas.put("hm7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaMatematica()) : "");
+		trocas.put("hm8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaMatematica()) : "");
+		trocas.put("hm9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaMatematica()) : "");
 
 		// notar Ciências
 		trocas.put("hc1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaCiencias()) : "");
@@ -1497,6 +1530,11 @@ public class AlunoController implements Serializable {
 		trocas.put("hc4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaCiencias()) : "");
 		trocas.put("hc5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaCiencias()) : "");
 		trocas.put("hc6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaCiencias()) : "");
+		
+		trocas.put("hc7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaCiencias()) : "");
+		trocas.put("hc8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaCiencias()) : "");
+		trocas.put("hc9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaCiencias()) : "");
+		
 
 		// notar História
 		trocas.put("hh1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaHistoria()) : "");
@@ -1505,6 +1543,10 @@ public class AlunoController implements Serializable {
 		trocas.put("hh4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaHistoria()) : "");
 		trocas.put("hh5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaHistoria()) : "");
 		trocas.put("hh6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaHistoria()) : "");
+		
+		trocas.put("hh7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaHistoria()) : "");
+		trocas.put("hh8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaHistoria()) : "");
+		trocas.put("hh9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaHistoria()) : "");
 
 		// notar Geografia
 		trocas.put("hg1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaGeografia()) : "");
@@ -1513,6 +1555,10 @@ public class AlunoController implements Serializable {
 		trocas.put("hg4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaGeografia()) : "");
 		trocas.put("hg5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaGeografia()) : "");
 		trocas.put("hg6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaGeografia()) : "");
+		
+		trocas.put("hg7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaGeografia()) : "");
+		trocas.put("hg8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaGeografia()) : "");
+		trocas.put("hg9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaGeografia()) : "");
 
 		// Ed Fisica
 		trocas.put("he1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaEdFisica()) : "");
@@ -1521,6 +1567,10 @@ public class AlunoController implements Serializable {
 		trocas.put("he4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaEdFisica()) : "");
 		trocas.put("he5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaEdFisica()) : "");
 		trocas.put("he6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaEdFisica()) : "");
+		
+		trocas.put("he7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaEdFisica()) : "");
+		trocas.put("he8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaEdFisica()) : "");
+		trocas.put("he9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaEdFisica()) : "");
 
 		// notar Artes
 		trocas.put("ha1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaArtes()) : "");
@@ -1530,6 +1580,11 @@ public class AlunoController implements Serializable {
 		trocas.put("ha5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaArtes()) : "");
 		trocas.put("ha6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaArtes()) : "");
 
+		trocas.put("ha7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaArtes()) : "");
+		trocas.put("ha8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaArtes()) : "");
+		trocas.put("ha9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaArtes()) : "");
+
+		
 		// notar Inglês
 		trocas.put("hi1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaIngles()) : "");
 		trocas.put("hi2", historico2Ano != null ? mostraNotas(historico2Ano.getNotaIngles()) : "");
@@ -1537,6 +1592,11 @@ public class AlunoController implements Serializable {
 		trocas.put("hi4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaIngles()) : "");
 		trocas.put("hi5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaIngles()) : "");
 		trocas.put("hi6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaIngles()) : "");
+		
+		trocas.put("hi7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaIngles()) : "");
+		trocas.put("hi8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaIngles()) : "");
+		trocas.put("hi9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaIngles()) : "");
+
 
 		// notar Formacao Crista
 		trocas.put("hf1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaformacaoCrista()) : "");
@@ -1545,6 +1605,10 @@ public class AlunoController implements Serializable {
 		trocas.put("hf4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaformacaoCrista()) : "");
 		trocas.put("hf5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaformacaoCrista()) : "");
 		trocas.put("hf6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaformacaoCrista()) : "");
+		
+		trocas.put("hf7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaformacaoCrista()) : "");
+		trocas.put("hf8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaformacaoCrista()) : "");
+		trocas.put("hf9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaformacaoCrista()) : "");
 
 		// notar Filosofia pegou do espanhool
 		trocas.put("hl1", historico1Ano != null ? mostraNotas(historico1Ano.getNotaEspanhol()) : "");
@@ -1553,6 +1617,10 @@ public class AlunoController implements Serializable {
 		trocas.put("hl4", historico4Ano != null ? mostraNotas(historico4Ano.getNotaEspanhol()) : "");
 		trocas.put("hl5", historico5Ano != null ? mostraNotas(historico5Ano.getNotaEspanhol()) : "");
 		trocas.put("hl6", historico6Ano != null ? mostraNotas(historico6Ano.getNotaEspanhol()) : "");
+		
+		trocas.put("hl7", historico7Ano != null ? mostraNotas(historico7Ano.getNotaEspanhol()) : "");
+		trocas.put("hl8", historico8Ano != null ? mostraNotas(historico8Ano.getNotaEspanhol()) : "");
+		trocas.put("hl9", historico9Ano != null ? mostraNotas(historico9Ano.getNotaEspanhol()) : "");
 
 		return trocas;
 	}
@@ -1636,6 +1704,105 @@ public class AlunoController implements Serializable {
 		return trocas;
 	}
 
+	
+	
+	
+	public HashMap<String, String> montarAcordoDivida(ContratoAluno contrato) {
+		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
+		String dataExtenso = formatador.format(new Date());
+		Calendar dataLim = Calendar.getInstance();
+		dataLim.add(Calendar.MONTH, 1);
+		String dataLimiteExtenso = formatador.format(dataLim.getTime());
+
+		boolean rematricula = (contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular())
+				? true : false;
+		HashMap<String, String> trocas = new HashMap<>();
+
+		String nomeAluno = contrato.getAluno().getNomeAluno();
+		String nomeSerie = rematricula ? Serie.values()[contrato.getAluno().getSerie().ordinal() + 1].getName()
+				: Serie.values()[contrato.getAluno().getSerie().ordinal()].getName();
+
+		String nomePeriodo = "";
+		if (contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular()) {
+			nomePeriodo = contrato.getAluno().getPeriodoProximoAno().getName();
+		} else {
+			nomePeriodo = contrato.getAluno().getPeriodo().getName();
+		}
+
+		if (contrato.getAluno().getIrmao1() != null && ((contrato.getAluno().getIrmao1().getRematricular() != null
+				&& contrato.getAluno().getIrmao1().getRematricular())
+				|| contrato.getAluno().getIrmao1().getRematricular() == null)) {
+			nomeAluno += ", " + contrato.getAluno().getIrmao1().getNomeAluno();
+			nomeSerie += ", "
+					+ (rematricula ? Serie.values()[contrato.getAluno().getIrmao1().getSerie().ordinal() + 1].getName()
+							: Serie.values()[contrato.getAluno().getIrmao1().getSerie().ordinal()].getName());
+			nomePeriodo += ", " + contrato.getAluno().getIrmao1().getPeriodoProximoAno().getName();
+
+		}
+		if (contrato.getAluno().getIrmao2() != null && ((contrato.getAluno().getIrmao2().getRematricular() != null
+				&& contrato.getAluno().getIrmao2().getRematricular())
+				|| contrato.getAluno().getIrmao2().getRematricular() == null)) {
+			nomeAluno += ", " + contrato.getAluno().getIrmao2().getNomeAluno();
+			nomeSerie += ", "
+					+ (rematricula ? Serie.values()[contrato.getAluno().getIrmao2().getSerie().ordinal() + 1].getName()
+							: Serie.values()[contrato.getAluno().getIrmao2().getSerie().ordinal()].getName());
+			nomePeriodo += ", " + contrato.getAluno().getIrmao2().getPeriodoProximoAno().getName();
+		}
+		if (contrato.getAluno().getIrmao3() != null && ((contrato.getAluno().getIrmao3().getRematricular() != null
+				&& contrato.getAluno().getIrmao3().getRematricular())
+				|| contrato.getAluno().getIrmao3().getRematricular() == null)) {
+			nomeAluno += ", " + contrato.getAluno().getIrmao3().getNomeAluno();
+			nomeSerie += ", "
+					+ (rematricula ? Serie.values()[contrato.getAluno().getIrmao3().getSerie().ordinal() + 1].getName()
+							: Serie.values()[contrato.getAluno().getIrmao3().getSerie().ordinal()].getName());
+			nomePeriodo += ", " + contrato.getAluno().getIrmao3().getPeriodoProximoAno().getName();
+		}
+		if (contrato.getAluno().getIrmao4() != null && contrato.getAluno().getIrmao4().getRematricular() != null
+				&& contrato.getAluno().getIrmao4().getRematricular()) {
+			nomeAluno += ", " + contrato.getAluno().getIrmao4().getNomeAluno();
+			nomeSerie += ", "
+					+ (rematricula ? Serie.values()[contrato.getAluno().getIrmao4().getSerie().ordinal() + 1].getName()
+							: Serie.values()[contrato.getAluno().getIrmao4().getSerie().ordinal()].getName());
+			nomePeriodo += ", " + contrato.getAluno().getIrmao4().getPeriodoProximoAno().getName();
+		}
+		int ano = configuracao.getAnoLetivo();
+		if (contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular()) {
+			ano = configuracao.getAnoRematricula();
+		}
+
+		trocas.put("adonainomeresponsavel", contrato.getNomeResponsavel().toUpperCase());
+		trocas.put("adonaidata", dataExtenso);
+		trocas.put("adonaicpfresponsavel", contrato.getCpfResponsavel());
+		trocas.put("adonaivalorparcela", (contrato.getValorMensal()) + "0");
+		trocas.put("adonaivalortotal", (contrato.getValorMensal() * contrato.getNumeroParcelas()) + "0");
+		trocas.put("adonaitaxasadicionais", ano + "");
+		
+		
+		trocas.put("adonaianoletivo", ano + "");
+		trocas.put("adonainomealuno", nomeAluno);
+		trocas.put("adonaiturma", nomeSerie);
+		trocas.put("adonaiperiodo", nomePeriodo);
+	
+		trocas.put("adonaidatalimtevaga", dataLimiteExtenso);
+		
+		trocas.put("adonainumeroparcelas", (contrato.getNumeroParcelas()) + "");
+		
+		
+
+		trocas.put("adonairgcontratado", contrato.getRgResponsavel());
+		
+		trocas.put("adonaimesespagar", getMesInicio(contrato.getNumeroParcelas()) + " a " + "DEZEMBRO");
+		trocas.put("mesinicio", getMesInicio(contrato.getNumeroParcelas()));
+		trocas.put("mesfim", "DEZEMBRO");
+
+		trocas.put("adonainometestemunha", "ABIMAEL ALDEVINO FIDENCIO");
+		trocas.put("adonaicpftestemunha", "066.606.049-52");
+		trocas.put("adonainomedoistestemunha", "MARCELO LOURENCO VANDRESEN");
+		trocas.put("adonaicpftdoisestemunha", "057.002.879-51");
+
+		return trocas;
+	}
+	
 	public HashMap<String, String> montarContrato(ContratoAluno contrato) {
 		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
 		String dataExtenso = formatador.format(new Date());
@@ -1981,7 +2148,7 @@ public class AlunoController implements Serializable {
 			tomador.setCpfcnpj(contrato.getCpfResponsavel());
 			tomador.setBairro(contrato.getBairro());
 			tomador.setCep(contrato.getCep().replaceAll("-", "").replaceAll(" ", ""));
-			tomador.setCidade(contrato.getCidade());
+			tomador.setCidade("8233");
 			tomador.setEmail(aluno.getContatoEmail1());
 			tomador.setNome_razao_social(contrato.getNomeResponsavel());
 			tomador.setLogradouro(contrato.getEndereco());
@@ -2148,10 +2315,20 @@ public class AlunoController implements Serializable {
 
 	public StreamedContent imprimirContrato(ContratoAluno contrato) throws IOException {
 		String nomeArquivo = "";
+		
+		
 		if (contrato != null && contrato.getId() != null) {
-			nomeArquivo = contrato.getAluno().getId() + "g";
-			ImpressoesUtils.imprimirInformacoesAluno("modeloContrato2017.docx", montarContrato(contrato), nomeArquivo);
-			nomeArquivo += ".doc";
+			
+			if(contrato.getTipoBoleto().equals(TipoBoleto.ACORDO_DIVIDA)) {
+				nomeArquivo = contrato.getAluno().getId() + "Acordo";
+				ImpressoesUtils.imprimirInformacoesAluno("modeloAcordoDivida.docx", montarAcordoDivida(contrato), nomeArquivo);
+				nomeArquivo += ".doc";
+			}else {
+				nomeArquivo = contrato.getAluno().getId() + "g";
+				ImpressoesUtils.imprimirInformacoesAluno("modeloContrato2017.docx", montarContrato(contrato), nomeArquivo);
+				nomeArquivo += ".doc";	
+			}
+			
 		} else {
 			nomeArquivo = "modeloContrato2017.docx";
 		}
@@ -2361,8 +2538,16 @@ public class AlunoController implements Serializable {
 	public String getNomeResponsavelDevedor(Aluno al){
 		String nomeResponsavelDev = "";
 		for(ContratoAluno ca: al.getContratos()){
-			nomeResponsavelDev += ca.getNomeResponsavel();
-			nomeResponsavelDev += "// \n";
+			nomeResponsavelDev = ca.getNomeResponsavel();
+		}
+		return nomeResponsavelDev;
+		
+	}
+	
+	public String getCPFResponsavelDevedor(Aluno al){
+		String nomeResponsavelDev = "";
+		for(ContratoAluno ca: al.getContratos()){
+			nomeResponsavelDev = ca.getCpfResponsavel();
 		}
 		return nomeResponsavelDev;
 		
@@ -2975,6 +3160,15 @@ public class AlunoController implements Serializable {
 		this.aluno = contrato.getAluno();
 
 	}
+	
+	public void salvarObservacao(ContratoAluno contrato) {
+		contrato = alunoService.saveComentario(contrato);
+
+		Util.addAtributoSessao("contrato", contrato);
+		Util.addAtributoSessao("aluno", contrato.getAluno());
+		this.aluno = contrato.getAluno();
+
+	}
 
 	public boolean podeImprimir(ContratoAluno contrato) {
 		if (contrato.getAluno() != null) {
@@ -3271,7 +3465,6 @@ public class AlunoController implements Serializable {
 			// null, ex);
 			ex.printStackTrace();
 		}
-
 		return null;
 	}
 

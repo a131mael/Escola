@@ -119,15 +119,15 @@ public class RelatorioController implements Serializable{
 	private int mesSelecionado = 1;
 
 	public double getNotasEnviadas(int mes){
-		return relatorioService.getTotalNotasEmitidas(mes);
+		return relatorioService.getTotalNotasEmitidas(mes,anoSelecionado);
 	}
 	
 	public List<String> getResponsaveisNotasEnviadas(int mes){
-		return relatorioService.getResponsaveisNotasEnviadas(mes);
+		return relatorioService.getResponsaveisNotasEnviadas(mes,anoSelecionado);
 	}
 	
 	public List<String> getResponsaveisNotasEnviadas(){
-		return relatorioService.getResponsaveisNotasEnviadas(mesSelecionado);
+		return relatorioService.getResponsaveisNotasEnviadas(mesSelecionado,anoSelecionado);
 	}
 	
 	public String getTotalCriancasDevendo(int mesBusca) {
@@ -171,6 +171,29 @@ public class RelatorioController implements Serializable{
 			Util.addAtributoSessao("aluno", getAluno());
 		}
 		return "verdevedor";
+	}
+	
+	public Long getIdDevedor(int posicao) {
+		if (devedores.size() <= posicao) {
+			return 0L;
+		}
+		devedores.get(posicao).getId();
+		if (devedores != null) {
+			return devedores.get(posicao).getId();
+		}
+		return 0L;
+	}
+	
+	public String marcarLinha(Long id) {
+		Aluno a = alunoService.findById(id);
+		String cor = "";
+		if (a != null) {
+			if (a.getRemovido() != null && a.getRemovido()) {
+				cor = "marcarLinhaVermelho";
+				return cor;
+			}
+		}
+		return cor;
 	}
 	
 	public String getValorDevidoDevedor(int posicao){

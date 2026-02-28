@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.aaf.dto.RetornoEnvioContratoDTO;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.StatusBoletoEnum;
 import org.escola.model.Aluno;
@@ -49,12 +51,22 @@ import org.escola.util.ImpressoesUtils;
 import org.escola.util.Util;
 import org.escola.util.Verificador;
 import org.primefaces.event.CellEditEvent;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
+
+import br.com.aaf.base.base.ConstantesEscolaApi;
+import br.com.aaf.base.comunicadores.EnviadorJson;
+import br.com.aaf.base.whats.model.Parametro;
 
 @Named
 @ViewScoped
@@ -87,6 +99,10 @@ public class DevedorController implements Serializable {
 	
 	private LazyDataModel<Aluno> lazyListDataModel;
 	
+	private LazyDataModel<ContratoAluno> lazyListDataModelProtestoWebService;
+	
+	private LazyDataModel<ContratoAluno> lazyListDataModelProtestoConfirmadoWebService;
+	
 	private LazyDataModel<ContratoAluno> lazyListDataModel2;
 	
 	private LazyDataModel<ContratoAluno> lazyListDataModel3;
@@ -107,6 +123,8 @@ public class DevedorController implements Serializable {
 	private Double valorTotal = 0D;
 
 	private long total = 0;
+	private UploadedFile file;
+	private byte[] bts = null;
 
 	@PostConstruct
 	private void init() {
@@ -247,6 +265,22 @@ public class DevedorController implements Serializable {
 		}
 		return FileDownload.getContentDoc(stream, nomeArquivo);
 
+	}
+	
+	public String getMessage(byte[] bytes) throws IOException {
+
+		if (bytes != null) {
+
+			return new String(bytes);
+
+		} else {
+			return "ainda nao foi enviado arquivo";
+		}
+
+	}
+
+	public void saveComentario(ContratoAluno ca) {
+		devedorService.saveComentario(ca);
 	}
 	
 	public HashMap<String, String> montarArquivoProtesto(ContratoAluno contratoAluno) {
@@ -603,6 +637,146 @@ public class DevedorController implements Serializable {
 
 	}
 	
+	public LazyDataModel<ContratoAluno> getLazyListDataModelProtestoWebService() {
+		if (lazyListDataModelProtestoWebService == null) {
+
+			lazyListDataModelProtestoWebService = new LazyDataModel<ContratoAluno>() {
+
+				@Override
+				public ContratoAluno getRowData(String rowKey) {
+					return getDevedorService().findByIdContratoAluno(Long.valueOf(rowKey));
+				}
+
+				@Override
+				public Long getRowKey(ContratoAluno al) {
+					return al.getId();
+				}
+
+				@Override
+				public List<ContratoAluno> load(int first, int pageSize, String order, SortOrder so,
+						Map<String, Object> where) {
+
+					Map<String, Object> filtros = new HashMap<String, Object>();
+
+					filtros.putAll(where);
+					if (filtros.containsKey("periodo")) {
+						filtros.put("periodo", filtros.get("periodo").equals("MANHA") ? PerioddoEnum.MANHA
+								: filtros.get("periodo").equals("TARDE") ? PerioddoEnum.TARDE : PerioddoEnum.INTEGRAL);
+					}
+
+					if (filtros.containsKey("enviadoParaCobrancaCDL")) {
+						filtros.put("enviadoParaCobrancaCDL",
+								filtros.get("enviadoParaCobrancaCDL").equals("Não") ? Boolean.FALSE : Boolean.TRUE);
+					}
+
+					if (filtros.containsKey("contratoTerminado")) {
+						filtros.put("contratoTerminado",
+								filtros.get("contratoTerminado").equals("Não") ? Boolean.FALSE : Boolean.TRUE);
+					}
+
+					if (filtros.containsKey("enviadoSPC")) {
+						filtros.put("enviadoSPC",
+								filtros.get("enviadoSPC").equals("Não") ? Boolean.FALSE : Boolean.TRUE);
+					}
+					filtros.put("protestado", Boolean.TRUE);
+					filtros.put("enviadoParaCobrancaCDL", Boolean.TRUE);
+					String orderByParam = (order != null) ? order : "id";
+					String orderParam = ("ASCENDING".equals(so.name())) ? "asc" : "desc";
+
+					List<ContratoAluno> ol = getDevedorService().findProtesto(first, pageSize, orderByParam, orderParam,
+							filtros);
+
+					if (ol != null && ol.size() > 0) {
+						lazyListDataModelProtestoWebService.setRowCount(ol.size() + pageSize + 1);
+						return ol;
+					}
+
+					if (ol == null) {
+						return null;
+					}
+					this.setRowCount(ol.size() + pageSize + 1);
+					return null;
+
+				}
+			};
+			lazyListDataModelProtestoWebService.setRowCount((int) getDevedorService().countContratoAluno(null));
+
+		}
+
+		return lazyListDataModelProtestoWebService;
+
+	}
+	
+	public LazyDataModel<ContratoAluno> getLazyListDataModelProtestoConfirmadoWebService() {
+		if (lazyListDataModelProtestoConfirmadoWebService == null) {
+
+			lazyListDataModelProtestoConfirmadoWebService = new LazyDataModel<ContratoAluno>() {
+
+				@Override
+				public ContratoAluno getRowData(String rowKey) {
+					return getDevedorService().findByIdContratoAluno(Long.valueOf(rowKey));
+				}
+
+				@Override
+				public Long getRowKey(ContratoAluno al) {
+					return al.getId();
+				}
+
+				@Override
+				public List<ContratoAluno> load(int first, int pageSize, String order, SortOrder so,
+						Map<String, Object> where) {
+
+					Map<String, Object> filtros = new HashMap<String, Object>();
+
+					filtros.putAll(where);
+					if (filtros.containsKey("periodo")) {
+						filtros.put("periodo", filtros.get("periodo").equals("MANHA") ? PerioddoEnum.MANHA
+								: filtros.get("periodo").equals("TARDE") ? PerioddoEnum.TARDE : PerioddoEnum.INTEGRAL);
+					}
+
+					if (filtros.containsKey("enviadoParaCobrancaCDL")) {
+						filtros.put("enviadoParaCobrancaCDL",
+								filtros.get("enviadoParaCobrancaCDL").equals("Não") ? Boolean.FALSE : Boolean.TRUE);
+					}
+
+					if (filtros.containsKey("contratoTerminado")) {
+						filtros.put("contratoTerminado",
+								filtros.get("contratoTerminado").equals("Não") ? Boolean.FALSE : Boolean.TRUE);
+					}
+
+					if (filtros.containsKey("enviadoSPC")) {
+						filtros.put("enviadoSPC",
+								filtros.get("enviadoSPC").equals("Não") ? Boolean.FALSE : Boolean.TRUE);
+					}
+					filtros.put("protestado", Boolean.TRUE);
+					filtros.put("enviadoParaCobrancaCDL", Boolean.TRUE);
+					String orderByParam = (order != null) ? order : "id";
+					String orderParam = ("ASCENDING".equals(so.name())) ? "asc" : "desc";
+
+					List<ContratoAluno> ol = getDevedorService().findProtestoConfirmado(first, pageSize, orderByParam, orderParam,
+							filtros);
+
+					if (ol != null && ol.size() > 0) {
+						lazyListDataModelProtestoConfirmadoWebService.setRowCount(ol.size() + pageSize + 1);
+						return ol;
+					}
+
+					if (ol == null) {
+						return null;
+					}
+					this.setRowCount(ol.size() + pageSize + 1);
+					return null;
+
+				}
+			};
+			lazyListDataModelProtestoConfirmadoWebService.setRowCount((int) getDevedorService().countContratoAluno(null));
+
+		}
+
+		return lazyListDataModelProtestoConfirmadoWebService;
+
+	}
+	
 	public LazyDataModel<Aluno> getLazyDataModelAtrasadosContactados() {
 		if (lazyListDataModelAtrasadosContactados == null) {
 
@@ -861,6 +1035,76 @@ public class DevedorController implements Serializable {
 		return cor;
 	}
 	
+	
+	public void atualizarStatus() {
+		@SuppressWarnings("unchecked")
+		List<ContratoAluno> data = (List<ContratoAluno>) lazyListDataModelProtestoWebService.getWrappedData();
+		for (ContratoAluno contrato : data) {
+			try {
+				byte[] decode = getStatus(contrato).getBytes();
+				contrato.setComentarioWebService(decode);
+				alunoService.saveComentarioContrato(contrato);	
+			}catch (Exception e) {
+			}
+			
+		}
+
+	}
+
+	public void enviarCartorio() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+		String endpoint = ConstantesEscolaApi.URL_CARTORIO + ConstantesEscolaApi.ProtestoCartorio;
+		
+		//  String endpoint =  "http://localhost:1616/integracao-0.0.1-SNAPSHOT/api/enviarContratoProtesto";
+		 
+		 
+
+		Parametro p1 = new Parametro("idContrato", getContratoS().getNumero());
+		List<Parametro> parametros = new ArrayList<>();
+		parametros.add(p1);
+		String retornoJson = EnviadorJson.get2(endpoint, null, parametros);
+		RetornoEnvioContratoDTO retorno = new RetornoEnvioContratoDTO();
+		try {
+			retorno = mapper.readValue(retornoJson, RetornoEnvioContratoDTO.class);
+			System.out.println(retornoJson);
+
+			if (retorno.getCodigo() != null
+					&& (retorno.getCodigo().contains("201") || retorno.getCodigo().contains("200"))) {
+
+				// contratoS.setComentario(contratoS.getComentario() + "/n" +
+				// retorno.getResponse()[0].getResposta().getMensagem());
+				alunoService.enviarCDL(contratoS);
+				byte[] decode = retorno.getResponse()[0].getResposta().getMensagem().getBytes();
+				contratoS.setComentarioWebService(decode);
+				alunoService.saveComentarioContrato(contratoS);
+
+			} else {
+				// contratoS.setComentario(contratoS.getComentario() + "/n" +
+				// retorno.getResponse()[0].getResposta().getMensagem());
+
+				byte[] decode = retorno.getResponse()[0].getResposta().getMensagem().getBytes();
+				contratoS.setComentarioWebService(decode);
+				alunoService.saveComentarioContrato(contratoS);
+			}
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void enviarProtestoCartorio(ContratoAluno contrato) {
+
+	}
+	
 	public void protestar(Aluno al) {
 		devedorService.enviarParaProtesto(al);
 	}
@@ -988,6 +1232,64 @@ public class DevedorController implements Serializable {
 		}
 		return qtade > 0 ? sum / qtade : 0;
 	}
+	
+	public void handleFileUpload(FileUploadEvent event) throws IOException {
+		setFile(event.getFile());
+		setBts(getFile().getContents());
+		contratoS.setContratoScaneado(getBase64FromByte(getBts()));
+		System.out.println(getBase64FromByte(getBts()));
+
+		alunoService.saveArquivoContrato(contratoS);
+	}
+
+	public String getBase64FromByte(byte[] bytes) throws IOException {
+		if (bytes != null) {
+			byte[] encoded = Base64.getEncoder().encode(bytes);
+			String encodedString = new String(encoded);
+
+			return encodedString;
+
+		} else {
+			return "ainda nao foi enviado arquivo";
+		}
+
+	}
+
+	public String getStatus(ContratoAluno contrato) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+			String endpoint = ConstantesEscolaApi.URL_CARTORIO + ConstantesEscolaApi.STATATUS_CONTRATO;
+			
+		// String endpoint ="http://localhost:1414/integracao-0.0.1-SNAPSHOT/api/recuperarStatus"			 ;
+
+
+			Parametro p1 = new Parametro("idContrato", contrato.getNumero());
+			List<Parametro> parametros = new ArrayList<>();
+			parametros.add(p1);
+			String retornoJson = EnviadorJson.get2(endpoint, null, parametros);
+			if (retornoJson.equalsIgnoreCase("")) {
+				return "Sem informaçoes";
+			}
+			RetornoEnvioContratoDTO retorno = new RetornoEnvioContratoDTO();
+
+			retorno = mapper.readValue(retornoJson, RetornoEnvioContratoDTO.class);
+
+			return retorno.getCodigo() + " - " + retorno.getMensagem();
+
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Sem informaçoes";
+	}
 
 	public Devedor getDevedor() {
 		return devedor;
@@ -1039,6 +1341,22 @@ public class DevedorController implements Serializable {
 
 	public void setAlunoDevedor(Aluno alunoDevedor) {
 		this.alunoDevedor = alunoDevedor;
+	}
+
+	public UploadedFile getFile() {
+		return file;
+	}
+
+	public void setFile(UploadedFile file) {
+		this.file = file;
+	}
+
+	public byte[] getBts() {
+		return bts;
+	}
+
+	public void setBts(byte[] bts) {
+		this.bts = bts;
 	}
 	
 }

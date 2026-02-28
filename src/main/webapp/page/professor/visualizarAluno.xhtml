@@ -277,7 +277,18 @@
 									        	
 		        	</h:panelGrid>
 		        	
-		        	<h:commandButton style="margin-left:90px !important" action="#{alunoController.gerarNotasQueFaltaramDOAluno(aluno)}" value="Gerar Notas que faltam"	/>
+		        	
+		        	
+		        	<h:panelGrid>
+		        		<h:commandButton style="margin-left:90px !important" action="#{alunoController.gerarNotasQueFaltaramDOAluno(aluno)}" value="Gerar Notas que faltam"	/>
+		        	
+		        		<h:commandButton icon="ui-icon-contact" ajax="false"
+							action="#{configuracaoController.gerarHistorico(aluno)}"
+								value="Gerar Historico do Aluno ">
+						</h:commandButton>
+		        	</h:panelGrid>
+		        	
+		        	
 		        	
 	        	</h:panelGrid>
 				<p:separator style="width:100%;" />

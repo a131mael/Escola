@@ -21,8 +21,9 @@
 			<p:graphicImage name="/gfx/preloader.gif" width="100" height="15" />
 		</p:dialog>
 
-		<h:form prependId="false" style="width:100%; border:none "
-			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+		<h:form prependId="false" style="width:100%; border:none " enctype="multipart/form-data"
+			rendered="#{authController.hasPermission(authController.administrador
+									,authController.secretaria,authController.administrador)}">
 
 			<h:panelGrid id="panelFerramentas" columns="7"
 				style="margin-top: -30px; margin-left:-20px; width:1200px!important;"  >
@@ -35,21 +36,29 @@
 					disabled="#{!devedorController.contratoSelecionado}">
 					<!-- <p:fileDownload value="devedorController.imprimirContrato()" />-->		
 					</p:commandButton>
-
+					
 				<p:commandButton id="gerarplanilha" ajax="false" 
 								value="Plan. Protesto" disabled="#{!devedorController.contratoSelecionado}"
 								style="float:left; float: none !important;"
                   				 onclick="PrimeFaces.monitorDownload(start, stop);">
 					<p:fileDownload value="#{devedorController.gerarArquivoProtesto()}" />
 				</p:commandButton>
-
-				<p:commandButton update="tbl" value="Pode enviar para protesto" 
-								style="float:left;"
-								rendered="#{devedorController.podeEnviar()}"
-												action="#{devedorController.enviarPodeEnviarProtestoFina()}" process="@this">
-						<p:confirm header="Confirmação" message="Confirmado, pode ser enviado para protesto ?" icon="ui-icon-alert" />
+				
+				<p:commandButton id="atulziarstatus" ajax="false" 
+								value="Atualizar status cartorio" 
+								style="float:left; float: none !important;"
+                  				 >
+                  				 <p:fileDownload value="#{devedorController.atualizarStatus()}" />
 				</p:commandButton>
 				
+				
+				<p:commandButton id="enviarCartorio" ajax="false" 
+								value="Enviar cartorio" disabled="#{!devedorController.contratoSelecionado}"
+								style="float:left; float: none !important;">
+					<p:fileDownload value="#{devedorController.enviarCartorio()}" />
+				</p:commandButton>
+				
+
 				<p:commandButton update="tbl" value="Enviado para protesto"  rendered="#{devedorController.podeEnviado()}"
 								action="#{devedorController.enviadoProtestoDefinitivo()}" process="@this">
 						<p:confirm header="Confirmação" message="Enviado para protesto ?" icon="ui-icon-alert" />
@@ -72,9 +81,9 @@
 					paginatorPosition="bottom"
 					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
                                          {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					resizableColumns="true" rows="20"
+					resizableColumns="true" rows="100"
 					rowsPerPageTemplate="20,50,100,200,300" id="tbl" var="contratoalunotab"
-					value="#{devedorController.lazyDataModel2}">
+					value="#{devedorController.lazyListDataModelProtestoWebService}">
 					<!-- rowsPerPageTemplate="25,50,100" -->
 					<p:ajax event="rowSelect" update="panelFerramentas" />
 					<p:ajax event="cellEdit" listener="#{devedorController.onCellEdit}"  update="panelFerramentas"/>
@@ -104,6 +113,13 @@
 
 					
 
+					<p:column filterBy="#{contratoalunotab.numero}"
+						style="text-align: center;width:9%;"
+						styleClass="#{devedorController.marcarLinha(contratoalunotab)}"
+						headerText="Nº contrato" width="5%">
+						<h:outputText value="#{contratoalunotab.numero}" />
+					</p:column>
+					
 					<p:column filterBy="#{contratoalunotab.nomeResponsavel}"
 						style="text-align: center;width:9%;"
 						styleClass="#{devedorController.marcarLinha(contratoalunotab)}"
@@ -118,39 +134,28 @@
                               headerText="Contato "
                               styleClass="#{devedorController.marcarLinha(contratoalunotab)}"
                               width="12%"
-                              >
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneCelularMae)}">
-			                        <h:outputText value="Celular mmãe" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneCelularMae}" />
+                              rendered="false">
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone1)}">
+			                        <h:outputText value="#{contratoalunotab.aluno.contatoNome1}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone1}" />
 	                        </p:panelGrid>
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneResidencialMae)}">
-			                        <h:outputText value="Resid.mãe" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneResidencialMae}" />
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone2)}">
+			                        <h:outputText value="#{contratoalunotab.aluno.contatoNome2}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone2}" />
 	                         </p:panelGrid>
-	                         <p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneEmpresaTrabalhaMae)}">
-			                         <h:outputText value="Trabalho mãe" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneEmpresaTrabalhaMae}" />
+	                         <p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone3)}">
+			                         <h:outputText value="#{contratoalunotab.aluno.contatoNome3}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone3}" />
 	                         </p:panelGrid>
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneCelularPai)}">
-			                         <h:outputText value="Celular pai" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneCelularPai}" />
-	                         </p:panelGrid>
-							
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneResidencialPai)}">
-			                        <h:outputText value="Resid. pai" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneResidencialPai}" />
-	                         </p:panelGrid>
-
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneEmpresaTrabalhaPai)}">
-			                        <h:outputText value="Trabalho pai" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneEmpresaTrabalhaPai}" />
-	                         </p:panelGrid>
-	                         
-	                         <p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefonecontatoSaidaEstabelecimento1)}">
-			                        <h:outputText value="#{professorTab.nomecontatoSaidaEstabelecimento1}" />
-									<h:outputText value="#{contratoalunotab.aluno.telefonecontatoSaidaEstabelecimento1}" />
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone4)}">
+			                         <h:outputText value="#{contratoalunotab.aluno.contatoNome4}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone4}" />
 	                         </p:panelGrid>
 							
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone5)}">
+			                        <h:outputText value="#{contratoalunotab.aluno.contatoNome5}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone5}" />
+	                         </p:panelGrid>
 							
 					</p:column>
 					
@@ -161,7 +166,7 @@
 						<h:outputText value="#{contratoalunotab.cpfResponsavel}" />
 					</p:column>
 
-				<p:column style="text-align: center;width:20%;"
+				<p:column style="text-align: center;width:30%;"
 						 styleClass="#{devedorController.marcarLinha(contratoalunotab)}"
 						headerText="boletos">
 						<br/>
@@ -208,11 +213,18 @@
 						</h:outputText>
 					</p:column>
 				
-				<p:column id="colunaComentario" style="text-align: center;width:10%;">
-			          <p:inputTextarea id="modelInput" value="#{contratoalunotab.comentario}" style="width:98%;height:120px">
-			          	 	<p:ajax process="@this" event="change" listener="#{devedorController.saveComentario(contratoalunotab)}"/>
-			           </p:inputTextarea>
+					<p:column id="colunaComentario" style="text-align: center;width:12%;">
+			 	         <h:outputText id="modelInput" value="#{devedorController.getMessage(contratoalunotab.comentarioWebService) }" style="width:98%;height:120px" />
 					</p:column>
+					
+					<p:column style="text-align: center;width:12%;">
+			 	        <p:fileUpload accept="pdf" 
+			 	        process="@this" fileUploadListener="#{devedorController.handleFileUpload}" auto="false"/>
+					
+						<h:outputText value="#{contratoalunotab.contratoScaneado}" />
+					
+					</p:column>
+					
 				
 				</p:dataTable>
 
@@ -234,7 +246,8 @@
 					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 			</p:confirmDialog>
 
-
 		</h:form>
+		 <p:messages  severity="info" escape="false" showDetail="true" 
+                 autoUpdate="true" closable="true"/>
 	</ui:define>
 </ui:composition>

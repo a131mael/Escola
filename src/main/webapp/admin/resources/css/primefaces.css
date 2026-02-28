@@ -231,7 +231,6 @@ background: #dbdbdb !important;
     background: #CCC !important;
 }
 
-###############################
 .ui-datatable .ui-state-hover {
     background: #d6d6d6 !important;
 }
@@ -267,7 +266,6 @@ background: #dbdbdb !important;
 }
 .ui-datatable th div.ui-dt-c, .ui-datatable .ui-datatable-data td div.ui-dt-c, .ui-datatable .ui-datatable-data-empty td div.ui-dt-c, .ui-datatable tfoot td div.ui-dt-c{font-size: 12px; text-align: center;}
 
-#################################################
 .ui-state-highlight{
     background: transparent !important;
 }

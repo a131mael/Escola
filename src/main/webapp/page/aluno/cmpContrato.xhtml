@@ -64,12 +64,22 @@
 									style="font-size: 13px; width:180px" />
 								<p:inputText value="#{contratoAlun.endereco}"
 											style="font-size: 15px; width:275px">
+											<p:ajax event="change" listener="#{alunoController.salvarNumeroCasa(contratoAlun)}"/>
 								</p:inputText>
+								
+								<h:outputLabel value="N casa "
+									style="font-size: 13px; width:180px" />
+								<p:inputText value="#{contratoAlun.enderecoNumero}"
+											style="font-size: 15px; width:275px">
+											<p:ajax event="change" listener="#{alunoController.salvarNumeroCasa(contratoAlun)}"/>
+								</p:inputText>
+	
 	
 								<h:outputLabel value="Bairro: "
 									style="font-size: 13px; width:180px" />
 								<p:inputText value="#{contratoAlun.bairro}"
 											style="font-size: 15px; width:275px">
+											<p:ajax event="change" listener="#{alunoController.salvarNumeroCasa(contratoAlun)}"/>
 								</p:inputText>
 	
 								
@@ -77,12 +87,15 @@
 									style="font-size: 13px; width:180px" />
 								<p:inputText value="#{contratoAlun.cidade}"
 											style="font-size: 15px; width:275px">
+											<p:ajax event="change" listener="#{alunoController.salvarNumeroCasa(contratoAlun)}"/>
 								</p:inputText>
 								
 	
 								<h:outputLabel value="CEP: " style="font-size: 13px; width:180px" />
 								<p:inputMask id="cpf" value="#{contratoAlun.cep}" mask="99 999-999"
-											style="font-size: 15px; width:275px" />
+											style="font-size: 15px; width:275px" >
+											<p:ajax event="change" listener="#{alunoController.salvarNumeroCasa(contratoAlun)}"/>
+											</p:inputMask>
 								
 	
 	
@@ -122,6 +135,15 @@
 								
 							</h:panelGrid>
 							<h:panelGrid columns="1" border="0" style="100%">
+							
+								<p:selectOneMenu  style="width: 160px;" value="#{contratoAlun.tipoBoleto}">
+													<f:selectItems value="#{CombosEspeciaisMB.getTipoBoleto()}"
+														var="tipoboleto" itemLabel="#{tipoboleto}"
+														itemValue="#{tipoboleto}" 
+														rendered="#{not contratoAlun.cancelado and alunoController.podeGerarBoleto(contratoAlun)}"/>
+														<p:ajax event="change" process="@this" />
+													</p:selectOneMenu>
+							
 									<p:commandButton value="Salvar Contrato" 
 													rendered="#{not contratoAlun.cancelado and alunoController.podeGerarBoleto(contratoAlun)}">
 													<p:ajax process="tabcontrato" event="click"
@@ -199,11 +221,27 @@
 			</p:tab>
 			
 			<p:tab id="tabBoleto" title="Boletos">
-			<ui:include src="cmpAlunoBoletos.xhtml">
-		    	<ui:param name="parametro" value="#{contratoAlun}" />
-		    	<ui:param name="visible" value="#{true}" />
-			</ui:include>
-			</p:tab>			
+				<ui:include src="cmpAlunoBoletos.xhtml">
+			    	<ui:param name="parametro" value="#{contratoAlun}" />
+			    	<ui:param name="visible" value="#{true}" />
+				</ui:include>
+				</p:tab>
+				
+				<p:tab id="tabDescricao" title="Descrição">
+				<h:panelGrid id="panelDescricao" width="98%" style="height: 400px">
+					<p:textEditor value="#{contratoAlun.comentario}"  style="width:102%; height:342px">
+					</p:textEditor>
+					
+					<br/>
+					<br/>
+					<br/>
+					<p:commandButton value="Salvar observacao"  style="float: right; COLOR: orangered">
+													<p:ajax process="tabDescricao" event="click"
+															listener="#{alunoController.salvarObservacao(contratoAlun)}"
+															update="@this" />
+									</p:commandButton>
+					</h:panelGrid>
+			</p:tab>				
 		</p:tabView>
 		 </p:tab>
 				

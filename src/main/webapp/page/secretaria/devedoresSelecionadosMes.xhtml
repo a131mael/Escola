@@ -63,7 +63,7 @@
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
                                          {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              resizableColumns="true"
-                             rows="20"
+                             rows="100"
   							 id="tbl" var="professorTab"
 							 value="#{relatorioController.lazyDataModelMes}"
 							 >
@@ -110,6 +110,12 @@
                               styleClass="#{alunoController.marcarLinha(professorTab)}"
                               headerText="responsavel ">
 						<h:outputText value="#{alunoController.getNomeResponsavelDevedor(professorTab)}" />
+					</p:column>
+					
+					<p:column style="text-align:center;"
+                              styleClass="#{alunoController.marcarLinha(professorTab)}"
+                              headerText="CPF ">
+						<h:outputText value="#{alunoController.getCPFResponsavelDevedor(professorTab)}" />
 					</p:column>
 
 					<p:column filterBy="#{professorTab.periodo}"

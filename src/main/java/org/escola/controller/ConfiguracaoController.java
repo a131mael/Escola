@@ -89,15 +89,20 @@ public class ConfiguracaoController implements Serializable{
 		}
 	}
 	
-//	public void gerarHistoricoAno(int ano){
-//		int quantidade = alunoService.findAll().size();
-//		int quantidadeNoLote = 50;
-//		int inicio = 0;
-//		while (inicio <= quantidade) {
-//			finalizarAnoLetivo.gerarHistorico(inicio,quantidadeNoLote,ano);
-//			inicio +=quantidadeNoLote +1;
-//		}
-//	}
+	public void gerarHistoricoAno(short ano){
+		int quantidade = alunoService.findAlunoDoAno(ano).size();
+		int quantidadeNoLote = 5;
+		int inicio = 0;
+		while (inicio <= quantidade) {
+			finalizarAnoLetivo.gerarHistorico(inicio,quantidadeNoLote,ano);
+			inicio +=quantidadeNoLote;
+		}
+	}
+	
+	public void gerarHistorico(Aluno aluno){
+		//finalizarAnoLetivo.gerarHistorico(aluno);
+	}
+	
 	public void gerarUsuarioAluno(){
 		configuracaoService.gerarUsuariosAlunos();
 	}
@@ -258,10 +263,45 @@ public class ConfiguracaoController implements Serializable{
 	}
 	
 	
+	
 	public void gerarNFSEDoMesAtual() {
+
+		/*
+		 * Calendar c = Calendar.getInstance(); double limite =
+		 * configuracao.getValorNotas(); Double totalGerado =
+		 * relatorioService.getTotalNotasEmitidas(c.get(Calendar.MONTH) + 1,
+		 * configuracao.getAnoLetivo());
+		 * 
+		 * List<Boleto> boletosMesAtual = boletoService.buscarBoletosDoMesAtual();
+		 * 
+		 * for (Boleto boleto : boletosMesAtual) {
+		 * 
+		 * if (totalGerado >= limite) { break; }
+		 * 
+		 * if (boletoJaGerouNota(boleto)) { continue; }
+		 * 
+		 * if (!boletoPago(boleto)) { continue; }
+		 * 
+		 * totalGerado += boleto.getValorPago();
+		 * 
+		 * alunoController.gerarNFSe(boleto.getPagador());
+		 * 
+		 * boleto.setNfsEnviada(true); boletoService.salvar(boleto); }
+		 */
+	}
+	private boolean boletoJaGerouNota(Boleto boleto) {
+	    return Boolean.TRUE.equals(boleto.getNfsEnviada());
+	}
+
+	private boolean boletoPago(Boleto boleto) {
+	    return boleto.getValorPago() != null && boleto.getValorPago() > 200;
+	}
+	
+	
+	public void gerarNFSEDoMesAtual2() {
 		Calendar c = Calendar.getInstance();
 		double limitNota = configuracao.getValorNotas();
-		Double totalGerado = relatorioService.getTotalNotasEmitidas(c.get(Calendar.MONTH)+1);
+		Double totalGerado = relatorioService.getTotalNotasEmitidas((c.get(Calendar.MONTH)+1),configuracao.getAnoLetivo());
 		List<Aluno> todosAlunos = alunoService.findAlunoDoAnoLetivoComLzyContrato();
 		
 		List<Aluno> alunosPrioritarios = alunoService.findAlunoPrioritariosNFSeComLzyContrato();

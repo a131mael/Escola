@@ -71,6 +71,10 @@ public class AuthController implements Serializable {
 		if (getLoggedUser().getTipoMembro().equals(TipoMembro.MESTRE)) {
 			return true;
 		}
+		
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.ADMIM)) {
+			return true;
+		}
 
 		return false;
 
@@ -84,6 +88,10 @@ public class AuthController implements Serializable {
 		}
 		
 		if (getLoggedUser().getTipoMembro().equals(TipoMembro.MESTRE)) {
+			return true;
+		}
+		
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.ADMIM)) {
 			return true;
 		}
 
@@ -107,6 +115,10 @@ public class AuthController implements Serializable {
 			return true;
 		}
 		
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.ADMIM)) {
+			return true;
+		}
+		
 		return false;
 
 	}
@@ -127,6 +139,9 @@ public class AuthController implements Serializable {
 		}
 		
 		if (getLoggedUser().getTipoMembro().equals(TipoMembro.MESTRE)) {
+			return true;
+		}
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.ADMIM)) {
 			return true;
 		}
 		
@@ -159,6 +174,10 @@ public class AuthController implements Serializable {
 			return true;
 		}
 		
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.ADMIM)) {
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -187,6 +206,10 @@ public class AuthController implements Serializable {
 		}
 		
 		if (getLoggedUser().getTipoMembro().equals(TipoMembro.MESTRE)) {
+			return true;
+		}
+		
+		if (getLoggedUser().getTipoMembro().equals(TipoMembro.ADMIM)) {
 			return true;
 		}
 		

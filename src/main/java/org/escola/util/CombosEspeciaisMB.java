@@ -20,6 +20,7 @@ import org.escola.enums.EspecialidadeEnum;
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
 import org.escola.enums.Sexo;
+import org.escola.enums.TipoBoleto;
 import org.escola.enums.TipoDestinatario;
 import org.escola.enums.TipoMembro;
 import org.escola.model.Professor;
@@ -69,7 +70,7 @@ public class CombosEspeciaisMB implements Serializable {
 	}
 	
 	public static Integer[] getAnos() {
-		Integer[] anos = {2020,2021,2022,2023,2024,2025};
+		Integer[] anos = {2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036};
 		return anos;
 	}
 	
@@ -206,6 +207,11 @@ public class CombosEspeciaisMB implements Serializable {
 	public static Sexo[] getSexo() {
 
 		return Sexo.values();
+	}
+	
+	public static TipoBoleto[] getTipoBoleto() {
+
+		return TipoBoleto.values();
 	}
 
 	

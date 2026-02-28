@@ -132,61 +132,73 @@
 		
 		<p:panel header="Maiores devedores " >
 			<p:panelGrid columns="2" width="100%" >
-				<h:commandLink action="#{relatorioController.verDevedor(0)}"  value="#{relatorioController.getNomeDevedor(0)}"  style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(0)}"  value="#{relatorioController.getNomeDevedor(0)}"  style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(0))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(0)}" >
 					<f:convertNumber pattern="#0.00" />
 				</h:outputText>
-				<h:commandLink action="#{relatorioController.verDevedor(1)}"  value="#{relatorioController.getNomeDevedor(1)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(1)}"  value="#{relatorioController.getNomeDevedor(1)}" style="font-size: 9px" 
+					styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(1))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(1)}" >
 					<f:convertNumber pattern="#0.00" />
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(2)}"  value="#{relatorioController.getNomeDevedor(2)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(2)}"  value="#{relatorioController.getNomeDevedor(2)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(2))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(2)}" >
 						<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(3)}"  value="#{relatorioController.getNomeDevedor(3)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(3)}"  value="#{relatorioController.getNomeDevedor(3)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(3))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(3)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 
-				<h:commandLink action="#{relatorioController.verDevedor(4)}"  value="#{relatorioController.getNomeDevedor(4)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(4)}"  value="#{relatorioController.getNomeDevedor(4)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(4))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(4)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(5)}"  value="#{relatorioController.getNomeDevedor(5)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(5)}"  value="#{relatorioController.getNomeDevedor(5)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(5))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(5)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(6)}"  value="#{relatorioController.getNomeDevedor(6)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(6)}"  value="#{relatorioController.getNomeDevedor(6)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(6))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(6)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(7)}"  value="#{relatorioController.getNomeDevedor(7)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(7)}"  value="#{relatorioController.getNomeDevedor(7)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(7))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(7)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(8)}"  value="#{relatorioController.getNomeDevedor(8)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(8)}"  value="#{relatorioController.getNomeDevedor(8)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(8))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(8)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(9)}" value="#{relatorioController.getNomeDevedor(9)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(9)}" value="#{relatorioController.getNomeDevedor(9)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(9))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(9)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(10)}" value="#{relatorioController.getNomeDevedor(10)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(10)}" value="#{relatorioController.getNomeDevedor(10)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(10))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(10)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(11)}" value="#{relatorioController.getNomeDevedor(11)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(11)}" value="#{relatorioController.getNomeDevedor(11)}" style="font-size: 9px"
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(11))}" />
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(11)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
@@ -197,61 +209,73 @@
 		
 		<p:panel header="Maiores devedores  " >
 			<p:panelGrid columns="2" width="100%" >
-				<h:commandLink action="#{relatorioController.verDevedor(12)}" value="#{relatorioController.getNomeDevedor(12)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(12)}" value="#{relatorioController.getNomeDevedor(12)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(12))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(12)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
-				<h:commandLink action="#{relatorioController.verDevedor(13)}" value="#{relatorioController.getNomeDevedor(13)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(13)}" value="#{relatorioController.getNomeDevedor(13)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(13))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(13)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(14)}" value="#{relatorioController.getNomeDevedor(14)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(14)}" value="#{relatorioController.getNomeDevedor(14)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(14))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(14)}" >
 						<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(15)}" value="#{relatorioController.getNomeDevedor(15)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(15)}" value="#{relatorioController.getNomeDevedor(15)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(15))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(15)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 
-				<h:commandLink action="#{relatorioController.verDevedor(16)}" value="#{relatorioController.getNomeDevedor(16)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(16)}" value="#{relatorioController.getNomeDevedor(16)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(16))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(16)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(17)}" value="#{relatorioController.getNomeDevedor(17)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(17)}" value="#{relatorioController.getNomeDevedor(17)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(17))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(17)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(18)}" value="#{relatorioController.getNomeDevedor(18)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(18)}" value="#{relatorioController.getNomeDevedor(18)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(18))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(18)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(19)}" value="#{relatorioController.getNomeDevedor(19)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(19)}" value="#{relatorioController.getNomeDevedor(19)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(19))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(19)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(20)}" value="#{relatorioController.getNomeDevedor(20)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(20)}" value="#{relatorioController.getNomeDevedor(20)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(20))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(20)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(21)}" value="#{relatorioController.getNomeDevedor(21)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(21)}" value="#{relatorioController.getNomeDevedor(21)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(21))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(21)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(22)}" value="#{relatorioController.getNomeDevedor(22)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(22)}" value="#{relatorioController.getNomeDevedor(22)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(22))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(22)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>
 				
-				<h:commandLink action="#{relatorioController.verDevedor(23)}" value="#{relatorioController.getNomeDevedor(23)}" style="font-size: 9px" />
+				<h:commandLink action="#{relatorioController.verDevedor(23)}" value="#{relatorioController.getNomeDevedor(23)}" style="font-size: 9px" 
+				styleClass="#{relatorioController.marcarLinha(relatorioController.getIdDevedor(23))}"/>
 				<h:outputText value="#{relatorioController.getValorDevidoDevedor(23)}" >
 					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2"/>
 				</h:outputText>

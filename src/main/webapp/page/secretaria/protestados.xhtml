@@ -22,7 +22,8 @@
 		</p:dialog>
 
 		<h:form prependId="false" style="width:100%; border:none "
-			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+			rendered="#{authController.hasPermission(authController.administrador
+						,authController.secretaria,authController.administrador)}">
 
 			<h:panelGrid id="panelFerramentas" columns="7"
 				style="margin-top: -30px; margin-left:-20px; width:1200px!important;"  >
@@ -65,10 +66,8 @@
 			<h:panelGrid width="99%">
 				<p:dataTable 
 					currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
-					emptyMessage="#Nenhum registro encontrado" 
-					selectionMode="single"
-					selection="#{devedorController.contratoS}" 
-					rowKey="#{contratoalunotab.id}"
+					emptyMessage="#Nenhum registro encontrado" selectionMode="single"
+					selection="#{devedorController.contratoS}" rowKey="#{contratoalunotab.id}"
 					filterEvent="enter" lazy="true" liveResize="true"
 					styleClass="tabela" pageLinks="5" paginator="true"
 					paginatorPosition="bottom"
@@ -121,38 +120,27 @@
                               styleClass="#{devedorController.marcarLinha(contratoalunotab)}"
                               width="12%"
                               >
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneCelularMae)}">
-			                        <h:outputText value="Celular mmãe" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneCelularMae}" />
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone1)}">
+			                        <h:outputText value="#{contratoalunotab.aluno.contatoNome1}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone1}" />
 	                        </p:panelGrid>
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneResidencialMae)}">
-			                        <h:outputText value="Resid.mãe" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneResidencialMae}" />
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone2)}">
+			                        <h:outputText value="#{contratoalunotab.aluno.contatoNome2}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone2}" />
 	                         </p:panelGrid>
-	                         <p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneEmpresaTrabalhaMae)}">
-			                         <h:outputText value="Trabalho mãe" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneEmpresaTrabalhaMae}" />
+	                         <p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone3)}">
+			                         <h:outputText value="#{contratoalunotab.aluno.contatoNome3}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone3}" />
 	                         </p:panelGrid>
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneCelularPai)}">
-			                         <h:outputText value="Celular pai" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneCelularPai}" />
-	                         </p:panelGrid>
-							
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneResidencialPai)}">
-			                        <h:outputText value="Resid. pai" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneResidencialPai}" />
-	                         </p:panelGrid>
-
-							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefoneEmpresaTrabalhaPai)}">
-			                        <h:outputText value="Trabalho pai" />
-									<h:outputText value="#{contratoalunotab.aluno.telefoneEmpresaTrabalhaPai}" />
-	                         </p:panelGrid>
-	                         
-	                         <p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.telefonecontatoSaidaEstabelecimento1)}">
-			                        <h:outputText value="#{professorTab.nomecontatoSaidaEstabelecimento1}" />
-									<h:outputText value="#{contratoalunotab.aluno.telefonecontatoSaidaEstabelecimento1}" />
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone4)}">
+			                         <h:outputText value="#{contratoalunotab.aluno.contatoNome4}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone4}" />
 	                         </p:panelGrid>
 							
+							<p:panelGrid columns="2" rendered="#{devedorController.temcontato(contratoalunotab.aluno.contatoTelefone5)}">
+			                        <h:outputText value="#{contratoalunotab.aluno.contatoNome5}" />
+									<h:outputText value="#{contratoalunotab.aluno.contatoTelefone5}" />
+	                         </p:panelGrid>
 							
 					</p:column>
 					

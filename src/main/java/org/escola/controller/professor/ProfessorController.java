@@ -24,12 +24,14 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.escola.auth.AuthController;
+import org.escola.enums.TipoMembro;
 import org.escola.model.Aluno;
 import org.escola.model.Member;
 import org.escola.model.Professor;
 import org.escola.model.Turma;
 import org.escola.service.AlunoService;
 import org.escola.service.ProfessorService;
+import org.escola.service.TurmaService;
 import org.escola.util.Util;
 
 import javax.inject.Named;
@@ -58,6 +60,8 @@ public class ProfessorController extends AuthController implements Serializable{
 	@Inject
     private AlunoService alunoService;
 
+	private TurmaService turmaService;
+	
 	@PostConstruct
 	private void init() {
 		if(professor == null){
@@ -78,9 +82,18 @@ public class ProfessorController extends AuthController implements Serializable{
 		return professorService.findAll();
 	}
 	
+	
+	
+	
 	public List<Aluno> getAlunosDoProfessor(){
-		List<Turma> turmasDosProfessor = professorService.findTurmaByProfessor(getLoggedUser().getId());
-		return alunoService.findAlunoTurmaBytTurma(turmasDosProfessor);
+		if(TipoMembro.ADMIM.equals(getLoggedUser().getTipoMembro()) ) {
+			List<Turma> todasTurmas = professorService.getTodasTurmas();
+			return alunoService.findAlunoTurmaBytTurma(todasTurmas);	
+		}else {
+			List<Turma> turmasDosProfessor = professorService.findTurmaByProfessor(getLoggedUser().getId());
+			return alunoService.findAlunoTurmaBytTurma(turmasDosProfessor);	
+		}
+		
 	}
 	
 	public String salvar(){
@@ -111,6 +124,14 @@ public class ProfessorController extends AuthController implements Serializable{
 	public String cadastrarNovo(){
 		Util.removeAtributoSessao("professor");
 		return "exibir";
+	}
+
+	public TurmaService getTurmaService() {
+		return turmaService;
+	}
+
+	public void setTurmaService(TurmaService turmaService) {
+		this.turmaService = turmaService;
 	}
 	
 }

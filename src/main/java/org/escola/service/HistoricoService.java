@@ -92,8 +92,10 @@ public class HistoricoService extends Service {
 			user.setDescricao(evento.getDescricao());
 			user.setNome(evento.getNome());
 			user.setCodigo(evento.getCodigo());*/
-			
+			em.clear();
+			em.flush();
 			em.persist(evento);
+		
 			
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues

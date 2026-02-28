@@ -29,16 +29,16 @@ public class RelatorioService extends Service {
 	@PersistenceContext(unitName = "EscolaDS")
 	private EntityManager em;
 
-	public double getTotalNotasEmitidas(int mes){
+	public double getTotalNotasEmitidas(int mes, int ano){
 		try{
 			StringBuilder sql = new StringBuilder();
 			sql.append(" select sum(valorPago) from boleto ");
 			sql.append("where ");
 			sql.append("nfsEnviada = true ");
 			sql.append("and vencimento >  ");
-			sql.append(getInicioMes(mes));
+			sql.append(getInicioMes(mes,ano));
 			sql.append(" and vencimento < ");
-			sql.append(getFimMes(mes));
+			sql.append(getFimMes(mes,ano));
 			
 			Query query = em.createNativeQuery(sql.toString());
 			Double t = (Double) query.getSingleResult();
@@ -52,7 +52,7 @@ public class RelatorioService extends Service {
 		}
 	}
 	
-	public List<String> getResponsaveisNotasEnviadas(int mes){
+	public List<String> getResponsaveisNotasEnviadas(int mes, int ano){
 		try{
 			StringBuilder sql = new StringBuilder();
 			sql.append(" select contrato.nomeresponsavel || ' (' || aluno.nomealuno  || ' )'  ");
@@ -65,9 +65,9 @@ public class RelatorioService extends Service {
 			sql.append("where ");
 			sql.append("nfsEnviada = true ");
 			sql.append("and vencimento >  ");
-			sql.append(getInicioMes(mes));
+			sql.append(getInicioMes(mes, ano));
 			sql.append(" and vencimento < ");
-			sql.append(getFimMes(mes));
+			sql.append(getFimMes(mes,ano));
 			
 			Query query = em.createNativeQuery(sql.toString());
 			List<String> t = (List<String>) query.getResultList();
@@ -78,120 +78,122 @@ public class RelatorioService extends Service {
 		}
 	}
 	
-	private String getInicioMes(int mesDoAno) {
-		String mes = "2022-01-01";
+	private String getInicioMes(int mesDoAno, int ano) {
+		
+		String mes = "'"+ano + "-01-01'";
+		
 		switch (mesDoAno) {
 
 		case 12:
-			mes = "'2022-12-01'";
+			mes = "'"+ano + "-12-01'";
 			break;
 
 		case 11:
-			mes = "'2022-11-01'";
+			mes = "'"+ano + "-11-01'";
 			break;
 
 		case 10:
-			mes = "'2022-10-01'";
+			mes = "'"+ano + "-10-01'";
 			break;
 
 		case 9:
-			mes = "'2022-09-01'";
+			mes = "'"+ano + "-09-01'";
 			break;
 
 		case 8:
-			mes = "'2022-08-01'";
+			mes ="'"+ano + "-08-01'";
 			break;
 
 		case 7:
-			mes = "'2022-07-01'";
+			mes = "'"+ano + "-07-01'";
 			break;
 
 		case 6:
-			mes = "'2022-06-01'";
+			mes = "'"+ano + "-06-01'";
 			break;
 
 		case 5:
-			mes = "'2022-05-01'";
+			mes ="'"+ano + "-05-01'";
 			break;
 
 		case 4:
-			mes = "'2022-04-01'";
+			mes = "'"+ano + "-04-01'";
 			break;
 
 		case 3:
-			mes = "'2022-03-01'";
+			mes = "'"+ano + "-03-01'";
 			break;
 
 		case 2:
-			mes = "'2022-02-01'";
+			mes = "'"+ano + "-02-01'";
 			break;
 
 		case 1:
-			mes = "'2022-01-01'";
+			mes = "'"+ano + "-01-01'";
 			break;
 
 		default:
-			mes = "'2022-12-01'";
+			mes = "'"+ano + "-12-01'";
 			break;
 		}
 
 		return mes;
 	}
 	
-	private String getFimMes(int mesDoAno) {
-		String mes = "2022-01-31";
+	private String getFimMes(int mesDoAno, int ano) {
+		String mes = "'"+ano + "-01-31";
 		switch (mesDoAno) {
 
 		case 12:
-			mes = "'2022-12-31'";
+			mes ="'"+ano + "-12-31'";
 			break;
 
 		case 11:
-			mes = "'2022-11-30'";
+			mes = "'"+ano + "-11-30'";
 			break;
 
 		case 10:
-			mes = "'2022-10-31'";
+			mes = "'"+ano + "-10-31'";
 			break;
 
 		case 9:
-			mes = "'2022-09-30'";
+			mes = "'"+ano + "-09-30'";
 			break;
 
 		case 8:
-			mes = "'2022-08-31'";
+			mes = "'"+ano + "-08-31'";
 			break;
 
 		case 7:
-			mes = "'2022-07-31'";
+			mes = "'"+ano + "-07-31'";
 			break;
 
 		case 6:
-			mes = "'2022-06-30'";
+			mes = "'"+ano + "-06-30'";
 			break;
 
 		case 5:
-			mes = "'2022-05-31'";
+			mes = "'"+ano + "-05-31'";
 			break;
 
 		case 4:
-			mes = "'2022-04-30'";
+			mes = "'"+ano + "-04-30'";
 			break;
 
 		case 3:
-			mes = "'2022-03-31'";
+			mes = "'"+ano + "-03-31'";
 			break;
 
 		case 2:
-			mes = "'2022-02-28'";
+			mes = "'"+ano + "-02-28'";
 			break;
 
 		case 1:
-			mes = "'2022-01-31'";
+			mes ="'"+ano + "-01-31'";
 			break;
 
 		default:
-			mes = "'2022-12-31'";
+			mes = "'"+ano + "-12-31'";
 			break;
 		}
 

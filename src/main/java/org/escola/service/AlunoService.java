@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -107,6 +109,18 @@ public class AlunoService extends Service {
 			alunos2.add(al);
 		}
 		return alunos2;
+	}
+	
+	public void saveNumeroCasa(ContratoAluno contrato) {
+		ContratoAluno ap = findContratoById(contrato.getId());
+		ap.setEnderecoNumero(contrato.getEnderecoNumero());
+		ap.setEndereco(contrato.getEndereco());
+
+		ap.setBairro(contrato.getBairro());
+		ap.setCidade(contrato.getCidade());
+
+		em.merge(ap);
+		em.flush();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -921,8 +935,52 @@ public class AlunoService extends Service {
 		return new Professor();
 
 	}
-
+	
 	public float getNota(Long idAluno, DisciplinaEnum disciplina, BimestreEnum bimestre, boolean recupecacao) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select av.* from alunoavaliacao  av");
+		sql.append("	left join  aluno aluno on av.aluno_id = aluno.id");
+		sql.append("	left join avaliacao avaliacao on av.avaliacao_id = avaliacao.id");
+		sql.append("	left join AlunoTurma alunoTurma on alunoTurma.aluno_id = av.aluno_id");
+		sql.append("	left join Turma turma on turma.id = alunoTurma.turma_id");
+		sql.append( "	left join Professor professor on professor.id = avaliacao.professor_id");
+
+		sql.append("	where 1=1 ");
+		sql.append("	and avaliacao.anoletivo = ");
+		sql.append(configuracaoService.getConfiguracao().getAnoLetivo());
+		sql.append( "	and avaliacao.bimestre = ");
+		sql.append(bimestre.ordinal());
+		sql.append("	and aluno.id = ");
+		sql.append(idAluno);
+		sql.append("	and avaliacao.disciplina = ");
+		sql.append(disciplina.ordinal());
+		sql.append( "	and avaliacao.serie = turma.serie");
+		
+		if(recupecacao) {
+			sql.append(" and  avaliacao.recuperacao = ");
+			sql.append(recupecacao);	
+		}else {
+			sql.append(" and  (avaliacao.recuperacao = false or avaliacao.recuperacao is null  )");
+		}
+		
+		Query query = em.createNativeQuery(sql.toString(),AlunoAvaliacao.class);
+		List<AlunoAvaliacao> notas =   query.getResultList();
+		
+		Float soma = 0F;
+		Float pesos = 0F;
+		if (notas != null && !notas.isEmpty()) {
+			for (AlunoAvaliacao avas : notas) {
+				soma += avas.getNota() * avas.getAvaliacao().getPeso();
+				pesos += avas.getAvaliacao().getPeso();
+			}
+		}
+
+		return soma / pesos;
+		
+	}
+
+	public float getNota2(Long idAluno, DisciplinaEnum disciplina, BimestreEnum bimestre, boolean recupecacao) {
 		try {
 			if (idAluno == 5506L) {
 				System.out.println("id");
@@ -938,9 +996,15 @@ public class AlunoService extends Service {
 				sql.append(" and  av.avaliacao.bimestre = ");
 				sql.append(bimestre.ordinal());
 			}
-			sql.append(" and  av.avaliacao.recuperacao = ");
-			sql.append(recupecacao);
-
+			
+			if(recupecacao) {
+				sql.append(" and  av.avaliacao.recuperacao = ");
+				sql.append(recupecacao);	
+			}else {
+				sql.append(" and  (av.avaliacao.recuperacao = false or av.avaliacao.recuperacao is null  )");
+			}
+			
+			sql.append(" and  av.avaliacao.serie = av.aluno.");
 			sql.append(" and  av.avaliacao.anoLetivo = ");
 			sql.append(configuracaoService.getConfiguracao().getAnoLetivo());
 			Query query = em.createQuery(sql.toString());
@@ -1751,6 +1815,17 @@ public class AlunoService extends Service {
 		return contrato;
 	}
 
+	public ContratoAluno saveComentario(ContratoAluno contrato) {
+		ContratoAluno c = new ContratoAluno();
+		if (contrato.getId() != null) {
+			c = findContratoById(contrato.getId());
+		}
+		c.setComentario(contrato.getComentario());
+		em.merge(c);
+		em.flush();
+		return c;
+	}
+	
 	public ContratoAluno saveContrato(ContratoAluno contrato) {
 		ContratoAluno c = new ContratoAluno();
 		if (contrato.getId() != null) {
@@ -1778,6 +1853,9 @@ public class AlunoService extends Service {
 		c.setEnviadoSPC(contrato.getEnviadoSPC());
 		c.setEnviadoParaCobrancaCDL(contrato.getEnviadoSPC());
 		c.setEndereco(contrato.getEndereco());
+		c.setComentario(contrato.getComentario());
+		c.setAcordo(contrato.getAcordo());
+		c.setTipoBoleto(contrato.getTipoBoleto());
 
 		String ano = String.valueOf(contrato.getAno());
 		String finalANo = ano.substring(ano.length() - 2, ano.length());
@@ -1919,4 +1997,85 @@ public class AlunoService extends Service {
 		return alunos;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Aluno> findAlunoDoAno(short ano) {
+		
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT al from  Aluno al ");
+		sql.append(" right join ContratoAluno ca on al.id = ca.aluno.id");
+		sql.append(" where 1=1 ");
+		sql.append(" and ca.ano = ");
+		sql.append(ano);
+		sql.append(" and al.serie > 3 ");
+		
+		List<Aluno> alunos = new ArrayList<>();		
+		Query query = em.createQuery(sql.toString());
+		alunos = query.getResultList();
+		
+		
+
+		StringBuilder sql2 = new StringBuilder();
+		sql2.append(" SELECT base from  Aluno base ");
+		sql2.append(" LEFT JOIN Aluno al ON base.id = al.irmao1.id");
+		sql2.append(" JOIN ContratoAluno ca ON al.id = ca.aluno.id");
+		sql2.append(" WHERE 1=1 ");
+		sql2.append(" AND ca.ano = ");
+		sql2.append(ano);
+		sql2.append(" AND al.serie > 3 ");
+		
+		List<Aluno> alunos2 = new ArrayList<>();		
+		Query query2 = em.createQuery(sql2.toString());
+		alunos2 = query2.getResultList();
+			
+		StringBuilder sql3 = new StringBuilder();
+		sql3.append(" SELECT base from  Aluno base ");
+		sql3.append(" LEFT JOIN Aluno al ON base.id = al.irmao2.id");
+		sql3.append(" JOIN ContratoAluno ca ON al.id = ca.aluno.id");
+		sql3.append(" WHERE 1=1 ");
+		sql3.append(" AND ca.ano = ");
+		sql3.append(ano);
+		sql3.append(" AND al.serie > 3");
+		
+		List<Aluno> alunos3 = new ArrayList<>();		
+		Query query3 = em.createQuery(sql3.toString());
+		alunos3 = query3.getResultList();
+		
+		
+		Set<Aluno> resultadoFinal = new HashSet<>();
+		resultadoFinal.addAll(alunos);
+		resultadoFinal.addAll(alunos2);
+		resultadoFinal.addAll(alunos3);
+
+		return new ArrayList<>(resultadoFinal);
+	}
+	
+	public void saveArquivoContrato(ContratoAluno contrato) {
+		ContratoAluno contratoa = findContratoById(contrato.getId());
+		contratoa.setContratoScaneado(contrato.getContratoScaneado());
+		em.merge(contratoa);
+		em.flush();
+	}
+	
+	public void saveComentarioContrato(ContratoAluno contrato) {
+		ContratoAluno contratoa = findContratoById(contrato.getId());
+		contratoa.setComentarioWebService(contrato.getComentarioWebService());
+		em.merge(contratoa);
+		em.flush();
+	}
+	
+	public void enviarCDL(ContratoAluno contrato) {
+		ContratoAluno contratoa = findContratoById(contrato.getId());
+		contratoa.setEnviadoSPC(true);
+		contratoa.setComentario(contrato.getComentario());
+		em.merge(contratoa);
+		em.flush();
+	}
+
+	public void enviarConfirmadoWebService(ContratoAluno contrato) {
+		ContratoAluno contratoa = findContratoById(contrato.getId());
+		contratoa.setConfirmadoEnvioPorWebService(true);
+		em.merge(contratoa);
+		em.flush();
+	}
 }
