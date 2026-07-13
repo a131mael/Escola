@@ -102,7 +102,10 @@ import org.escola.service.AlunoService;
 import org.escola.service.AvaliacaoService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.DevedorService;
+import org.escola.service.EvolutionApiService;
+import org.escola.service.MensagemWhatsAppService;
 import org.escola.service.FinanceiroEscolaService;
+import org.escola.util.MensagemWA;
 import org.escola.service.rotinasAutomaticas.EnviadorEmail;
 import org.escola.util.CompactadorZip;
 import org.escola.util.CurrencyWriter;
@@ -156,6 +159,12 @@ public class AlunoController implements Serializable {
 
 	@Inject
 	private AvaliacaoService avaliacaoService;
+
+	@Inject
+	private EvolutionApiService evolutionApiService;
+
+	@Inject
+	private MensagemWhatsAppService mensagemWhatsAppService;
 
 	private OfficeDOCUtil officeDOCUtil;
 	CurrencyWriter cw;
@@ -808,6 +817,79 @@ public class AlunoController implements Serializable {
 
 		return cor;
 	}
+
+	public String getRowClassDevedor(Aluno a) {
+		if (a == null) return "";
+		if (a.getContratoVigente(configuracao.getAnoLetivo()) == null) return "marcarLinhaVermelho";
+		String status = a.getStatusWhatsAppSync();
+		if ("PODE_COBRAR".equals(status)) return "marcarLinhaVerde";
+		return "";
+	}
+
+	public String getWhatsAppStatusHtml(Aluno a) {
+		if (a == null) return "";
+		String status = a.getStatusWhatsAppSync();
+		if (status == null || status.trim().isEmpty()) return "<span style='color:#aaa;font-size:11px;'>-</span>";
+		if ("PODE_COBRAR".equals(status))
+			return "<span style='background:#d4edda;color:#155724;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:bold;'>Cobrar</span>";
+		if ("NAO_COBRAR".equals(status))
+			return "<span style='background:#f8d7da;color:#721c24;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:bold;'>Pago?</span>";
+		if ("RESOLVIDO".equals(status))
+			return "<span style='background:#cce5ff;color:#004085;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:bold;'>Resolvido</span>";
+		return "<span style='background:#fff3cd;color:#856404;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:bold;'>Indeciso</span>";
+	}
+
+	public boolean hasDuplicateContratos(Aluno a) {
+		if (a == null || a.getContratos() == null) return false;
+		int count = 0;
+		for (ContratoAluno c : a.getContratos()) {
+			if (!Boolean.TRUE.equals(c.getCancelado()) && c.getAno() == configuracao.getAnoLetivo()) count++;
+		}
+		return count >= 2;
+	}
+
+	private Aluno alunoConversa;
+	private List<MensagemWA> listaMensagens = new ArrayList<MensagemWA>();
+	private List<MensagemWA> listaMensagensInbox = new ArrayList<MensagemWA>();
+
+	public void abrirConversa(Aluno a) {
+		alunoConversa = a;
+		listaMensagensInbox = new ArrayList<MensagemWA>();
+		String primTel = (a != null) ? a.getContatoTelefone1() : null;
+		if (primTel != null && !primTel.trim().isEmpty()) {
+			carregarMensagens(primTel);
+		} else {
+			listaMensagens = new ArrayList<MensagemWA>();
+		}
+	}
+
+	public void carregarMensagens(String telefone) {
+		if (telefone == null || telefone.trim().isEmpty()) return;
+		if (alunoConversa == null) return;
+
+		// 1. busca do banco o que já temos
+		listaMensagens = mensagemWhatsAppService.carregarDosBanco(alunoConversa, telefone);
+
+		// 2. busca na API desde o último timestamp salvo
+		long ultimoTs = mensagemWhatsAppService.ultimoTimestamp(alunoConversa, telefone);
+		try {
+			List<MensagemWA> novas = evolutionApiService.buscarMensagensSince(telefone, ultimoTs);
+			if (novas != null && !novas.isEmpty()) {
+				// 3. salva as novas no banco (deduplicando por messageId)
+				mensagemWhatsAppService.salvarNovas(alunoConversa, telefone, novas);
+				// 4. recarrega do banco ordenado
+				listaMensagens = mensagemWhatsAppService.carregarDosBanco(alunoConversa, telefone);
+			}
+		} catch (Exception e) {
+			System.err.println("carregarMensagens erro API: " + e.getMessage());
+		}
+	}
+
+	public Aluno getAlunoConversa() { return alunoConversa; }
+
+	public List<MensagemWA> getListaMensagens() { return listaMensagens; }
+
+	public List<MensagemWA> getListaMensagensInbox() { return listaMensagensInbox; }
 
 	public String marcarLinhaChamada(Aluno aluno) {
 		String cor = "";

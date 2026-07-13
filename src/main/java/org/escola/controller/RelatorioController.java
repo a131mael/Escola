@@ -19,6 +19,7 @@ package org.escola.controller;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +33,20 @@ import javax.inject.Named;
 
 import org.escola.enums.PerioddoEnum;
 import org.escola.enums.Serie;
+import org.escola.model.Aluno;
 import org.escola.model.Configuracao;
+import org.escola.model.ContratoAluno;
+import org.escola.service.AlunoService;
 import org.escola.service.ConfiguracaoService;
+import org.escola.service.DevedorService;
+import org.escola.service.EvolutionApiService;
 import org.escola.service.FinanceiroEscolaService;
+import org.escola.service.MensagemWhatsAppService;
 import org.escola.service.RelatorioService;
 import org.escola.util.Util;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-import org.escola.service.AlunoService;
-import org.escola.model.Aluno;
 
 @Named
 @ViewScoped
@@ -58,10 +63,19 @@ public class RelatorioController implements Serializable{
 	
 	@Inject
 	private AlunoService alunoService;
-	
+
 	@Inject
 	private FinanceiroEscolaService financeiroService;
-	
+
+	@Inject
+	private EvolutionApiService evolutionApiService;
+
+	@Inject
+	private MensagemWhatsAppService mensagemWhatsAppService;
+
+	@Inject
+	private DevedorService devedorService;
+
 	private LazyDataModel<Aluno> lazyListDataModelQuantidade;
 	private LazyDataModel<Aluno> lazyListDataModelMes;
 	
@@ -587,5 +601,202 @@ public class RelatorioController implements Serializable{
 	public void setMesSelecionadoRelatorio(Integer mesSelecionadoRelatorio) {
 		Util.addAtributoSessao("mesSelecionadoRelatorio", mesSelecionadoRelatorio);
 		this.mesSelecionadoRelatorio = mesSelecionadoRelatorio;
+	}
+
+	private String getMesNomeAtrasado() {
+		String[] meses = {"Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+						  "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"};
+		if (mesAtrasado >= 1 && mesAtrasado <= 12) return meses[mesAtrasado - 1];
+		return String.valueOf(mesAtrasado);
+	}
+
+	private String getPrimeiroTelefoneValido(Aluno a) {
+		String[] tels = {a.getContatoTelefone1(), a.getContatoTelefone2(),
+						 a.getContatoTelefone3(), a.getContatoTelefone4()};
+		for (String t : tels) {
+			if (t != null && !t.trim().isEmpty() && !t.trim().toLowerCase().startsWith("x")) {
+				return t;
+			}
+		}
+		return null;
+	}
+
+	private String getNomeResponsavelAluno(Aluno a) {
+		if (a.getContratos() != null) {
+			for (ContratoAluno ca : a.getContratos()) {
+				if (ca.getNomeResponsavel() != null && !ca.getNomeResponsavel().trim().isEmpty()) {
+					return ca.getNomeResponsavel();
+				}
+			}
+		}
+		return a.getNomeAluno();
+	}
+
+	public void sincronizarWhatsAppMes() {
+		try {
+			Map<String, Object> filtros = new HashMap<String, Object>();
+			Object obj = Util.getAtributoSessao("mesAtrasado");
+			if (obj != null) mesAtrasado = (int) obj;
+			filtros.put("mesAtrasado", mesAtrasado);
+			filtros.put("anoSelecionado", anoSelecionado);
+			List<Aluno> todos = financeiroService.findAlunoMes(0, 9999, "id", "asc", filtros);
+			if (todos == null) todos = new ArrayList<Aluno>();
+			for (Aluno a : todos) {
+				List<String> tels = new ArrayList<String>();
+				if (a.getContatoTelefone1() != null) tels.add(a.getContatoTelefone1());
+				if (a.getContatoTelefone2() != null) tels.add(a.getContatoTelefone2());
+				if (a.getContatoTelefone3() != null) tels.add(a.getContatoTelefone3());
+				if (a.getContatoTelefone4() != null) tels.add(a.getContatoTelefone4());
+				String status = evolutionApiService.analisarStatusCobranca(tels);
+				a.setStatusWhatsAppSync(status);
+				a.setDataUltimaSincWhatsApp(new Date());
+				alunoService.saveStatusWhatsAppSync(a);
+			}
+			lazyListDataModelMes = null;
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage("Sincronização concluída!", todos.size() + " alunos sincronizados."));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na sincronização", e.getMessage()));
+		}
+	}
+
+	public void sincronizarWhatsAppQuantidade() {
+		try {
+			Map<String, Object> filtros = new HashMap<String, Object>();
+			Object obj = Util.getAtributoSessao("quantidadeAtrasados");
+			if (obj != null) quantidadeAtrasados = (int) obj;
+			filtros.put("quantidadeAtrasados", quantidadeAtrasados);
+			filtros.put("anoSelecionado", anoSelecionado);
+
+			List<Aluno> todos = financeiroService.findAlunoQuantidade(0, 9999, "id", "asc", filtros);
+			if (todos == null) todos = new ArrayList<Aluno>();
+			for (Aluno a : todos) {
+				List<String> tels = new ArrayList<String>();
+				if (a.getContatoTelefone1() != null) tels.add(a.getContatoTelefone1());
+				if (a.getContatoTelefone2() != null) tels.add(a.getContatoTelefone2());
+				if (a.getContatoTelefone3() != null) tels.add(a.getContatoTelefone3());
+				if (a.getContatoTelefone4() != null) tels.add(a.getContatoTelefone4());
+				String status = evolutionApiService.analisarStatusCobranca(tels);
+				a.setStatusWhatsAppSync(status);
+				a.setDataUltimaSincWhatsApp(new Date());
+				alunoService.saveStatusWhatsAppSync(a);
+			}
+			lazyListDataModelQuantidade = null;
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage("Sincronização concluída!", todos.size() + " alunos sincronizados."));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na sincronização", e.getMessage()));
+		}
+	}
+
+	public void enviarCobranca1(Long alunoId) {
+		try {
+			Aluno a = alunoService.findById(alunoId);
+			if (a == null) return;
+			String nome = getNomeResponsavelAluno(a);
+			String mes = getMesNomeAtrasado();
+			String msg = evolutionApiService.getMsgCobranca1(nome, mes);
+			String tel = getPrimeiroTelefoneValido(a);
+			if (tel != null) {
+				boolean enviou = evolutionApiService.enviarMensagem(tel, msg);
+				if (enviou) {
+					mensagemWhatsAppService.salvarCobrancaEnviada(a, tel, msg);
+				}
+				FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage("Cobrança 1 enviada para " + nome));
+			} else {
+				FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_WARN, "Sem telefone válido", nome));
+			}
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao enviar", e.getMessage()));
+		}
+	}
+
+	public void enviarCobranca2(Long alunoId) {
+		try {
+			Aluno a = alunoService.findById(alunoId);
+			if (a == null) return;
+			String nome = getNomeResponsavelAluno(a);
+			String mes = getMesNomeAtrasado();
+			String msg = evolutionApiService.getMsgCobranca2(nome, mes);
+			String tel = getPrimeiroTelefoneValido(a);
+			if (tel != null) {
+				boolean enviou = evolutionApiService.enviarMensagem(tel, msg);
+				if (enviou) {
+					mensagemWhatsAppService.salvarCobrancaEnviada(a, tel, msg);
+				}
+				FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage("Cobrança 2 enviada para " + nome));
+			} else {
+				FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_WARN, "Sem telefone válido", nome));
+			}
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao enviar", e.getMessage()));
+		}
+	}
+
+	private Long alunoCobrancaId;
+	private String observacaoCobrancaTemp;
+	private String statusCobrancaTemp;
+
+	public Long getAlunoCobrancaId() { return alunoCobrancaId; }
+	public void setAlunoCobrancaId(Long alunoCobrancaId) { this.alunoCobrancaId = alunoCobrancaId; }
+	public String getObservacaoCobrancaTemp() { return observacaoCobrancaTemp; }
+	public void setObservacaoCobrancaTemp(String o) { this.observacaoCobrancaTemp = o; }
+	public String getStatusCobrancaTemp() { return statusCobrancaTemp; }
+	public void setStatusCobrancaTemp(String s) { this.statusCobrancaTemp = s; }
+
+	public void abrirModalCobranca(Long alunoId) {
+		this.alunoCobrancaId = alunoId;
+		this.observacaoCobrancaTemp = "";
+		this.statusCobrancaTemp = "";
+	}
+
+	public void marcarProtestar(Long alunoId) {
+		try {
+			Aluno a = alunoService.findById(alunoId);
+			if (a == null) return;
+
+			List<ContratoAluno> contratos = financeiroService.findContratoAtrasadoMes(alunoId, mesAtrasado, anoSelecionado);
+			if (contratos == null || contratos.isEmpty()) {
+				FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_WARN, "Nada a marcar",
+						"Não encontrei o boleto em atraso desse mês para " + a.getNomeAluno() + "."));
+				return;
+			}
+			for (ContratoAluno ca : contratos) {
+				devedorService.enviarParaProtesto(ca);
+			}
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage("Contrato de " + a.getNomeAluno() + " (boleto deste mês) marcado para protestar."));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao marcar protesto", e.getMessage()));
+		}
+	}
+
+	public void salvarCobrancaFeita() {
+		try {
+			if (alunoCobrancaId == null) return;
+			Aluno a = alunoService.findById(alunoCobrancaId);
+			if (a == null) return;
+			a.setDataUltimaCobranca(new java.util.Date());
+			a.setObservacaoCobranca(observacaoCobrancaTemp);
+			if (statusCobrancaTemp != null && !statusCobrancaTemp.isEmpty()) {
+				a.setStatusWhatsAppSync(statusCobrancaTemp);
+			}
+			alunoService.saveCobrancaFeita(a);
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage("Cobrança registrada para " + a.getNomeAluno()));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage()));
+		}
 	}
 }

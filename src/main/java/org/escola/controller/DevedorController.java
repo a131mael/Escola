@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -1056,49 +1057,41 @@ public class DevedorController implements Serializable {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 		String endpoint = ConstantesEscolaApi.URL_CARTORIO + ConstantesEscolaApi.ProtestoCartorio;
-		
-		//  String endpoint =  "http://localhost:1616/integracao-0.0.1-SNAPSHOT/api/enviarContratoProtesto";
-		 
-		 
 
 		Parametro p1 = new Parametro("idContrato", getContratoS().getNumero());
 		List<Parametro> parametros = new ArrayList<>();
 		parametros.add(p1);
-		String retornoJson = EnviadorJson.get2(endpoint, null, parametros);
-		RetornoEnvioContratoDTO retorno = new RetornoEnvioContratoDTO();
 		try {
-			retorno = mapper.readValue(retornoJson, RetornoEnvioContratoDTO.class);
+			String retornoJson = EnviadorJson.get2(endpoint, null, parametros);
+			RetornoEnvioContratoDTO retorno = mapper.readValue(retornoJson, RetornoEnvioContratoDTO.class);
 			System.out.println(retornoJson);
 
-			if (retorno.getCodigo() != null
-					&& (retorno.getCodigo().contains("201") || retorno.getCodigo().contains("200"))) {
-
-				// contratoS.setComentario(contratoS.getComentario() + "/n" +
-				// retorno.getResponse()[0].getResposta().getMensagem());
-				alunoService.enviarCDL(contratoS);
-				byte[] decode = retorno.getResponse()[0].getResposta().getMensagem().getBytes();
-				contratoS.setComentarioWebService(decode);
-				alunoService.saveComentarioContrato(contratoS);
-
-			} else {
-				// contratoS.setComentario(contratoS.getComentario() + "/n" +
-				// retorno.getResponse()[0].getResposta().getMensagem());
-
-				byte[] decode = retorno.getResponse()[0].getResposta().getMensagem().getBytes();
-				contratoS.setComentarioWebService(decode);
-				alunoService.saveComentarioContrato(contratoS);
+			String mensagem = (retorno.getResponse() != null && retorno.getResponse().length > 0)
+					? retorno.getResponse()[0].getResposta().getMensagem()
+					: retorno.getMensagem();
+			if (mensagem == null) {
+				mensagem = "Sem mensagem de retorno do cartório.";
 			}
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
+			boolean sucesso = "200".equals(retorno.getCodigo()) || "201".equals(retorno.getCodigo());
+
+			contratoS.setComentarioWebService(mensagem.getBytes());
+			alunoService.saveComentarioContrato(contratoS);
+
+			if (sucesso) {
+				alunoService.enviarCDL(contratoS);
+				alunoService.enviarConfirmadoWebService(contratoS);
+				FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Enviado ao cartório", mensagem));
+			} else {
+				FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cartório recusou o envio", mensagem));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao enviar para o cartório", e.getMessage()));
+		}
 	}
 
 	public void enviarProtestoCartorio(ContratoAluno contrato) {

@@ -527,6 +527,14 @@ public class DevedorService extends Service {
 			sql.append("bol.vencimento < '");
 			sql.append(new Date());
 			sql.append("'");
+
+			// Contrato/boleto vencido há mais de 1 ano não pode mais ser protestado - já sai da listagem
+			Calendar limiteProtesto = Calendar.getInstance();
+			limiteProtesto.add(Calendar.YEAR, -1);
+			sql.append(" and bol.vencimento > '");
+			sql.append(limiteProtesto.getTime());
+			sql.append("'");
+
 			if (getDataInicio() != null) {
 				sql.append(" and bol.vencimento > '");
 				sql.append(getDataInicio());
@@ -538,7 +546,7 @@ public class DevedorService extends Service {
 				sql.append(getDataFim());
 				sql.append("'");
 			}
-			
+
 			if(filtros.get("nomeResponsavel") != null  ) {
 				sql.append(" and UPPER(ca.nomeresponsavel) like UPPER('%");
 				sql.append(filtros.get("nomeResponsavel"));

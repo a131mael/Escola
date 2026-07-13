@@ -147,44 +147,23 @@ public class AvaliacaoService extends Service {
 			CriteriaQuery<Avaliacao> criteria = cb.createQuery(Avaliacao.class);
 			Root<Avaliacao> member = criteria.from(Avaliacao.class);
 
-			Predicate whereSerie = null;
-			Predicate wherePeriodo = null;
+			List<Predicate> preds = new ArrayList<>();
 
-			StringBuilder sb = new StringBuilder();
+			if (idProfessor != null) {
+				preds.add(cb.equal(member.get("professor").get("id"), idProfessor));
+			}
 			if (serie != null) {
-				sb.append("A");
-				whereSerie = cb.equal(member.get("serie"), serie);
+				preds.add(cb.equal(member.get("serie"), serie));
 			}
-
 			if (periodo != null) {
-				sb.append("B");
-				wherePeriodo = cb.equal(member.get("periodo"), periodo);
+				preds.add(cb.equal(member.get("periodo"), periodo));
 			}
 
-			switch (sb.toString()) {
+			criteria.select(member)
+					.where(preds.toArray(new Predicate[0]))
+					.orderBy(cb.asc(member.get("nome")));
 
-			case "A":
-				criteria.select(member).where(whereSerie);
-				break;
-
-			case "B":
-				criteria.select(member).where(wherePeriodo);
-				break;
-
-			case "AB":
-				criteria.select(member).where(whereSerie, wherePeriodo);
-				break;
-			default:
-				break;
-			}
-
-			criteria.select(member).orderBy(cb.asc(member.get("nome")));
-			List<Avaliacao> avaliacoes = em.createQuery(criteria).getResultList();
-			
-			return avaliacoes
-					.stream()
-					.filter(e ->  (e.getProfessor() != null &&  e.getProfessor().getId() == idProfessor))
-					.collect(Collectors.toList()); 
+			return em.createQuery(criteria).getResultList();
 
 		} catch (NoResultException nre) {
 			return new ArrayList<>();

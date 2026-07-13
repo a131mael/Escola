@@ -7,165 +7,239 @@
 
 	<ui:define name="content">
 		<script type="text/javascript">
-			function start() {
-			    PF('statusDialog').show();
-			}
-			 
-			function stop() {
-			    PF('statusDialog').hide();
-			}
+			function start() { PF('statusDialog').show(); }
+			function stop()  { PF('statusDialog').hide(); }
 		</script>
-		
-		<p:dialog modal="true" widgetVar="statusDialog" header="Status" 
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
 				draggable="false" closable="false" resizable="false">
     		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
 		</p:dialog>
-	
-		<h:form prependId="false" style="width:100%; border:none" 
-				rendered="#{authController.hasPermission(authController.administrador
-							,authController.secretaria)}">
 
-			<h:panelGrid id="panelFerramentas" columns="17" style="margin-top: -30px; margin-left:-20px">
-				 <p:tooltip  for="editar" value="Editar" position="top"/>
-				<p:tooltip  for="negativoDebito" value="Negativo Debito" position="top"/>
-				<p:tooltip  for="contrato" value="Contrato" position="top"/>
-				<p:tooltip  for="restaurar" value="Restaurar" position="top"/>
-			
-				<p:commandButton id="editar" icon="ui-icon-pencil" update="@form" action="#{relatorioController.editar()}"	alt="Editar" />
-				
-				<p:commandButton id="restaurar" icon="ui-icon-pencil" action="#{alunoController.restaurar(aluno.id)}" disabled="#{!alunoController.alunoSelecionado}"/>
-				
-				<p:separator style=" height:25px;" />
-				<p:commandButton id="negativoDebito"  ajax="false" icon="ui-icon-pencil" 
-								 onclick="PrimeFaces.monitorDownload(start, stop);"
-	   						     disabled="#{!alunoController.alunoSelecionado}" rendered="false">
-								 <p:fileDownload value="#{alunoController.imprimirNegativoDebito()}" />
-	 		  </p:commandButton>
-				<p:commandButton id="contrato" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  
-								disabled="#{!alunoController.alunoSelecionado}">
-						<p:fileDownload value="#{alunoController.imprimirContrato()}" />
-				</p:commandButton>
+		<h:form prependId="false" style="width:100%; border:none; padding-right:10px;"
+				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
+
+			<p:growl id="messages" showDetail="true" life="8000" globalOnly="false"/>
+
+			<h:panelGrid id="panelFerramentas" columns="17" style="margin-top:-30px; margin-left:-20px">
+				<p:tooltip for="editar" value="Editar" position="top"/>
+				<p:tooltip for="sincWhatsApp" value="Sincronizar com WhatsApp" position="top"/>
+				<p:tooltip for="sincSicoob" value="Sincronizar com Sicoob" position="top"/>
+
+				<p:commandButton id="editar" icon="ui-icon-pencil" update="@form"
+					action="#{relatorioController.editar()}" alt="Editar" />
+
+				<p:separator style="height:25px;" />
+
+				<p:commandButton id="sincWhatsApp"
+					value="Sincronizar com WhatsApp"
+					icon="ui-icon-check"
+					style="background-color:#25D366; border-color:#25D366; color:white; font-weight:bold;"
+					action="#{relatorioController.sincronizarWhatsAppMes()}"
+					onstart="start()" oncomplete="stop()"
+					update="tbl panelFerramentas messages" ajax="true" />
+
+				<p:commandButton id="sincSicoob"
+					value="Sincronizar com Sicoob"
+					icon="ui-icon-clock"
+					style="background-color:#aaa; border-color:#888; color:white;"
+					disabled="true" />
 			</h:panelGrid>
 
-			<h:panelGrid width="98%">
+			<div style="width:100%;">
 				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
-                             emptyMessage="#Nenhum registro encontrado"
-                             selectionMode="single" 
+                             emptyMessage="Nenhum registro encontrado"
+                             selectionMode="single"
                              selection="#{relatorioController.aluno}"
                              rowKey="#{professorTab.id}"
-                             filterEvent="enter" 
-                             lazy="true" 
+                             filterEvent="enter"
+                             lazy="true"
                              liveResize="true"
                              styleClass="tabela"
+                             style="width:100%;"
                              pageLinks="5"
                              paginator="true"
-                             paginatorPosition="bottom"                                         
-                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} 
-                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             paginatorPosition="bottom"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              resizableColumns="true"
                              rows="100"
-  							 id="tbl" var="professorTab"
-							 value="#{relatorioController.lazyDataModelMes}"
-							 >
-   <!-- rowsPerPageTemplate="25,50,100" -->
-   
-   					<p:ajax event="rowSelect"  update="panelFerramentas" />
-					<f:facet name="{Exporters}">
-						<h:commandLink>
-							<p:graphicImage name="/gfx/excel.png" width="24" />
-							<p:dataExporter type="xls" target="tbl" fileName="cars" />
-						</h:commandLink>
+                             id="tbl" var="professorTab"
+                             value="#{relatorioController.lazyDataModelMes}"
+                             rowStyleClass="#{alunoController.getRowClassDevedor(professorTab)}">
 
-						<h:commandLink>
-							<p:graphicImage name="/gfx/pdf.png" width="24" />
-							<p:dataExporter type="pdf" target="tbl" fileName="cars" />
-						</h:commandLink>
-
-						<h:commandLink>
-							<p:graphicImage name="/gfx/csv.png" width="24" />
-							<p:dataExporter type="csv" target="tbl" fileName="cars" />
-						</h:commandLink>
-
-						<h:commandLink>
-							<p:graphicImage name="/gfx/xml.png" width="24" />
-							<p:dataExporter type="xml" target="tbl" fileName="cars" />
-						</h:commandLink>
-					</f:facet>
-					<p:column style="width:7%; text-align:center;" filterBy="#{professorTab.codigo}"
-                              styleClass="#{alunoController.marcarLinha(professorTab)}"
-                              sortBy="#{professorTab.codigo}" 
-                              headerText="Código ">
-						<h:outputText value="#{professorTab.codigo}" />
-					</p:column>
+					<p:ajax event="rowSelect" update="panelFerramentas" />
 
 					<p:column filterBy="#{professorTab.nomeAluno}"
-                              sortBy="#{professorTab.nomeAluno}" 
-                              style="text-align:center;"
-                              styleClass="#{alunoController.marcarLinha(professorTab)}"
-                              headerText="Nome ">
-						<h:outputText value="#{professorTab.nomeAluno}" />
+                              sortBy="#{professorTab.nomeAluno}"
+                              style="text-align:left; width:14%;"
+                              headerText="Nome">
+						<h:panelGroup rendered="#{alunoController.hasDuplicateContratos(professorTab)}">
+							<span style="background:#e67e22;color:white;border-radius:3px;padding:1px 5px;font-size:10px;margin-right:4px;">2+</span>
+						</h:panelGroup>
+						<p:commandLink value="#{professorTab.nomeAluno}"
+							style="color:inherit; text-decoration:none;"
+							action="#{relatorioController.editar(professorTab.id)}"
+							update="@none" process="@this"
+							oncomplete="window.open('#{request.contextPath}/page/aluno/cadastrarAluno.xhtml', '_blank');" />
 					</p:column>
-					
-					<p:column style="text-align:center;"
-                              styleClass="#{alunoController.marcarLinha(professorTab)}"
-                              headerText="responsavel ">
+
+					<p:column style="text-align:center; width:13%;" headerText="Responsável">
 						<h:outputText value="#{alunoController.getNomeResponsavelDevedor(professorTab)}" />
 					</p:column>
-					
-					<p:column style="text-align:center;"
-                              styleClass="#{alunoController.marcarLinha(professorTab)}"
-                              headerText="CPF ">
+
+					<p:column style="text-align:center; width:7%;" headerText="CPF">
 						<h:outputText value="#{alunoController.getCPFResponsavelDevedor(professorTab)}" />
 					</p:column>
 
-					<p:column filterBy="#{professorTab.periodo}"
-                              sortBy="#{professorTab.periodo}" 
-                              style="text-align:center;width:8%"
-                              styleClass="#{alunoController.marcarLinha(professorTab)}"
-                              headerText="Periodo "
-                              filterOptions="#{CombosEspeciaisMB.periodosSelectIItem}">
-						<h:outputText value="#{professorTab.periodo.name}" />
+					<p:column style="text-align:center; width:14%;" headerText="Contato">
+						<h:outputText value="#{professorTab.contatoTelefone1}" />
+						<h:outputText value=" #{professorTab.contatoNome1}" /><br/>
+						<h:outputText value="#{professorTab.contatoTelefone2}" />
+						<h:outputText value=" #{professorTab.contatoNome2}" /><br/>
+						<h:outputText value="#{professorTab.contatoTelefone3}" />
+						<h:outputText value=" #{professorTab.contatoNome3}" /><br/>
+						<h:outputText value="#{professorTab.contatoTelefone4}" />
+						<h:outputText value=" #{professorTab.contatoNome4}" />
 					</p:column>
-					
-					<p:column filterBy="#{professorTab.serie}"
-                              sortBy="#{professorTab.serie}" 
-                              style="text-align: center;width:10%;"
-                              styleClass="#{alunoController.marcarLinha(professorTab)}"
-                              headerText="Contato "
-                              filterOptions="#{CombosEspeciaisMB.seriesSelectIItem}">
-								
-								 <h:outputText value="#{professorTab.contatoTelefone1}" />
-					             <h:outputText value=" " />
-					             <h:outputText value="#{professorTab.contatoNome1}" />
-					             <br/>
-					             <h:outputText value="#{professorTab.contatoTelefone2}" />
-					             <h:outputText value=" " />
-					             <h:outputText value="#{professorTab.contatoNome2}" />
-					             <br/>
-					             <h:outputText value="#{professorTab.contatoTelefone3}" />
-					             <h:outputText value=" " />
-					             <h:outputText value="#{professorTab.contatoNome3}" />
-					             <br/>
-					             <h:outputText value="#{professorTab.contatoTelefone4}" />
-					             <h:outputText value=" " />
-					             <h:outputText value="#{professorTab.contatoNome4}" />						
 
-					</p:column>	
-					
+					<p:column style="text-align:center; width:8%;" headerText="WA Status">
+						<h:outputText value="#{alunoController.getWhatsAppStatusHtml(professorTab)}" escape="false" /><br/>
+						<h:outputText value="#{professorTab.dataUltimaSincWhatsApp}" rendered="#{professorTab.dataUltimaSincWhatsApp != null}" style="font-size:10px;color:#999;">
+							<f:convertDateTime pattern="dd/MM HH:mm" timeZone="GMT-3" />
+						</h:outputText>
+					</p:column>
 
-					<p:column style="text-align: center; width:8%" 
-					styleClass="#{alunoController.marcarLinha(professorTab)}">
-						<f:facet name="header">
-							<h:outputText value="Remover" />
-						</f:facet>
-						
-							<p:commandButton update="tbl" icon="ui-icon-trash" action="#{alunoController.remover(professorTab.id)}" >
-								
-							</p:commandButton>
+					<p:column style="text-align:center; width:26%;" headerText="Ações">
+						<div style="display:flex; gap:3px; justify-content:center; flex-wrap:wrap; align-items:center;">
+							<p:commandButton value="Cob.1" update="tbl"
+								style="background:#90CAF9; border-color:#90CAF9; color:#1a1a1a; font-size:10px; padding:1px 5px; min-width:0;"
+								onclick="if(!confirm('Enviar cobrança 1 para #{professorTab.nomeAluno}?')) return false;"
+								action="#{relatorioController.enviarCobranca1(professorTab.id)}" />
+							<p:commandButton value="Cob.2" update="tbl"
+								style="background:#FFCC80; border-color:#FFCC80; color:#1a1a1a; font-size:10px; padding:1px 5px; min-width:0;"
+								onclick="if(!confirm('Enviar cobrança 2 para #{professorTab.nomeAluno}?')) return false;"
+								action="#{relatorioController.enviarCobranca2(professorTab.id)}" />
+							<p:commandButton icon="ui-icon-comment"
+								title="Ver conversas"
+								update="panelConversa"
+								style="font-size:10px; padding:1px 5px; min-width:0;"
+								action="#{alunoController.abrirConversa(professorTab)}"
+								oncomplete="PF('dlgConversa').show();" />
+							<p:commandButton value="✓ Cobrado"
+								title="Registrar cobrança feita"
+								update="panelModalCobranca"
+								style="background:#7986CB; border-color:#7986CB; color:white; font-size:10px; padding:1px 5px; min-width:0;"
+								action="#{relatorioController.abrirModalCobranca(professorTab.id)}"
+								oncomplete="PF('dlgCobrancaFeita').show();" />
+							<p:commandButton value="Protestar" update="tbl"
+								title="Marcar contrato(s) em atraso para protestar depois"
+								style="background:#B71C1C; border-color:#B71C1C; color:white; font-size:10px; padding:1px 5px; min-width:0;"
+								onclick="if(!confirm('Marcar contrato(s) de #{professorTab.nomeAluno} para protestar?')) return false;"
+								action="#{relatorioController.marcarProtestar(professorTab.id)}" />
+						</div>
+					</p:column>
+
+					<p:column style="text-align:left; width:14%;" headerText="Última Cobrança">
+						<h:panelGroup rendered="#{professorTab.dataUltimaCobranca != null}">
+							<div style="font-size:10px; color:#555;">
+								<h:outputText value="#{professorTab.dataUltimaCobranca}" style="font-weight:bold;">
+									<f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="GMT-3"/>
+								</h:outputText>
+								<br/>
+								<h:outputText value="#{professorTab.observacaoCobranca}" style="color:#333;"/>
+							</div>
+						</h:panelGroup>
 					</p:column>
 
 				</p:dataTable>
-</h:panelGrid>
+			</div>
+
+			<h:commandButton id="voltarButtomDash" immediate="true"
+				action="#{alunoController.voltarDash()}" value="Voltar Dashboard"
+				style="margin-top:8px;" />
+
+			<p:dialog header="Registrar Cobrança" widgetVar="dlgCobrancaFeita"
+					width="500" modal="true" showEffect="fade">
+				<h:panelGroup id="panelModalCobranca" layout="block" style="padding:10px;">
+					<div style="margin-bottom:8px;">
+						<label style="font-size:12px; color:#555; font-weight:bold;">Alterar status WA:</label>
+						<p:selectOneMenu value="#{relatorioController.statusCobrancaTemp}"
+							style="width:100%; margin-top:4px;">
+							<f:selectItem itemValue="" itemLabel="— Manter atual —" />
+							<f:selectItem itemValue="RESOLVIDO" itemLabel="✓ Resolvido" />
+							<f:selectItem itemValue="NAO_COBRAR" itemLabel="Pago / Não cobrar" />
+							<f:selectItem itemValue="PODE_COBRAR" itemLabel="Cobrar" />
+							<f:selectItem itemValue="INDECISO" itemLabel="Indeciso" />
+						</p:selectOneMenu>
+					</div>
+					<div style="margin-bottom:10px; font-size:12px; color:#555; font-weight:bold; margin-top:10px;">
+						Observação:
+					</div>
+					<p:inputTextarea value="#{relatorioController.observacaoCobrancaTemp}"
+						rows="4" style="width:100%; font-size:13px;" placeholder="Ex: Responsável prometeu pagar até dia 20..." />
+					<div style="display:flex; justify-content:space-between; margin-top:12px;">
+						<p:commandButton value="Cancelar"
+							style="background:#aaa; border-color:#aaa; color:white;"
+							onclick="PF('dlgCobrancaFeita').hide(); return false;" />
+						<p:commandButton value="Salvar"
+							style="background:#4CAF50; border-color:#4CAF50; color:white; font-weight:bold;"
+							action="#{relatorioController.salvarCobrancaFeita()}"
+							update="tbl messages"
+							oncomplete="PF('dlgCobrancaFeita').hide();" />
+					</div>
+				</h:panelGroup>
+			</p:dialog>
+
+			<p:dialog header="Conversas WhatsApp" widgetVar="dlgConversa"
+					height="520" width="850" showEffect="fade" modal="true">
+				<h:panelGroup id="panelConversa" layout="block" style="width:100%">
+
+					<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+						<p:commandButton rendered="#{alunoController.alunoConversa != null}"
+							value="#{alunoController.alunoConversa.contatoTelefone1} #{alunoController.alunoConversa.contatoNome1}"
+							style="font-size:11px; width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+							update="panelConversa"
+							action="#{alunoController.carregarMensagens(alunoController.alunoConversa.contatoTelefone1)}" />
+						<p:commandButton rendered="#{alunoController.alunoConversa != null and alunoController.alunoConversa.contatoTelefone2 != null}"
+							value="#{alunoController.alunoConversa.contatoTelefone2} #{alunoController.alunoConversa.contatoNome2}"
+							style="font-size:11px; width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+							update="panelConversa"
+							action="#{alunoController.carregarMensagens(alunoController.alunoConversa.contatoTelefone2)}" />
+						<p:commandButton rendered="#{alunoController.alunoConversa != null and alunoController.alunoConversa.contatoTelefone3 != null}"
+							value="#{alunoController.alunoConversa.contatoTelefone3} #{alunoController.alunoConversa.contatoNome3}"
+							style="font-size:11px; width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+							update="panelConversa"
+							action="#{alunoController.carregarMensagens(alunoController.alunoConversa.contatoTelefone3)}" />
+						<p:commandButton rendered="#{alunoController.alunoConversa != null and alunoController.alunoConversa.contatoTelefone4 != null}"
+							value="#{alunoController.alunoConversa.contatoTelefone4} #{alunoController.alunoConversa.contatoNome4}"
+							style="font-size:11px; width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+							update="panelConversa"
+							action="#{alunoController.carregarMensagens(alunoController.alunoConversa.contatoTelefone4)}" />
+					</div>
+
+					<div style="font-size:11px; font-weight:bold; color:#075e54; margin-bottom:4px;">Histórico de mensagens</div>
+					<div style="height:400px; overflow-y:auto; border:1px solid #ddd; padding:8px; background:#f5f5f5; width:100%; box-sizing:border-box;">
+						<h:outputText rendered="#{empty alunoController.listaMensagens}"
+							value="Nenhuma mensagem ainda. Envie uma cobrança para iniciar."
+							style="color:#aaa; font-size:12px;" />
+						<ui:repeat value="#{alunoController.listaMensagens}" var="msg">
+							<h:panelGroup layout="block" rendered="#{msg.primeiro}"
+								style="background:#fff; border-radius:8px; padding:6px 10px; margin:3px 40px 3px 0; word-wrap:break-word; box-shadow:0 1px 2px rgba(0,0,0,0.1); clear:both;">
+								<h:outputText value="#{msg.text}" style="font-size:12px; display:block;"/>
+								<h:outputText value="#{msg.dataFormatada}" style="font-size:10px; color:#999; display:block; text-align:right; margin-top:2px;"/>
+							</h:panelGroup>
+							<h:panelGroup layout="block" rendered="#{not msg.primeiro}"
+								style="background:#dcf8c6; border-radius:8px; padding:6px 10px; margin:3px 0 3px 40px; word-wrap:break-word; box-shadow:0 1px 2px rgba(0,0,0,0.1); float:right; clear:both;">
+								<h:outputText value="#{msg.text}" style="font-size:12px; display:block;"/>
+								<h:outputText value="#{msg.dataFormatada}" style="font-size:10px; color:#777; display:block; text-align:right; margin-top:2px;"/>
+							</h:panelGroup>
+							<div style="clear:both;"/>
+						</ui:repeat>
+					</div>
+
+				</h:panelGroup>
+			</p:dialog>
+
 		</h:form>
 	</ui:define>
 </ui:composition>

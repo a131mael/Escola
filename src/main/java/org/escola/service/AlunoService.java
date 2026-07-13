@@ -2078,4 +2078,44 @@ public class AlunoService extends Service {
 		em.merge(contratoa);
 		em.flush();
 	}
+
+	public void saveStatusWhatsAppSync(Aluno al) {
+		Aluno ap = findById(al.getId());
+		if (ap != null) {
+			ap.setStatusWhatsAppSync(al.getStatusWhatsAppSync());
+			ap.setDataUltimaSincWhatsApp(al.getDataUltimaSincWhatsApp());
+			em.merge(ap);
+			em.flush();
+		}
+	}
+
+	public void saveCobrancaFeita(Aluno al) {
+		Aluno ap = findById(al.getId());
+		if (ap != null) {
+			ap.setDataUltimaCobranca(al.getDataUltimaCobranca());
+			ap.setObservacaoCobranca(al.getObservacaoCobranca());
+			if (al.getStatusWhatsAppSync() != null && !al.getStatusWhatsAppSync().isEmpty()) {
+				ap.setStatusWhatsAppSync(al.getStatusWhatsAppSync());
+			}
+			em.merge(ap);
+			em.flush();
+		}
+	}
+
+	public List<Aluno> findAlunoPorNomeContato(String nomeContato) {
+		if (nomeContato == null || nomeContato.trim().isEmpty()) return new java.util.ArrayList<Aluno>();
+		String n = "%" + nomeContato.trim().toLowerCase() + "%";
+		try {
+			return em.createQuery(
+				"SELECT DISTINCT a FROM Aluno a WHERE " +
+				"LOWER(a.contatoNome1) LIKE :n OR LOWER(a.contatoNome2) LIKE :n OR " +
+				"LOWER(a.contatoNome3) LIKE :n OR LOWER(a.contatoNome4) LIKE :n",
+				Aluno.class)
+				.setParameter("n", n)
+				.setMaxResults(5)
+				.getResultList();
+		} catch (Exception e) {
+			return new java.util.ArrayList<Aluno>();
+		}
+	}
 }

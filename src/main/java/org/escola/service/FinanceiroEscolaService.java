@@ -620,6 +620,19 @@ public class FinanceiroEscolaService extends Service {
 	
 	
 	@SuppressWarnings("unchecked")
+	public List<ContratoAluno> findContratoAtrasadoMes(Long alunoId, Integer mes, Integer ano) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select distinct contrato.* from boleto bol left join contratoaluno contrato on bol.contrato_id = contrato.id where ");
+		sql.append(getIntervaloMes(mes, ano));
+		sql.append(" and bol.pagador_id = ").append(alunoId);
+		sql.append(" and (bol.cancelado is null or bol.cancelado = false) and bol.datapagamento is null");
+		sql.append(" and (contrato.protestado is null or contrato.protestado = false)");
+
+		Query query = em.createNativeQuery(sql.toString(), ContratoAluno.class);
+		List<ContratoAluno> contratos = query.getResultList();
+		return contratos != null ? contratos : new ArrayList<>();
+	}
+
 	public List<Aluno> findAlunoMes(int first, int size, String orderBy, String order,	Map<String, Object> filtros) {
 			
 			StringBuilder sql = new StringBuilder();
