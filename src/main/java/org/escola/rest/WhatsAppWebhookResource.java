@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import org.escola.model.Aluno;
 import org.escola.service.AlunoService;
+import org.escola.service.EvolutionApiService;
 import org.escola.service.MensagemWhatsAppService;
 
 @Stateless
@@ -24,6 +25,9 @@ public class WhatsAppWebhookResource {
 
 	@Inject
 	private MensagemWhatsAppService mensagemWhatsAppService;
+
+	@Inject
+	private EvolutionApiService evolutionApiService;
 
 	@POST
 	@Path("/whatsapp")
@@ -48,12 +52,13 @@ public class WhatsAppWebhookResource {
 			String text = extractJsonString(payload, "conversation");
 			if (text == null) text = extractJsonString(payload, "text");
 			if (text == null) text = extractJsonString(payload, "caption");
+			boolean midia = false;
 			if (text == null) {
-				if (payload.contains("\"imageMessage\"")) text = "[Imagem]";
-				else if (payload.contains("\"videoMessage\"")) text = "[Vídeo]";
-				else if (payload.contains("\"audioMessage\"") || payload.contains("\"pttMessage\"")) text = "[Áudio]";
-				else if (payload.contains("\"documentMessage\"")) text = "[Documento]";
-				else if (payload.contains("\"stickerMessage\"")) text = "[Sticker]";
+				if (payload.contains("\"imageMessage\"")) { text = "[Imagem]"; midia = true; }
+				else if (payload.contains("\"videoMessage\"")) { text = "[Vídeo]"; midia = true; }
+				else if (payload.contains("\"audioMessage\"") || payload.contains("\"pttMessage\"")) { text = "[Áudio]"; midia = true; }
+				else if (payload.contains("\"documentMessage\"")) { text = "[Documento]"; midia = true; }
+				else if (payload.contains("\"stickerMessage\"")) { text = "[Sticker]"; midia = true; }
 				else if (payload.contains("\"reactionMessage\"")) return Response.ok("{}").build();
 				else text = "[Mensagem]";
 			}
@@ -63,7 +68,22 @@ public class WhatsAppWebhookResource {
 				Aluno aluno = alunos.get(0);
 				String telefone = getPrimTelefoneValido(aluno);
 				if (telefone != null) {
-					mensagemWhatsAppService.salvarRecebida(aluno, telefone, messageId, text, ts);
+					byte[] midiaBytes = null;
+					String midiaMimetype = null;
+					if (midia && messageId != null) {
+						// busca o arquivo real agora, enquanto o link do WhatsApp ainda está fresco -
+						// evita depender de buscar depois, quando pode já ter expirado
+						try {
+							EvolutionApiService.MidiaResult mr = evolutionApiService.buscarMidia(messageId, telefone, false);
+							if (mr != null && mr.getBytes() != null) {
+								midiaBytes = mr.getBytes();
+								midiaMimetype = mr.getMimetype();
+							}
+						} catch (Exception e) {
+							System.err.println("WhatsAppWebhookResource: falha ao baixar mídia " + messageId + ": " + e.getMessage());
+						}
+					}
+					mensagemWhatsAppService.salvarRecebida(aluno, telefone, messageId, text, ts, midiaBytes, midiaMimetype);
 				}
 			}
 		} catch (Exception e) {

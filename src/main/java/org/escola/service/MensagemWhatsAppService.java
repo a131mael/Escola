@@ -23,6 +23,9 @@ public class MensagemWhatsAppService implements Serializable {
 	@PersistenceContext
 	private EntityManager em;
 
+	@javax.inject.Inject
+	private EvolutionApiService evolutionApiService;
+
 	public List<MensagemWA> carregarDosBanco(Aluno aluno, String telefone) {
 		if (aluno == null || telefone == null) return new ArrayList<MensagemWA>();
 		String telNorm = telefone.replaceAll("[^0-9]", "");
@@ -58,6 +61,11 @@ public class MensagemWhatsAppService implements Serializable {
 	}
 
 	public void salvarRecebida(Aluno aluno, String telefone, String messageId, String texto, long waTimestamp) {
+		salvarRecebida(aluno, telefone, messageId, texto, waTimestamp, null, null);
+	}
+
+	public void salvarRecebida(Aluno aluno, String telefone, String messageId, String texto, long waTimestamp,
+			byte[] midia, String midiaMimetype) {
 		if (aluno == null || telefone == null || texto == null) return;
 		String telNorm = telefone.replaceAll("[^0-9]", "");
 		if (telNorm.isEmpty()) return;
@@ -67,7 +75,30 @@ public class MensagemWhatsAppService implements Serializable {
 			if (count > 0) return;
 		}
 		MensagemWhatsApp msg = new MensagemWhatsApp(aluno, telNorm, messageId, texto, false, waTimestamp);
+		msg.setMidia(midia);
+		msg.setMidiaMimetype(midiaMimetype);
 		em.persist(msg);
+		em.flush();
+	}
+
+	public MensagemWhatsApp buscarPorMessageId(String messageId) {
+		if (messageId == null || messageId.trim().isEmpty()) return null;
+		try {
+			return em.createQuery("SELECT m FROM MensagemWhatsApp m WHERE m.messageId = :mid", MensagemWhatsApp.class)
+				.setParameter("mid", messageId)
+				.getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public void salvarMidia(Long msgId, byte[] midia, String midiaMimetype) {
+		if (msgId == null || midia == null) return;
+		MensagemWhatsApp msg = em.find(MensagemWhatsApp.class, msgId);
+		if (msg == null) return;
+		msg.setMidia(midia);
+		msg.setMidiaMimetype(midiaMimetype);
+		em.merge(msg);
 		em.flush();
 	}
 
@@ -99,6 +130,20 @@ public class MensagemWhatsAppService implements Serializable {
 
 			MensagemWhatsApp msg = new MensagemWhatsApp(
 				aluno, telNorm, wa.getMessageId(), wa.getText(), wa.isFromMe(), wa.getTimestamp());
+
+			if (wa.isMidia() && wa.getMessageId() != null && !wa.getMessageId().isEmpty()) {
+				try {
+					EvolutionApiService.MidiaResult midia = evolutionApiService.buscarMidia(
+						wa.getMessageId(), telNorm, wa.isFromMe());
+					if (midia != null && midia.getBytes() != null) {
+						msg.setMidia(midia.getBytes());
+						msg.setMidiaMimetype(midia.getMimetype());
+					}
+				} catch (Exception e) {
+					System.err.println("salvarNovas: falha ao baixar mídia " + wa.getMessageId() + ": " + e.getMessage());
+				}
+			}
+
 			em.persist(msg);
 		}
 		em.flush();
