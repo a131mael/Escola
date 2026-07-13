@@ -1,6 +1,7 @@
 package org.escola.service;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -110,6 +112,67 @@ public class EvolutionApiService implements Serializable {
 			}
 		}
 		return INDECISO;
+	}
+
+	public static class MidiaResult implements Serializable {
+		private static final long serialVersionUID = 1L;
+		private byte[] bytes;
+		private String mimetype;
+
+		public byte[] getBytes() { return bytes; }
+		public void setBytes(byte[] bytes) { this.bytes = bytes; }
+		public String getMimetype() { return mimetype; }
+		public void setMimetype(String mimetype) { this.mimetype = mimetype; }
+	}
+
+	// Baixa o conteúdo real (base64) de uma mensagem de mídia (imagem/áudio/documento/vídeo) via Evolution API.
+	// Só funciona enquanto o link de mídia ainda não expirou no WhatsApp (geralmente algumas semanas).
+	public MidiaResult buscarMidia(String messageId, String telefone, boolean fromMe) {
+		try {
+			if (messageId == null || messageId.trim().isEmpty()) return null;
+			String jid = resolverJid(telefone);
+			if (jid == null) return null;
+
+			URL url = new URL(BASE_URL + "/chat/getBase64FromMediaMessage/" + INSTANCE);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("apikey", API_KEY);
+			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setDoOutput(true);
+			conn.setConnectTimeout(15000);
+			conn.setReadTimeout(30000);
+
+			String body = "{\"message\":{\"key\":{\"id\":\"" + messageId + "\",\"remoteJid\":\"" + jid
+					+ "\",\"fromMe\":" + fromMe + "}}}";
+			try (OutputStream os = conn.getOutputStream()) {
+				os.write(body.getBytes("UTF-8"));
+			}
+
+			int code = conn.getResponseCode();
+			InputStream is = (code >= 200 && code < 300) ? conn.getInputStream() : conn.getErrorStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = br.readLine()) != null) sb.append(line);
+			br.close();
+
+			if (code < 200 || code >= 300) {
+				System.err.println("EvolutionApiService.buscarMidia HTTP " + code + ": " + sb);
+				return null;
+			}
+
+			String resp = sb.toString();
+			String base64 = extractJsonString(resp, "base64");
+			if (base64 == null || base64.isEmpty()) return null;
+
+			MidiaResult result = new MidiaResult();
+			result.setBytes(Base64.getDecoder().decode(base64));
+			result.setMimetype(extractJsonString(resp, "mimetype"));
+			return result;
+		} catch (Exception e) {
+			System.err.println("EvolutionApiService.buscarMidia erro: " + e.getMessage());
+			return null;
+		}
 	}
 
 	public String resolverJid(String numero) {

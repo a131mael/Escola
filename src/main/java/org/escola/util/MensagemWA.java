@@ -39,6 +39,12 @@ public class MensagemWA {
 	public String getMessageId() { return messageId; }
 	public String getPushName() { return pushName != null ? pushName : ""; }
 
+	public boolean isImagem() { return "[Imagem]".equals(text); }
+	public boolean isAudio() { return "[Áudio]".equals(text); }
+	public boolean isVideo() { return "[Vídeo]".equals(text); }
+	public boolean isDocumento() { return text != null && text.startsWith("[Documento"); }
+	public boolean isMidia() { return isImagem() || isAudio() || isVideo() || isDocumento(); }
+
 	public String getDataFormatada() {
 		if (timestamp <= 0) return "";
 		try {

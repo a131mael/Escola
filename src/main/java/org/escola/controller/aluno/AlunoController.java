@@ -851,6 +851,7 @@ public class AlunoController implements Serializable {
 	private Aluno alunoConversa;
 	private List<MensagemWA> listaMensagens = new ArrayList<MensagemWA>();
 	private List<MensagemWA> listaMensagensInbox = new ArrayList<MensagemWA>();
+	private String telefoneAtual;
 
 	public void abrirConversa(Aluno a) {
 		alunoConversa = a;
@@ -866,6 +867,8 @@ public class AlunoController implements Serializable {
 	public void carregarMensagens(String telefone) {
 		if (telefone == null || telefone.trim().isEmpty()) return;
 		if (alunoConversa == null) return;
+
+		this.telefoneAtual = telefone;
 
 		// 1. busca do banco o que já temos
 		listaMensagens = mensagemWhatsAppService.carregarDosBanco(alunoConversa, telefone);
@@ -890,6 +893,8 @@ public class AlunoController implements Serializable {
 	public List<MensagemWA> getListaMensagens() { return listaMensagens; }
 
 	public List<MensagemWA> getListaMensagensInbox() { return listaMensagensInbox; }
+
+	public String getTelefoneAtual() { return telefoneAtual; }
 
 	public String marcarLinhaChamada(Aluno aluno) {
 		String cor = "";

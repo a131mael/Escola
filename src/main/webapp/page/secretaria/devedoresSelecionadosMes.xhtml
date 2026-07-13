@@ -225,12 +225,52 @@
 						<ui:repeat value="#{alunoController.listaMensagens}" var="msg">
 							<h:panelGroup layout="block" rendered="#{msg.primeiro}"
 								style="background:#fff; border-radius:8px; padding:6px 10px; margin:3px 40px 3px 0; word-wrap:break-word; box-shadow:0 1px 2px rgba(0,0,0,0.1); clear:both;">
-								<h:outputText value="#{msg.text}" style="font-size:12px; display:block;"/>
+								<h:panelGroup rendered="#{msg.imagem}">
+									<img src="#{request.contextPath}/rest/whatsapp/midia?id=#{msg.messageId}&amp;tel=#{alunoController.telefoneAtual}&amp;fromMe=#{msg.fromMe}"
+										style="max-width:220px; max-height:220px; border-radius:6px; display:block;"
+										onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '&lt;span style=\'font-size:11px;color:#999;\'&gt;⚠ imagem expirada no WhatsApp&lt;/span&gt;');" />
+								</h:panelGroup>
+								<h:panelGroup rendered="#{msg.audio}">
+									<audio controls="controls" style="max-width:220px; display:block;"
+										onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '&lt;span style=\'font-size:11px;color:#999;\'&gt;⚠ áudio expirado no WhatsApp&lt;/span&gt;');">
+										<source src="#{request.contextPath}/rest/whatsapp/midia?id=#{msg.messageId}&amp;tel=#{alunoController.telefoneAtual}&amp;fromMe=#{msg.fromMe}" />
+									</audio>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{msg.video}">
+									<video controls="controls" style="max-width:220px; border-radius:6px; display:block;">
+										<source src="#{request.contextPath}/rest/whatsapp/midia?id=#{msg.messageId}&amp;tel=#{alunoController.telefoneAtual}&amp;fromMe=#{msg.fromMe}" />
+									</video>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{msg.documento}">
+									<a href="#{request.contextPath}/rest/whatsapp/midia?id=#{msg.messageId}&amp;tel=#{alunoController.telefoneAtual}&amp;fromMe=#{msg.fromMe}"
+										target="_blank" style="font-size:12px; color:#075e54;">📄 #{msg.text}</a>
+								</h:panelGroup>
+								<h:outputText value="#{msg.text}" rendered="#{not msg.midia}" style="font-size:12px; display:block;"/>
 								<h:outputText value="#{msg.dataFormatada}" style="font-size:10px; color:#999; display:block; text-align:right; margin-top:2px;"/>
 							</h:panelGroup>
 							<h:panelGroup layout="block" rendered="#{not msg.primeiro}"
 								style="background:#dcf8c6; border-radius:8px; padding:6px 10px; margin:3px 0 3px 40px; word-wrap:break-word; box-shadow:0 1px 2px rgba(0,0,0,0.1); float:right; clear:both;">
-								<h:outputText value="#{msg.text}" style="font-size:12px; display:block;"/>
+								<h:panelGroup rendered="#{msg.imagem}">
+									<img src="#{request.contextPath}/rest/whatsapp/midia?id=#{msg.messageId}&amp;tel=#{alunoController.telefoneAtual}&amp;fromMe=#{msg.fromMe}"
+										style="max-width:220px; max-height:220px; border-radius:6px; display:block;"
+										onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '&lt;span style=\'font-size:11px;color:#999;\'&gt;⚠ imagem expirada no WhatsApp&lt;/span&gt;');" />
+								</h:panelGroup>
+								<h:panelGroup rendered="#{msg.audio}">
+									<audio controls="controls" style="max-width:220px; display:block;"
+										onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '&lt;span style=\'font-size:11px;color:#999;\'&gt;⚠ áudio expirado no WhatsApp&lt;/span&gt;');">
+										<source src="#{request.contextPath}/rest/whatsapp/midia?id=#{msg.messageId}&amp;tel=#{alunoController.telefoneAtual}&amp;fromMe=#{msg.fromMe}" />
+									</audio>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{msg.video}">
+									<video controls="controls" style="max-width:220px; border-radius:6px; display:block;">
+										<source src="#{request.contextPath}/rest/whatsapp/midia?id=#{msg.messageId}&amp;tel=#{alunoController.telefoneAtual}&amp;fromMe=#{msg.fromMe}" />
+									</video>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{msg.documento}">
+									<a href="#{request.contextPath}/rest/whatsapp/midia?id=#{msg.messageId}&amp;tel=#{alunoController.telefoneAtual}&amp;fromMe=#{msg.fromMe}"
+										target="_blank" style="font-size:12px; color:#075e54;">📄 #{msg.text}</a>
+								</h:panelGroup>
+								<h:outputText value="#{msg.text}" rendered="#{not msg.midia}" style="font-size:12px; display:block;"/>
 								<h:outputText value="#{msg.dataFormatada}" style="font-size:10px; color:#777; display:block; text-align:right; margin-top:2px;"/>
 							</h:panelGroup>
 							<div style="clear:both;"/>
