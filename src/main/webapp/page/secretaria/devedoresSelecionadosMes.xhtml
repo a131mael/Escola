@@ -87,7 +87,7 @@
 						<h:outputText value="#{alunoController.getNomeResponsavelDevedor(professorTab)}" />
 					</p:column>
 
-					<p:column style="text-align:center; width:7%;" headerText="CPF">
+					<p:column style="text-align:center; width:5%;" headerText="CPF">
 						<h:outputText value="#{alunoController.getCPFResponsavelDevedor(professorTab)}" />
 					</p:column>
 
@@ -102,14 +102,14 @@
 						<h:outputText value=" #{professorTab.contatoNome4}" />
 					</p:column>
 
-					<p:column style="text-align:center; width:8%;" headerText="WA Status">
+					<p:column style="text-align:center; width:6%;" headerText="WA Status">
 						<h:outputText value="#{alunoController.getWhatsAppStatusHtml(professorTab)}" escape="false" /><br/>
 						<h:outputText value="#{professorTab.dataUltimaSincWhatsApp}" rendered="#{professorTab.dataUltimaSincWhatsApp != null}" style="font-size:10px;color:#999;">
 							<f:convertDateTime pattern="dd/MM HH:mm" timeZone="GMT-3" />
 						</h:outputText>
 					</p:column>
 
-					<p:column style="text-align:center; width:26%;" headerText="Ações">
+					<p:column style="text-align:center; width:30%;" headerText="Ações">
 						<div style="display:flex; gap:3px; justify-content:center; flex-wrap:wrap; align-items:center;">
 							<p:commandButton value="Cob.1" update="tbl"
 								style="background:#90CAF9; border-color:#90CAF9; color:#1a1a1a; font-size:10px; padding:1px 5px; min-width:0;"
@@ -133,7 +133,7 @@
 								oncomplete="PF('dlgCobrancaFeita').show();" />
 							<p:commandButton value="Protestar" update="tbl"
 								title="Marcar contrato(s) em atraso para protestar depois"
-								style="background:#B71C1C; border-color:#B71C1C; color:white; font-size:10px; padding:1px 5px; min-width:0;"
+								style="background:#EF9A9A; border-color:#EF9A9A; color:#1a1a1a; font-size:10px; padding:1px 5px; min-width:0; white-space:nowrap;"
 								onclick="if(!confirm('Marcar contrato(s) de #{professorTab.nomeAluno} para protestar?')) return false;"
 								action="#{relatorioController.marcarProtestar(professorTab.id)}" />
 						</div>
