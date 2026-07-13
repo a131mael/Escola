@@ -123,7 +123,9 @@
 					<p:column filterBy="#{contratoalunotab.nomeResponsavel}"
 						style="text-align: center;width:9%;"
 						styleClass="#{devedorController.marcarLinha(contratoalunotab)}"
-						headerText="Responsavel">
+						headerText="Responsável / CPF / Aluno"
+						filterMatchMode="contains"
+						filterStyle="width:95%;">
 						<h:outputText value="#{contratoalunotab.nomeResponsavel}" />
 						<br/>
 						<h:outputText value="CPF:" />

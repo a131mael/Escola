@@ -521,38 +521,32 @@ public class DevedorService extends Service {
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("select bol.* from boleto bol ");
-			sql.append("left join contratoaluno ca ");
-			sql.append("on bol.contrato_id = ca.id ");
+			sql.append("left join contratoaluno ca on bol.contrato_id = ca.id ");
+			sql.append("left join aluno al2 on ca.aluno_id = al2.id ");
 			sql.append("where ");
-			sql.append("bol.vencimento < '");
-			sql.append(new Date());
-			sql.append("'");
+			sql.append("bol.vencimento < :hoje");
 
 			// Contrato/boleto vencido há mais de 1 ano não pode mais ser protestado - já sai da listagem
 			Calendar limiteProtesto = Calendar.getInstance();
 			limiteProtesto.add(Calendar.YEAR, -1);
-			sql.append(" and bol.vencimento > '");
-			sql.append(limiteProtesto.getTime());
-			sql.append("'");
+			sql.append(" and bol.vencimento > :limiteProtesto");
 
 			if (getDataInicio() != null) {
-				sql.append(" and bol.vencimento > '");
-				sql.append(getDataInicio());
-				sql.append("'");
+				sql.append(" and bol.vencimento > :dataInicio");
 			}
 
 			if (getDataFim() != null) {
-				sql.append(" and bol.vencimento < '");
-				sql.append(getDataFim());
-				sql.append("'");
+				sql.append(" and bol.vencimento < :dataFim");
 			}
 
-			if(filtros.get("nomeResponsavel") != null  ) {
-				sql.append(" and UPPER(ca.nomeresponsavel) like UPPER('%");
-				sql.append(filtros.get("nomeResponsavel"));
-				sql.append("%')");
+			Object termoBusca = filtros.get("nomeResponsavel");
+			boolean temBusca = termoBusca != null && !termoBusca.toString().trim().isEmpty();
+			if (temBusca) {
+				sql.append(" and (ca.nomeresponsavel ilike :termoBusca");
+				sql.append(" or ca.cpfresponsavel ilike :termoBusca");
+				sql.append(" or al2.nomealuno ilike :termoBusca)");
 			}
-			
+
 			sql.append(" and (bol.valorpago<bol.valornominal -20 or bol.valorpago is null)");
 			sql.append(" and (bol.baixagerada is null or bol.baixagerada = false)");
 			sql.append(" and (bol.baixamanual is null or bol.baixamanual = false)");
@@ -560,8 +554,20 @@ public class DevedorService extends Service {
 			sql.append(" and (bol.dividaPerdoada is null or bol.dividaPerdoada = false)");
 			sql.append(" and ca.protestado = true");
 			sql.append(" and (ca.enviadoProtestoDefinitivo is null or ca.enviadoProtestoDefinitivo = false)");
+			sql.append(" order by ca.dataprotesto desc nulls last");
 
 			Query query = em.createNativeQuery(sql.toString(), Boleto.class);
+			query.setParameter("hoje", new Date());
+			query.setParameter("limiteProtesto", limiteProtesto.getTime());
+			if (getDataInicio() != null) {
+				query.setParameter("dataInicio", getDataInicio());
+			}
+			if (getDataFim() != null) {
+				query.setParameter("dataFim", getDataFim());
+			}
+			if (temBusca) {
+				query.setParameter("termoBusca", "%" + termoBusca.toString().trim() + "%");
+			}
 			query.setFirstResult(first);
 			List<Boleto> boletos = query.getResultList();
 			if (boletos == null) {
@@ -582,6 +588,7 @@ public class DevedorService extends Service {
 			}
 			return aux;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -1195,6 +1202,7 @@ public class DevedorService extends Service {
 		ContratoAluno caa = findByIdContratoAluno(ca.getId());
 		caa.setProtestado(true);
 		caa.setEnviadoParaCobrancaCDL(true);
+		caa.setDataProtesto(new Date());
 		em.merge(caa);
 		em.flush();
 	}
@@ -1282,6 +1290,7 @@ public class DevedorService extends Service {
 				ContratoAluno caa = findByIdContratoAluno(ca.getId());
 				caa.setProtestado(true);
 				caa.setEnviadoParaCobrancaCDL(true);
+				caa.setDataProtesto(new Date());
 				em.merge(caa);
 			}
 		}
