@@ -34,7 +34,9 @@
 	
 	<p:menuitem value="Home" url="../secretaria/index.jsf"
 			icon="ui-icon-search" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}"/>
-		
+
+		<p:menuitem value="Arquivos" url="../arquivos/index.jsf"
+			icon="ui-icon-folder-open" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}"/>
 
 		<p:submenu label="Crianças" rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" >
 			

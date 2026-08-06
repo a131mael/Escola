@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" style="width:100%; border:none">
+
+			<h3>Arquivos escaneados</h3>
+			<p style="color:#777;margin-top:-10px">
+				PDFs enviados pela impressora (scan) direto pra pasta do servidor. Mais recentes primeiro.
+			</p>
+
+			<p:dataTable id="tbl" var="arq" value="#{arquivosController.arquivos}"
+				paginator="true" rows="30"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="15,30,60,100"
+				emptyMessage="Nenhum arquivo encontrado.">
+
+				<p:column headerText="Data" filterBy="#{arq.pasta}" sortBy="#{arq.pasta}" style="width:15%">
+					<h:outputText value="#{arq.pasta}" />
+				</p:column>
+
+				<p:column headerText="Arquivo" filterBy="#{arq.nome}" sortBy="#{arq.nome}">
+					<h:outputText value="#{arq.nome}" />
+				</p:column>
+
+				<p:column headerText="Recebido em" sortBy="#{arq.dataModificacao}" style="width:18%">
+					<h:outputText value="#{arq.dataModificacao}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Tamanho" sortBy="#{arq.tamanho}" style="width:10%;text-align:center">
+					<h:outputText value="#{arq.tamanho / 1024}">
+						<f:convertNumber maxFractionDigits="0" />
+					</h:outputText>
+					<h:outputText value=" KB" />
+				</p:column>
+
+				<p:column headerText="Baixar" style="width:8%;text-align:center">
+					<p:commandButton icon="ui-icon-arrowthickstop-1-s" ajax="false" title="Baixar"
+						onclick="PrimeFaces.monitorDownload(start, stop);">
+						<p:fileDownload value="#{arquivosController.baixar(arq)}" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
