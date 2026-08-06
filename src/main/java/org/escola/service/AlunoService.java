@@ -1584,34 +1584,51 @@ public class AlunoService extends Service {
 		return codigo + 1;
 	}
 
-	public List<Aluno> findAluno(String nome, String nomeResponsavel, String cpf, String numeroDocumento) {
+	public List<Aluno> findAluno(String nome, String nomeResponsavel, String cpf, String buscaGeral) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT distinct(cont) from  Boleto bol ");
 		sql.append("left join bol.contrato cont ");
 
-		sql.append("where 1=2 ");
-		if (nome != null && !nome.equalsIgnoreCase("")) {
-			sql.append(" or cont.aluno.nomeAluno like '%");
-			sql.append(nome);
-			sql.append("%' ");
+		List<String> condicoes = new ArrayList<>();
+
+		if (nome != null && !nome.trim().equalsIgnoreCase("")) {
+			condicoes.add("FUNCTION('unaccent', upper(cont.aluno.nomeAluno)) like FUNCTION('unaccent', upper('%"
+				+ nome.trim() + "%'))");
+		}
+		if (nomeResponsavel != null && !nomeResponsavel.trim().equalsIgnoreCase("")) {
+			condicoes.add("FUNCTION('unaccent', upper(cont.nomeResponsavel)) like FUNCTION('unaccent', upper('%"
+				+ nomeResponsavel.trim() + "%'))");
+		}
+		if (cpf != null && !cpf.trim().equalsIgnoreCase("")) {
+			String cpfLimpo = cpf.replaceAll("[^0-9]", "");
+			condicoes.add("cont.cpfResponsavel like '%" + cpfLimpo + "%'");
+		}
+		if (buscaGeral != null && !buscaGeral.trim().equalsIgnoreCase("")) {
+			String termo = buscaGeral.trim();
+			String semFormatacao = termo.replaceAll("[\\s.\\-()]", "");
+			boolean pareceNumero = semFormatacao.length() >= 3 && semFormatacao.matches("\\d+");
+			List<String> alternativas = new ArrayList<>();
+			if (pareceNumero) {
+				String digitos = termo.replaceAll("[^0-9]", "");
+				alternativas.add("cont.cpfResponsavel like '%" + digitos + "%'");
+				alternativas.add("cont.aluno.contatoTelefone1 like '%" + digitos + "%'");
+				alternativas.add("cont.aluno.contatoTelefone2 like '%" + digitos + "%'");
+				alternativas.add("cont.aluno.contatoTelefone3 like '%" + digitos + "%'");
+				alternativas.add("cont.aluno.contatoTelefone4 like '%" + digitos + "%'");
+				alternativas.add("cont.aluno.contatoTelefone5 like '%" + digitos + "%'");
+			} else {
+				alternativas.add("FUNCTION('unaccent', upper(cont.aluno.nomeAluno)) like FUNCTION('unaccent', upper('%"
+					+ termo + "%'))");
+				alternativas.add("FUNCTION('unaccent', upper(cont.nomeResponsavel)) like FUNCTION('unaccent', upper('%"
+					+ termo + "%'))");
+			}
+			condicoes.add("(" + String.join(" or ", alternativas) + ")");
+		}
+
+		if (condicoes.isEmpty()) {
+			sql.append("where 1=2 ");
 		} else {
-
-		}
-		if (nomeResponsavel != null && !nomeResponsavel.equalsIgnoreCase("")) {
-			sql.append(" or cont.nomeResponsavel like '%");
-			sql.append(nomeResponsavel);
-			sql.append("%' ");
-		}
-
-		if (cpf != null && !cpf.equalsIgnoreCase("")) {
-			sql.append(" or cont.cpfResponsavel like '%");
-			sql.append(cpf);
-			sql.append("%' ");
-		}
-
-		if (numeroDocumento != null && !numeroDocumento.equalsIgnoreCase("")) {
-			sql.append(" or bol.nossoNumero = ");
-			sql.append(numeroDocumento);
+			sql.append("where ").append(String.join(" and ", condicoes)).append(" ");
 		}
 
 		Query query = em.createQuery(sql.toString());
