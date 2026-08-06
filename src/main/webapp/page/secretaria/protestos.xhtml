@@ -123,7 +123,9 @@
 					<p:column filterBy="#{contratoalunotab.nomeResponsavel}"
 						style="text-align: center;width:9%;"
 						styleClass="#{devedorController.marcarLinha(contratoalunotab)}"
-						headerText="Responsavel">
+						headerText="Responsável / CPF / Aluno"
+						filterMatchMode="contains"
+						filterStyle="width:95%;">
 						<h:outputText value="#{contratoalunotab.nomeResponsavel}" />
 						<br/>
 						<h:outputText value="CPF:" />
@@ -178,10 +180,15 @@
                			 </p:panelGrid>
 							<ui:repeat var="bole" value="#{contratoalunotab.boletos}">
 							
-	                        	<p:panelGrid rendered="#{bole.atrasado}" columns="4" 
+	                        	<p:panelGrid rendered="#{bole.atrasado}" columns="4"
 	                        					 columnClasses="tamanhoCelula" style="background:none !important; padding:1px">
-	                         		<h:outputText value="#{bole.nossoNumero}" ></h:outputText>
-	                         		
+	                         		<h:panelGroup>
+	                         			<h:outputText value="#{bole.nossoNumero}" />
+	                         			<h:outputText rendered="#{bole.baixaDecursoPrazo}" value=" ⏳ Decurso (banco)"
+	                         				style="display:block; font-size:10px; color:#B7791F; font-weight:bold;"
+	                         				title="Banco reportou decurso de prazo no retorno - não protestado automaticamente, verificar manualmente" />
+	                         		</h:panelGroup>
+
 	                         		<h:outputText value="#{bole.vencimento}" >
 	                         			<f:convertDateTime attern="dd/MM/yyyy" />
 	                         		</h:outputText>

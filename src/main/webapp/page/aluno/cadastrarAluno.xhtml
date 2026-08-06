@@ -427,6 +427,69 @@
 						</h:panelGrid>
 
 					</p:tab>
+
+					<p:tab title="Conversas WhatsApp"
+						rendered="#{alunoController.alunoCadastrado(aluno)}">
+
+						<h:panelGrid id="panelConversaCadastro" columns="1" border="0" style="width:100%">
+
+							<div style="margin-bottom:10px;">
+								<p:commandButton value="Sincronizar conversas"
+									icon="ui-icon-refresh"
+									style="background:#25D366; border-color:#25D366; color:white; font-weight:bold;"
+									update="panelConversaCadastro"
+									action="#{alunoController.abrirConversa(aluno)}"
+									onstart="this.disabled=true; this.value='Sincronizando...'"
+									oncomplete="this.disabled=false; this.value='Sincronizar conversas'" />
+							</div>
+
+							<h:panelGrid columns="5" border="0" style="margin-bottom:8px">
+								<p:commandButton
+									value="#{aluno.contatoTelefone1} #{aluno.contatoNome1}"
+									style="font-size:11px; width:180px"
+									update="panelConversaCadastro"
+									action="#{alunoController.carregarMensagens(aluno.contatoTelefone1)}" />
+								<p:commandButton rendered="#{aluno.contatoTelefone2 != null}"
+									value="#{aluno.contatoTelefone2} #{aluno.contatoNome2}"
+									style="font-size:11px; width:180px"
+									update="panelConversaCadastro"
+									action="#{alunoController.carregarMensagens(aluno.contatoTelefone2)}" />
+								<p:commandButton rendered="#{aluno.contatoTelefone3 != null}"
+									value="#{aluno.contatoTelefone3} #{aluno.contatoNome3}"
+									style="font-size:11px; width:180px"
+									update="panelConversaCadastro"
+									action="#{alunoController.carregarMensagens(aluno.contatoTelefone3)}" />
+								<p:commandButton rendered="#{aluno.contatoTelefone4 != null}"
+									value="#{aluno.contatoTelefone4} #{aluno.contatoNome4}"
+									style="font-size:11px; width:180px"
+									update="panelConversaCadastro"
+									action="#{alunoController.carregarMensagens(aluno.contatoTelefone4)}" />
+								<p:commandButton rendered="#{aluno.contatoTelefone5 != null}"
+									value="#{aluno.contatoTelefone5} #{aluno.contatoNome5}"
+									style="font-size:11px; width:180px"
+									update="panelConversaCadastro"
+									action="#{alunoController.carregarMensagens(aluno.contatoTelefone5)}" />
+							</h:panelGrid>
+
+							<div style="height:420px; overflow-y:auto; border:1px solid #ddd; padding:10px; background:#f5f5f5; width:100%; box-sizing:border-box;">
+								<ui:repeat value="#{alunoController.listaMensagens}" var="msg">
+									<h:panelGroup layout="block" rendered="#{msg.primeiro}"
+										style="background:#fff; border-radius:8px; padding:8px 12px; margin:4px 80px 4px 0; word-wrap:break-word; box-shadow:0 1px 2px rgba(0,0,0,0.1); clear:both;">
+										<h:outputText value="#{msg.text}" style="font-size:13px; display:block;"/>
+										<h:outputText value="#{msg.dataFormatada}" style="font-size:10px; color:#999; display:block; text-align:right; margin-top:2px;"/>
+									</h:panelGroup>
+									<h:panelGroup layout="block" rendered="#{not msg.primeiro}"
+										style="background:#dcf8c6; border-radius:8px; padding:8px 12px; margin:4px 0 4px 80px; word-wrap:break-word; box-shadow:0 1px 2px rgba(0,0,0,0.1); float:right; clear:both;">
+										<h:outputText value="#{msg.text}" style="font-size:13px; display:block;"/>
+										<h:outputText value="#{msg.dataFormatada}" style="font-size:10px; color:#777; display:block; text-align:right; margin-top:2px;"/>
+									</h:panelGroup>
+									<div style="clear:both;"/>
+								</ui:repeat>
+							</div>
+
+						</h:panelGrid>
+					</p:tab>
+
 				</p:tabView>
 
 			</h:panelGrid>

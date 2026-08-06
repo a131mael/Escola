@@ -2078,4 +2078,72 @@ public class AlunoService extends Service {
 		em.merge(contratoa);
 		em.flush();
 	}
+
+	public void saveStatusWhatsAppSync(Aluno al) {
+		Aluno ap = findById(al.getId());
+		if (ap != null) {
+			ap.setStatusWhatsAppSync(al.getStatusWhatsAppSync());
+			ap.setDataUltimaSincWhatsApp(al.getDataUltimaSincWhatsApp());
+			em.merge(ap);
+			em.flush();
+		}
+	}
+
+	public void saveCobrancaFeita(Aluno al) {
+		Aluno ap = findById(al.getId());
+		if (ap != null) {
+			ap.setDataUltimaCobranca(al.getDataUltimaCobranca());
+			ap.setObservacaoCobranca(al.getObservacaoCobranca());
+			if (al.getStatusWhatsAppSync() != null && !al.getStatusWhatsAppSync().isEmpty()) {
+				ap.setStatusWhatsAppSync(al.getStatusWhatsAppSync());
+			}
+			boolean eraCritico = Boolean.TRUE.equals(ap.getCritico());
+			boolean agoraCritico = Boolean.TRUE.equals(al.getCritico());
+			ap.setCritico(agoraCritico);
+			if (agoraCritico && !eraCritico) {
+				ap.setDataMarcadoCritico(new java.util.Date());
+			}
+			em.merge(ap);
+			em.flush();
+		}
+	}
+
+	public void removerCritico(Long alunoId) {
+		Aluno ap = findById(alunoId);
+		if (ap != null) {
+			ap.setCritico(false);
+			em.merge(ap);
+			em.flush();
+		}
+	}
+
+	public List<Aluno> findAlunosCriticos() {
+		try {
+			return em.createQuery(
+				"SELECT DISTINCT a FROM Aluno a LEFT JOIN FETCH a.contratos " +
+				"WHERE a.critico = true AND (a.removido IS NULL OR a.removido = false) " +
+				"ORDER BY a.dataMarcadoCritico DESC",
+				Aluno.class)
+				.getResultList();
+		} catch (Exception e) {
+			return new java.util.ArrayList<Aluno>();
+		}
+	}
+
+	public List<Aluno> findAlunoPorNomeContato(String nomeContato) {
+		if (nomeContato == null || nomeContato.trim().isEmpty()) return new java.util.ArrayList<Aluno>();
+		String n = "%" + nomeContato.trim().toLowerCase() + "%";
+		try {
+			return em.createQuery(
+				"SELECT DISTINCT a FROM Aluno a WHERE " +
+				"LOWER(a.contatoNome1) LIKE :n OR LOWER(a.contatoNome2) LIKE :n OR " +
+				"LOWER(a.contatoNome3) LIKE :n OR LOWER(a.contatoNome4) LIKE :n",
+				Aluno.class)
+				.setParameter("n", n)
+				.setMaxResults(5)
+				.getResultList();
+		} catch (Exception e) {
+			return new java.util.ArrayList<Aluno>();
+		}
+	}
 }
