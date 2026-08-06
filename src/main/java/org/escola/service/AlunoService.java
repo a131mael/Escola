@@ -2097,8 +2097,36 @@ public class AlunoService extends Service {
 			if (al.getStatusWhatsAppSync() != null && !al.getStatusWhatsAppSync().isEmpty()) {
 				ap.setStatusWhatsAppSync(al.getStatusWhatsAppSync());
 			}
+			boolean eraCritico = Boolean.TRUE.equals(ap.getCritico());
+			boolean agoraCritico = Boolean.TRUE.equals(al.getCritico());
+			ap.setCritico(agoraCritico);
+			if (agoraCritico && !eraCritico) {
+				ap.setDataMarcadoCritico(new java.util.Date());
+			}
 			em.merge(ap);
 			em.flush();
+		}
+	}
+
+	public void removerCritico(Long alunoId) {
+		Aluno ap = findById(alunoId);
+		if (ap != null) {
+			ap.setCritico(false);
+			em.merge(ap);
+			em.flush();
+		}
+	}
+
+	public List<Aluno> findAlunosCriticos() {
+		try {
+			return em.createQuery(
+				"SELECT DISTINCT a FROM Aluno a LEFT JOIN FETCH a.contratos " +
+				"WHERE a.critico = true AND (a.removido IS NULL OR a.removido = false) " +
+				"ORDER BY a.dataMarcadoCritico DESC",
+				Aluno.class)
+				.getResultList();
+		} catch (Exception e) {
+			return new java.util.ArrayList<Aluno>();
 		}
 	}
 

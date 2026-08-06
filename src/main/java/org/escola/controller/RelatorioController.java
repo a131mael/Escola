@@ -744,6 +744,7 @@ public class RelatorioController implements Serializable{
 	private Long alunoCobrancaId;
 	private String observacaoCobrancaTemp;
 	private String statusCobrancaTemp;
+	private Boolean criticoTemp;
 
 	public Long getAlunoCobrancaId() { return alunoCobrancaId; }
 	public void setAlunoCobrancaId(Long alunoCobrancaId) { this.alunoCobrancaId = alunoCobrancaId; }
@@ -751,11 +752,15 @@ public class RelatorioController implements Serializable{
 	public void setObservacaoCobrancaTemp(String o) { this.observacaoCobrancaTemp = o; }
 	public String getStatusCobrancaTemp() { return statusCobrancaTemp; }
 	public void setStatusCobrancaTemp(String s) { this.statusCobrancaTemp = s; }
+	public Boolean getCriticoTemp() { return criticoTemp; }
+	public void setCriticoTemp(Boolean criticoTemp) { this.criticoTemp = criticoTemp; }
 
 	public void abrirModalCobranca(Long alunoId) {
 		this.alunoCobrancaId = alunoId;
 		this.observacaoCobrancaTemp = "";
 		this.statusCobrancaTemp = "";
+		Aluno a = alunoService.findById(alunoId);
+		this.criticoTemp = (a != null) ? Boolean.TRUE.equals(a.getCritico()) : false;
 	}
 
 	public void marcarProtestar(Long alunoId) {
@@ -791,12 +796,44 @@ public class RelatorioController implements Serializable{
 			if (statusCobrancaTemp != null && !statusCobrancaTemp.isEmpty()) {
 				a.setStatusWhatsAppSync(statusCobrancaTemp);
 			}
+			a.setCritico(Boolean.TRUE.equals(criticoTemp));
 			alunoService.saveCobrancaFeita(a);
+			criticosList = null;
 			FacesContext.getCurrentInstance().addMessage(null,
 				new FacesMessage("Cobrança registrada para " + a.getNomeAluno()));
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage()));
+		}
+	}
+
+	private List<Aluno> criticosList;
+
+	public List<Aluno> getCriticosList() {
+		if (criticosList == null) {
+			criticosList = alunoService.findAlunosCriticos();
+		}
+		return criticosList;
+	}
+
+	public long getTotalCriticos() {
+		return getCriticosList().size();
+	}
+
+	public String rotaCriticos() {
+		return "listagemCriticos";
+	}
+
+	public void removerCritico(Long alunoId) {
+		try {
+			Aluno a = alunoService.findById(alunoId);
+			alunoService.removerCritico(alunoId);
+			criticosList = null;
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage((a != null ? a.getNomeAluno() : "Aluno") + " removido da lista de críticos."));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao remover", e.getMessage()));
 		}
 	}
 }

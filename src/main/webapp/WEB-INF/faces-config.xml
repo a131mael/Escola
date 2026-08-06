@@ -322,10 +322,30 @@
 			<to-view-id>/page/secretaria/devedoresSelecionadosMes.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>verdevedor</from-outcome>
 			<to-view-id>/page/aluno/cadastrarAluno.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>listagemCriticos</from-outcome>
+			<to-view-id>/page/secretaria/criticos.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/page/secretaria/criticos.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>cadastrar</from-outcome>
+			<to-view-id>/page/aluno/cadastrarAluno.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dashboard</from-outcome>
+			<to-view-id>/page/secretaria/index.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 	</navigation-rule>

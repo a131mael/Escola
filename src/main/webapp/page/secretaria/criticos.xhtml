@@ -6,79 +6,30 @@
 	template="/WEB-INF/templates/templateADM.xhtml">
 
 	<ui:define name="content">
-		<script type="text/javascript">
-			function start() { PF('statusDialog').show(); }
-			function stop()  { PF('statusDialog').hide(); }
-		</script>
-
-		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
-				draggable="false" closable="false" resizable="false">
-    		<p:graphicImage name="/gfx/preloader.gif" width="100" height="15"/>
-		</p:dialog>
-
 		<h:form prependId="false" style="width:100%; border:none; padding-right:10px;"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
 
 			<p:growl id="messages" showDetail="true" life="8000" globalOnly="false"/>
 
-			<h:panelGrid id="panelFerramentas" columns="17" style="margin-top:-30px; margin-left:-20px">
-				<p:tooltip for="editar" value="Editar" position="top"/>
-				<p:tooltip for="sincWhatsApp" value="Sincronizar com WhatsApp" position="top"/>
-				<p:tooltip for="sincSicoob" value="Sincronizar com Sicoob" position="top"/>
-
-				<p:commandButton id="editar" icon="ui-icon-pencil" update="@form"
-					action="#{relatorioController.editar()}" alt="Editar" />
-
-				<p:separator style="height:25px;" />
-
-				<p:commandButton id="sincWhatsApp"
-					value="Sincronizar com WhatsApp"
-					icon="ui-icon-check"
-					style="background-color:#25D366; border-color:#25D366; color:white; font-weight:bold;"
-					action="#{relatorioController.sincronizarWhatsAppMes()}"
-					onstart="start()" oncomplete="stop()"
-					update="tbl panelFerramentas messages" ajax="true" />
-
-				<p:commandButton id="sincSicoob"
-					value="Sincronizar com Sicoob"
-					icon="ui-icon-clock"
-					style="background-color:#aaa; border-color:#888; color:white;"
-					disabled="true" />
-			</h:panelGrid>
+			<h:panelGroup layout="block" style="margin-bottom:10px;">
+				<h:outputText value="⚠ Devedores Críticos" style="font-size:18px; font-weight:bold; color:#c0392b;" />
+				<p:separator />
+			</h:panelGroup>
 
 			<div style="width:100%;">
 				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
-                             emptyMessage="Nenhum registro encontrado"
-                             selectionMode="single"
-                             selection="#{relatorioController.aluno}"
-                             rowKey="#{professorTab.id}"
-                             filterEvent="enter"
-                             lazy="true"
-                             liveResize="true"
+                             emptyMessage="Nenhum devedor crítico no momento."
                              styleClass="tabela"
                              style="width:100%;"
                              pageLinks="5"
                              paginator="true"
                              paginatorPosition="bottom"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                             resizableColumns="true"
                              rows="100"
                              id="tbl" var="professorTab"
-                             value="#{relatorioController.lazyDataModelMes}"
-                             rowStyleClass="#{alunoController.getRowClassDevedor(professorTab)}">
+                             value="#{relatorioController.criticosList}">
 
-					<p:ajax event="rowSelect" update="panelFerramentas" />
-
-					<p:column filterBy="#{professorTab.nomeAluno}"
-                              sortBy="#{professorTab.nomeAluno}"
-                              style="text-align:left; width:14%;"
-                              headerText="Nome">
-						<h:panelGroup rendered="#{alunoController.hasDuplicateContratos(professorTab)}">
-							<span style="background:#e67e22;color:white;border-radius:3px;padding:1px 5px;font-size:10px;margin-right:4px;">2+</span>
-						</h:panelGroup>
-						<h:panelGroup rendered="#{professorTab.critico}">
-							<span style="background:#c0392b;color:white;border-radius:3px;padding:1px 5px;font-size:10px;margin-right:4px;" title="Crítico">⚠ CRÍTICO</span>
-						</h:panelGroup>
+					<p:column style="text-align:left; width:16%;" headerText="Nome">
 						<p:commandLink value="#{professorTab.nomeAluno}"
 							style="color:inherit; text-decoration:none;"
 							action="#{relatorioController.editar(professorTab.id)}"
@@ -90,26 +41,29 @@
 						<h:outputText value="#{alunoController.getNomeResponsavelDevedor(professorTab)}" />
 					</p:column>
 
-					<p:column style="text-align:center; width:5%;" headerText="CPF">
-						<h:outputText value="#{alunoController.getCPFResponsavelDevedor(professorTab)}" />
-					</p:column>
-
 					<p:column style="text-align:center; width:14%;" headerText="Contato">
 						<h:outputText value="#{professorTab.contatoTelefone1}" />
 						<h:outputText value=" #{professorTab.contatoNome1}" /><br/>
 						<h:outputText value="#{professorTab.contatoTelefone2}" />
-						<h:outputText value=" #{professorTab.contatoNome2}" /><br/>
-						<h:outputText value="#{professorTab.contatoTelefone3}" />
-						<h:outputText value=" #{professorTab.contatoNome3}" /><br/>
-						<h:outputText value="#{professorTab.contatoTelefone4}" />
-						<h:outputText value=" #{professorTab.contatoNome4}" />
+						<h:outputText value=" #{professorTab.contatoNome2}" />
 					</p:column>
 
-					<p:column style="text-align:center; width:6%;" headerText="WA Status">
-						<h:outputText value="#{alunoController.getWhatsAppStatusHtml(professorTab)}" escape="false" /><br/>
-						<h:outputText value="#{professorTab.dataUltimaSincWhatsApp}" rendered="#{professorTab.dataUltimaSincWhatsApp != null}" style="font-size:10px;color:#999;">
-							<f:convertDateTime pattern="dd/MM HH:mm" timeZone="GMT-3" />
+					<p:column style="text-align:center; width:9%;" headerText="Crítico desde">
+						<h:outputText value="#{professorTab.dataMarcadoCritico}" style="font-size:11px;">
+							<f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="GMT-3" />
 						</h:outputText>
+					</p:column>
+
+					<p:column style="text-align:left; width:18%;" headerText="Última Cobrança">
+						<h:panelGroup rendered="#{professorTab.dataUltimaCobranca != null}">
+							<div style="font-size:10px; color:#555;">
+								<h:outputText value="#{professorTab.dataUltimaCobranca}" style="font-weight:bold;">
+									<f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="GMT-3"/>
+								</h:outputText>
+								<br/>
+								<h:outputText value="#{professorTab.observacaoCobranca}" style="color:#333;"/>
+							</div>
+						</h:panelGroup>
 					</p:column>
 
 					<p:column style="text-align:center; width:30%;" headerText="Ações">
@@ -134,24 +88,12 @@
 								style="background:#7986CB; border-color:#7986CB; color:white; font-size:10px; padding:1px 5px; min-width:0;"
 								action="#{relatorioController.abrirModalCobranca(professorTab.id)}"
 								oncomplete="PF('dlgCobrancaFeita').show();" />
-							<p:commandButton value="Protestar" update="tbl"
-								title="Marcar contrato(s) em atraso para protestar depois"
-								style="background:#EF9A9A; border-color:#EF9A9A; color:#1a1a1a; font-size:10px; padding:1px 5px; min-width:0; white-space:nowrap;"
-								onclick="if(!confirm('Marcar contrato(s) de #{professorTab.nomeAluno} para protestar?')) return false;"
-								action="#{relatorioController.marcarProtestar(professorTab.id)}" />
+							<p:commandButton value="Remover crítico" update="tbl messages"
+								title="Tirar da lista de críticos"
+								style="background:#4CAF50; border-color:#4CAF50; color:white; font-size:10px; padding:1px 5px; min-width:0; white-space:nowrap;"
+								onclick="if(!confirm('Remover #{professorTab.nomeAluno} da lista de críticos?')) return false;"
+								action="#{relatorioController.removerCritico(professorTab.id)}" />
 						</div>
-					</p:column>
-
-					<p:column style="text-align:left; width:14%;" headerText="Última Cobrança">
-						<h:panelGroup rendered="#{professorTab.dataUltimaCobranca != null}">
-							<div style="font-size:10px; color:#555;">
-								<h:outputText value="#{professorTab.dataUltimaCobranca}" style="font-weight:bold;">
-									<f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="GMT-3"/>
-								</h:outputText>
-								<br/>
-								<h:outputText value="#{professorTab.observacaoCobranca}" style="color:#333;"/>
-							</div>
-						</h:panelGroup>
 					</p:column>
 
 				</p:dataTable>
