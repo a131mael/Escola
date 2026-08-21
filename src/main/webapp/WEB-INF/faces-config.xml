@@ -161,6 +161,11 @@
 			<from-outcome>listagemEventos</from-outcome>
 			<to-view-id>/page/calendario/index.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>cadastrar</from-outcome>
+			<to-view-id>/page/aluno/cadastrarAluno.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/page/professor/index.xhtml</from-view-id>

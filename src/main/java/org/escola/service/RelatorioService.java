@@ -235,5 +235,60 @@ public class RelatorioService extends Service {
 
 	}
 
+	public java.util.List<org.escola.model.PedidoCancelamento> getPedidosCancelamentoPendentes() {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append(" select pc.id, a.nomealuno, ca.numero, ca.ano, ca.nomeresponsavel, pc.motivo, pc.aluno_id, ");
+			sql.append(" pc.data_pedido, pc.data_ultimo_uso, pc.valor_multa, bm.vencimento, ");
+			sql.append(" (select string_agg( ");
+			sql.append("    'R$ ' || to_char(b.valornominal, 'FM999999990.00') || ' (' || to_char(b.vencimento,'MM/YYYY') || ')', ");
+			sql.append("    ' + ' order by x.posicao) ");
+			sql.append("  from unnest(pc.boletos_mensalidade_ids) with ordinality as x(bid, posicao) ");
+			sql.append("  join boleto b on b.id = x.bid) as detalhe_mensalidades ");
+			sql.append(" from pedido_cancelamento_contrato pc ");
+			sql.append(" join contratoaluno ca on ca.id = pc.contrato_id ");
+			sql.append(" join aluno a on a.id = pc.aluno_id ");
+			sql.append(" left join boleto bm on bm.id = pc.boleto_multa_id ");
+			sql.append(" where coalesce(ca.cancelado, false) = false ");
+			sql.append(" order by pc.data_pedido desc ");
+
+			Query query = em.createNativeQuery(sql.toString());
+			@SuppressWarnings("unchecked")
+			java.util.List<Object[]> linhas = query.getResultList();
+
+			java.util.List<org.escola.model.PedidoCancelamento> pedidos = new ArrayList<>();
+			for (Object[] l : linhas) {
+				org.escola.model.PedidoCancelamento p = new org.escola.model.PedidoCancelamento();
+				p.setId(l[0] == null ? null : ((Number) l[0]).longValue());
+				p.setNomeAluno((String) l[1]);
+				p.setNumeroContrato(l[2] == null ? "" : String.valueOf(l[2]));
+				p.setAno(l[3] == null ? "" : String.valueOf(l[3]));
+				p.setNomeResponsavel((String) l[4]);
+				p.setMotivo((String) l[5]);
+				p.setAlunoId(l[6] == null ? null : ((Number) l[6]).longValue());
+				p.setDataPedido(l[7] == null ? "" : l[7].toString());
+				p.setDataUltimoUso(l[8] == null ? "" : l[8].toString());
+				String vencMulta = l[10] == null ? "" : (" (" + l[10].toString().substring(0, 7) + ")");
+				p.setValorMulta(l[9] == null ? "-" : ("R$ " + l[9].toString() + vencMulta));
+				p.setDetalheMensalidades(l[11] == null ? "-" : (String) l[11]);
+				pedidos.add(p);
+			}
+			return pedidos;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+
+	public void descancelarPedido(Long pedidoId) {
+		try {
+			Query query = em.createNativeQuery("delete from pedido_cancelamento_contrato where id = :id");
+			query.setParameter("id", pedidoId);
+			query.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
 

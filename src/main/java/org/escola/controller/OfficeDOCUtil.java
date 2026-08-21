@@ -121,6 +121,85 @@ public class OfficeDOCUtil {
 		}
 	}
 
+	/** Gera um único arquivo combinando o documento principal (ex: contrato) com um
+	 * documento anexo (ex: termo de consentimento), cada um com seu próprio mapa de
+	 * substituições — o anexo entra como folha(s) separada(s) no final, após quebra de
+	 * página, mantendo a assinatura própria do anexo. */
+	public void editDoc2ComAnexo(String enderecoPrincipal, Map<String, String> trocasPrincipal,
+			String enderecoAnexo, Map<String, String> trocasAnexo, String nomeArquivoSaida) throws IOException {
+		editDoc2ComAnexos(enderecoPrincipal, trocasPrincipal,
+				java.util.Collections.singletonList(enderecoAnexo), java.util.Collections.singletonList(trocasAnexo),
+				nomeArquivoSaida);
+	}
+
+	/** Igual a editDoc2ComAnexo, mas aceita vários anexos — cada um entra como folha(s)
+	 * separada(s), na ordem da lista, um atrás do outro, cada um com quebra de página
+	 * antes. Usado por ex. quando o contrato precisa sair com o termo de consentimento
+	 * de imagem e, se for o caso, o regimento escolar do segmento do aluno. */
+	public void editDoc2ComAnexos(String enderecoPrincipal, Map<String, String> trocasPrincipal,
+			List<String> enderecosAnexos, List<Map<String, String>> trocasAnexos, String nomeArquivoSaida) throws IOException {
+
+		OutputStream writer = null;
+		try {
+			XWPFDocument principal = new XWPFDocument(
+					new FileInputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath(enderecoPrincipal)));
+			for (XWPFTable table : principal.getTables()) {
+				for (XWPFTableRow linha : table.getRows()) {
+					for (XWPFTableCell celula : linha.getTableCells()) {
+						replaceParagrapfs(celula.getParagraphs(), trocasPrincipal);
+					}
+				}
+			}
+			replaceParagrapfs(principal.getParagraphs(), trocasPrincipal);
+
+			for (int i = 0; i < enderecosAnexos.size(); i++) {
+				XWPFDocument anexo = new XWPFDocument(new FileInputStream(
+						FacesContext.getCurrentInstance().getExternalContext().getRealPath(enderecosAnexos.get(i))));
+				replaceParagrapfs(anexo.getParagraphs(), trocasAnexos.get(i));
+
+				// quebra de página antes de cada anexo
+				principal.createParagraph().createRun().addBreak(org.apache.poi.xwpf.usermodel.BreakType.PAGE);
+
+				for (XWPFParagraph origem : anexo.getParagraphs()) {
+					XWPFParagraph destino = principal.createParagraph();
+					copiarParagrafo(origem, destino);
+				}
+			}
+
+			writer = new FileOutputStream(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
+					+ nomeArquivoSaida + ".doc");
+			principal.write(writer);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				writer.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	private static void copiarParagrafo(XWPFParagraph origem, XWPFParagraph destino) {
+		if (origem.getStyle() != null) {
+			destino.setStyle(origem.getStyle());
+		}
+		if (origem.getAlignment() != null) {
+			destino.setAlignment(origem.getAlignment());
+		}
+		destino.setIndentationLeft(origem.getIndentationLeft());
+		destino.setSpacingAfter(origem.getSpacingAfter());
+		for (XWPFRun origemRun : origem.getRuns()) {
+			XWPFRun destinoRun = destino.createRun();
+			destinoRun.setText(origemRun.text());
+			destinoRun.setBold(origemRun.isBold());
+			destinoRun.setItalic(origemRun.isItalic());
+			if (origemRun.getFontSize() != -1) {
+				destinoRun.setFontSize(origemRun.getFontSize());
+			}
+		}
+	}
+
 	public void editDoc2(String endereco, Map<String, String> trocas, String nomeArquivoSaida) throws IOException {
 
 		OutputStream writer = null;
@@ -148,6 +227,43 @@ public class OfficeDOCUtil {
 
 		} catch (OLE2NotOfficeXmlFileException ole2) {
 			editDoc(endereco, trocas, nomeArquivoSaida);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				writer.close();
+			} catch (Exception e) {
+
+			}
+		}
+	}
+
+	/** Igual ao editDoc2, mas recebe caminhos absolutos em vez de resolver via
+	 * FacesContext — necessário pra chamar fora de uma requisição JSF (ex: recurso
+	 * REST usado pelo portal do responsável), onde FacesContext.getCurrentInstance()
+	 * é nulo. */
+	public void editDoc2CaminhoAbsoluto(String caminhoTemplateAbsoluto, Map<String, String> trocas,
+			String caminhoSaidaAbsoluto) throws IOException {
+
+		OutputStream writer = null;
+
+		try {
+			XWPFDocument docx = new XWPFDocument(new FileInputStream(caminhoTemplateAbsoluto));
+
+			writer = new FileOutputStream(caminhoSaidaAbsoluto);
+			for (Map.Entry<String, String> entry : trocas.entrySet()) {
+				for (XWPFTable table : docx.getTables()) {
+					for (XWPFTableRow linha : table.getRows()) {
+						for (XWPFTableCell celula : linha.getTableCells()) {
+							replaceParagrapfs(celula.getParagraphs(), trocas);
+						}
+					}
+				}
+				replaceParagrapfs(docx.getParagraphs(), trocas);
+			}
+
+			docx.write(writer);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

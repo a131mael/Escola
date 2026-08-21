@@ -289,12 +289,49 @@
 			</p:panelGrid>
 			</p:panel>
 
-	</h:panelGrid>	
-	
+	</h:panelGrid>
+
 	<br/>
-	
-	
-	<h:panelGrid id="panelGrupos" columns="2" styleClass="alinharTopo"> 
+
+	<p:panel id="painelPedidosCancelamento" header="Pedidos de cancelamento de matrícula"
+		style="width:100%; margin-bottom:10px" rendered="#{not empty relatorioController.pedidosCancelamento}">
+		<p:dataTable id="tabelaPedidosCancelamento" value="#{relatorioController.pedidosCancelamento}" var="pedido" style="width:100%">
+			<p:column headerText="Pedido em" style="width:12%">
+				<h:outputText value="#{pedido.dataPedido}" />
+			</p:column>
+			<p:column headerText="Aluno" style="width:16%">
+				<h:commandLink action="#{alunoController.editar(pedido.alunoId)}" value="#{pedido.nomeAluno}" />
+			</p:column>
+			<p:column headerText="Contrato" style="width:9%">
+				<h:outputText value="#{pedido.numeroContrato}/#{pedido.ano}" />
+			</p:column>
+			<p:column headerText="Responsável" style="width:15%">
+				<h:outputText value="#{pedido.nomeResponsavel}" />
+			</p:column>
+			<p:column headerText="Família prevê saída em" style="width:11%">
+				<h:outputText value="#{pedido.dataUltimoUso}" />
+			</p:column>
+			<p:column headerText="Deve pagar" style="width:18%">
+				<h:outputText value="#{pedido.detalheMensalidades}" />
+			</p:column>
+			<p:column headerText="Multa" style="width:11%">
+				<h:outputText value="#{pedido.valorMulta}" />
+			</p:column>
+			<p:column headerText="Motivo">
+				<h:outputText value="#{pedido.motivo}" />
+			</p:column>
+			<p:column headerText="Ação" style="width:8%">
+				<p:commandButton value="Descancelar" update="@form"
+					onclick="if (!confirm('Responsável se arrependeu e não vai mais cancelar a matrícula?')) return false;"
+					action="#{relatorioController.descancelar(pedido)}" />
+			</p:column>
+		</p:dataTable>
+	</p:panel>
+
+	<br/>
+
+
+	<h:panelGrid id="panelGrupos" columns="2" styleClass="alinharTopo">
 				<h:outputLabel value="Gastos" />
 				<h:outputLabel value="Receitas" />
 				<p:dataTable  styleClass="alinharTopo" style="width:100%" sortField="#{gasto.value}" sortBy="#{gasto.value}" var="gasto" value="#{graficosController.getGastosPorGrupo()}"  >

@@ -163,7 +163,7 @@
 									
 									<br/>
 									<br/>
-									<h:panelGrid columns="5" border="0">
+									<h:panelGrid columns="3" border="0">
 										<p:commandButton id="contrato" icon="ui-icon-print"
 														value="Download Contrato"  
 														ajax="false"
@@ -171,46 +171,65 @@
 														onclick="PrimeFaces.monitorDownload(start, stop);">
 										<p:fileDownload value="#{alunoController.imprimirContrato(contratoAlun)}" />
 										</p:commandButton>
-				
+
+										<p:commandButton id="termoImagem" icon="ui-icon-print"
+														value="Termo de Consentimento"
+														ajax="false"
+														rendered="#{alunoController.podeImprimir(contratoAlun)}"
+														onclick="PrimeFaces.monitorDownload(start, stop);">
+										<p:fileDownload value="#{alunoController.imprimirTermoConsentimentoImagem(contratoAlun)}" />
+										</p:commandButton>
+
+										<p:commandButton id="regimentoAnosFinais" icon="ui-icon-print"
+														value="Regimento 6º-9º"
+														ajax="false"
+														rendered="#{alunoController.podeImprimir(contratoAlun) and alunoController.algumAlunoAnosFinais(contratoAlun)}"
+														onclick="PrimeFaces.monitorDownload(start, stop);">
+										<p:fileDownload value="#{alunoController.imprimirRegimentoEscolarAnosFinais()}" />
+										</p:commandButton>
+
 										<p:commandButton id="boleto" icon="ui-icon-print" ajax="false"
 														onclick="PrimeFaces.monitorDownload(start, stop);"
 														rendered="#{alunoController.podeImprimir(contratoAlun)}"
 														value="Download Boletos" >
 												<p:fileDownload value="#{alunoController.gerarBoleto(contratoAlun)}" />
 										</p:commandButton>
-				
+
+										<p:commandButton id="negativaDebito" icon="ui-icon-print" ajax="false"
+														onclick="PrimeFaces.monitorDownload(start, stop);"
+														rendered="#{alunoController.podeImprimir(contratoAlun)}"
+														value="Negativa de Débito" >
+												<p:fileDownload value="#{alunoController.imprimirNegativoDebito(contratoAlun)}" />
+										</p:commandButton>
+
 										<p:commandButton id="cnb240" icon="ui-icon-print" ajax="false"
 														onclick="PrimeFaces.monitorDownload(start, stop);"
 														rendered="#{authController.hasPermission(authController.mestre)}" 
 														value="Download CNB240" >
 												<p:fileDownload value="#{alunoController.gerarCNB240(contratoAlun)}" />
 										</p:commandButton>
-				
-										
+									</h:panelGrid>
+									<br/>
+									<br/>
+
+									<h:panelGrid columns="2" border="0">
+										<p:commandButton style="background:red"
+														action="#{alunoController.cancelar(contratoAlun)}"  
+														value="Cancelar Contrato" 
+														process="@this"
+														rendered="#{not contratoAlun.cancelado}">
+										</p:commandButton>
+
 										<p:commandButton icon="ui-icon-arrowthick-1-e" alt="Protestar contrato" 
 														id="protesto" process="@this" value="PROTESTAR"
 														rendered="#{not contratoAlun.protestado}"
 														action="#{alunoController.enviarProtesto(contratoAlun)}"
 														>
-											
 										   <p:confirm header="Confirmacao" message="Você deseja realmente protestar  ? ?" icon="ui-icon-alert" />
-										   
 										</p:commandButton>
 										<p:tooltip for="protesto" value="PROTESTAR !!!" trackMouse="false"  rendered="#{not contratoAlun.protestado}"/>
-										
-										
 									</h:panelGrid>
-									<br/>
-									<br/>
-							
-									<p:commandButton style="background:red"
-													action="#{alunoController.cancelar(contratoAlun)}"  
-													value="Cancelar Contrato" 
-													process="@this"
-													rendered="#{not contratoAlun.cancelado}">
-													
-									</p:commandButton>
-										
+
 										<br/>
 									<br/>
 									<h:outputLabel value="CONTRATO PROTESTADO" style="font-size:25px" rendered="#{contratoAlun.protestado}"/>				

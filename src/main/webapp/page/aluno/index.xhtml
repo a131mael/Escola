@@ -60,25 +60,25 @@
 					position="top" />
 			
 			
-				<p:commandButton id="adicionar" icon="ui-icon-plus" action="#{alunoController.adicionarNovo()}" />
+				<p:commandButton id="adicionar" icon="ui-icon-plusthick" action="#{alunoController.adicionarNovo()}" />
 				<p:commandButton id="editar" icon="ui-icon-pencil" action="#{alunoController.editar()}"	alt="Editar" disabled="#{!alunoController.alunoSelecionado}"/>
 				<p:separator style=" height:25px;" />
-				<p:commandButton id="boletim" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
-								 icon="ui-icon-bookmark"  
+				<p:commandButton id="boletim" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+								 icon="ui-icon-note"
 								 disabled="#{!alunoController.alunoSelecionado}">
 								 <p:fileDownload value="#{alunoController.imprimirContratoAdonai()}" />
 								 </p:commandButton>
-				<p:commandButton id="negativoDebito"  ajax="false" icon="ui-icon-pencil" 
+				<p:commandButton id="negativoDebito"  ajax="false" icon="ui-icon-check"
 								 onclick="PrimeFaces.monitorDownload(start, stop);"
 								  disabled="#{!alunoController.alunoSelecionado}">
 								  	<p:fileDownload value="#{alunoController.imprimirNegativoDebito()}" />
 								  </p:commandButton>
-				<p:commandButton id="contrato" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  
+				<p:commandButton id="contrato" icon="ui-icon-document"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
 								disabled="#{!alunoController.alunoSelecionado}">
 						<p:fileDownload value="#{alunoController.imprimirContrato()}" />
 				</p:commandButton>
-				
-				<p:commandButton icon="ui-icon-arrowreturn-1-w" 
+
+				<p:commandButton icon="ui-icon-arrowrefresh-1-w"
 							ajax="false"
 							alt="Ficha rematricula"
 							id="ficharematricula"
@@ -86,25 +86,41 @@
 					disabled="#{!alunoController.alunoSelecionado}">
 					<p:fileDownload value="#{alunoController.imprimirFichaRematricula()}" />
 				</p:commandButton>
-				
-				<p:commandButton id="atestadoVaga" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+
+				<p:commandButton id="atestadoVaga" icon="ui-icon-document-b"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
 					 disabled="#{!alunoController.alunoSelecionado}">
 							<p:fileDownload value="#{alunoController.imprimirAtestadoVaga()}" />
 				</p:commandButton>
-				<p:commandButton id="atestadoMatricula" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+				<p:commandButton id="atestadoMatricula" icon="ui-icon-star"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
 								  disabled="#{!alunoController.alunoSelecionado}">
 				<p:fileDownload value="#{alunoController.imprimirAtestadoMatricula()}" />
 				</p:commandButton>
-				<p:commandButton id="atestadoFrequencia" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+				<p:commandButton id="atestadoFrequencia" icon="ui-icon-calendar"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
 								 disabled="#{!alunoController.alunoSelecionado}">
 								<p:fileDownload value="#{alunoController.imprimirAtestadoFrequencia()}" />
 				</p:commandButton>
-				
-				<p:commandButton id="historico" icon="ui-icon-pencil"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+
+				<p:commandButton id="historico" icon="ui-icon-clock"  ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
 								 disabled="#{!alunoController.alunoSelecionado}">
 								<p:fileDownload value="#{alunoController.imprimirHistorico()}" />
 				</p:commandButton>
-			
+
+				<p:tooltip for="termoConsentimento" value="Termo de Consentimento (uso de imagem)" position="top"/>
+				<p:commandButton id="termoConsentimento" icon="ui-icon-image" ajax="false"
+								 onclick="PrimeFaces.monitorDownload(start, stop);"
+								 disabled="#{!alunoController.alunoSelecionado}">
+								<p:fileDownload value="#{alunoController.imprimirTermoConsentimentoImagem(alunoController.aluno.contratoVigente)}" />
+				</p:commandButton>
+
+				<p:tooltip for="regimentoAnosFinaisTopo" value="Regimento Escolar (6º ao 9º ano)" position="top"
+						   rendered="#{alunoController.alunoAnosFinais}"/>
+				<p:commandButton id="regimentoAnosFinaisTopo" icon="ui-icon-clipboard" ajax="false"
+								 onclick="PrimeFaces.monitorDownload(start, stop);"
+								 disabled="#{!alunoController.alunoSelecionado}"
+								 rendered="#{alunoController.alunoAnosFinais}">
+								<p:fileDownload value="#{alunoController.imprimirRegimentoEscolarAnosFinais()}" />
+				</p:commandButton>
+
 				<p:commandButton id="boleto" icon="ui-icon-print" ajax="false"
 					onclick="PrimeFaces.monitorDownload(start, stop);"
 					disabled="#{!alunoController.alunoSelecionado}">
@@ -119,53 +135,53 @@
 				<p:commandButton id="gerarBoleto"
 					action="#{alunoController.gerarBoletoModel()}" alt="GerarBoleto"
 					rendered="#{authController.hasPermission(authController.mestre)}" />
-			
-				<p:commandButton id="rematricula" update="@form" icon="ui-icon-check" action="#{alunoController.rematricular()}" 
+
+				<p:commandButton id="rematricula" update="@form" icon="ui-icon-check" action="#{alunoController.rematricular()}"
 								alt="Rematricular" disabled="#{!alunoController.alunoSelecionado}"
 								rendered="#{!alunoController.matriculado}">
 				 		<p:confirm header="Confirmacao" message="Deseja fazer a rematricula ?" icon="ui-icon-alert" />
 				</p:commandButton>
-			 
-			 	<p:commandButton id="desmatricular" update="@form" icon="ui-icon-check" action="#{alunoController.desmatricular()}"	
+
+			 	<p:commandButton id="desmatricular" update="@form" icon="ui-icon-cancel" action="#{alunoController.desmatricular()}"
 			 					 alt="Desmatricular" disabled="#{!alunoController.alunoSelecionado}"
 			 					 rendered="#{alunoController.matriculado}">
 					<p:confirm header="Confirmacao" message="Deseja remover a rematricula ?" icon="ui-icon-alert" />
 				</p:commandButton>
-				
-				<p:commandButton id="enviarCnab" update="@form" icon="ui-icon-check" action="#{alunoController.enviarCnab()}" 
+
+				<p:commandButton id="enviarCnab" update="@form" icon="ui-icon-arrowthick-1-n" action="#{alunoController.enviarCnab()}"
 								alt="Rematricular" disabled="#{!alunoController.alunoSelecionado}"
 								rendered="#{authController.hasPermission(authController.mestre) and !alunoController.cnabEnvado}">
 				 		<p:confirm header="Confirmacao" message="Deseja fazer a rematricula ?" icon="ui-icon-alert" />
 				</p:commandButton>
-			 
-			 	<p:commandButton id="removerCnabEnviado" update="@form" icon="ui-icon-check" action="#{alunoController.removerCnabEnviado()}"	
+
+			 	<p:commandButton id="removerCnabEnviado" update="@form" icon="ui-icon-trash" action="#{alunoController.removerCnabEnviado()}"
 			 					 alt="Desmatricular" disabled="#{!alunoController.alunoSelecionado}"
 			 					 rendered="#{authController.hasPermission(authController.mestre) and alunoController.cnabEnvado}">
 					<p:confirm header="Confirmacao" message="Deseja remover a rematricula ?" icon="ui-icon-alert" />
 				</p:commandButton>
-			 
-			 
-			 <p:commandButton id="salvarTodos" update="@form" icon="ui-icon-check" action="#{alunoController.salvarTodos()}"	
-			 					 alt="TESTE" 
+
+
+			 <p:commandButton id="salvarTodos" update="@form" icon="ui-icon-disk" action="#{alunoController.salvarTodos()}"
+			 					 alt="TESTE"
 			 					 rendered="#{authController.hasPermission(authController.mestre)}">
 					<p:confirm header="Confirmacao" message="Atualizar Todas as Crianças ?" icon="ui-icon-alert" />
 				</p:commandButton>
-			 
-			 	 <p:commandButton id="gerarBaixa" update="@form" icon="ui-icon-check" 	
+
+			 	 <p:commandButton id="gerarBaixa" update="@form" icon="ui-icon-arrowthick-1-s"
 			 					 alt="Gerar Baixa"
 			 					 ajax="false"
-			 					 onclick="PrimeFaces.monitorDownload(start, stop);" 
+			 					 onclick="PrimeFaces.monitorDownload(start, stop);"
 			 					 rendered="#{authController.hasPermission(authController.mestre)}">
-					
+
 					<p:fileDownload value="#{alunoController.gerarArquivoBaixa()}" />
 				</p:commandButton>
-				
-				<p:commandButton id="gerarNFS" update="@form" icon="ui-icon-check"
+
+				<p:commandButton id="gerarNFS" update="@form" icon="ui-icon-calculator"
 					alt="Gerar NFS prefeitura" action="#{alunoController.gerarNFSe()}"
 					disabled="#{!alunoController.alunoSelecionado}">
 					<p:confirm header="Confirmacao" message="Deseja Gerar a Nota fiscal para o aluno selecionado ?" icon="ui-icon-alert" />
 				</p:commandButton>
-			 
+
 			</h:panelGrid>
 
 			<h:panelGrid width="98%">
