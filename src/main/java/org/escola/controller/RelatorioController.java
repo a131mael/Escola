@@ -836,4 +836,12 @@ public class RelatorioController implements Serializable{
 				new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao remover", e.getMessage()));
 		}
 	}
+
+	public java.util.List<org.escola.model.PedidoCancelamento> getPedidosCancelamento() {
+		return relatorioService.getPedidosCancelamentoPendentes();
+	}
+
+	public void descancelar(org.escola.model.PedidoCancelamento pedido) {
+		relatorioService.descancelarPedido(pedido.getId());
+	}
 }

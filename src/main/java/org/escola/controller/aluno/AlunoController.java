@@ -17,6 +17,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -464,26 +465,12 @@ public class AlunoController implements Serializable {
 					}
 
 					if (filtros.containsKey("serie")) {
-						if (filtros.get("serie").equals(Serie.JARDIM_I.toString())) {
-							filtros.put("serie", Serie.JARDIM_I);
-						} else if (filtros.get("serie").equals(Serie.JARDIM_II.toString())) {
-							filtros.put("serie", Serie.JARDIM_II);
-						} else if (filtros.get("serie").equals(Serie.MATERNAL.toString())) {
-							filtros.put("serie", Serie.MATERNAL);
-						} else if (filtros.get("serie").equals(Serie.PRE.toString())) {
-							filtros.put("serie", Serie.PRE);
-						} else if (filtros.get("serie").equals(Serie.PRIMEIRO_ANO.toString())) {
-							filtros.put("serie", Serie.PRIMEIRO_ANO);
-						} else if (filtros.get("serie").equals(Serie.SEGUNDO_ANO.toString())) {
-							filtros.put("serie", Serie.SEGUNDO_ANO);
-						} else if (filtros.get("serie").equals(Serie.TERCEIRO_ANO.toString())) {
-							filtros.put("serie", Serie.TERCEIRO_ANO);
-						} else if (filtros.get("serie").equals(Serie.QUARTO_ANO.toString())) {
-							filtros.put("serie", Serie.QUARTO_ANO);
-						} else if (filtros.get("serie").equals(Serie.QUINTO_ANO.toString())) {
-							filtros.put("serie", Serie.QUINTO_ANO);
+						for (Serie s : Serie.values()) {
+							if (filtros.get("serie").equals(s.toString())) {
+								filtros.put("serie", s);
+								break;
+							}
 						}
-
 					}
 
 					String orderByParam = (order != null) ? order : "id";
@@ -547,26 +534,12 @@ public class AlunoController implements Serializable {
 					}
 
 					if (filtros.containsKey("serie")) {
-						if (filtros.get("serie").equals(Serie.JARDIM_I.toString())) {
-							filtros.put("serie", Serie.JARDIM_I);
-						} else if (filtros.get("serie").equals(Serie.JARDIM_II.toString())) {
-							filtros.put("serie", Serie.JARDIM_II);
-						} else if (filtros.get("serie").equals(Serie.MATERNAL.toString())) {
-							filtros.put("serie", Serie.MATERNAL);
-						} else if (filtros.get("serie").equals(Serie.PRE.toString())) {
-							filtros.put("serie", Serie.PRE);
-						} else if (filtros.get("serie").equals(Serie.PRIMEIRO_ANO.toString())) {
-							filtros.put("serie", Serie.PRIMEIRO_ANO);
-						} else if (filtros.get("serie").equals(Serie.SEGUNDO_ANO.toString())) {
-							filtros.put("serie", Serie.SEGUNDO_ANO);
-						} else if (filtros.get("serie").equals(Serie.TERCEIRO_ANO.toString())) {
-							filtros.put("serie", Serie.TERCEIRO_ANO);
-						} else if (filtros.get("serie").equals(Serie.QUARTO_ANO.toString())) {
-							filtros.put("serie", Serie.QUARTO_ANO);
-						} else if (filtros.get("serie").equals(Serie.QUINTO_ANO.toString())) {
-							filtros.put("serie", Serie.QUINTO_ANO);
+						for (Serie s : Serie.values()) {
+							if (filtros.get("serie").equals(s.toString())) {
+								filtros.put("serie", s);
+								break;
+							}
 						}
-
 					}
 
 					filtros.put("removido", false);
@@ -656,26 +629,12 @@ public class AlunoController implements Serializable {
 					}
 
 					if (filtros.containsKey("serie")) {
-						if (filtros.get("serie").equals(Serie.JARDIM_I.toString())) {
-							filtros.put("serie", Serie.JARDIM_I);
-						} else if (filtros.get("serie").equals(Serie.JARDIM_II.toString())) {
-							filtros.put("serie", Serie.JARDIM_II);
-						} else if (filtros.get("serie").equals(Serie.MATERNAL.toString())) {
-							filtros.put("serie", Serie.MATERNAL);
-						} else if (filtros.get("serie").equals(Serie.PRE.toString())) {
-							filtros.put("serie", Serie.PRE);
-						} else if (filtros.get("serie").equals(Serie.PRIMEIRO_ANO.toString())) {
-							filtros.put("serie", Serie.PRIMEIRO_ANO);
-						} else if (filtros.get("serie").equals(Serie.SEGUNDO_ANO.toString())) {
-							filtros.put("serie", Serie.SEGUNDO_ANO);
-						} else if (filtros.get("serie").equals(Serie.TERCEIRO_ANO.toString())) {
-							filtros.put("serie", Serie.TERCEIRO_ANO);
-						} else if (filtros.get("serie").equals(Serie.QUARTO_ANO.toString())) {
-							filtros.put("serie", Serie.QUARTO_ANO);
-						} else if (filtros.get("serie").equals(Serie.QUINTO_ANO.toString())) {
-							filtros.put("serie", Serie.QUINTO_ANO);
+						for (Serie s : Serie.values()) {
+							if (filtros.get("serie").equals(s.toString())) {
+								filtros.put("serie", s);
+								break;
+							}
 						}
-
 					}
 
 					String orderByParam = (order != null) ? order : "id";
@@ -742,26 +701,12 @@ public class AlunoController implements Serializable {
 					}
 
 					if (filtros.containsKey("serie")) {
-						if (filtros.get("serie").equals(Serie.JARDIM_I.toString())) {
-							filtros.put("serie", Serie.JARDIM_I);
-						} else if (filtros.get("serie").equals(Serie.JARDIM_II.toString())) {
-							filtros.put("serie", Serie.JARDIM_II);
-						} else if (filtros.get("serie").equals(Serie.MATERNAL.toString())) {
-							filtros.put("serie", Serie.MATERNAL);
-						} else if (filtros.get("serie").equals(Serie.PRE.toString())) {
-							filtros.put("serie", Serie.PRE);
-						} else if (filtros.get("serie").equals(Serie.PRIMEIRO_ANO.toString())) {
-							filtros.put("serie", Serie.PRIMEIRO_ANO);
-						} else if (filtros.get("serie").equals(Serie.SEGUNDO_ANO.toString())) {
-							filtros.put("serie", Serie.SEGUNDO_ANO);
-						} else if (filtros.get("serie").equals(Serie.TERCEIRO_ANO.toString())) {
-							filtros.put("serie", Serie.TERCEIRO_ANO);
-						} else if (filtros.get("serie").equals(Serie.QUARTO_ANO.toString())) {
-							filtros.put("serie", Serie.QUARTO_ANO);
-						} else if (filtros.get("serie").equals(Serie.QUINTO_ANO.toString())) {
-							filtros.put("serie", Serie.QUINTO_ANO);
+						for (Serie s : Serie.values()) {
+							if (filtros.get("serie").equals(s.toString())) {
+								filtros.put("serie", s);
+								break;
+							}
 						}
-
 					}
 
 					String orderByParam = (order != null) ? order : "id";
@@ -1457,16 +1402,48 @@ public class AlunoController implements Serializable {
 	}
 
 	public HashMap<String, String> montarAtestadoNegativoDebito(Aluno aluno) {
+		return montarAtestadoNegativoDebito(aluno, aluno.getContratoVigente());
+	}
+
+	/** Permite gerar a negativa de débito/comprovante de pagamento de um contrato
+	 * específico (não só o vigente) — útil pra pegar o comprovante de um ano anterior. */
+	public HashMap<String, String> montarAtestadoNegativoDebito(Aluno aluno, ContratoAluno contrato) {
 		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
 		String dataExtenso = formatador.format(new Date());
+
+		NumberFormat formatadorMoeda = NumberFormat.getInstance(new Locale("pt", "BR"));
+		formatadorMoeda.setMinimumFractionDigits(2);
+		formatadorMoeda.setMaximumFractionDigits(2);
+
+		// Soma apenas o que foi de fato pago (boletos com dataPagamento), nunca o valor
+		// nominal do contrato — documento também é usado como comprovante de pagamento
+		// (IR), então precisa refletir a realidade mesmo se o contrato não estiver
+		// totalmente quitado.
+		double valorPago = 0d;
+		int parcelasPagas = 0;
+		if (contrato != null && contrato.getBoletos() != null) {
+			for (org.escola.model.Boleto boleto : contrato.getBoletos()) {
+				if (Boolean.TRUE.equals(boleto.getCancelado())) {
+					continue;
+				}
+				if (boleto.getDataPagamento() != null && boleto.getValorPago() != null) {
+					valorPago += boleto.getValorPago();
+					parcelasPagas++;
+				}
+			}
+		}
 
 		HashMap<String, String> trocas = new HashMap<>();
 		trocas.put("adonainomealuno", aluno.getNomeAluno());
 		trocas.put("adonaiturma", aluno.getSerie().getName());
 		trocas.put("adonaiperiodo", aluno.getPeriodo().getName());
 		trocas.put("adonaidata", dataExtenso);
-		trocas.put("adonaicpfresponsavel", aluno.getContratoVigente().getCpfResponsavel());
-		trocas.put("adonainomeresponsavel", aluno.getContratoVigente().getNomeResponsavel());
+		trocas.put("adonaicpfresponsavel", contrato != null ? contrato.getCpfResponsavel() : "");
+		trocas.put("adonainomeresponsavel", contrato != null ? contrato.getNomeResponsavel() : "");
+		trocas.put("adonaiano", contrato != null ? contrato.getAno() + "" : "");
+		trocas.put("adonaianuidade", formatadorMoeda.format(valorPago));
+		trocas.put("adonaiparcelas", parcelasPagas + "");
+		trocas.put("adonaivalorparcelas", contrato != null ? formatadorMoeda.format(contrato.getValorMensal()) : "");
 
 		return trocas;
 	}
@@ -1759,10 +1736,7 @@ public class AlunoController implements Serializable {
 					: Serie.values()[aluno.getIrmao4().getSerie().ordinal()].getName());
 			nomePeriodo += ", " + aluno.getIrmao4().getPeriodoProximoAno().getName();
 		}
-		int ano = configuracao.getAnoLetivo();
-		if (aluno.getRematricular() != null && aluno.getRematricular()) {
-			ano = configuracao.getAnoRematricula();
-		}
+		int ano = aluno.getContratoVigente().getAno();
 
 		trocas.put("adonaianoletivo", ano + "");
 		trocas.put("adonainomealuno", nomeAluno);
@@ -1852,10 +1826,7 @@ public class AlunoController implements Serializable {
 							: Serie.values()[contrato.getAluno().getIrmao4().getSerie().ordinal()].getName());
 			nomePeriodo += ", " + contrato.getAluno().getIrmao4().getPeriodoProximoAno().getName();
 		}
-		int ano = configuracao.getAnoLetivo();
-		if (contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular()) {
-			ano = configuracao.getAnoRematricula();
-		}
+		int ano = contrato.getAno();
 
 		trocas.put("adonainomeresponsavel", contrato.getNomeResponsavel().toUpperCase());
 		trocas.put("adonaidata", dataExtenso);
@@ -1890,6 +1861,64 @@ public class AlunoController implements Serializable {
 		return trocas;
 	}
 	
+	/** Verifica se o aluno titular do contrato, ou algum dos irmãos incluídos nele,
+	 * fica entre o 6º e o 9º ano (Anos Finais) — mesma lógica de rematrícula/irmãos já
+	 * usada em montarContrato, pra decidir se anexa o regimento escolar desse segmento. */
+	/** Pra tela de listagem (topo): se o aluno atualmente selecionado (ou algum irmão do
+	 * contrato vigente dele) está entre 6º e 9º ano — controla se o botão do regimento
+	 * escolar dos anos finais aparece ali. */
+	public boolean isAlunoAnosFinais() {
+		if (aluno == null) {
+			return false;
+		}
+		if (aluno.getContratoVigente() != null) {
+			return algumAlunoAnosFinais(aluno.getContratoVigente());
+		}
+		if (aluno.getSerie() == null) {
+			return false;
+		}
+		return aluno.getSerie().ordinal() >= Serie.SEXTO_ANO.ordinal()
+				&& aluno.getSerie().ordinal() <= Serie.NONO_ANO.ordinal();
+	}
+
+	public boolean algumAlunoAnosFinais(ContratoAluno contrato) {
+		boolean rematricula = (contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular())
+				? true : false;
+
+		List<Aluno> alunos = new ArrayList<>();
+		alunos.add(contrato.getAluno());
+		if (contrato.getAluno().getIrmao1() != null && ((contrato.getAluno().getIrmao1().getRematricular() != null
+				&& contrato.getAluno().getIrmao1().getRematricular())
+				|| contrato.getAluno().getIrmao1().getRematricular() == null)) {
+			alunos.add(contrato.getAluno().getIrmao1());
+		}
+		if (contrato.getAluno().getIrmao2() != null && ((contrato.getAluno().getIrmao2().getRematricular() != null
+				&& contrato.getAluno().getIrmao2().getRematricular())
+				|| contrato.getAluno().getIrmao2().getRematricular() == null)) {
+			alunos.add(contrato.getAluno().getIrmao2());
+		}
+		if (contrato.getAluno().getIrmao3() != null && ((contrato.getAluno().getIrmao3().getRematricular() != null
+				&& contrato.getAluno().getIrmao3().getRematricular())
+				|| contrato.getAluno().getIrmao3().getRematricular() == null)) {
+			alunos.add(contrato.getAluno().getIrmao3());
+		}
+		if (contrato.getAluno().getIrmao4() != null && contrato.getAluno().getIrmao4().getRematricular() != null
+				&& contrato.getAluno().getIrmao4().getRematricular()) {
+			alunos.add(contrato.getAluno().getIrmao4());
+		}
+
+		for (Aluno al : alunos) {
+			if (al.getSerie() == null) {
+				continue;
+			}
+			int ordinal = al.getSerie().ordinal() + (rematricula ? 1 : 0);
+			if (ordinal >= Serie.SEXTO_ANO.ordinal() && ordinal <= Serie.NONO_ANO.ordinal()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public HashMap<String, String> montarContrato(ContratoAluno contrato) {
 		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
 		String dataExtenso = formatador.format(new Date());
@@ -1948,10 +1977,7 @@ public class AlunoController implements Serializable {
 							: Serie.values()[contrato.getAluno().getIrmao4().getSerie().ordinal()].getName());
 			nomePeriodo += ", " + contrato.getAluno().getIrmao4().getPeriodoProximoAno().getName();
 		}
-		int ano = configuracao.getAnoLetivo();
-		if (contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular()) {
-			ano = configuracao.getAnoRematricula();
-		}
+		int ano = contrato.getAno();
 
 		trocas.put("adonaianoletivo", ano + "");
 		trocas.put("adonainomealuno", nomeAluno);
@@ -2379,6 +2405,26 @@ public class AlunoController implements Serializable {
 		return imprimirNegativoDebito(aluno);
 	}
 
+	/** Igual, mas gera a negativa/comprovante de um contrato específico (não
+	 * necessariamente o vigente) — usado pra baixar o comprovante de um ano anterior. */
+	public StreamedContent imprimirNegativoDebito(ContratoAluno contrato) throws IOException {
+		String nomeArquivo = "";
+		if (contrato != null && contrato.getId() != null && contrato.getAluno() != null) {
+			nomeArquivo = contrato.getAluno().getId() + "f" + contrato.getId();
+			ImpressoesUtils.imprimirInformacoesAluno(contrato.getAluno(), "modeloNegativoDebito2017.docx",
+					montarAtestadoNegativoDebito(contrato.getAluno(), contrato), nomeArquivo);
+
+			nomeArquivo += ".doc";
+		} else {
+			nomeArquivo = "modeloNegativoDebito2017.docx";
+		}
+
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
+				+ nomeArquivo;
+		InputStream stream = new FileInputStream(caminho);
+		return FileDownload.getContentDoc(stream, nomeArquivo);
+	}
+
 	public StreamedContent imprimirContrato(Aluno aluno) throws IOException {
 		String nomeArquivo = "";
 		if (aluno != null && aluno.getId() != null) {
@@ -2412,14 +2458,57 @@ public class AlunoController implements Serializable {
 				nomeArquivo += ".doc";
 			}else {
 				nomeArquivo = contrato.getAluno().getId() + "g";
-				ImpressoesUtils.imprimirInformacoesAluno("modeloContrato2017.docx", montarContrato(contrato), nomeArquivo);
-				nomeArquivo += ".doc";	
+				HashMap<String, String> trocasContrato = montarContrato(contrato);
+
+				List<String> anexos = new ArrayList<>();
+				List<HashMap<String, String>> trocasAnexos = new ArrayList<>();
+				anexos.add("modeloTermoConsentimentoImagem.docx");
+				trocasAnexos.add(trocasContrato);
+				if (algumAlunoAnosFinais(contrato)) {
+					anexos.add("regimentoEscolarAnosFinais.docx");
+					trocasAnexos.add(trocasContrato);
+				}
+
+				ImpressoesUtils.imprimirInformacoesAlunoComAnexos("modeloContrato2017.docx", trocasContrato,
+						anexos, trocasAnexos, nomeArquivo);
+				nomeArquivo += ".doc";
 			}
 			
 		} else {
 			nomeArquivo = "modeloContrato2017.docx";
 		}
 
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
+				+ nomeArquivo;
+		InputStream stream = new FileInputStream(caminho);
+		return FileDownload.getContentDoc(stream, nomeArquivo);
+	}
+
+	/** Termo de Consentimento Específico e Destacado para uso de imagem em redes sociais
+	 * orgânicas (Lei 15.211/2025 - ECA Digital / LGPD) — documento separado do contrato,
+	 * com assinatura própria. Reaproveita os mesmos dados (nome/CPF do responsável, nome
+	 * do aluno, data) já usados em montarContrato. */
+	public StreamedContent imprimirTermoConsentimentoImagem(ContratoAluno contrato) throws IOException {
+		String nomeArquivo = "";
+		if (contrato != null && contrato.getId() != null) {
+			nomeArquivo = contrato.getAluno().getId() + "termoImagem";
+			ImpressoesUtils.imprimirInformacoesAluno("modeloTermoConsentimentoImagem.docx", montarContrato(contrato),
+					nomeArquivo);
+			nomeArquivo += ".doc";
+		} else {
+			nomeArquivo = "modeloTermoConsentimentoImagem.docx";
+		}
+
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
+				+ nomeArquivo;
+		InputStream stream = new FileInputStream(caminho);
+		return FileDownload.getContentDoc(stream, nomeArquivo);
+	}
+
+	/** Regimento Escolar dos Anos Finais (6º ao 9º ano) — documento estático, sem dado
+	 * de aluno pra preencher, só pra download avulso. */
+	public StreamedContent imprimirRegimentoEscolarAnosFinais() throws IOException {
+		String nomeArquivo = "regimentoEscolarAnosFinais.docx";
 		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
 				+ nomeArquivo;
 		InputStream stream = new FileInputStream(caminho);
@@ -3658,10 +3747,7 @@ public class AlunoController implements Serializable {
 		String dataExtenso = formatador.format(new Date());
 		Calendar dataLim = Calendar.getInstance();
 		dataLim.add(Calendar.MONTH, 1);
-		int ano = configuracao.getAnoLetivo();
-		if (aluno.getRematricular() != null && aluno.getRematricular()) {
-			ano = configuracao.getAnoRematricula();
-		}
+		int ano = contrato.getAno();
 		Calendar calendar = Calendar.getInstance();
 		DateFormat fomatadorData = DateFormat.getDateInstance(DateFormat.DEFAULT, new Locale("pt", "BR"));
 		int anoNascimento = 0;
