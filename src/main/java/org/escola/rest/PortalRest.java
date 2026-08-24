@@ -134,10 +134,11 @@ public class PortalRest {
 						+ "substitui os recibos individuais de pagamento das mensalidades de " + periodo + " de " + ano + ".";
 			}
 
+			String caminhoAssinatura = servletContext.getRealPath("/assinaturaSecretaria.png");
 			byte[] pdf = org.escola.controller.OfficePDFUtil.gerarDeclaracaoPagamentos(
 					contrato.getNomeResponsavel(), contrato.getCpfResponsavel(), ano,
 					formatadorMoeda.format(valorPago), parcelasPagas, formatadorMoeda.format(contrato.getValorMensal()),
-					aluno.getNomeAluno(), dataExtenso, fraseSubstituicao);
+					aluno.getNomeAluno(), dataExtenso, fraseSubstituicao, caminhoAssinatura);
 
 			return Response.ok(pdf)
 					.header("Content-Disposition", "inline; filename=comprovante_" + idcontrato + ".pdf")

@@ -2404,10 +2404,12 @@ public class AlunoController implements Serializable {
 					+ "substitui os recibos individuais de pagamento das mensalidades de " + periodo + " de " + ano + ".";
 		}
 
+		String caminhoAssinatura = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/")
+				+ File.separator + "assinaturaSecretaria.png";
 		return OfficePDFUtil.gerarDeclaracaoPagamentos(
 				contrato.getNomeResponsavel(), contrato.getCpfResponsavel(), ano,
 				formatadorMoeda.format(valorPago), parcelasPagas, formatadorMoeda.format(contrato.getValorMensal()),
-				contrato.getAluno().getNomeAluno(), dataExtenso, fraseSubstituicao);
+				contrato.getAluno().getNomeAluno(), dataExtenso, fraseSubstituicao, caminhoAssinatura);
 	}
 
 	public StreamedContent imprimirContrato(Aluno aluno) throws IOException {

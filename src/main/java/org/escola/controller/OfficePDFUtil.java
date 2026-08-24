@@ -23,6 +23,7 @@ import com.lowagie.text.Cell;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -121,7 +122,7 @@ public class OfficePDFUtil {
 	 * pronta de quem chamou (varia se o contrato está 100% quitado ou só em dia). */
 	public static byte[] gerarDeclaracaoPagamentos(String nomeResponsavel, String cpfResponsavel, int ano,
 			String valorPagoFormatado, int parcelasPagas, String valorParcelaFormatado, String nomeAluno,
-			String dataExtenso, String fraseSubstituicao) throws DocumentException {
+			String dataExtenso, String fraseSubstituicao, String caminhoAssinatura) throws DocumentException {
 		Document document = new Document(PageSize.A4, 60f, 60f, 50f, 50f);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PdfWriter.getInstance(document, baos);
@@ -176,10 +177,24 @@ public class OfficePDFUtil {
 		document.add(fechamento);
 
 		Paragraph dataParagrafo = new Paragraph("Palhoça, " + dataExtenso + ".", fonteCorpo);
-		dataParagrafo.setSpacingAfter(60f);
+		dataParagrafo.setSpacingAfter(50f);
 		document.add(dataParagrafo);
 
-		document.add(new Paragraph("________________________________", fonteCorpo));
+		boolean assinaturaAdicionada = false;
+		if (caminhoAssinatura != null) {
+			try {
+				Image assinatura = Image.getInstance(caminhoAssinatura);
+				assinatura.scaleToFit(180f, 70f);
+				assinatura.setAlignment(Image.ALIGN_LEFT);
+				document.add(assinatura);
+				assinaturaAdicionada = true;
+			} catch (IOException e) {
+				// Sem a imagem, cai no fallback da linha em branco abaixo.
+			}
+		}
+		if (!assinaturaAdicionada) {
+			document.add(new Paragraph("________________________________", fonteCorpo));
+		}
 		document.add(new Paragraph("Secretaria Centro Educacional Adonai.", fonteCorpo));
 
 		document.close();
