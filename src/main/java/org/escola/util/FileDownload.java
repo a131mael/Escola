@@ -37,6 +37,10 @@ public class FileDownload {
     public static StreamedContent getContentDoc(InputStream stream, String nomeArquivoSaida){
     	return new DefaultStreamedContent(stream, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", nomeArquivoSaida);
     }
+
+    public static StreamedContent getContentPdf(InputStream stream, String nomeArquivoSaida){
+    	return new DefaultStreamedContent(stream, "application/pdf", nomeArquivoSaida);
+    }
     
     public StreamedContent getFile() {
         return file;

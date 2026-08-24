@@ -1,11 +1,7 @@
 package org.escola.rest;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,7 +17,6 @@ import javax.servlet.ServletContext;
 
 import org.aaf.financeiro.model.Pagador;
 import org.aaf.financeiro.sicoob.util.CNAB240_SICOOB;
-import org.escola.controller.OfficeDOCUtil;
 import org.escola.model.Aluno;
 import org.escola.model.ContratoAluno;
 import org.escola.service.AlunoService;
@@ -87,7 +82,7 @@ public class PortalRest {
 
 	@GET
 	@Path("/comprovante/{idcontrato}")
-	@Produces("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+	@Produces("application/pdf")
 	public Response getComprovantePagamento(@PathParam("idcontrato") Long idcontrato) {
 		try {
 			ContratoAluno contrato = alunoService.findContratoById(idcontrato);
@@ -105,47 +100,47 @@ public class PortalRest {
 
 			double valorPago = 0d;
 			int parcelasPagas = 0;
+			int totalBoletosValidos = 0;
+			List<org.escola.model.Boleto> boletosPagos = new ArrayList<>();
 			if (contrato.getBoletos() != null) {
 				for (org.escola.model.Boleto boleto : contrato.getBoletos()) {
 					if (Boolean.TRUE.equals(boleto.getCancelado())) {
 						continue;
 					}
+					totalBoletosValidos++;
 					if (boleto.getDataPagamento() != null && boleto.getValorPago() != null) {
 						valorPago += boleto.getValorPago();
 						parcelasPagas++;
+						boletosPagos.add(boleto);
 					}
 				}
 			}
+			boletosPagos.sort((a, b) -> a.getVencimento().compareTo(b.getVencimento()));
 
-			HashMap<String, String> trocas = new HashMap<>();
-			trocas.put("adonainomealuno", aluno.getNomeAluno());
-			trocas.put("adonaiturma", aluno.getSerie() != null ? aluno.getSerie().getName() : "");
-			trocas.put("adonaiperiodo", aluno.getPeriodo() != null ? aluno.getPeriodo().getName() : "");
-			trocas.put("adonaidata", dataExtenso);
-			trocas.put("adonaicpfresponsavel", contrato.getCpfResponsavel());
-			trocas.put("adonainomeresponsavel", contrato.getNomeResponsavel());
-			trocas.put("adonaiano", contrato.getAno() + "");
-			trocas.put("adonaianuidade", formatadorMoeda.format(valorPago));
-			trocas.put("adonaiparcelas", parcelasPagas + "");
-			trocas.put("adonaivalorparcelas", formatadorMoeda.format(contrato.getValorMensal()));
-
-			String caminhoTemplate = servletContext.getRealPath("/modeloNegativoDebito2017.docx");
-			String nomeArquivoSaida = "comprovante_" + idcontrato + ".doc";
-			String caminhoSaida = System.getProperty("java.io.tmpdir") + File.separator + nomeArquivoSaida;
-
-			new OfficeDOCUtil().editDoc2CaminhoAbsoluto(caminhoTemplate, trocas, caminhoSaida);
-
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-			try (FileInputStream in = new FileInputStream(caminhoSaida)) {
-				byte[] chunk = new byte[8192];
-				int lidos;
-				while ((lidos = in.read(chunk)) != -1) {
-					buffer.write(chunk, 0, lidos);
-				}
+			int ano = contrato.getAno();
+			String fraseSubstituicao;
+			boolean cemPorCentoPago = !boletosPagos.isEmpty() && parcelasPagas == totalBoletosValidos;
+			if (cemPorCentoPago || boletosPagos.isEmpty()) {
+				fraseSubstituicao = "Esta declaração tem finalidade de comprovação de pagamento (Imposto de Renda) e "
+						+ "substitui os recibos individuais de pagamento das mensalidades do ano de " + ano + ".";
+			} else {
+				DateFormat formatadorMes = new java.text.SimpleDateFormat("MMMM", new Locale("pt", "BR"));
+				String mesInicial = formatadorMes.format(boletosPagos.get(0).getVencimento())
+						.toLowerCase(new Locale("pt", "BR"));
+				String mesFinal = formatadorMes.format(boletosPagos.get(boletosPagos.size() - 1).getVencimento())
+						.toLowerCase(new Locale("pt", "BR"));
+				String periodo = mesInicial.equals(mesFinal) ? mesInicial : (mesInicial + " a " + mesFinal);
+				fraseSubstituicao = "Esta declaração tem finalidade de comprovação de pagamento (Imposto de Renda) e "
+						+ "substitui os recibos individuais de pagamento das mensalidades de " + periodo + " de " + ano + ".";
 			}
 
-			return Response.ok(buffer.toByteArray())
-					.header("Content-Disposition", "inline; filename=comprovante_" + idcontrato + ".doc")
+			byte[] pdf = org.escola.controller.OfficePDFUtil.gerarDeclaracaoPagamentos(
+					contrato.getNomeResponsavel(), contrato.getCpfResponsavel(), ano,
+					formatadorMoeda.format(valorPago), parcelasPagas, formatadorMoeda.format(contrato.getValorMensal()),
+					aluno.getNomeAluno(), dataExtenso, fraseSubstituicao);
+
+			return Response.ok(pdf)
+					.header("Content-Disposition", "inline; filename=comprovante_" + idcontrato + ".pdf")
 					.build();
 		} catch (Exception e) {
 			e.printStackTrace();
