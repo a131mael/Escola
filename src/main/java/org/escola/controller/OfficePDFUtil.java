@@ -1,6 +1,7 @@
 package org.escola.controller;
 
 import java.awt.Color;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -113,6 +114,76 @@ public class OfficePDFUtil {
 		 * document.add(chapter1); document.close();
 		 */
 
+	}
+
+	/** Declaração de Pagamentos (comprovante pra Imposto de Renda) gerada direto em PDF
+	 * com iText, sem depender de template .docx/LibreOffice. `fraseSubstituicao` já vem
+	 * pronta de quem chamou (varia se o contrato está 100% quitado ou só em dia). */
+	public static byte[] gerarDeclaracaoPagamentos(String nomeResponsavel, String cpfResponsavel, int ano,
+			String valorPagoFormatado, int parcelasPagas, String valorParcelaFormatado, String nomeAluno,
+			String dataExtenso, String fraseSubstituicao) throws DocumentException {
+		Document document = new Document(PageSize.A4, 60f, 60f, 50f, 50f);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfWriter.getInstance(document, baos);
+		document.open();
+
+		Font fonteCabecalhoBold = new Font(Font.HELVETICA, 11, Font.BOLD);
+		Font fonteCabecalho = new Font(Font.HELVETICA, 10, Font.NORMAL);
+		Font fonteTitulo = new Font(Font.HELVETICA, 14, Font.BOLD);
+		Font fonteCorpo = new Font(Font.HELVETICA, 12, Font.NORMAL);
+
+		Paragraph nomeEscola = new Paragraph("COLÉGIO ADONAI", fonteCabecalhoBold);
+		nomeEscola.setAlignment(Paragraph.ALIGN_CENTER);
+		document.add(nomeEscola);
+
+		String[] linhasCabecalho = {
+				"Centro Educacional Adonai",
+				"Estado de Santa Catarina",
+				"MUNICÍPIO DE PALHOÇA",
+				"PARECER Nº 571 / 2013",
+				"Endereço: Rua José Cosme Pamplona nº 2001",
+				"Bela Vista – Palhoça",
+				"Fone: (48) 3242-4194 / 3093-0042",
+		};
+		for (String linha : linhasCabecalho) {
+			Paragraph p = new Paragraph(linha, fonteCabecalho);
+			p.setAlignment(Paragraph.ALIGN_CENTER);
+			document.add(p);
+		}
+
+		Paragraph titulo = new Paragraph("DECLARAÇÃO DE PAGAMENTOS", fonteTitulo);
+		titulo.setAlignment(Paragraph.ALIGN_CENTER);
+		titulo.setSpacingBefore(24f);
+		titulo.setSpacingAfter(24f);
+		document.add(titulo);
+
+		String corpoTexto = "Centro Educacional Adonai CNPJ 14.395.954/0001-55, com endereço na Rua José Cosme "
+				+ "Pamplona nº 2001 – Bela Vista - Palhoça, vem, através desta, declarar que " + nomeResponsavel
+				+ ", CPF: " + cpfResponsavel + ", efetuou o pagamento de mensalidades referentes ao Contrato de "
+				+ "Prestação de Serviços de Educação Escolar para o ano letivo de " + ano + ", no valor total pago "
+				+ "de R$ " + valorPagoFormatado + " (referente a " + parcelasPagas + " parcela(s) de R$ "
+				+ valorParcelaFormatado + "), cujo beneficiário foi o aluno " + nomeAluno + ".";
+		Paragraph corpo = new Paragraph(corpoTexto, fonteCorpo);
+		corpo.setAlignment(Paragraph.ALIGN_JUSTIFIED);
+		corpo.setLeading(18f);
+		corpo.setSpacingAfter(16f);
+		document.add(corpo);
+
+		Paragraph fechamento = new Paragraph(fraseSubstituicao, fonteCorpo);
+		fechamento.setAlignment(Paragraph.ALIGN_JUSTIFIED);
+		fechamento.setLeading(18f);
+		fechamento.setSpacingAfter(40f);
+		document.add(fechamento);
+
+		Paragraph dataParagrafo = new Paragraph("Palhoça, " + dataExtenso + ".", fonteCorpo);
+		dataParagrafo.setSpacingAfter(60f);
+		document.add(dataParagrafo);
+
+		document.add(new Paragraph("________________________________", fonteCorpo));
+		document.add(new Paragraph("Secretaria Centro Educacional Adonai.", fonteCorpo));
+
+		document.close();
+		return baos.toByteArray();
 	}
 
 	public static void geraPDF(String nomeArquivo,byte[] pdfByteArray){

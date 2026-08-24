@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1401,53 +1402,6 @@ public class AlunoController implements Serializable {
 		return trocas;
 	}
 
-	public HashMap<String, String> montarAtestadoNegativoDebito(Aluno aluno) {
-		return montarAtestadoNegativoDebito(aluno, aluno.getContratoVigente());
-	}
-
-	/** Permite gerar a negativa de débito/comprovante de pagamento de um contrato
-	 * específico (não só o vigente) — útil pra pegar o comprovante de um ano anterior. */
-	public HashMap<String, String> montarAtestadoNegativoDebito(Aluno aluno, ContratoAluno contrato) {
-		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
-		String dataExtenso = formatador.format(new Date());
-
-		NumberFormat formatadorMoeda = NumberFormat.getInstance(new Locale("pt", "BR"));
-		formatadorMoeda.setMinimumFractionDigits(2);
-		formatadorMoeda.setMaximumFractionDigits(2);
-
-		// Soma apenas o que foi de fato pago (boletos com dataPagamento), nunca o valor
-		// nominal do contrato — documento também é usado como comprovante de pagamento
-		// (IR), então precisa refletir a realidade mesmo se o contrato não estiver
-		// totalmente quitado.
-		double valorPago = 0d;
-		int parcelasPagas = 0;
-		if (contrato != null && contrato.getBoletos() != null) {
-			for (org.escola.model.Boleto boleto : contrato.getBoletos()) {
-				if (Boolean.TRUE.equals(boleto.getCancelado())) {
-					continue;
-				}
-				if (boleto.getDataPagamento() != null && boleto.getValorPago() != null) {
-					valorPago += boleto.getValorPago();
-					parcelasPagas++;
-				}
-			}
-		}
-
-		HashMap<String, String> trocas = new HashMap<>();
-		trocas.put("adonainomealuno", aluno.getNomeAluno());
-		trocas.put("adonaiturma", aluno.getSerie().getName());
-		trocas.put("adonaiperiodo", aluno.getPeriodo().getName());
-		trocas.put("adonaidata", dataExtenso);
-		trocas.put("adonaicpfresponsavel", contrato != null ? contrato.getCpfResponsavel() : "");
-		trocas.put("adonainomeresponsavel", contrato != null ? contrato.getNomeResponsavel() : "");
-		trocas.put("adonaiano", contrato != null ? contrato.getAno() + "" : "");
-		trocas.put("adonaianuidade", formatadorMoeda.format(valorPago));
-		trocas.put("adonaiparcelas", parcelasPagas + "");
-		trocas.put("adonaivalorparcelas", contrato != null ? formatadorMoeda.format(contrato.getValorMensal()) : "");
-
-		return trocas;
-	}
-
 	public HashMap<String, String> montarAtestadoVaga(Aluno aluno) {
 		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
 		String dataExtenso = formatador.format(new Date());
@@ -2384,21 +2338,7 @@ public class AlunoController implements Serializable {
 	}
 
 	public StreamedContent imprimirNegativoDebito(Aluno aluno) throws IOException {
-		String nomeArquivo = "";
-		if (aluno != null && aluno.getId() != null) {
-			nomeArquivo = aluno.getId() + "f";
-			ImpressoesUtils.imprimirInformacoesAluno(aluno, "modeloNegativoDebito2017.docx",
-					montarAtestadoNegativoDebito(aluno), nomeArquivo);
-
-			nomeArquivo += ".doc";
-		} else {
-			nomeArquivo = "modeloNegativoDebito2017.docx";
-		}
-
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
-				+ nomeArquivo;
-		InputStream stream = new FileInputStream(caminho);
-		return FileDownload.getContentDoc(stream, nomeArquivo);
+		return imprimirNegativoDebito(aluno != null ? aluno.getContratoVigente() : null);
 	}
 
 	public StreamedContent imprimirNegativoDebito() throws IOException {
@@ -2406,23 +2346,68 @@ public class AlunoController implements Serializable {
 	}
 
 	/** Igual, mas gera a negativa/comprovante de um contrato específico (não
-	 * necessariamente o vigente) — usado pra baixar o comprovante de um ano anterior. */
+	 * necessariamente o vigente) — usado pra baixar o comprovante de um ano anterior.
+	 * Gerado direto em PDF (iText), sem depender de template .docx. */
 	public StreamedContent imprimirNegativoDebito(ContratoAluno contrato) throws IOException {
-		String nomeArquivo = "";
-		if (contrato != null && contrato.getId() != null && contrato.getAluno() != null) {
-			nomeArquivo = contrato.getAluno().getId() + "f" + contrato.getId();
-			ImpressoesUtils.imprimirInformacoesAluno(contrato.getAluno(), "modeloNegativoDebito2017.docx",
-					montarAtestadoNegativoDebito(contrato.getAluno(), contrato), nomeArquivo);
+		if (contrato == null || contrato.getAluno() == null) {
+			throw new IOException("Contrato não encontrado pra gerar a declaração de pagamentos.");
+		}
+		try {
+			byte[] pdf = gerarPdfDeclaracaoPagamentos(contrato);
+			String nomeArquivo = contrato.getAluno().getId() + "f" + contrato.getId() + ".pdf";
+			return FileDownload.getContentPdf(new ByteArrayInputStream(pdf), nomeArquivo);
+		} catch (com.lowagie.text.DocumentException e) {
+			throw new IOException(e);
+		}
+	}
 
-			nomeArquivo += ".doc";
+	private byte[] gerarPdfDeclaracaoPagamentos(ContratoAluno contrato) throws com.lowagie.text.DocumentException {
+		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
+		String dataExtenso = formatador.format(new Date());
+
+		NumberFormat formatadorMoeda = NumberFormat.getInstance(new Locale("pt", "BR"));
+		formatadorMoeda.setMinimumFractionDigits(2);
+		formatadorMoeda.setMaximumFractionDigits(2);
+
+		double valorPago = 0d;
+		int parcelasPagas = 0;
+		int totalBoletosValidos = 0;
+		java.util.List<org.escola.model.Boleto> boletosPagos = new ArrayList<>();
+		if (contrato.getBoletos() != null) {
+			for (org.escola.model.Boleto boleto : contrato.getBoletos()) {
+				if (Boolean.TRUE.equals(boleto.getCancelado())) {
+					continue;
+				}
+				totalBoletosValidos++;
+				if (boleto.getDataPagamento() != null && boleto.getValorPago() != null) {
+					valorPago += boleto.getValorPago();
+					parcelasPagas++;
+					boletosPagos.add(boleto);
+				}
+			}
+		}
+		boletosPagos.sort((a, b) -> a.getVencimento().compareTo(b.getVencimento()));
+
+		int ano = contrato.getAno();
+		String fraseSubstituicao;
+		boolean cemPorCentoPago = !boletosPagos.isEmpty() && parcelasPagas == totalBoletosValidos;
+		if (cemPorCentoPago || boletosPagos.isEmpty()) {
+			fraseSubstituicao = "Esta declaração tem finalidade de comprovação de pagamento (Imposto de Renda) e "
+					+ "substitui os recibos individuais de pagamento das mensalidades do ano de " + ano + ".";
 		} else {
-			nomeArquivo = "modeloNegativoDebito2017.docx";
+			DateFormat formatadorMes = new SimpleDateFormat("MMMM", new Locale("pt", "BR"));
+			String mesInicial = formatadorMes.format(boletosPagos.get(0).getVencimento()).toLowerCase(new Locale("pt", "BR"));
+			String mesFinal = formatadorMes.format(boletosPagos.get(boletosPagos.size() - 1).getVencimento())
+					.toLowerCase(new Locale("pt", "BR"));
+			String periodo = mesInicial.equals(mesFinal) ? mesInicial : (mesInicial + " a " + mesFinal);
+			fraseSubstituicao = "Esta declaração tem finalidade de comprovação de pagamento (Imposto de Renda) e "
+					+ "substitui os recibos individuais de pagamento das mensalidades de " + periodo + " de " + ano + ".";
 		}
 
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
-				+ nomeArquivo;
-		InputStream stream = new FileInputStream(caminho);
-		return FileDownload.getContentDoc(stream, nomeArquivo);
+		return OfficePDFUtil.gerarDeclaracaoPagamentos(
+				contrato.getNomeResponsavel(), contrato.getCpfResponsavel(), ano,
+				formatadorMoeda.format(valorPago), parcelasPagas, formatadorMoeda.format(contrato.getValorMensal()),
+				contrato.getAluno().getNomeAluno(), dataExtenso, fraseSubstituicao);
 	}
 
 	public StreamedContent imprimirContrato(Aluno aluno) throws IOException {
