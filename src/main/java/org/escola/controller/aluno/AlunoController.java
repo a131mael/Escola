@@ -766,10 +766,26 @@ public class AlunoController implements Serializable {
 
 	public String getRowClassDevedor(Aluno a) {
 		if (a == null) return "";
-		if (a.getContratoVigente(configuracao.getAnoLetivo()) == null) return "marcarLinhaVermelho";
+		if (!possuiContratoAtivoNoAno(a, configuracao.getAnoLetivo())) return "marcarLinhaVermelho";
 		String status = a.getStatusWhatsAppSync();
 		if ("PODE_COBRAR".equals(status)) return "marcarLinhaVerde";
 		return "";
+	}
+
+	/** Checa direto na lista de contratos do aluno se existe algum não cancelado pro
+	 * ano informado. Não usa Aluno.getContratoVigente(int) porque esse método, quando
+	 * não acha nenhum contrato do ano, cai num fallback e retorna o PRIMEIRO contrato
+	 * da lista (de qualquer ano, até cancelado) em vez de null — o que mascarava o
+	 * "sem contrato ativo" pra praticamente todo aluno que já teve algum contrato. */
+	private boolean possuiContratoAtivoNoAno(Aluno a, int ano) {
+		if (a.getContratos() == null) return false;
+		for (ContratoAluno contrato : a.getContratos()) {
+			if (contrato != null && (contrato.getCancelado() == null || !contrato.getCancelado())
+					&& contrato.getAno() == ano) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String getWhatsAppStatusHtml(Aluno a) {
