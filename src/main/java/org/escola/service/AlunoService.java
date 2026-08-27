@@ -1305,8 +1305,9 @@ public class AlunoService extends Service {
 	public List<Boleto> gerarBoletos(Aluno user, int ano, int quantidadeParcelas, ContratoAluno contrato) {
 		List<Boleto> boletos = new ArrayList<>();
 		long nossoNumero = getProximoNossoNumero();
+		Date hoje = new Date();
+		List<Integer> mesesEmpurradosParaProximoAno = new ArrayList<>();
 		while (quantidadeParcelas < 12) {
-			Boleto boleto = new Boleto();
 			Calendar vencimento = Calendar.getInstance();
 			vencimento.set(Calendar.MONTH, quantidadeParcelas);
 			vencimento.set(Calendar.YEAR, ano);
@@ -1319,6 +1320,20 @@ public class AlunoService extends Service {
 				int dia = vencimento.getActualMaximum(Calendar.DAY_OF_MONTH);
 				vencimento.set(Calendar.DAY_OF_MONTH, dia);
 			}
+
+			// Contratos com muitas parcelas fechados no meio do ano podem fazer essa
+			// regressão a partir de dezembro cair em mês/dia que já passou (ex.: 8x
+			// fechado em agosto, com a regressão normal caindo em maio). Nesse caso essa
+			// parcela não entra no ano corrente — fica de lado pra ser posta em sequência
+			// a partir de janeiro do ano seguinte, depois que o restante do ano corrente
+			// (os meses que ainda não venceram) for gerado normalmente.
+			if (vencimento.getTime().before(hoje)) {
+				mesesEmpurradosParaProximoAno.add(quantidadeParcelas);
+				quantidadeParcelas++;
+				continue;
+			}
+
+			Boleto boleto = new Boleto();
 			boleto.setVencimento(vencimento.getTime());
 			boleto.setEmissao(new Date());
 			boleto.setValorNominal(contrato.getValorMensal());
@@ -1332,6 +1347,37 @@ public class AlunoService extends Service {
 			quantidadeParcelas++;
 			em.flush();
 		}
+
+		int mesSeguinte = Calendar.JANUARY;
+		for (int i = 0; i < mesesEmpurradosParaProximoAno.size(); i++) {
+			Calendar vencimento = Calendar.getInstance();
+			vencimento.set(Calendar.MONTH, mesSeguinte);
+			vencimento.set(Calendar.YEAR, ano + 1);
+			vencimento.set(Calendar.HOUR, 0);
+			vencimento.set(Calendar.MINUTE, 0);
+			vencimento.set(Calendar.SECOND, 0);
+			if (contrato.getVencimentoUltimoDia() == null || !contrato.getVencimentoUltimoDia()) {
+				vencimento.set(Calendar.DAY_OF_MONTH, contrato.getDiaVencimento());
+			} else {
+				int dia = vencimento.getActualMaximum(Calendar.DAY_OF_MONTH);
+				vencimento.set(Calendar.DAY_OF_MONTH, dia);
+			}
+
+			Boleto boleto = new Boleto();
+			boleto.setVencimento(vencimento.getTime());
+			boleto.setEmissao(new Date());
+			boleto.setValorNominal(contrato.getValorMensal());
+			boleto.setPagador(user);
+			boleto.setNossoNumero(nossoNumero);
+			boleto.setContrato(contrato);
+			em.persist(boleto);
+			nossoNumero++;
+			boletos.add(boleto);
+			em.flush();
+
+			mesSeguinte++;
+		}
+
 		return boletos;
 	}
 
