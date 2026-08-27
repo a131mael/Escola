@@ -264,8 +264,7 @@ public class OfficePDFUtil {
 				+ totalDividaFormatado + ", referente a:", fonteCorpo));
 		String rotuloMensalidades = "Mensalidades escolares em atraso"
 				+ (mesesDevendo != null && !mesesDevendo.trim().isEmpty() ? " (" + mesesDevendo + ")" : "");
-		document.add(corpo(rotuloMensalidades + ": R$ " + totalDividaFormatado + " (" + numeroParcelas
-				+ " parcela(s))", fonteCorpo));
+		document.add(corpo(rotuloMensalidades + ": R$ " + totalDividaFormatado, fonteCorpo));
 		document.add(corpo("Taxas adicionais: R$ 0,00", fonteCorpo));
 		document.add(corpo("Totalizando o valor de R$ " + totalDividaFormatado + " a ser quitado conforme "
 				+ "condições estabelecidas neste contrato.", fonteCorpo));
