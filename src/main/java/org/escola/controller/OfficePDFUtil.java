@@ -208,7 +208,7 @@ public class OfficePDFUtil {
 	 * original, com os valores calculados já substituídos. */
 	public static byte[] gerarContratoAcordoDivida(String nomeResponsavel, String cpfResponsavel, String endereco,
 			String totalDividaFormatado, String valorParcelaFormatado, int numeroParcelas,
-			String vencimentoPrimeiraParcela, String dataExtenso,
+			String vencimentoPrimeiraParcela, String dataExtenso, String mesesDevendo,
 			String caminhoAssinaturaCredora, String caminhoAssinaturaTestemunha1, String caminhoAssinaturaTestemunha2)
 			throws DocumentException {
 		Document document = new Document(PageSize.A4, 60f, 60f, 50f, 50f);
@@ -262,7 +262,9 @@ public class OfficePDFUtil {
 		document.add(secao("CLÁUSULA SEGUNDA - DO RECONHECIMENTO DA DÍVIDA", fonteSecao));
 		document.add(corpo("O(a) DEVEDOR(A) reconhece e confessa que deve ao COLÉGIO ADONAI o montante de R$ "
 				+ totalDividaFormatado + ", referente a:", fonteCorpo));
-		document.add(corpo("Mensalidades escolares em atraso: R$ " + totalDividaFormatado + " (" + numeroParcelas
+		String rotuloMensalidades = "Mensalidades escolares em atraso"
+				+ (mesesDevendo != null && !mesesDevendo.trim().isEmpty() ? " (" + mesesDevendo + ")" : "");
+		document.add(corpo(rotuloMensalidades + ": R$ " + totalDividaFormatado + " (" + numeroParcelas
 				+ " parcela(s))", fonteCorpo));
 		document.add(corpo("Taxas adicionais: R$ 0,00", fonteCorpo));
 		document.add(corpo("Totalizando o valor de R$ " + totalDividaFormatado + " a ser quitado conforme "

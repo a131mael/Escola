@@ -136,14 +136,24 @@
 							</h:panelGrid>
 							<h:panelGrid columns="1" border="0" style="100%">
 							
-								<p:selectOneMenu  style="width: 160px;" value="#{contratoAlun.tipoBoleto}">
+								<p:selectOneMenu id="tipoBoleto" style="width: 160px;" value="#{contratoAlun.tipoBoleto}">
 													<f:selectItems value="#{CombosEspeciaisMB.getTipoBoleto()}"
 														var="tipoboleto" itemLabel="#{tipoboleto}"
-														itemValue="#{tipoboleto}" 
+														itemValue="#{tipoboleto}"
 														rendered="#{not contratoAlun.cancelado and alunoController.podeGerarBoleto(contratoAlun)}"/>
-														<p:ajax event="change" process="@this" />
+														<p:ajax event="change" process="@this" update="panelMesesAcordo" />
 													</p:selectOneMenu>
-							
+
+								<h:panelGroup id="panelMesesAcordo">
+									<h:outputLabel value="Meses do acordo (ex: agosto e setembro): "
+										style="font-size: 13px; width:180px"
+										rendered="#{alunoController.isAcordoDivida(contratoAlun)}" />
+									<p:inputText value="#{contratoAlun.mesesAcordo}"
+										style="font-size: 15px; width:275px"
+										rendered="#{alunoController.isAcordoDivida(contratoAlun)}">
+									</p:inputText>
+								</h:panelGroup>
+
 									<p:commandButton value="Salvar Contrato" 
 													rendered="#{not contratoAlun.cancelado and alunoController.podeGerarBoleto(contratoAlun)}">
 													<p:ajax process="tabcontrato" event="click"
