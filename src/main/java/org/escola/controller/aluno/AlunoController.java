@@ -1738,97 +1738,45 @@ public class AlunoController implements Serializable {
 	
 	
 	
-	public HashMap<String, String> montarAcordoDivida(ContratoAluno contrato) {
+	/** Gera o Contrato de Acordo de Dívida em PDF (iText), com as assinaturas da
+	 * credora e das 2 testemunhas já embutidas — igual ao padrão da Declaração de
+	 * Pagamentos. Substitui a geração antiga em .docx (modeloAcordoDivida.docx),
+	 * que tinha metade dos campos sem preencher.
+	 *
+	 * Regras de cálculo confirmadas com o Abimael (27/ago/2026):
+	 * - Total da dívida = número de parcelas do acordo × valor da parcela (sem
+	 *   taxas adicionais — não existe fórmula de "taxa adicional" separada hoje).
+	 * - Juros por atraso: R$ 0,50 por boleto, por dia de atraso (texto fixo da
+	 *   Cláusula Quarta, não é um valor calculado neste método).
+	 * - Vencimento da 1ª parcela = dia de vencimento do contrato (os boletos do
+	 *   próprio acordo, gerados à parte, é que definem o vencimento real). */
+	private byte[] gerarPdfAcordoDivida(ContratoAluno contrato) throws com.lowagie.text.DocumentException {
 		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
 		String dataExtenso = formatador.format(new Date());
-		Calendar dataLim = Calendar.getInstance();
-		dataLim.add(Calendar.MONTH, 1);
-		String dataLimiteExtenso = formatador.format(dataLim.getTime());
 
-		boolean rematricula = (contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular())
-				? true : false;
-		HashMap<String, String> trocas = new HashMap<>();
+		NumberFormat formatadorMoeda = NumberFormat.getInstance(new Locale("pt", "BR"));
+		formatadorMoeda.setMinimumFractionDigits(2);
+		formatadorMoeda.setMaximumFractionDigits(2);
 
-		String nomeAluno = contrato.getAluno().getNomeAluno();
-		String nomeSerie = rematricula ? Serie.values()[contrato.getAluno().getSerie().ordinal() + 1].getName()
-				: Serie.values()[contrato.getAluno().getSerie().ordinal()].getName();
+		double totalDivida = contrato.getValorMensal() * contrato.getNumeroParcelas();
+		String totalFormatado = formatadorMoeda.format(totalDivida);
 
-		String nomePeriodo = "";
-		if (contrato.getAluno().getRematricular() != null && contrato.getAluno().getRematricular()) {
-			nomePeriodo = contrato.getAluno().getPeriodoProximoAno().getName();
-		} else {
-			nomePeriodo = contrato.getAluno().getPeriodo().getName();
-		}
+		String vencimentoPrimeiraParcela = (contrato.getVencimentoUltimoDia() != null && contrato.getVencimentoUltimoDia())
+				? "último dia útil do mês"
+				: String.valueOf(contrato.getDiaVencimento());
 
-		if (contrato.getAluno().getIrmao1() != null && ((contrato.getAluno().getIrmao1().getRematricular() != null
-				&& contrato.getAluno().getIrmao1().getRematricular())
-				|| contrato.getAluno().getIrmao1().getRematricular() == null)) {
-			nomeAluno += ", " + contrato.getAluno().getIrmao1().getNomeAluno();
-			nomeSerie += ", "
-					+ (rematricula ? Serie.values()[contrato.getAluno().getIrmao1().getSerie().ordinal() + 1].getName()
-							: Serie.values()[contrato.getAluno().getIrmao1().getSerie().ordinal()].getName());
-			nomePeriodo += ", " + contrato.getAluno().getIrmao1().getPeriodoProximoAno().getName();
+		String caminhoAssinaturaCredora = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/")
+				+ File.separator + "assinaturaSecretaria.png";
+		String caminhoAssinaturaTestemunha1 = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/")
+				+ File.separator + "assinaturaTestemunha1.png";
+		String caminhoAssinaturaTestemunha2 = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/")
+				+ File.separator + "assinaturaTestemunha2.png";
 
-		}
-		if (contrato.getAluno().getIrmao2() != null && ((contrato.getAluno().getIrmao2().getRematricular() != null
-				&& contrato.getAluno().getIrmao2().getRematricular())
-				|| contrato.getAluno().getIrmao2().getRematricular() == null)) {
-			nomeAluno += ", " + contrato.getAluno().getIrmao2().getNomeAluno();
-			nomeSerie += ", "
-					+ (rematricula ? Serie.values()[contrato.getAluno().getIrmao2().getSerie().ordinal() + 1].getName()
-							: Serie.values()[contrato.getAluno().getIrmao2().getSerie().ordinal()].getName());
-			nomePeriodo += ", " + contrato.getAluno().getIrmao2().getPeriodoProximoAno().getName();
-		}
-		if (contrato.getAluno().getIrmao3() != null && ((contrato.getAluno().getIrmao3().getRematricular() != null
-				&& contrato.getAluno().getIrmao3().getRematricular())
-				|| contrato.getAluno().getIrmao3().getRematricular() == null)) {
-			nomeAluno += ", " + contrato.getAluno().getIrmao3().getNomeAluno();
-			nomeSerie += ", "
-					+ (rematricula ? Serie.values()[contrato.getAluno().getIrmao3().getSerie().ordinal() + 1].getName()
-							: Serie.values()[contrato.getAluno().getIrmao3().getSerie().ordinal()].getName());
-			nomePeriodo += ", " + contrato.getAluno().getIrmao3().getPeriodoProximoAno().getName();
-		}
-		if (contrato.getAluno().getIrmao4() != null && contrato.getAluno().getIrmao4().getRematricular() != null
-				&& contrato.getAluno().getIrmao4().getRematricular()) {
-			nomeAluno += ", " + contrato.getAluno().getIrmao4().getNomeAluno();
-			nomeSerie += ", "
-					+ (rematricula ? Serie.values()[contrato.getAluno().getIrmao4().getSerie().ordinal() + 1].getName()
-							: Serie.values()[contrato.getAluno().getIrmao4().getSerie().ordinal()].getName());
-			nomePeriodo += ", " + contrato.getAluno().getIrmao4().getPeriodoProximoAno().getName();
-		}
-		int ano = contrato.getAno();
-
-		trocas.put("adonainomeresponsavel", contrato.getNomeResponsavel().toUpperCase());
-		trocas.put("adonaidata", dataExtenso);
-		trocas.put("adonaicpfresponsavel", contrato.getCpfResponsavel());
-		trocas.put("adonaivalorparcela", (contrato.getValorMensal()) + "0");
-		trocas.put("adonaivalortotal", (contrato.getValorMensal() * contrato.getNumeroParcelas()) + "0");
-		trocas.put("adonaitaxasadicionais", ano + "");
-		
-		
-		trocas.put("adonaianoletivo", ano + "");
-		trocas.put("adonainomealuno", nomeAluno);
-		trocas.put("adonaiturma", nomeSerie);
-		trocas.put("adonaiperiodo", nomePeriodo);
-	
-		trocas.put("adonaidatalimtevaga", dataLimiteExtenso);
-		
-		trocas.put("adonainumeroparcelas", (contrato.getNumeroParcelas()) + "");
-		
-		
-
-		trocas.put("adonairgcontratado", contrato.getRgResponsavel());
-		
-		trocas.put("adonaimesespagar", getMesInicio(contrato.getNumeroParcelas()) + " a " + "DEZEMBRO");
-		trocas.put("mesinicio", getMesInicio(contrato.getNumeroParcelas()));
-		trocas.put("mesfim", "DEZEMBRO");
-
-		trocas.put("adonainometestemunha", "ABIMAEL ALDEVINO FIDENCIO");
-		trocas.put("adonaicpftestemunha", "066.606.049-52");
-		trocas.put("adonainomedoistestemunha", "MARCELO LOURENCO VANDRESEN");
-		trocas.put("adonaicpftdoisestemunha", "057.002.879-51");
-
-		return trocas;
+		return OfficePDFUtil.gerarContratoAcordoDivida(
+				contrato.getNomeResponsavel().toUpperCase(), contrato.getCpfResponsavel(), contrato.getEndereco(),
+				totalFormatado, formatadorMoeda.format(contrato.getValorMensal()), contrato.getNumeroParcelas(),
+				vencimentoPrimeiraParcela, dataExtenso,
+				caminhoAssinaturaCredora, caminhoAssinaturaTestemunha1, caminhoAssinaturaTestemunha2);
 	}
 	
 	/** Verifica se o aluno titular do contrato, ou algum dos irmãos incluídos nele,
@@ -2450,16 +2398,20 @@ public class AlunoController implements Serializable {
 	}
 
 	public StreamedContent imprimirContrato(ContratoAluno contrato) throws IOException {
+		if (contrato != null && contrato.getId() != null && contrato.getTipoBoleto() != null
+				&& contrato.getTipoBoleto().equals(TipoBoleto.ACORDO_DIVIDA)) {
+			try {
+				byte[] pdf = gerarPdfAcordoDivida(contrato);
+				String nomeArquivoPdf = contrato.getAluno().getId() + "Acordo.pdf";
+				return FileDownload.getContentPdf(new ByteArrayInputStream(pdf), nomeArquivoPdf);
+			} catch (com.lowagie.text.DocumentException e) {
+				throw new IOException(e);
+			}
+		}
+
 		String nomeArquivo = "";
-		
-		
 		if (contrato != null && contrato.getId() != null) {
-			
-			if(contrato.getTipoBoleto().equals(TipoBoleto.ACORDO_DIVIDA)) {
-				nomeArquivo = contrato.getAluno().getId() + "Acordo";
-				ImpressoesUtils.imprimirInformacoesAluno("modeloAcordoDivida.docx", montarAcordoDivida(contrato), nomeArquivo);
-				nomeArquivo += ".doc";
-			}else {
+			{
 				nomeArquivo = contrato.getAluno().getId() + "g";
 				HashMap<String, String> trocasContrato = montarContrato(contrato);
 
