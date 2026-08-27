@@ -1765,6 +1765,11 @@ public class AlunoController implements Serializable {
 				? "último dia útil do mês"
 				: String.valueOf(contrato.getDiaVencimento());
 
+		String mesesDevendo = null;
+		if (contrato.getMesesAcordo() != null && !contrato.getMesesAcordo().trim().isEmpty()) {
+			mesesDevendo = contrato.getMesesAcordo().trim() + " " + contrato.getAno();
+		}
+
 		String caminhoAssinaturaCredora = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/")
 				+ File.separator + "assinaturaSecretaria.png";
 		String caminhoAssinaturaTestemunha1 = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/")
@@ -1775,7 +1780,7 @@ public class AlunoController implements Serializable {
 		return OfficePDFUtil.gerarContratoAcordoDivida(
 				contrato.getNomeResponsavel().toUpperCase(), contrato.getCpfResponsavel(), contrato.getEndereco(),
 				totalFormatado, formatadorMoeda.format(contrato.getValorMensal()), contrato.getNumeroParcelas(),
-				vencimentoPrimeiraParcela, dataExtenso,
+				vencimentoPrimeiraParcela, dataExtenso, mesesDevendo,
 				caminhoAssinaturaCredora, caminhoAssinaturaTestemunha1, caminhoAssinaturaTestemunha2);
 	}
 	
@@ -3319,6 +3324,11 @@ public class AlunoController implements Serializable {
 		} else {
 			return false;
 		}
+	}
+
+	public boolean isAcordoDivida(ContratoAluno contrato) {
+		return contrato != null && contrato.getTipoBoleto() != null
+				&& contrato.getTipoBoleto().equals(TipoBoleto.ACORDO_DIVIDA);
 	}
 
 	public List<org.escola.model.Boleto> getBoletosParaPagar(Aluno aluno) {
