@@ -201,6 +201,177 @@ public class OfficePDFUtil {
 		return baos.toByteArray();
 	}
 
+	/** Contrato de Acordo de Dívida gerado direto em PDF (iText), com as assinaturas
+	 * da credora e das 2 testemunhas embutidas — mesmo padrão da Declaração de
+	 * Pagamentos. Substitui o antigo modeloAcordoDivida.docx (metade dos campos
+	 * ficava em branco lá). Texto das cláusulas replicado fielmente do modelo
+	 * original, com os valores calculados já substituídos. */
+	public static byte[] gerarContratoAcordoDivida(String nomeResponsavel, String cpfResponsavel, String endereco,
+			String totalDividaFormatado, String valorParcelaFormatado, int numeroParcelas,
+			String vencimentoPrimeiraParcela, String dataExtenso,
+			String caminhoAssinaturaCredora, String caminhoAssinaturaTestemunha1, String caminhoAssinaturaTestemunha2)
+			throws DocumentException {
+		Document document = new Document(PageSize.A4, 60f, 60f, 50f, 50f);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfWriter.getInstance(document, baos);
+		document.open();
+
+		Font fonteCabecalhoBold = new Font(Font.HELVETICA, 11, Font.BOLD);
+		Font fonteCabecalho = new Font(Font.HELVETICA, 10, Font.NORMAL);
+		Font fonteTitulo = new Font(Font.HELVETICA, 14, Font.BOLD);
+		Font fonteSecao = new Font(Font.HELVETICA, 12, Font.BOLD);
+		Font fonteCorpo = new Font(Font.HELVETICA, 11, Font.NORMAL);
+		Font fonteCorpoBold = new Font(Font.HELVETICA, 11, Font.BOLD);
+
+		Paragraph nomeEscola = new Paragraph("COLÉGIO ADONAI", fonteCabecalhoBold);
+		nomeEscola.setAlignment(Paragraph.ALIGN_CENTER);
+		document.add(nomeEscola);
+		String[] linhasCabecalho = {
+				"Centro Educacional Adonai",
+				"Endereço: Rua Manoel Joaquim de Souza, 97",
+				"Bela Vista – Palhoça",
+				"Fone: (48) 3242-4194 / 3093-0042",
+		};
+		for (String linha : linhasCabecalho) {
+			Paragraph p = new Paragraph(linha, fonteCabecalho);
+			p.setAlignment(Paragraph.ALIGN_CENTER);
+			document.add(p);
+		}
+
+		Paragraph titulo = new Paragraph("CONTRATO DE ACORDO DE DÍVIDA", fonteTitulo);
+		titulo.setAlignment(Paragraph.ALIGN_CENTER);
+		titulo.setSpacingBefore(20f);
+		titulo.setSpacingAfter(20f);
+		document.add(titulo);
+
+		document.add(secao("IDENTIFICAÇÃO DAS PARTES CONTRATANTES", fonteSecao));
+		document.add(corpo("COLÉGIO ADONAI, inscrito no CNPJ nº 14.395.954/0001-55, com sede à Rua Manoel Joaquim "
+				+ "de Souza, 94, Bela Vista, Palhoça, Santa Catarina, neste ato representado por Marlete Maria da "
+				+ "Silva Fidêncio, doravante denominada simplesmente CREDORA.", fonteCorpo));
+		document.add(corpo(nomeResponsavel + ", inscrito(a) no CPF sob o nº " + cpfResponsavel + ", residente e "
+				+ "domiciliado(a) à " + (endereco != null ? endereco : "") + ", doravante denominado(a) simplesmente "
+				+ "DEVEDOR(A).", fonteCorpo));
+		document.add(corpo("As partes acima identificadas têm, entre si, justo e acertado o presente contrato de "
+				+ "acordo de dívida, que se regerá pelas cláusulas e condições seguintes:", fonteCorpo));
+
+		document.add(secao("CLÁUSULA PRIMEIRA - DO OBJETO DO ACORDO", fonteSecao));
+		document.add(corpo("O presente contrato tem por objeto o reconhecimento e a quitação da dívida existente "
+				+ "em nome do(a) DEVEDOR(A) perante o COLÉGIO ADONAI, referente a valores inadimplidos relativos a "
+				+ "mensalidades escolares e outros encargos, conforme detalhado na Cláusula Segunda.", fonteCorpo));
+
+		document.add(secao("CLÁUSULA SEGUNDA - DO RECONHECIMENTO DA DÍVIDA", fonteSecao));
+		document.add(corpo("O(a) DEVEDOR(A) reconhece e confessa que deve ao COLÉGIO ADONAI o montante de R$ "
+				+ totalDividaFormatado + ", referente a:", fonteCorpo));
+		document.add(corpo("Mensalidades escolares em atraso: R$ " + totalDividaFormatado + " (" + numeroParcelas
+				+ " parcela(s))", fonteCorpo));
+		document.add(corpo("Taxas adicionais: R$ 0,00", fonteCorpo));
+		document.add(corpo("Totalizando o valor de R$ " + totalDividaFormatado + " a ser quitado conforme "
+				+ "condições estabelecidas neste contrato.", fonteCorpo));
+
+		document.add(secao("CLÁUSULA TERCEIRA - DAS CONDIÇÕES DE PAGAMENTO", fonteSecao));
+		document.add(corpo("As partes acordam que a dívida mencionada na Cláusula Segunda será paga pelo(a) "
+				+ "DEVEDOR(A) ao COLÉGIO ADONAI nas seguintes condições:", fonteCorpo));
+		document.add(corpo("Parcelamento: O valor total da dívida será dividido em " + numeroParcelas
+				+ " parcelas iguais de R$ " + valorParcelaFormatado + ".", fonteCorpo));
+		document.add(corpo("Data de vencimento: A primeira parcela deverá ser paga no dia "
+				+ vencimentoPrimeiraParcela + ", e as parcelas subsequentes vencerão no mesmo dia dos meses "
+				+ "seguintes.", fonteCorpo));
+		document.add(corpo("Forma de pagamento: O pagamento será realizado através de Boleto bancário.", fonteCorpo));
+
+		document.add(secao("CLÁUSULA QUARTA - DAS CONSEQUÊNCIAS DO INADIMPLEMENTO", fonteSecao));
+		document.add(corpo("O não pagamento de qualquer parcela na data de vencimento implicará em:", fonteCorpo));
+		document.add(corpo("Multa de 2% sobre o valor da parcela em atraso.", fonteCorpo));
+		document.add(corpo("Juros de R$ 0,50 (cinquenta centavos) por boleto, por dia de atraso, até o efetivo "
+				+ "pagamento.", fonteCorpo));
+		document.add(corpo("Caso o(a) DEVEDOR(A) deixe de pagar 2 parcelas consecutivas ou intercaladas ou haja "
+				+ "parcela com mais de 45 dias de atraso o presente acordo será considerado rescindido e o saldo "
+				+ "total da dívida será imediatamente exigível, com os devidos acréscimos legais.", fonteCorpo));
+		document.add(corpo("Caso o contrato seja rescindido por inadimplência o COLÉGIO ADONAI poderá realizar o "
+				+ "protesto do saldo total da dívida imediatamente, com inclusão do nome do contratante nos órgãos "
+				+ "de proteção ao crédito, conforme previsto na legislação vigente.", fonteCorpo));
+
+		document.add(secao("CLÁUSULA QUINTA - DA QUITAÇÃO", fonteSecao));
+		document.add(corpo("Após o pagamento integral da dívida conforme as condições estabelecidas neste "
+				+ "contrato, o COLÉGIO ADONAI fornecerá ao(a) DEVEDOR(A) um termo de quitação total da dívida, não "
+				+ "restando mais qualquer valor a ser pago relacionado ao objeto deste contrato.", fonteCorpo));
+
+		document.add(secao("CLÁUSULA SEXTA - DA CONFIDENCIALIDADE", fonteSecao));
+		document.add(corpo("As partes se comprometem a manter confidenciais as informações relacionadas ao "
+				+ "presente contrato e à dívida aqui mencionada, não divulgando-as a terceiros, exceto quando "
+				+ "exigido por lei ou decisão judicial.", fonteCorpo));
+
+		document.add(secao("CLÁUSULA SÉTIMA - DO FORO", fonteSecao));
+		document.add(corpo("As partes elegem o foro da Comarca de Palhoça, Estado de Santa Catarina, para dirimir "
+				+ "quaisquer dúvidas ou litígios oriundos deste contrato, renunciando a qualquer outro, por mais "
+				+ "privilegiado que seja.", fonteCorpo));
+
+		document.add(corpo("E, por estarem de pleno acordo com as cláusulas deste contrato, as partes assinam o "
+				+ "presente instrumento em duas vias de igual teor e forma, juntamente com duas testemunhas, para "
+				+ "que produza seus devidos efeitos legais.", fonteCorpo));
+
+		Paragraph dataParagrafo = new Paragraph("Palhoça, " + dataExtenso + ".", fonteCorpo);
+		dataParagrafo.setSpacingBefore(10f);
+		dataParagrafo.setSpacingAfter(30f);
+		document.add(dataParagrafo);
+
+		document.add(corpo("CREDORA:", fonteCorpoBold));
+		adicionarAssinatura(document, caminhoAssinaturaCredora);
+		document.add(corpo("Nome: Marlete Maria da Silva Fidêncio", fonteCorpo));
+		document.add(corpo("Representante legal do Colégio Adonai", fonteCorpo));
+		document.add(corpo("CNPJ: 14.395.954/0001-55", fonteCorpo));
+
+		Paragraph devedorTitulo = corpo("DEVEDOR(A):", fonteCorpoBold);
+		devedorTitulo.setSpacingBefore(24f);
+		document.add(devedorTitulo);
+		document.add(new Paragraph(" "));
+		document.add(corpo("Nome: " + nomeResponsavel, fonteCorpo));
+		document.add(corpo("CPF: " + cpfResponsavel, fonteCorpo));
+
+		Paragraph testemunhasTitulo = corpo("TESTEMUNHAS:", fonteCorpoBold);
+		testemunhasTitulo.setSpacingBefore(24f);
+		document.add(testemunhasTitulo);
+
+		adicionarAssinatura(document, caminhoAssinaturaTestemunha1);
+		document.add(corpo("NOME: ABIMAEL ALDEVINO FIDENCIO", fonteCorpo));
+		document.add(corpo("RG: 5052701", fonteCorpo));
+		document.add(corpo("CPF: 066.606.049-52", fonteCorpo));
+
+		adicionarAssinatura(document, caminhoAssinaturaTestemunha2);
+		document.add(corpo("NOME: Bernardo Gonçalves Fidêncio", fonteCorpo));
+		document.add(corpo("RG: 109.160.559-90", fonteCorpo));
+		document.add(corpo("CPF: 109.160.559-90", fonteCorpo));
+
+		document.close();
+		return baos.toByteArray();
+	}
+
+	private static Paragraph secao(String texto, Font fonte) {
+		Paragraph p = new Paragraph(texto, fonte);
+		p.setSpacingBefore(14f);
+		p.setSpacingAfter(6f);
+		return p;
+	}
+
+	private static Paragraph corpo(String texto, Font fonte) {
+		Paragraph p = new Paragraph(texto, fonte);
+		p.setAlignment(Paragraph.ALIGN_JUSTIFIED);
+		p.setLeading(15f);
+		p.setSpacingAfter(4f);
+		return p;
+	}
+
+	private static void adicionarAssinatura(Document document, String caminhoAssinatura) {
+		try {
+			Image assinatura = Image.getInstance(caminhoAssinatura);
+			assinatura.scaleToFit(170f, 65f);
+			assinatura.setAlignment(Image.ALIGN_LEFT);
+			assinatura.setSpacingBefore(6f);
+			document.add(assinatura);
+		} catch (Exception e) {
+			// segue sem a imagem — ainda sobra a linha "Nome:/CPF:" pra identificar
+		}
+	}
+
 	public static void geraPDF(String nomeArquivo,byte[] pdfByteArray){
 		
 		try {
