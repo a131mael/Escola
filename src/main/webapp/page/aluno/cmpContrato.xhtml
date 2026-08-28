@@ -144,12 +144,12 @@
 														<p:ajax event="change" process="@this" update="panelMesesAcordo" />
 													</p:selectOneMenu>
 
-								<h:panelGroup id="panelMesesAcordo">
+								<h:panelGroup id="panelMesesAcordo" layout="block">
 									<h:outputLabel value="Meses do acordo (ex: agosto e setembro): "
-										style="font-size: 13px; white-space:nowrap; display:inline-block; margin-right:8px;"
+										style="font-size: 13px; display:block; margin-bottom:4px;"
 										rendered="#{alunoController.isAcordoDivida(contratoAlun)}" />
 									<p:inputText value="#{contratoAlun.mesesAcordo}"
-										style="font-size: 15px; width:275px"
+										style="font-size: 15px; width:275px; display:block;"
 										rendered="#{alunoController.isAcordoDivida(contratoAlun)}">
 									</p:inputText>
 								</h:panelGroup>
