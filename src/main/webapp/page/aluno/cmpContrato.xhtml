@@ -167,10 +167,23 @@
 									
 									<p:commandButton style="background:blue"
 													value="Gerar Boletos" rendered="#{alunoController.podeGerarBoleto(contratoAlun) and !contratoAlun.cancelado}">
-													<p:ajax listener="#{alunoController.gerarBoletos(contratoAlun)}"   
+													<p:ajax listener="#{alunoController.gerarBoletos(contratoAlun)}"
 															update="form:tabView:panelContratos" />
 									</p:commandButton>
-									
+
+									<br/>
+									<br/>
+
+									<p:commandButton style="background:green" icon="ui-icon-arrowreturnthick-1-e"
+													value="Enviar todos os boletos pro banco"
+													action="#{alunoController.enviarTodosBoletosParaBanco(contratoAlun)}"
+													update="form:tabView:panelContratos"
+													rendered="#{not contratoAlun.cancelado}">
+													<p:confirm header="Confirmacao"
+														message="Deseja enviar TODOS os boletos em aberto desse contrato pro banco agora, mesmo os que ainda não venceram?"
+														icon="ui-icon-alert" />
+									</p:commandButton>
+
 									<br/>
 									<br/>
 									<h:panelGrid columns="3" border="0">

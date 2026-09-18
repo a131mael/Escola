@@ -90,14 +90,14 @@
 					</p:commandButton>
 					</p:column>
 					
-					<p:column style="width:7%; text-align:center;" headerText="Perdoar">
-						<p:commandButton id="perdoar" update="@form" icon="ui-icon-check"
-							alt="Perdoar Divida" action="#{alunoController.perdoarDivida(professorTab)}"
+					<p:column style="width:7%; text-align:center;" headerText="Enviar Banco">
+						<p:commandButton id="enviarBanco" update="@form" icon="ui-icon-arrowreturnthick-1-e"
+							alt="Enviar Boleto pro Banco" action="#{alunoController.enviarBoletoParaBanco(professorTab)}"
 							disabled="#{!alunoController.alunoSelecionado}">
 							<p:confirm header="Confirmacao"
-								message="Deseja perdoar essa divida ?" icon="ui-icon-alert" />
+								message="Deseja enviar esse boleto pro banco agora ?" icon="ui-icon-alert" />
 						</p:commandButton>
-						
+
 					</p:column>
 					
 					

@@ -168,6 +168,9 @@ public class AlunoController implements Serializable {
 	@Inject
 	private MensagemWhatsAppService mensagemWhatsAppService;
 
+	@Inject
+	private org.escola.service.rotinasAutomaticas.CNAB240 cnab240;
+
 	private OfficeDOCUtil officeDOCUtil;
 	CurrencyWriter cw;
 
@@ -3572,13 +3575,59 @@ public class AlunoController implements Serializable {
 			boleto.setDividaPerdoada(true);
 			financeiroEscolaService.save(boleto);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Divida foi perdoada"));
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "Erro ao perdoar"));
 		}
 	}
-	
+
+	/** Envia um boleto específico pro banco (gera a remessa CNAB240 e marca como
+	 * enviado), independente do mês de vencimento — ação manual avulsa, chamada
+	 * pelo botão da tabela de boletos. */
+	public void enviarBoletoParaBanco(org.escola.model.Boleto boleto) {
+		try {
+			boolean enviado = cnab240.enviarBoletoParaBanco(boleto, 1);
+			if (enviado) {
+				FacesContext.getCurrentInstance().addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Boleto enviado pro banco"));
+			} else {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Info",
+						"Não enviado: falta CPF/nome/endereço do responsável no contrato"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "Erro ao enviar boleto pro banco"));
+		}
+	}
+
+	/** Envia TODOS os boletos em aberto desse contrato pro banco de uma vez
+	 * (gera uma remessa CNAB240 por boleto), sem a limitação de mês da rotina
+	 * automática — usado pelo botão "Enviar todos os boletos pro banco" na
+	 * tela de contrato. */
+	public void enviarTodosBoletosParaBanco(ContratoAluno contrato) {
+		try {
+			int enviados = 0;
+			int sequencial = 1;
+			for (org.escola.model.Boleto b : contrato.getBoletos()) {
+				if (Boolean.TRUE.equals(b.getCancelado()) || Boolean.TRUE.equals(b.getCnabEnviado())) {
+					continue;
+				}
+				if (cnab240.enviarBoletoParaBanco(b, sequencial)) {
+					enviados++;
+					sequencial++;
+				}
+			}
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info",
+					enviados + " boleto(s) enviado(s) pro banco"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "Erro ao enviar boletos pro banco"));
+		}
+	}
+
 	public void gerarBoletos(ContratoAluno contrato) {
 		if (CPFValidator.isCPF(contrato.getCpfResponsavel())) {
 			ContratoAluno cont = alunoService.criarBoletos(contrato.getAluno(), contrato.getAno(),

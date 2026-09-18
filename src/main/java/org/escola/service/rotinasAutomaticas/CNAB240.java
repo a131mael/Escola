@@ -173,41 +173,55 @@ public class CNAB240 {
 	}
 
 	public void gerarCNABAlunos(int quantidadeDeMeses) {
-		// FileUtils
 		List<Boleto> boletosNAOEnviados = financeiroService.getBoletosCNABNaoEnviado(quantidadeDeMeses);
+		int contador = 1;
+		for (Boleto b : boletosNAOEnviados) {
+			if (enviarBoletoParaBanco(b, contador)) {
+				contador++;
+			}
+		}
+	}
+
+	/**
+	 * Envia um único boleto pro banco (gera o arquivo de remessa CNAB240 e marca
+	 * como enviado) — usado tanto pela rotina automática (mês corrente) quanto
+	 * pelo envio manual avulso/em lote a partir da tela de contrato.
+	 * Retorna false sem gerar nada se o contrato não tiver os dados mínimos
+	 * (CPF/nome/endereço do responsável) exigidos pela remessa.
+	 */
+	public boolean enviarBoletoParaBanco(Boleto b, int sequencialNoLote) {
+		ContratoAluno ca = configuracaoService.findContrato(b.getId());
+
+		if (ca.getCpfResponsavel() == null || ca.getCpfResponsavel().equalsIgnoreCase("")) {
+			return false;
+		}
+		if (ca.getNomeResponsavel() == null || ca.getNomeResponsavel().equalsIgnoreCase("")) {
+			return false;
+		}
+		if (ca.getEndereco() == null || ca.getEndereco().equalsIgnoreCase("")) {
+			return false;
+		}
+		if (ca.getCep() == null || ca.getCep().equalsIgnoreCase("")) {
+			ca.setCep("88132700");
+		}
+		if (ca.getBairro() == null || ca.getBairro().equalsIgnoreCase("")) {
+			ca.setBairro("Bela Vista");
+		}
+		if (ca.getCidade() == null || ca.getCidade().equalsIgnoreCase("")) {
+			ca.setCidade("Palhoca");
+		}
+
 		LocalDate data = LocalDate.now();
 		StringBuilder sb = new StringBuilder();
 		sb.append(data.getYear());
 		sb.append(data.getMonthValue());
 		sb.append(data.getDayOfMonth());
 
-		int contador = 1;
-		for (Boleto b : boletosNAOEnviados) {
-
-			ContratoAluno ca = configuracaoService.findContrato(b.getId());
-
-			if (ca.getCpfResponsavel() != null && !ca.getCpfResponsavel().equalsIgnoreCase("")) {
-				if (ca.getNomeResponsavel() != null && !ca.getNomeResponsavel().equalsIgnoreCase("")) {
-					if (ca.getEndereco() != null && !ca.getEndereco().equalsIgnoreCase("")) {
-						if (ca.getCep() == null || ca.getCep().equalsIgnoreCase("")) {
-							ca.setCep("88132700");
-						}
-						if (ca.getBairro() == null || ca.getBairro().equalsIgnoreCase("")) {
-							ca.setBairro("Bela Vista");
-						}
-						if (ca.getCidade() == null || ca.getCidade().equalsIgnoreCase("")) {
-							ca.setCidade("Palhoca");
-						}
-						byte[] arquivo = gerarCNB240(CONSTANTES.projeto, ca, b);
-						String nomeArquivo = "COB_756_494960_" + sb + contador + ".REM";
-						ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
-						financeiroService.saveCNABENviado(b);
-						contador++;
-					}
-				}
-			}
-
-		}
+		byte[] arquivo = gerarCNB240(CONSTANTES.projeto, ca, b);
+		String nomeArquivo = "COB_756_494960_" + sb + sequencialNoLote + ".REM";
+		ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
+		financeiroService.saveCNABENviado(b);
+		return true;
 	}
 
 	public void gerarBaixaBoletosPagos() {
