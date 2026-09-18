@@ -4,6 +4,7 @@ d * To change this template, choose Tools | Templates
  */
 package org.escola.service.rotinasAutomaticas;
 
+import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,6 +13,10 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
 import org.aaf.financeiro.model.Pagador;
 import org.aaf.financeiro.sicoob.util.CNAB240_REMESSA_SICOOB;
@@ -182,10 +187,63 @@ public class CNAB240 {
 		}
 	}
 
+	// Gerenciador (Raspberry Pi) -- quem de fato gera/envia CNAB pro banco pela
+	// rotina automatica. O webapp Escola nao tem acesso ao disco dele, entao o
+	// envio manual avulso manda o arquivo por SFTP direto pra pasta que o
+	// Skyunix (cliente do banco) ja vigia la, em vez de escrever localmente
+	// (a constante antiga PATH_ENVIAR_CNAB apontava pra um caminho que so
+	// existe na Pi, nao no container do Escola -- nunca teria funcionado).
+	// Credenciais NAO ficam no código (repo é público) -- configurar via
+	// variavel de ambiente do container: GERENCIADOR_SSH_USUARIO e
+	// GERENCIADOR_SSH_SENHA.
+	private static final String GERENCIADOR_HOST = "192.168.15.10";
+	private static final String GERENCIADOR_PASTA_OUTBOX = "/home/server/Skyunix/outbox/";
+
+	private static String getConfig(String nome) {
+		String valor = System.getenv(nome);
+		if (valor == null || valor.isEmpty()) {
+			valor = System.getProperty(nome);
+		}
+		return valor;
+	}
+
+	private void enviarArquivoParaGerenciador(byte[] conteudo, String nomeArquivo) {
+		String usuario = getConfig("GERENCIADOR_SSH_USUARIO");
+		String senha = getConfig("GERENCIADOR_SSH_SENHA");
+		if (usuario == null || senha == null) {
+			throw new RuntimeException(
+					"Credencial do Gerenciador não configurada (env GERENCIADOR_SSH_USUARIO / GERENCIADOR_SSH_SENHA no container)");
+		}
+
+		Session session = null;
+		ChannelSftp sftp = null;
+		try {
+			JSch jsch = new JSch();
+			session = jsch.getSession(usuario, GERENCIADOR_HOST, 22);
+			session.setPassword(senha);
+			session.setConfig("StrictHostKeyChecking", "no");
+			session.connect(10000);
+
+			sftp = (ChannelSftp) session.openChannel("sftp");
+			sftp.connect(10000);
+			sftp.cd(GERENCIADOR_PASTA_OUTBOX);
+			sftp.put(new ByteArrayInputStream(conteudo), nomeArquivo);
+		} catch (Exception e) {
+			throw new RuntimeException("Falha ao enviar arquivo CNAB pro Gerenciador: " + e.getMessage(), e);
+		} finally {
+			if (sftp != null) {
+				sftp.disconnect();
+			}
+			if (session != null) {
+				session.disconnect();
+			}
+		}
+	}
+
 	/**
-	 * Envia um único boleto pro banco (gera o arquivo de remessa CNAB240 e marca
-	 * como enviado) — usado tanto pela rotina automática (mês corrente) quanto
-	 * pelo envio manual avulso/em lote a partir da tela de contrato.
+	 * Envia um único boleto pro banco (gera o arquivo de remessa CNAB240 e manda
+	 * por SFTP pro Gerenciador, marcando como enviado) — usado pelo envio manual
+	 * avulso/em lote a partir da tela de contrato.
 	 * Retorna false sem gerar nada se o contrato não tiver os dados mínimos
 	 * (CPF/nome/endereço do responsável) exigidos pela remessa.
 	 */
@@ -219,7 +277,7 @@ public class CNAB240 {
 
 		byte[] arquivo = gerarCNB240(CONSTANTES.projeto, ca, b);
 		String nomeArquivo = "COB_756_494960_" + sb + sequencialNoLote + ".REM";
-		ImportadorArquivo.geraArquivoFisico(arquivo, CONSTANTES.PATH_ENVIAR_CNAB + nomeArquivo);
+		enviarArquivoParaGerenciador(arquivo, nomeArquivo);
 		financeiroService.saveCNABENviado(b);
 		return true;
 	}

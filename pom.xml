@@ -284,6 +284,13 @@
 			<version>2.5</version>
 		</dependency>
 
+		<!-- SFTP pra mandar remessa CNAB direto pra pasta do Gerenciador (Raspberry Pi) -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.55</version>
+		</dependency>
+
 		<!-- Import the Servlet API, we use provided scope as the API is included 
 			in JBoss WildFly -->
 		<dependency>
