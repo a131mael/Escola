@@ -20,6 +20,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
@@ -1090,6 +1091,17 @@ public class AlunoService extends Service {
 		return Float.parseFloat(String.valueOf(valor));
 	}
 
+	/** Deixa a busca por texto (Nome, etc) ignorar maiúsculas/minúsculas, acentos
+	 * e espaços em branco extras/nas pontas — tanto o valor buscado quanto a
+	 * coluna do banco passam pela mesma normalização antes de comparar. */
+	private Expression<String> normalizarBusca(CriteriaBuilder cb, Expression<String> texto) {
+		return cb.function("unaccent", String.class, cb.upper(texto));
+	}
+
+	private String normalizarBusca(Object valor) {
+		return valor.toString().trim().replaceAll("\\s+", " ");
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Aluno> find(int first, int size, String orderBy, String order, Map<String, Object> filtros) {
 		try {
@@ -1103,7 +1115,10 @@ public class AlunoService extends Service {
 
 				Predicate pred = cb.and();
 				if (entry.getValue() instanceof String) {
-					pred = cb.and(pred, cb.like(member.<String> get(entry.getKey()), "%" + entry.getValue() + "%"));
+					Expression<String> coluna = normalizarBusca(cb, member.<String> get(entry.getKey()));
+					String valorBusca = normalizarBusca(entry.getValue());
+					Expression<String> padraoBusca = cb.concat(cb.concat("%", normalizarBusca(cb, cb.literal(valorBusca))), "%");
+					pred = cb.and(pred, cb.like(coluna, padraoBusca));
 				} else {
 					pred = cb.equal(member.get(entry.getKey()), entry.getValue());
 				}
@@ -1153,7 +1168,10 @@ public class AlunoService extends Service {
 
 					Predicate pred = cb.and();
 					if (entry.getValue() instanceof String) {
-						pred = cb.and(pred, cb.like(member.<String> get(entry.getKey()), "%" + entry.getValue() + "%"));
+						Expression<String> coluna = normalizarBusca(cb, member.<String> get(entry.getKey()));
+						String valorBusca = normalizarBusca(entry.getValue());
+						Expression<String> padraoBusca = cb.concat(cb.concat("%", normalizarBusca(cb, cb.literal(valorBusca))), "%");
+						pred = cb.and(pred, cb.like(coluna, padraoBusca));
 					} else {
 						pred = cb.equal(member.get(entry.getKey()), entry.getValue());
 					}
