@@ -147,6 +147,7 @@
 									<p:commandButton icon="ui-icon-arrowreturnthick-1-e"
 													value="Enviar todos os boletos pro banco"
 													action="#{alunoController.enviarTodosBoletosParaBanco(contratoAlun)}"
+													process="@this"
 													update="form:tabView:panelContratos"
 													rendered="#{not contratoAlun.cancelado}">
 													<p:confirm header="Confirmacao"

@@ -91,7 +91,7 @@
 					</p:column>
 					
 					<p:column style="width:7%; text-align:center;" headerText="Enviar Banco">
-						<p:commandButton id="enviarBanco" update="@form" icon="ui-icon-arrowreturnthick-1-e"
+						<p:commandButton id="enviarBanco" process="@this" update="@form" icon="ui-icon-arrowreturnthick-1-e"
 							alt="Enviar Boleto pro Banco" action="#{alunoController.enviarBoletoParaBanco(professorTab)}"
 							disabled="#{!alunoController.alunoSelecionado}">
 							<p:confirm header="Confirmacao"
