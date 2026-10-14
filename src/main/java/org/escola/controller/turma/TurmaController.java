@@ -492,10 +492,14 @@ public class TurmaController extends AuthController implements Serializable {
 	}
 	
 	private HashMap<String, String> montarBoletim(Aluno aluno) {
-		Professor prof = alunoService.getProfessor(aluno.getId());
+		String nomeProfessorBoletim = alunoService.getNomeProfessorBoletim(aluno.getId());
+		if (nomeProfessorBoletim == null) {
+			Professor prof = alunoService.getProfessor(aluno.getId());
+			nomeProfessorBoletim = prof.getNome();
+		}
 		HashMap<String, String> trocas = new HashMap<>();
 		trocas.put("nomeAluno", aluno.getNomeAluno());
-		trocas.put("nomeProfessor", prof.getNome());
+		trocas.put("nomeProfessor", nomeProfessorBoletim);
 		trocas.put("turma", aluno.getSerie().getName());
 		
 		//FALTAS

@@ -40,6 +40,12 @@
 								listener="#{turmaController.montarPickListAluno}" />
 						</p:selectOneMenu>
 
+						<h:outputLabel for="professorBoletim" value="Nome Professor Boletim: "
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}" />
+						<h:inputText id="professorBoletim" value="#{turma.professorBoletim}"
+							style="font-size: 15px; width:280px"
+							disabled="#{!authController.hasPermission(authController.administrador,authController.secretaria)}" />
+
 						<h:outputLabel value="Disciplina:"
 							rendered="#{authController.hasPermission(authController.professor)}" />
 						<p:selectOneMenu style="width: 256px;"

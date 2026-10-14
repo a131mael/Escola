@@ -913,6 +913,27 @@ public class AlunoService extends Service {
 
 	}
 
+	/** Retorna o nome digitado no campo "Nome Professor Boletim" da turma do aluno,
+	 * pra ser usado na impressão do boletim no lugar do professor principal — ou
+	 * null se o campo estiver vazio (quem chama deve então usar getProfessor()). */
+	public String getNomeProfessorBoletim(Long idAluno) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT at.turma from  AlunoTurma at ");
+		sql.append("where 1 = 1");
+		sql.append("and  at.aluno.id = ");
+		sql.append(idAluno);
+		Query query = em.createQuery(sql.toString());
+		List<?> resultado = query.getResultList();
+		if (resultado == null || resultado.isEmpty()) {
+			return null;
+		}
+		Turma t = (Turma) resultado.get(0);
+		if (t.getProfessorBoletim() != null && !t.getProfessorBoletim().trim().isEmpty()) {
+			return t.getProfessorBoletim().trim();
+		}
+		return null;
+	}
+
 	public Professor getProfessor(Long idAluno) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT at.turma from  AlunoTurma at ");
