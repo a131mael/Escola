@@ -922,6 +922,8 @@ public class AlunoService extends Service {
 		sql.append("where 1 = 1");
 		sql.append("and  at.aluno.id = ");
 		sql.append(idAluno);
+		sql.append(" and  at.anoLetivo = ");
+		sql.append(configuracaoService.getConfiguracao().getAnoLetivo());
 		Query query = em.createQuery(sql.toString());
 		List<?> resultado = query.getResultList();
 		if (resultado == null || resultado.isEmpty()) {
@@ -940,8 +942,14 @@ public class AlunoService extends Service {
 		sql.append("where 1 = 1");
 		sql.append("and  at.aluno.id = ");
 		sql.append(idAluno);
+		sql.append(" and  at.anoLetivo = ");
+		sql.append(configuracaoService.getConfiguracao().getAnoLetivo());
 		Query query = em.createQuery(sql.toString());
-		Turma t = (Turma) query.getResultList().get(0);
+		List<?> resultadoTurma = query.getResultList();
+		if (resultadoTurma == null || resultadoTurma.isEmpty()) {
+			return new Professor();
+		}
+		Turma t = (Turma) resultadoTurma.get(0);
 
 		StringBuilder sql2 = new StringBuilder();
 		sql2.append("SELECT pt.professor from  ProfessorTurma pt ");
