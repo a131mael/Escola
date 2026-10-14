@@ -86,6 +86,7 @@ public class TurmaService extends Service {
 			user.setNome(professor.getNome());
 			user.setSerie(professor.getSerie());
 			user.setPeriodo(professor.getPeriodo());
+			user.setProfessorBoletim(professor.getProfessorBoletim());
 			em.persist(user);
 
 			
