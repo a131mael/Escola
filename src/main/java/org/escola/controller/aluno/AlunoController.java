@@ -2161,9 +2161,13 @@ public class AlunoController implements Serializable {
 			System.out.println(response.getStatusLine().getStatusCode());
 			System.out.println(corpoResposta);
 
-			// A prefeitura responde HTTP 200 mesmo quando REJEITA a nota -- o erro
-			// real vem dentro do corpo, em <retorno><mensagem><codigo>...</codigo>.
-			// Sem checar isso, o sistema marcava a nota como enviada mesmo rejeitada.
+			// A prefeitura responde HTTP 200 tanto pra sucesso quanto pra rejeição --
+			// os dois trazem <mensagem>, então isso sozinho não basta. Sucesso de
+			// verdade sempre vem com <numero_nfse>; rejeição nunca tem esse campo.
+			if (corpoResposta != null && corpoResposta.contains("<numero_nfse>")) {
+				return true;
+			}
+
 			if (corpoResposta != null && corpoResposta.contains("<mensagem>")) {
 				ultimoErroEnvioNFS = corpoResposta.replaceAll("<[^>]+>", " ").trim().replaceAll("\\s+", " ");
 				return false;
