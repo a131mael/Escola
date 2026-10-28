@@ -147,6 +147,8 @@ public class AlunoController implements Serializable {
 	@Named
 	private List<Aluno> alunos;
 
+	private String ultimoErroEnvioNFS;
+
 	@Inject
 	private AlunoService alunoService;
 
@@ -413,7 +415,8 @@ public class AlunoController implements Serializable {
 
 			} else {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info",
-						"NÃO GEROU A NOTA " + aluno.getNomeAluno()));
+						"NÃO GEROU A NOTA " + aluno.getNomeAluno()
+								+ (ultimoErroEnvioNFS != null ? " — " + ultimoErroEnvioNFS : "")));
 			}
 
 		} catch (Exception e) {
@@ -422,8 +425,8 @@ public class AlunoController implements Serializable {
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "NÃO GEROU A NOTA " + aluno.getNomeAluno()));
 		}
 	}
-	
-	
+
+
 	public ContratoAluno getContrato() {
 		Object obj = Util.getAtributoSessao("contrato");
 		ContratoAluno contrato = null;
@@ -2062,15 +2065,17 @@ public class AlunoController implements Serializable {
 				alunoService.setNfsEnviada(boletoMesAtual.getId());
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "NOTA GERADA do ALUNO " + aluno.getNomeAluno()));
 			}else{
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "NÃO GEROU A NOTA " + aluno.getNomeAluno()));
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info",
+						"NÃO GEROU A NOTA " + aluno.getNomeAluno()
+								+ (ultimoErroEnvioNFS != null ? " — " + ultimoErroEnvioNFS : "")));
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info", "NÃO GEROU A NOTA " + aluno.getNomeAluno()));
 		}
 	}
-	
+
 	private static void aceptallSSL() {
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -2152,9 +2157,18 @@ public class AlunoController implements Serializable {
 			System.out.println("executing request " + httppost.getRequestLine());
 			System.out.println("Now uploading your file into uploadbox.com");
 			HttpResponse response = httpclient.execute(httppost);
+			String corpoResposta = EntityUtils.toString(response.getEntity(), "UTF-8");
 			System.out.println(response.getStatusLine().getStatusCode());
-			System.out.println(EntityUtils.toString(response.getEntity(), "UTF-8"));
-			
+			System.out.println(corpoResposta);
+
+			// A prefeitura responde HTTP 200 mesmo quando REJEITA a nota -- o erro
+			// real vem dentro do corpo, em <retorno><mensagem><codigo>...</codigo>.
+			// Sem checar isso, o sistema marcava a nota como enviada mesmo rejeitada.
+			if (corpoResposta != null && corpoResposta.contains("<mensagem>")) {
+				ultimoErroEnvioNFS = corpoResposta.replaceAll("<[^>]+>", " ").trim().replaceAll("\\s+", " ");
+				return false;
+			}
+
 			if (response.getStatusLine().getStatusCode() >= 200 && response.getStatusLine().getStatusCode() < 300) {
 				return true;
 			}
@@ -2195,6 +2209,11 @@ public class AlunoController implements Serializable {
 			ListaItensNFS listaItem = new ListaItensNFS();
 			listaItem.setValor_tributavel(valor);
 			listaItem.setUnidade_valor_unitario(valor);
+			// NBS muda conforme a série: até o Pré é educação infantil, dali em
+			// diante (1º ano em diante) é ensino fundamental/médio.
+			if (aluno.getSerie() != null && aluno.getSerie().ordinal() > org.escola.enums.Serie.PRE.ordinal()) {
+				listaItem.setCodigo_nbs("122012000"); // Ensino fundamental (NBS 1.2201.20.00)
+			}
 			ItemNFS item = new ItemNFS();
 			item.setLista(listaItem);
 			NFSeDTO nfs = new NFSeDTO();
