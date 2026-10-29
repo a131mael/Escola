@@ -45,6 +45,9 @@ public class EventoArrecadacaoListController implements Serializable {
 	public void prepararNovoEvento() {
 		novoEvento = new EventoArrecadacao();
 		novoEvento.setTodasTurmas(true);
+		novoEvento.setChavePix("7d2f5c98-708b-4682-bf22-69ef6e1a013c");
+		novoEvento.setNomeRecebedor("Colegio Adonai");
+		novoEvento.setCidadeRecebedor("Palhoca");
 		turmaIdSelecionada = null;
 	}
 
