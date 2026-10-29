@@ -1,0 +1,122 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
+
+			<p:growl id="msgs" showDetail="true" />
+
+			<h:panelGrid columns="1" style="margin-bottom:10px">
+				<p:commandButton value="Novo evento" icon="ui-icon-plus"
+					actionListener="#{eventoArrecadacaoListController.prepararNovoEvento()}"
+					oncomplete="PF('dlgNovoEvento').show();" update=":formNovo" />
+			</h:panelGrid>
+
+			<p:dataTable id="dtEventos" var="evento"
+				value="#{eventoArrecadacaoListController.listaEventos}"
+				emptyMessage="Nenhum evento cadastrado">
+
+				<p:column headerText="Nome">
+					<h:outputText value="#{evento.nome}" />
+				</p:column>
+
+				<p:column headerText="Ano">
+					<h:outputText value="#{evento.anoLetivo}" />
+				</p:column>
+
+				<p:column headerText="Turma">
+					<h:outputText value="Todas" rendered="#{evento.todasTurmas}" />
+					<h:outputText value="#{evento.turma.nome}" rendered="#{not evento.todasTurmas}" />
+				</p:column>
+
+				<p:column headerText="Parcelado">
+					<h:outputText value="Sim" rendered="#{evento.parcelado}" />
+					<h:outputText value="Não" rendered="#{not evento.parcelado}" />
+				</p:column>
+
+				<p:column headerText="Por quantidade">
+					<h:outputText value="Sim" rendered="#{evento.porQuantidade}" />
+					<h:outputText value="Não" rendered="#{not evento.porQuantidade}" />
+				</p:column>
+
+				<p:column headerText="Valor unitário">
+					<h:outputText value="#{evento.valorUnitario}">
+						<f:convertNumber type="currency" currencySymbol="R$ " />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Ações" style="width:140px">
+					<h:link outcome="eventoArrecadacaoDetalhe" value="Abrir">
+						<f:param name="id" value="#{evento.id}" />
+					</h:link>
+					&#160;|&#160;
+					<p:commandLink value="Remover" actionListener="#{eventoArrecadacaoListController.remover(evento)}"
+						update=":form:dtEventos">
+						<p:confirm header="Confirmação" message="Remover esse evento e todos os pagamentos ligados a ele?" icon="ui-icon-alert" />
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+		</h:form>
+
+		<p:dialog header="Novo evento" widgetVar="dlgNovoEvento" modal="true" width="480">
+			<h:form id="formNovo">
+				<h:panelGrid columns="2" cellpadding="6">
+
+					<h:outputText value="Nome:" />
+					<p:inputText value="#{eventoArrecadacaoListController.novoEvento.nome}" style="width:260px" />
+
+					<h:outputText value="Valor unitário:" />
+					<p:inputNumber value="#{eventoArrecadacaoListController.novoEvento.valorUnitario}"
+						symbol="R$ " decimalPlaces="2" />
+
+					<h:outputText value="Todas as turmas:" />
+					<p:selectBooleanCheckbox value="#{eventoArrecadacaoListController.novoEvento.todasTurmas}" />
+
+					<h:outputText value="Turma (se não for todas):" />
+					<p:selectOneMenu value="#{eventoArrecadacaoListController.turmaIdSelecionada}"
+						disabled="#{eventoArrecadacaoListController.novoEvento.todasTurmas}">
+						<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+						<f:selectItems value="#{eventoArrecadacaoListController.turmasDisponiveis}" var="t"
+							itemLabel="#{t.nome}" itemValue="#{t.id}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Parcelado:" />
+					<p:selectBooleanCheckbox value="#{eventoArrecadacaoListController.novoEvento.parcelado}" />
+
+					<h:outputText value="Por quantidade de pessoas:" />
+					<p:selectBooleanCheckbox value="#{eventoArrecadacaoListController.novoEvento.porQuantidade}" />
+
+					<h:outputText value="Tem confirmação prévia:" />
+					<p:selectBooleanCheckbox value="#{eventoArrecadacaoListController.novoEvento.temConfirmacao}" />
+
+					<h:outputText value="Chave Pix:" />
+					<p:inputText value="#{eventoArrecadacaoListController.novoEvento.chavePix}" style="width:260px" />
+
+					<h:outputText value="Nome do recebedor:" />
+					<p:inputText value="#{eventoArrecadacaoListController.novoEvento.nomeRecebedor}" style="width:260px" />
+
+					<h:outputText value="Cidade do recebedor:" />
+					<p:inputText value="#{eventoArrecadacaoListController.novoEvento.cidadeRecebedor}" style="width:260px" />
+
+				</h:panelGrid>
+
+				<p:commandButton value="Salvar" icon="ui-icon-check"
+					actionListener="#{eventoArrecadacaoListController.salvarNovoEvento()}"
+					oncomplete="PF('dlgNovoEvento').hide();" update=":form:dtEventos :form:msgs" />
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

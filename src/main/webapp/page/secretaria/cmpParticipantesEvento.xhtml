@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dataTable var="participante"
+		value="#{eventoArrecadacaoDetalheController.getParticipantes(turmaAtual)}"
+		emptyMessage="Nenhum aluno nessa turma">
+
+		<p:column headerText="Aluno">
+			<h:outputText value="#{participante.aluno.nomeAluno}" />
+		</p:column>
+
+		<p:column headerText="Confirmado" rendered="#{eventoArrecadacaoDetalheController.evento.temConfirmacao}">
+			<p:selectBooleanCheckbox value="#{participante.confirmado}">
+				<p:ajax listener="#{eventoArrecadacaoDetalheController.confirmar(participante)}"
+					update=":form:tabViewResumo" />
+			</p:selectBooleanCheckbox>
+		</p:column>
+
+		<p:column headerText="Quantidade" rendered="#{eventoArrecadacaoDetalheController.evento.porQuantidade}">
+			<p:inputNumber value="#{participante.quantidadeConfirmada}" decimalPlaces="0" style="width:70px">
+				<p:ajax event="change" listener="#{eventoArrecadacaoDetalheController.confirmar(participante)}"
+					update=":form:tabViewResumo" />
+			</p:inputNumber>
+		</p:column>
+
+		<p:column headerText="Nº parcelas" rendered="#{eventoArrecadacaoDetalheController.evento.parcelado}">
+			<p:inputNumber value="#{participante.numeroParcelas}" decimalPlaces="0" style="width:60px">
+				<p:ajax event="change" listener="#{eventoArrecadacaoDetalheController.atualizarNumeroParcelas(participante)}"
+					update=":form:tabViewResumo @parent:parcelas" />
+			</p:inputNumber>
+		</p:column>
+
+		<p:column headerText="Parcelas / Pagamento">
+			<p:dataList value="#{participante.parcelas}" var="parcela" type="none" id="parcelas">
+				<h:outputText value="#{parcela.numero}ª: " rendered="#{eventoArrecadacaoDetalheController.evento.parcelado}" />
+				<h:outputText value="#{parcela.valor}">
+					<f:convertNumber type="currency" currencySymbol="R$ " />
+				</h:outputText>
+				&#160;
+				<p:commandButton value="Baixar" icon="ui-icon-check"
+					actionListener="#{eventoArrecadacaoDetalheController.baixarParcela(parcela)}"
+					disabled="#{eventoArrecadacaoDetalheController.isPago(parcela)}"
+					update=":form:tabViewResumo @parent:parcelas">
+					<p:confirm header="Confirmação" message="Confirma o pagamento dessa parcela?" icon="ui-icon-alert" />
+				</p:commandButton>
+				<p:commandButton value="Estornar" icon="ui-icon-close"
+					actionListener="#{eventoArrecadacaoDetalheController.estornarParcela(parcela)}"
+					rendered="#{eventoArrecadacaoDetalheController.isPago(parcela)}"
+					update=":form:tabViewResumo @parent:parcelas">
+					<p:confirm header="Confirmação" message="Desfazer essa baixa?" icon="ui-icon-alert" />
+				</p:commandButton>
+			</p:dataList>
+		</p:column>
+
+	</p:dataTable>
+
+</ui:composition>

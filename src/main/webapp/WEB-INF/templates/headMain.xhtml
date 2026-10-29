@@ -132,6 +132,9 @@
 					url="../secretaria/protestados.jsf" icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
 
+				<p:menuitem value="Eventos" url="../secretaria/eventosArrecadacao.jsf"
+					icon="ui-icon-close"
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
 
 			</p:submenu>
 			<p:submenu label="Secretaria"
