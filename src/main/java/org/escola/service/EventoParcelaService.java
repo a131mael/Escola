@@ -32,12 +32,14 @@ public class EventoParcelaService extends Service {
 		parcela.setValorPago(parcela.getValor());
 		parcela.setDataPagamento(new Date());
 		em.merge(parcela);
+		em.flush();
 	}
 
 	public void estornar(EventoParcela parcela) {
 		parcela.setValorPago(null);
 		parcela.setDataPagamento(null);
 		em.merge(parcela);
+		em.flush();
 	}
 
 	public List<EventoResumoTurma> resumoPorEvento(EventoArrecadacao evento) {

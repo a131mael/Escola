@@ -62,6 +62,7 @@ public class EventoParticipanteService extends Service {
 		parcela.setNumero(1);
 		parcela.setValor(evento.getValorUnitario());
 		em.persist(parcela);
+		em.flush();
 
 		return participante;
 	}
@@ -98,6 +99,7 @@ public class EventoParticipanteService extends Service {
 			recalcularParcelasNaoPagas(participante);
 		}
 		em.merge(participante);
+		em.flush();
 	}
 
 	public void atualizarNumeroParcelas(EventoParticipante participante, int novoNumero) {
@@ -138,6 +140,7 @@ public class EventoParticipanteService extends Service {
 		participante.setNumeroParcelas(novoNumero);
 		em.merge(participante);
 		recalcularParcelasNaoPagas(participante);
+		em.flush();
 	}
 
 	// Redivide o valor restante (total do participante menos o que ja foi

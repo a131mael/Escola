@@ -49,9 +49,12 @@ public class EventoArrecadacaoService extends Service {
 				evento.setAnoLetivo(configuracaoService.getConfiguracao().getAnoLetivo());
 			}
 			em.persist(evento);
+			em.flush();
 			return evento;
 		}
-		return em.merge(evento);
+		EventoArrecadacao merged = em.merge(evento);
+		em.flush();
+		return merged;
 	}
 
 	public void remover(Long id) {

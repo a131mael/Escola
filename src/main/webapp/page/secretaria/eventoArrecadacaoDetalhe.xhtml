@@ -11,7 +11,7 @@
 	</f:metadata>
 
 	<ui:define name="content">
-		<h:form id="form"
+		<h:form id="form" style="width:100%; border:none"
 			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro) and eventoArrecadacaoDetalheController.evento != null}">
 
 			<p:growl id="msgs" showDetail="true" />
@@ -22,10 +22,10 @@
 				actionListener="#{eventoArrecadacaoDetalheController.gerarPix()}"
 				oncomplete="PF('dlgPix').show(); desenharQrCode();" update=":form:pixTexto" />
 
-			<p:tabView id="tabViewResumo">
+			<p:tabView id="tabViewResumo" style="width:100%">
 				<p:tab id="tabResumo" title="Resumo">
 					<h3>Geral</h3>
-					<p:dataTable value="#{eventoArrecadacaoDetalheController.resumoGeralLista}" var="r">
+					<p:dataTable value="#{eventoArrecadacaoDetalheController.resumoGeralLista}" var="r" style="width:100%">
 						<p:column headerText="Participantes"><h:outputText value="#{r.totalParticipantes}" /></p:column>
 						<p:column headerText="Confirmados"><h:outputText value="#{r.confirmados}" /></p:column>
 						<p:column headerText="Não confirmados"><h:outputText value="#{r.naoConfirmados}" /></p:column>
@@ -43,7 +43,7 @@
 					</p:dataTable>
 
 					<h3>Por turma</h3>
-					<p:dataTable value="#{eventoArrecadacaoDetalheController.resumoPorTurma}" var="r">
+					<p:dataTable value="#{eventoArrecadacaoDetalheController.resumoPorTurma}" var="r" style="width:100%">
 						<p:column headerText="Turma"><h:outputText value="#{r.nomeTurma}" /></p:column>
 						<p:column headerText="Participantes"><h:outputText value="#{r.totalParticipantes}" /></p:column>
 						<p:column headerText="Confirmados"><h:outputText value="#{r.confirmados}" /></p:column>
@@ -64,7 +64,7 @@
 			</p:tabView>
 
 			<!-- uma aba por turma quando o evento vale pra todas; se for turma unica, essa lista so tem 1 elemento -->
-			<p:tabView id="tabViewTurmas" value="#{eventoArrecadacaoDetalheController.turmas}" var="turma">
+			<p:tabView id="tabViewTurmas" value="#{eventoArrecadacaoDetalheController.turmas}" var="turma" style="width:100%">
 				<p:tab title="#{turma.nome}">
 					<ui:include src="cmpParticipantesEvento.xhtml">
 						<ui:param name="turmaAtual" value="#{turma}" />

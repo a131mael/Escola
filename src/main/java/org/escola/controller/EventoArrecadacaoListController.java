@@ -52,15 +52,21 @@ public class EventoArrecadacaoListController implements Serializable {
 	}
 
 	public void salvarNovoEvento() {
-		if (!novoEvento.isTodasTurmas() && turmaIdSelecionada != null) {
-			novoEvento.setTurma(turmaService.findById(turmaIdSelecionada));
-		} else {
-			novoEvento.setTurma(null);
+		try {
+			if (!novoEvento.isTodasTurmas() && turmaIdSelecionada != null) {
+				novoEvento.setTurma(turmaService.findById(turmaIdSelecionada));
+			} else {
+				novoEvento.setTurma(null);
+			}
+			eventoArrecadacaoService.save(novoEvento);
+			listaEventos = eventoArrecadacaoService.findAll();
+			prepararNovoEvento();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Evento criado"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage()));
 		}
-		eventoArrecadacaoService.save(novoEvento);
-		listaEventos = eventoArrecadacaoService.findAll();
-		prepararNovoEvento();
-		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Evento criado"));
 	}
 
 	public void remover(EventoArrecadacao evento) {

@@ -6,18 +6,18 @@
 	template="/WEB-INF/templates/templateADM.xhtml">
 
 	<ui:define name="content">
-		<h:form id="form"
+		<h:form id="form" style="width:100%; border:none"
 			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
 
 			<p:growl id="msgs" showDetail="true" />
 
-			<h:panelGrid columns="1" style="margin-bottom:10px">
+			<h:panelGrid columns="1" width="100%" style="margin-bottom:10px">
 				<p:commandButton value="Novo evento" icon="ui-icon-plus"
 					actionListener="#{eventoArrecadacaoListController.prepararNovoEvento()}"
 					oncomplete="PF('dlgNovoEvento').show();" update=":formNovo" />
 			</h:panelGrid>
 
-			<p:dataTable id="dtEventos" var="evento"
+			<p:dataTable id="dtEventos" var="evento" style="width:100%"
 				value="#{eventoArrecadacaoListController.listaEventos}"
 				emptyMessage="Nenhum evento cadastrado">
 
