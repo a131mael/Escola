@@ -86,8 +86,9 @@
 							action="#{relatorioController.editar(professorTab.id)}"
 							update="@none" process="@this"
 							oncomplete="window.open('#{request.contextPath}/page/aluno/cadastrarAluno.xhtml', '_blank');" />
-						<br/>
-						<h:outputText value="#{alunoController.getSicoobStatusHtmlDevedor(professorTab, relatorioController.mesAtrasado, relatorioController.anoSelecionado)}" escape="false" />
+						<div style="margin-top:4px;">
+							<h:outputText value="#{alunoController.getSicoobStatusHtmlDevedor(professorTab, relatorioController.mesAtrasado, relatorioController.anoSelecionado)}" escape="false" />
+						</div>
 					</p:column>
 
 					<p:column style="text-align:center; width:13%;" headerText="Responsável">
