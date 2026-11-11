@@ -147,11 +147,27 @@ public class RelatorioController implements Serializable{
 				+ (todosAlunos != null ? todosAlunos.size() : 0));
 		int sucesso = 0;
 		int erro = 0;
+		// mesmo intervalo de vencimento que a propria tela de devedores usa pra
+		// decidir qual boleto "e esse atraso" -- sem isso, ia conferir TODOS os
+		// boletos de TODOS os anos de cada aluno (lento, e nao e o que a tela mostra)
+		Calendar inicioMes = Calendar.getInstance();
+		inicioMes.set(anoSelecionado, mesAtrasado - 1, 1, 0, 0, 0);
+		Calendar fimMes = Calendar.getInstance();
+		fimMes.set(anoSelecionado, mesAtrasado - 1, 1, 23, 59, 59);
+		fimMes.set(Calendar.DAY_OF_MONTH, fimMes.getActualMaximum(Calendar.DAY_OF_MONTH));
+
 		if (todosAlunos != null) {
 			for (Aluno al : todosAlunos) {
 				for (ContratoAluno contrato : al.getContratos()) {
 					for (org.escola.model.Boleto boleto : contrato.getBoletos()) {
 						if (boleto.getCancelado() != null && boleto.getCancelado()) {
+							continue;
+						}
+						if (boleto.getDataPagamento() != null) {
+							continue;
+						}
+						if (boleto.getVencimento() == null || boleto.getVencimento().before(inicioMes.getTime())
+								|| boleto.getVencimento().after(fimMes.getTime())) {
 							continue;
 						}
 						try {
