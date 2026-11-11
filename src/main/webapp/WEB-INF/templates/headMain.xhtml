@@ -88,10 +88,6 @@
 				icon="ui-icon-gear"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
 				
-			<p:menuitem value="Chamada" url="../chamada/index.jsf"
-				icon="ui-icon-gear"
-				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.professor)}" />
-
 			<p:menuitem value="Relatórios" url="../relatorio/index.jsf"
 				icon="ui-icon-close"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
