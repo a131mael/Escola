@@ -1,0 +1,114 @@
+package org.escola.controller;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
+
+import org.escola.util.CurrencyWriter;
+import org.escola.util.FileDownload;
+import org.escola.util.ImpressoesUtils;
+import org.escola.util.Util;
+import org.primefaces.model.StreamedContent;
+
+@Named
+@ViewScoped
+public class ReciboController implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	private String nomeResponsavel;
+
+	private String cpf;
+
+	private String valor;
+
+	private String item;
+
+	public String getNomeResponsavel() {
+		return nomeResponsavel;
+	}
+
+	public void setNomeResponsavel(String nomeResponsavel) {
+		this.nomeResponsavel = nomeResponsavel;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getValor() {
+		return valor;
+	}
+
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+
+	public String getItem() {
+		return item;
+	}
+
+	public void setItem(String item) {
+		this.item = item;
+	}
+
+	private HashMap<String, String> montarRecibo(double valorNumerico) {
+		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
+		String dataExtenso = formatador.format(new Date());
+
+		HashMap<String, String> trocas = new HashMap<>();
+		trocas.put("reciboresponsavel", nomeResponsavel != null ? nomeResponsavel : "");
+		trocas.put("recibocpf", cpf != null ? cpf : "");
+		trocas.put("recibovalor", "R$ " + Util.formatarDouble2Decimais(valorNumerico).replace(".", ","));
+		trocas.put("recibovalorextenso", new CurrencyWriter().write(BigDecimal.valueOf(valorNumerico)));
+		trocas.put("reciboitem", item != null ? item : "");
+		trocas.put("recibodata", dataExtenso);
+
+		return trocas;
+	}
+
+	public StreamedContent gerarRecibo() throws IOException {
+		if (nomeResponsavel == null || nomeResponsavel.trim().isEmpty() || valor == null
+				|| valor.trim().isEmpty()) {
+			FacesContext.getCurrentInstance().addMessage(null,
+					new javax.faces.application.FacesMessage(javax.faces.application.FacesMessage.SEVERITY_ERROR,
+							"Preencha ao menos o nome e o valor", null));
+			return null;
+		}
+
+		double valorNumerico;
+		try {
+			valorNumerico = Double.parseDouble(valor.replace(".", "").replace(",", "."));
+		} catch (NumberFormatException e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+					new javax.faces.application.FacesMessage(javax.faces.application.FacesMessage.SEVERITY_ERROR,
+							"Valor inválido", null));
+			return null;
+		}
+
+		String nomeArquivo = "recibo" + System.currentTimeMillis();
+		ImpressoesUtils.imprimirInformacoesAluno("modeloRecibo.docx", montarRecibo(valorNumerico), nomeArquivo);
+		nomeArquivo += ".doc";
+
+		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
+				+ nomeArquivo;
+		InputStream stream = new FileInputStream(caminho);
+		return FileDownload.getContentDoc(stream, "recibo.doc");
+	}
+
+}

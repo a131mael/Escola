@@ -23,7 +23,6 @@
 					position="top" />
 				
 				<p:tooltip  for="historico" value="Histórico" position="top"/>
-				<p:tooltip for="recibo" value="Recibo" position="top" />
 				
 				<p:commandButton id="boletim" ajax="false"
 					value="Modelo Boletim"
@@ -79,23 +78,6 @@
 						value="#{alunoController.imprimirHistorico()}" />
 				</p:commandButton>
 				
-			</h:panelGrid>
-
-			<p:separator />
-
-			<h:panelGrid columns="1" style="margin-left:-20px">
-				<h:outputText value="Recibo (aluno selecionado na tela anterior)" style="font-weight:bold;" />
-				<p:panelGrid columns="2" style="margin-top:10px;">
-					<h:outputText value="Item:" />
-					<p:inputText value="#{alunoController.reciboItem}" placeholder="ex: Uniforme escolar" />
-
-					<h:outputText value="Valor (R$):" />
-					<p:inputText value="#{alunoController.reciboValor}" placeholder="ex: 150,00" />
-				</p:panelGrid>
-				<p:commandButton id="recibo" value="Gerar Recibo" icon="ui-icon-pencil"
-					ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);">
-					<p:fileDownload value="#{alunoController.imprimirRecibo()}" />
-				</p:commandButton>
 			</h:panelGrid>
 
 		</h:form>

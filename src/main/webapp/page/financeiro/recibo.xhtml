@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" style="width:100%; border:none; height:100%"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
+
+			<p:growl id="messages" showDetail="true" />
+
+			<h:panelGrid id="panelRecibo" columns="2" columnClasses="value" width="98%" style="height:100%">
+
+				<h:outputText value="Recebi de:" style="font-size: 12px; padding-right:10px !important" styleClass="alinharDireita"/>
+				<p:inputText value="#{reciboController.nomeResponsavel}" style="width:400px;" placeholder="Nome de quem pagou" />
+
+				<h:outputText value="CPF:" style="font-size: 12px; padding-right:10px !important" styleClass="alinharDireita"/>
+				<p:inputText value="#{reciboController.cpf}" style="width:300px;" placeholder="000.000.000-00" />
+
+				<h:outputText value="Valor (R$):" style="font-size: 12px; padding-right:10px !important" styleClass="alinharDireita"/>
+				<p:inputText value="#{reciboController.valor}" style="width:150px;" placeholder="150,00" />
+
+				<h:outputText value="Referente a:" style="font-size: 12px; padding-right:10px !important" styleClass="alinharDireita"/>
+				<p:inputText value="#{reciboController.item}" style="width:400px;" placeholder="ex: Uniforme escolar" />
+
+			</h:panelGrid>
+
+			<p:commandButton id="gerar" ajax="false"
+				value="Gerar Recibo"
+				icon="ui-icon-pencil"
+				style="margin-top:20px;"
+				onclick="PrimeFaces.monitorDownload(start, stop);">
+				<p:fileDownload value="#{reciboController.gerarRecibo()}" />
+			</p:commandButton>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

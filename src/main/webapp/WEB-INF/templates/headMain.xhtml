@@ -132,6 +132,10 @@
 					icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
 
+				<p:menuitem value="Recibo" url="../financeiro/recibo.jsf"
+					icon="ui-icon-close"
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
+
 			</p:submenu>
 			<p:submenu label="Secretaria"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">

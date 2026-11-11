@@ -1424,68 +1424,6 @@ public class AlunoController implements Serializable {
 		return trocas;
 	}
 
-	private String reciboItem;
-
-	private String reciboValor;
-
-	public String getReciboItem() {
-		return reciboItem;
-	}
-
-	public void setReciboItem(String reciboItem) {
-		this.reciboItem = reciboItem;
-	}
-
-	public String getReciboValor() {
-		return reciboValor;
-	}
-
-	public void setReciboValor(String reciboValor) {
-		this.reciboValor = reciboValor;
-	}
-
-	public HashMap<String, String> montarRecibo(Aluno aluno, String item, double valor) {
-		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
-		String dataExtenso = formatador.format(new Date());
-
-		ContratoAluno contrato = aluno.getContratoVigente();
-		String nomeResponsavel = contrato != null ? contrato.getNomeResponsavel() : "";
-		String cpfResponsavel = contrato != null ? contrato.getCpfResponsavel() : "";
-
-		HashMap<String, String> trocas = new HashMap<>();
-		trocas.put("reciboresponsavel", nomeResponsavel != null ? nomeResponsavel : "");
-		trocas.put("recibocpf", cpfResponsavel != null ? cpfResponsavel : "");
-		trocas.put("recibovalor", "R$ " + Util.formatarDouble2Decimais(valor).replace(".", ","));
-		trocas.put("recibovalorextenso", cw.write(java.math.BigDecimal.valueOf(valor)));
-		trocas.put("reciboitem", item != null ? item : "");
-		trocas.put("recibodata", dataExtenso);
-
-		return trocas;
-	}
-
-	public StreamedContent imprimirRecibo() throws IOException {
-		String nomeArquivo = "";
-		if (aluno != null && aluno.getId() != null && reciboItem != null && reciboValor != null) {
-			double valor;
-			try {
-				valor = Double.parseDouble(reciboValor.replace(".", "").replace(",", "."));
-			} catch (NumberFormatException e) {
-				return null;
-			}
-			nomeArquivo = aluno.getId() + "recibo";
-			ImpressoesUtils.imprimirInformacoesAluno(aluno, "modeloRecibo.docx",
-					montarRecibo(aluno, reciboItem, valor), nomeArquivo);
-			nomeArquivo += ".doc";
-		} else {
-			nomeArquivo = "modeloRecibo.docx";
-		}
-
-		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/") + File.separator
-				+ nomeArquivo;
-		InputStream stream = new FileInputStream(caminho);
-		return FileDownload.getContentDoc(stream, nomeArquivo);
-	}
-
 	public HashMap<String, String> montarAtestadoVaga(Aluno aluno) {
 		DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL, new Locale("pt", "BR"));
 		String dataExtenso = formatador.format(new Date());
