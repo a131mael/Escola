@@ -86,6 +86,8 @@
 							action="#{relatorioController.editar(professorTab.id)}"
 							update="@none" process="@this"
 							oncomplete="window.open('#{request.contextPath}/page/aluno/cadastrarAluno.xhtml', '_blank');" />
+						<br/>
+						<h:outputText value="#{alunoController.getSicoobStatusHtmlDevedor(professorTab, relatorioController.mesAtrasado, relatorioController.anoSelecionado)}" escape="false" />
 					</p:column>
 
 					<p:column style="text-align:center; width:13%;" headerText="Responsável">
@@ -112,10 +114,6 @@
 						<h:outputText value="#{professorTab.dataUltimaSincWhatsApp}" rendered="#{professorTab.dataUltimaSincWhatsApp != null}" style="font-size:10px;color:#999;">
 							<f:convertDateTime pattern="dd/MM HH:mm" timeZone="GMT-3" />
 						</h:outputText>
-					</p:column>
-
-					<p:column style="text-align:center; width:8%;" headerText="Status Sicoob">
-						<h:outputText value="#{alunoController.getSicoobStatusHtmlDevedor(professorTab)}" escape="false" />
 					</p:column>
 
 					<p:column style="text-align:center; width:30%;" headerText="Ações">

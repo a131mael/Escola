@@ -2728,35 +2728,34 @@ public class AlunoController implements Serializable {
 				sucesso + " boleto(s) consultado(s) com sucesso, " + erro + " com erro", null));
 	}
 
-	/** Pra tabelas por aluno (nao por boleto): acha o boleto mais recentemente
-	 * consultado no Sicoob (ou, se nenhum foi consultado ainda, o mais recente
-	 * em aberto) entre todos os contratos do aluno, e mostra o status dele. */
-	public String getSicoobStatusHtmlDevedor(Aluno al) {
-		org.escola.model.Boleto maisRecente = null;
+	/** Pra tabelas por aluno (nao por boleto): acha o boleto cujo vencimento cai
+	 * no mes/ano que a tela de devedores tem selecionado (o mesmo criterio que
+	 * decide quem aparece como devedor) e mostra o status dele -- nao pode ser
+	 * "o mais recentemente consultado" porque ai mostra status de um boleto de
+	 * outro mes/ano, antigo, e nao bate com o que a tela esta realmente mostrando. */
+	public String getSicoobStatusHtmlDevedor(Aluno al, int mes, int ano) {
+		java.util.Calendar inicioMes = java.util.Calendar.getInstance();
+		inicioMes.set(ano, mes - 1, 1, 0, 0, 0);
+		java.util.Calendar fimMes = java.util.Calendar.getInstance();
+		fimMes.set(ano, mes - 1, 1, 23, 59, 59);
+		fimMes.set(java.util.Calendar.DAY_OF_MONTH, fimMes.getActualMaximum(java.util.Calendar.DAY_OF_MONTH));
+
+		org.escola.model.Boleto doMes = null;
 		if (al.getContratos() != null) {
 			for (ContratoAluno contrato : al.getContratos()) {
 				for (org.escola.model.Boleto b : contrato.getBoletos()) {
 					if (b.getCancelado() != null && b.getCancelado()) {
 						continue;
 					}
-					if (maisRecente == null) {
-						maisRecente = b;
+					if (b.getVencimento() == null || b.getVencimento().before(inicioMes.getTime())
+							|| b.getVencimento().after(fimMes.getTime())) {
 						continue;
 					}
-					boolean bTemConsulta = b.getDataConsultaSicoob() != null;
-					boolean atualTemConsulta = maisRecente.getDataConsultaSicoob() != null;
-					if (bTemConsulta && (!atualTemConsulta
-							|| b.getDataConsultaSicoob().after(maisRecente.getDataConsultaSicoob()))) {
-						maisRecente = b;
-					} else if (!bTemConsulta && !atualTemConsulta
-							&& b.getVencimento() != null && maisRecente.getVencimento() != null
-							&& b.getVencimento().after(maisRecente.getVencimento())) {
-						maisRecente = b;
-					}
+					doMes = b;
 				}
 			}
 		}
-		return maisRecente != null ? getSicoobStatusHtml(maisRecente) : "";
+		return doMes != null ? getSicoobStatusHtml(doMes) : "";
 	}
 
 	public String getSicoobStatusHtml(org.escola.model.Boleto boleto) {
