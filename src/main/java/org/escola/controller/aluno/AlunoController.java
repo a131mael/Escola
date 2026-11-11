@@ -2721,6 +2721,37 @@ public class AlunoController implements Serializable {
 				sucesso + " boleto(s) consultado(s) com sucesso, " + erro + " com erro", null));
 	}
 
+	/** Pra tabelas por aluno (nao por boleto): acha o boleto mais recentemente
+	 * consultado no Sicoob (ou, se nenhum foi consultado ainda, o mais recente
+	 * em aberto) entre todos os contratos do aluno, e mostra o status dele. */
+	public String getSicoobStatusHtmlDevedor(Aluno al) {
+		org.escola.model.Boleto maisRecente = null;
+		if (al.getContratos() != null) {
+			for (ContratoAluno contrato : al.getContratos()) {
+				for (org.escola.model.Boleto b : contrato.getBoletos()) {
+					if (b.getCancelado() != null && b.getCancelado()) {
+						continue;
+					}
+					if (maisRecente == null) {
+						maisRecente = b;
+						continue;
+					}
+					boolean bTemConsulta = b.getDataConsultaSicoob() != null;
+					boolean atualTemConsulta = maisRecente.getDataConsultaSicoob() != null;
+					if (bTemConsulta && (!atualTemConsulta
+							|| b.getDataConsultaSicoob().after(maisRecente.getDataConsultaSicoob()))) {
+						maisRecente = b;
+					} else if (!bTemConsulta && !atualTemConsulta
+							&& b.getVencimento() != null && maisRecente.getVencimento() != null
+							&& b.getVencimento().after(maisRecente.getVencimento())) {
+						maisRecente = b;
+					}
+				}
+			}
+		}
+		return maisRecente != null ? getSicoobStatusHtml(maisRecente) : "";
+	}
+
 	public String getSicoobStatusHtml(org.escola.model.Boleto boleto) {
 		String status = boleto.getStatusSicoob();
 		if (status == null || status.isEmpty()) {

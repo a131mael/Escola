@@ -114,6 +114,10 @@
 						</h:outputText>
 					</p:column>
 
+					<p:column style="text-align:center; width:8%;" headerText="Status Sicoob">
+						<h:outputText value="#{alunoController.getSicoobStatusHtmlDevedor(professorTab)}" escape="false" />
+					</p:column>
+
 					<p:column style="text-align:center; width:30%;" headerText="Ações">
 						<div style="display:flex; gap:3px; justify-content:center; flex-wrap:wrap; align-items:center;">
 							<p:commandButton value="Cob.1" update="tbl"
