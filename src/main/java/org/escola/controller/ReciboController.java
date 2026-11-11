@@ -137,6 +137,16 @@ public class ReciboController implements Serializable {
 		trocas.put("reciboitem", item != null ? item : "");
 		trocas.put("recibodata", dataExtenso);
 
+		if (crianca != null) {
+			trocas.put("reciboaluno", crianca.getNomeAluno() != null ? crianca.getNomeAluno() : "");
+			trocas.put("reciboserie", crianca.getSerie() != null ? crianca.getSerie().getName() : "");
+			trocas.put("reciboperiodo", crianca.getPeriodo() != null ? crianca.getPeriodo().getName() : "");
+		} else {
+			trocas.put("reciboaluno", "");
+			trocas.put("reciboserie", "");
+			trocas.put("reciboperiodo", "");
+		}
+
 		return trocas;
 	}
 
