@@ -9,12 +9,17 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.escola.model.Aluno;
+import org.escola.model.ContratoAluno;
+import org.escola.service.AlunoService;
 import org.escola.util.CurrencyWriter;
 import org.escola.util.FileDownload;
 import org.escola.util.ImpressoesUtils;
@@ -26,6 +31,33 @@ import org.primefaces.model.StreamedContent;
 public class ReciboController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	@Inject
+	private AlunoService alunoService;
+
+	private Aluno crianca;
+
+	public Aluno getCrianca() {
+		return crianca;
+	}
+
+	public void setCrianca(Aluno crianca) {
+		this.crianca = crianca;
+	}
+
+	public List<Aluno> completeCrianca(String texto) {
+		return alunoService.findByNomeContendo(texto);
+	}
+
+	public void onCriancaSelecionada(org.primefaces.event.SelectEvent event) {
+		Aluno aluno = (Aluno) event.getObject();
+		crianca = aluno;
+		ContratoAluno contrato = aluno.getContratoVigente();
+		if (contrato != null) {
+			nomeResponsavel = contrato.getNomeResponsavel();
+			cpf = contrato.getCpfResponsavel();
+		}
+	}
 
 	private String nomeResponsavel;
 

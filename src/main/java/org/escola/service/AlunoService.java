@@ -255,6 +255,26 @@ public class AlunoService extends Service {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Aluno> findByNomeContendo(String texto) {
+		if (texto == null || texto.trim().isEmpty()) {
+			return new ArrayList<>();
+		}
+		try {
+			Query query = em.createQuery(
+					"SELECT a FROM Aluno a WHERE UPPER(a.nomeAluno) LIKE UPPER(:texto) "
+					+ "AND (a.removido IS NULL OR a.removido = false) ORDER BY a.nomeAluno");
+			query.setParameter("texto", "%" + texto.trim() + "%");
+			query.setMaxResults(15);
+			return query.getResultList();
+		} catch (NoResultException nre) {
+			return new ArrayList<>();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+
 	public List<Aluno> findAll(Map<String, Object> filtros) {
 		try {
 			CriteriaBuilder cb = em.getCriteriaBuilder();

@@ -13,6 +13,14 @@
 
 			<h:panelGrid id="panelRecibo" columns="2" columnClasses="value" width="98%" style="height:100%">
 
+				<h:outputText value="Nome da criança:" style="font-size: 12px; padding-right:10px !important" styleClass="alinharDireita"/>
+				<p:autoComplete value="#{reciboController.crianca}" completeMethod="#{reciboController.completeCrianca}"
+					var="al" itemLabel="#{al.nomeAluno}" itemValue="#{al}" converter="converterAluno"
+					forceSelection="true" style="width:400px;" placeholder="Digite o nome da criança">
+					<p:ajax event="itemSelect" listener="#{reciboController.onCriancaSelecionada}"
+						update="panelRecibo" />
+				</p:autoComplete>
+
 				<h:outputText value="Recebi de:" style="font-size: 12px; padding-right:10px !important" styleClass="alinharDireita"/>
 				<p:inputText value="#{reciboController.nomeResponsavel}" style="width:400px;" placeholder="Nome de quem pagou" />
 
