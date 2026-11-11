@@ -35,6 +35,9 @@ public class ReciboController implements Serializable {
 	@Inject
 	private AlunoService alunoService;
 
+	@Inject
+	private org.escola.service.ConfiguracaoService configuracaoService;
+
 	private Aluno crianca;
 
 	public Aluno getCrianca() {
@@ -51,8 +54,18 @@ public class ReciboController implements Serializable {
 
 	public void onCriancaSelecionada(org.primefaces.event.SelectEvent event) {
 		Aluno aluno = (Aluno) event.getObject();
+		// a entidade que vem da sugestao do autocomplete nao tem os contratos
+		// inicializados (lazy) -- busca de novo, ja com tudo carregado, igual
+		// o findById ja faz em outras telas.
+		aluno = alunoService.findById(aluno.getId());
 		crianca = aluno;
-		ContratoAluno contrato = aluno.getContratoVigente();
+		int anoAtual = configuracaoService.getConfiguracao().getAnoLetivo();
+		ContratoAluno contrato = aluno.getContratoVigente(anoAtual);
+		if (contrato == null) {
+			// sem contrato ativo no ano atual -- usa o ultimo contrato (mais
+			// recente) que a crianca tiver, mesmo que de ano anterior
+			contrato = ultimoContrato(aluno);
+		}
 		if (contrato != null) {
 			nomeResponsavel = contrato.getNomeResponsavel();
 			cpf = contrato.getCpfResponsavel();
@@ -97,6 +110,19 @@ public class ReciboController implements Serializable {
 
 	public void setItem(String item) {
 		this.item = item;
+	}
+
+	private ContratoAluno ultimoContrato(Aluno aluno) {
+		ContratoAluno ultimo = null;
+		if (aluno.getContratos() != null) {
+			for (ContratoAluno c : aluno.getContratos()) {
+				if (ultimo == null || (c.getDataCriacaoContrato() != null && ultimo.getDataCriacaoContrato() != null
+						&& c.getDataCriacaoContrato().after(ultimo.getDataCriacaoContrato()))) {
+					ultimo = c;
+				}
+			}
+		}
+		return ultimo;
 	}
 
 	private HashMap<String, String> montarRecibo(double valorNumerico) {
