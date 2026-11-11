@@ -13,7 +13,7 @@
 				<p:commandButton value="Sincronizar com Sicoob" icon="ui-icon-refresh"
 					style="background-color:#00A651; border-color:#00A651; color:white; font-weight:bold; margin-bottom:8px;"
 					action="#{alunoController.sincronizarBoletosComSicoob(parametro)}"
-					update="tbboleto" ajax="true" />
+					update="tbboleto :messages" ajax="true" />
 				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
                              emptyMessage="#Nenhum registro encontrado"
                              filterEvent="enter" 
