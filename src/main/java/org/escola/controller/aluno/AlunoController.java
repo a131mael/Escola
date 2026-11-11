@@ -101,6 +101,7 @@ import org.escola.model.HistoricoAluno;
 import org.escola.model.Member;
 import org.escola.model.Professor;
 import org.escola.service.AlunoService;
+import org.escola.service.SicoobBoletoService;
 import org.escola.service.AvaliacaoService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.DevedorService;
@@ -157,6 +158,9 @@ public class AlunoController implements Serializable {
 
 	@Inject
 	private FinanceiroEscolaService financeiroEscolaService;
+
+	@Inject
+	private SicoobBoletoService sicoobBoletoService;
 
 	@Inject
 	private DevedorService devedorService;
@@ -2698,6 +2702,45 @@ public class AlunoController implements Serializable {
 		// alunoService.removerBoleto(idBoleto);
 	}
 	
+	public void sincronizarBoletosComSicoob(ContratoAluno contrato) {
+		int sucesso = 0;
+		int erro = 0;
+		for (org.escola.model.Boleto boleto : contrato.getBoletos()) {
+			if (boleto.getCancelado() != null && boleto.getCancelado()) {
+				continue;
+			}
+			try {
+				String situacao = sicoobBoletoService.consultarSituacaoBoleto(configuracao, boleto.getNossoNumero());
+				financeiroEscolaService.atualizarStatusSicoob(boleto.getId(), situacao, new Date());
+				sucesso++;
+			} catch (Exception e) {
+				erro++;
+			}
+		}
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				sucesso + " boleto(s) consultado(s) com sucesso, " + erro + " com erro", null));
+	}
+
+	public String getSicoobStatusHtml(org.escola.model.Boleto boleto) {
+		String status = boleto.getStatusSicoob();
+		if (status == null || status.isEmpty()) {
+			return "<span style=\"color:#999;\">— não consultado —</span>";
+		}
+		String statusLower = status.toLowerCase();
+		String cor;
+		if (statusLower.contains("liquid") || statusLower.contains("pago")) {
+			cor = "#2e7d32"; // verde
+		} else if (statusLower.contains("baixad") || statusLower.contains("cancelad")) {
+			cor = "#757575"; // cinza
+		} else if (statusLower.contains("abert") || statusLower.contains("vencid")) {
+			cor = "#f9a825"; // amarelo
+		} else {
+			cor = "#1565c0"; // azul (fallback)
+		}
+		return "<span style=\"background:" + cor
+				+ ";color:white;border-radius:3px;padding:1px 6px;font-size:11px;\">" + status + "</span>";
+	}
+
 	public String getNomeResponsavelDevedor(Aluno al){
 		String nomeResponsavelDev = "";
 		for(ContratoAluno ca: al.getContratos()){

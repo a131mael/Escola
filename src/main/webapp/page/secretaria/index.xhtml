@@ -328,6 +328,30 @@
 		</p:dataTable>
 	</p:panel>
 
+	<p:panel id="painelPixRecebidos" header="Pix recebidos" style="width:100%; margin-bottom:10px">
+		<p:dataTable id="tabelaPixRecebidos" value="#{relatorioController.pixRecebidos}" var="pix" style="width:100%"
+			emptyMessage="Nenhum Pix recebido no período (ou API Sicoob indisponível).">
+			<p:column headerText="Data/Hora" style="width:16%">
+				<h:outputText value="#{pix.horario}" />
+			</p:column>
+			<p:column headerText="Quem pagou" style="width:20%">
+				<h:outputText value="#{pix.nomePagador}" />
+			</p:column>
+			<p:column headerText="CPF/CNPJ" style="width:13%">
+				<h:outputText value="#{pix.cpfPagador}" />
+			</p:column>
+			<p:column headerText="Valor" style="width:10%">
+				<h:outputText value="#{pix.valor}" />
+			</p:column>
+			<p:column headerText="Descrição" style="width:21%">
+				<h:outputText value="#{pix.infoPagador}" />
+			</p:column>
+			<p:column headerText="EndToEnd">
+				<h:outputText value="#{pix.endToEndId}" style="font-size:11px; color:#888;" />
+			</p:column>
+		</p:dataTable>
+	</p:panel>
+
 	<br/>
 
 

@@ -296,6 +296,16 @@ public class FinanceiroEscolaService extends Service {
 		}
 	}
 
+	public void atualizarStatusSicoob(Long boletoId, String statusSicoob, java.util.Date dataConsultaSicoob) {
+		org.escola.model.Boleto bol = em.find(org.escola.model.Boleto.class, boletoId);
+		if (bol != null) {
+			bol.setStatusSicoob(statusSicoob);
+			bol.setDataConsultaSicoob(dataConsultaSicoob);
+			em.merge(bol);
+			em.flush();
+		}
+	}
+
 	public void alterarBoletoManualmente(org.escola.model.Boleto boleto) {
 		org.escola.model.Boleto boletoMerged = em.find(org.escola.model.Boleto.class, boleto.getId());
 		boletoMerged.setAlteracaoBoletoManual(true);

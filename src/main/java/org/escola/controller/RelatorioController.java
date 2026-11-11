@@ -36,6 +36,7 @@ import org.escola.enums.Serie;
 import org.escola.model.Aluno;
 import org.escola.model.Configuracao;
 import org.escola.model.ContratoAluno;
+import org.escola.model.PixRecebido;
 import org.escola.service.AlunoService;
 import org.escola.service.ConfiguracaoService;
 import org.escola.service.DevedorService;
@@ -43,6 +44,7 @@ import org.escola.service.EvolutionApiService;
 import org.escola.service.FinanceiroEscolaService;
 import org.escola.service.MensagemWhatsAppService;
 import org.escola.service.RelatorioService;
+import org.escola.service.SicoobBoletoService;
 import org.escola.util.Util;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -75,6 +77,9 @@ public class RelatorioController implements Serializable{
 
 	@Inject
 	private DevedorService devedorService;
+
+	@Inject
+	private SicoobBoletoService sicoobBoletoService;
 
 	private LazyDataModel<Aluno> lazyListDataModelQuantidade;
 	private LazyDataModel<Aluno> lazyListDataModelMes;
@@ -131,6 +136,43 @@ public class RelatorioController implements Serializable{
 	private PerioddoEnum integral;
 	
 	private int mesSelecionado = 1;
+
+	public void sincronizarBoletosComSicoobMes() {
+		Map<String, Object> filtros = new HashMap<>();
+		filtros.put("mesAtrasado", mesAtrasado);
+		filtros.put("anoSelecionado", anoSelecionado);
+
+		List<Aluno> todosAlunos = financeiroService.findAlunoMes(0, 9999, "id", "asc", filtros);
+		int sucesso = 0;
+		int erro = 0;
+		if (todosAlunos != null) {
+			for (Aluno al : todosAlunos) {
+				for (ContratoAluno contrato : al.getContratos()) {
+					for (org.escola.model.Boleto boleto : contrato.getBoletos()) {
+						if (boleto.getCancelado() != null && boleto.getCancelado()) {
+							continue;
+						}
+						try {
+							String situacao = sicoobBoletoService.consultarSituacaoBoleto(configuracao,
+									boleto.getNossoNumero());
+							financeiroService.atualizarStatusSicoob(boleto.getId(), situacao, new Date());
+							sucesso++;
+						} catch (Exception e) {
+							erro++;
+						}
+					}
+				}
+			}
+		}
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				sucesso + " boleto(s) consultado(s) com sucesso, " + erro + " com erro", null));
+	}
+
+	public List<PixRecebido> getPixRecebidos() {
+		int mes = mesSelecionadoRelatorio != null ? mesSelecionadoRelatorio : (Calendar.getInstance().get(Calendar.MONTH) + 1);
+		int ano = anoSelecionado != null ? anoSelecionado : Calendar.getInstance().get(Calendar.YEAR);
+		return sicoobBoletoService.consultarPixRecebidos(configuracao, mes, ano);
+	}
 
 	public double getNotasEnviadas(int mes){
 		return relatorioService.getTotalNotasEmitidas(mes,anoSelecionado);

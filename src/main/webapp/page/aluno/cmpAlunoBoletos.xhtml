@@ -10,6 +10,10 @@
 	
 	<h:panelGrid columns="1" border="0" rendered="#{visible}">
 	<h:panelGrid width="98%">
+				<p:commandButton value="Sincronizar com Sicoob" icon="ui-icon-refresh"
+					style="background-color:#00A651; border-color:#00A651; color:white; font-weight:bold; margin-bottom:8px;"
+					action="#{alunoController.sincronizarBoletosComSicoob(parametro)}"
+					update="tbboleto messages" ajax="true" />
 				<p:dataTable currentPageReportTemplate="Exibindo: {startRecord}-{endRecord} de {totalRecords} Registros"
                              emptyMessage="#Nenhum registro encontrado"
                              filterEvent="enter" 
@@ -81,7 +85,14 @@
 					<p:column style="width:7%; text-align:center;" headerText="Status">
 						<h:outputText value="#{alunoController.getStatus(professorTab)}" />
 					</p:column>
-					
+
+					<p:column style="width:9%; text-align:center;" headerText="Status Sicoob">
+						<h:outputText value="#{alunoController.getSicoobStatusHtml(professorTab)}" escape="false" /><br/>
+						<h:outputText value="#{professorTab.dataConsultaSicoob}" rendered="#{professorTab.dataConsultaSicoob != null}" style="font-size:10px;color:#999;">
+							<f:convertDateTime pattern="dd/MM HH:mm" timeZone="GMT-3" />
+						</h:outputText>
+					</p:column>
+
 					<p:column style="width:7%; text-align:center;" headerText="Download">
 						<p:commandButton id="cnab" icon="ui-icon-print" alt="Imprimir"  
 						ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  

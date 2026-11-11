@@ -41,9 +41,11 @@
 
 				<p:commandButton id="sincSicoob"
 					value="Sincronizar com Sicoob"
-					icon="ui-icon-clock"
-					style="background-color:#aaa; border-color:#888; color:white;"
-					disabled="true" />
+					icon="ui-icon-refresh"
+					style="background-color:#00A651; border-color:#00A651; color:white; font-weight:bold;"
+					action="#{relatorioController.sincronizarBoletosComSicoobMes()}"
+					onstart="start()" oncomplete="stop()"
+					update="tbl panelFerramentas messages" ajax="true" />
 			</h:panelGrid>
 
 			<div style="width:100%;">

@@ -138,8 +138,47 @@
 				<p:commandButton icon="ui-icon-contact" ajax="false" value="Gerar Notas Fiscais Mes Atual "
 					action="#{configuracaoController.gerarNFSEDoMesAtual()}">
 				</p:commandButton>
-				
 
+				<br />
+				<br />
+				<h:panelGrid columns="2" columnClasses="value" width="98%" style="margin-top:10px;">
+
+					<h:outputText value="Integração Sicoob (API - Cobrança Bancária)" style="font-weight:bold; font-size:14px;" />
+					<h:outputText value="" />
+
+					<h:outputText value="Client ID (Cobrança Bancária):" />
+					<p:inputText value="#{configuracao.sicoobClientId}" style="width:300px;">
+						<p:ajax event="blur" process="@this" listener="#{configuracaoController.salvar()}" />
+					</p:inputText>
+
+					<h:outputText value="Número de Cliente (Sicoob):" />
+					<p:inputText value="#{configuracao.sicoobNumeroContrato}" style="width:300px;">
+						<p:ajax event="blur" process="@this" listener="#{configuracaoController.salvar()}" />
+					</p:inputText>
+
+					<h:outputText value="Código da modalidade:" />
+					<p:inputText value="#{configuracao.sicoobCodigoModalidade}" style="width:300px;" placeholder="ex: 1">
+						<p:ajax event="blur" process="@this" listener="#{configuracaoController.salvar()}" />
+					</p:inputText>
+
+					<h:outputText value="Código da agência:" />
+					<p:inputText value="#{configuracao.sicoobCodigoAgencia}" style="width:300px;">
+						<p:ajax event="blur" process="@this" listener="#{configuracaoController.salvar()}" />
+					</p:inputText>
+
+					<h:outputText value="Ambiente:" />
+					<p:selectOneMenu value="#{configuracao.sicoobAmbiente}" style="width:300px;">
+						<f:selectItem itemValue="sandbox" itemLabel="Sandbox (testes)" />
+						<f:selectItem itemValue="producao" itemLabel="Produção" />
+						<p:ajax event="change" process="@this" listener="#{configuracaoController.salvar()}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Certificado Digital (.pfx):" />
+					<p:inputText value="#{configuracao.certificadoPath}" style="width:300px;" placeholder="(produção usa o certificado A1 informado acima pra NFSe)">
+						<p:ajax event="blur" process="@this" listener="#{configuracaoController.salvar()}" />
+					</p:inputText>
+
+				</h:panelGrid>
 
 		</h:form>
 	</ui:define>
