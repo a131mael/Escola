@@ -2703,6 +2703,8 @@ public class AlunoController implements Serializable {
 	}
 	
 	public void sincronizarBoletosComSicoob(ContratoAluno contrato) {
+		System.out.println("[SICOOB] sincronizarBoletosComSicoob chamado, contrato=" + contrato.getId()
+				+ ", total boletos=" + contrato.getBoletos().size());
 		int sucesso = 0;
 		int erro = 0;
 		for (org.escola.model.Boleto boleto : contrato.getBoletos()) {
@@ -2712,8 +2714,13 @@ public class AlunoController implements Serializable {
 			try {
 				String situacao = sicoobBoletoService.consultarSituacaoBoleto(configuracao, boleto.getNossoNumero());
 				financeiroEscolaService.atualizarStatusSicoob(boleto.getId(), situacao, new Date());
+				System.out.println("[SICOOB] boleto " + boleto.getId() + " nossoNumero=" + boleto.getNossoNumero()
+						+ " -> " + situacao);
 				sucesso++;
 			} catch (Exception e) {
+				System.out.println("[SICOOB] ERRO boleto " + boleto.getId() + " nossoNumero=" + boleto.getNossoNumero()
+						+ ": " + e);
+				e.printStackTrace();
 				erro++;
 			}
 		}

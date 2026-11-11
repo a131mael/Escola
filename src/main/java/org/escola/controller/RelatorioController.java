@@ -143,6 +143,8 @@ public class RelatorioController implements Serializable{
 		filtros.put("anoSelecionado", anoSelecionado);
 
 		List<Aluno> todosAlunos = financeiroService.findAlunoMes(0, 9999, "id", "asc", filtros);
+		System.out.println("[SICOOB] sincronizarBoletosComSicoobMes chamado, alunos encontrados="
+				+ (todosAlunos != null ? todosAlunos.size() : 0));
 		int sucesso = 0;
 		int erro = 0;
 		if (todosAlunos != null) {
@@ -156,8 +158,13 @@ public class RelatorioController implements Serializable{
 							String situacao = sicoobBoletoService.consultarSituacaoBoleto(configuracao,
 									boleto.getNossoNumero());
 							financeiroService.atualizarStatusSicoob(boleto.getId(), situacao, new Date());
+							System.out.println("[SICOOB] " + al.getNomeAluno() + " boleto " + boleto.getId()
+									+ " nossoNumero=" + boleto.getNossoNumero() + " -> " + situacao);
 							sucesso++;
 						} catch (Exception e) {
+							System.out.println("[SICOOB] ERRO " + al.getNomeAluno() + " boleto " + boleto.getId()
+									+ " nossoNumero=" + boleto.getNossoNumero() + ": " + e);
+							e.printStackTrace();
 							erro++;
 						}
 					}
