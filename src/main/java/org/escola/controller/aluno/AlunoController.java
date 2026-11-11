@@ -1420,6 +1420,7 @@ public class AlunoController implements Serializable {
 		trocas.put("adonaiturma", aluno.getSerie().getName());
 		trocas.put("adonaiperiodo", aluno.getPeriodo().getName());
 		trocas.put("adonaidata", dataExtenso);
+		trocas.put("adonaianoletivo", (configuracaoService.getConfiguracao().getAnoLetivo() + 1) + "");
 
 		return trocas;
 	}
