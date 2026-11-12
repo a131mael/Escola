@@ -6,450 +6,73 @@
 	template="/WEB-INF/templates/templateADM.xhtml">
 
 	<ui:define name="content">
-		<script type="text/javascript">
-    PrimeFaces.locales['pt'] = {
-        closeText: 'Fechar',
-        prevText: 'geri',
-        nextText: 'ileri',
-        currentText: 'Hoje',
-        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
-            'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
-        monthNamesShort: ['Jan','Fev','Mar','Abr','Maio','Jun',
-            'Jul','Ago','Set','Out','Nov','Dez'],
-        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sabado'],
-        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'],
-        dayNamesMin: ['D','S','T','Q','Q','S','S'],
-        weekHeader: 'Hf',
-        firstDay: 1,
-        isRTL: false,
-        showMonthAfterYear: false,
-        yearSuffix: '',
-        month: 'Mes',
-        week: 'Semana',
-        day: 'Dia',
-        allDayText : 'Horas'
-    };
-</script>
-		<h:form style="width:100%; border:none"
+		<h:form id="formRelatorioNFSe" style="width:100%; border:none"
 			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
 			<p:growl id="messages" showDetail="true" />
 
-		<h:panelGrid columns="2">
-			<h:panelGrid columns="3" style="margin-top: -0px;">
-			
-				<p:outputLabel value="MES " />
-				<p:outputLabel value=" - " />
-				<p:outputLabel value="Valor" />
+			<h:panelGrid columns="1" style="width:100%">
 
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="" style="margin-left:20px" />
-				<h:outputText value="" style="margin-left:20px" />
+				<h:panelGroup style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+					<p:outputLabel value="NFS-e emitidas em:" style="font-weight:bold;" />
+					<p:selectOneMenu value="#{relatorioController.anoSelecionado}">
+						<f:selectItems value="#{relatorioController.anosDisponiveis}" />
+						<p:ajax update="formRelatorioNFSe" />
+					</p:selectOneMenu>
+					<h:outputText value="Total do ano: " style="margin-left:20px; font-weight:bold;" />
+					<h:outputText value="#{relatorioController.totalNFSeAnoSelecionado}">
+						<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+					</h:outputText>
+				</h:panelGroup>
 
-				<h:outputText value="Janeiro" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(1)}"
-					style="margin-left:20px" />
+				<p:dataTable value="#{relatorioController.resumoNFSePorMes}" var="mesResumo"
+					styleClass="tabela" style="max-width:500px;">
 
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
+					<p:column headerText="Mês">
+						<p:commandLink value="#{mesResumo.nomeMes}"
+							action="#{relatorioController.selecionarMesDetalheNFSe(mesResumo.mes)}"
+							update="@form" process="@this" />
+					</p:column>
+					<p:column headerText="Qtd. Notas" style="text-align:center;">
+						<h:outputText value="#{mesResumo.qtdNotas}" />
+					</p:column>
+					<p:column headerText="Valor Total" style="text-align:right;">
+						<h:outputText value="#{mesResumo.valorTotal}">
+							<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
 
-				<h:outputText value="Fevereiro" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(2)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Marco" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(3)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Abril" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(4)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Maio" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(5)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Junho" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(6)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="Julho" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(7)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="Agosto" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(8)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="Setembro" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(9)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="Outubro" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(10)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="Novembro" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(11)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="Dezembro" style="margin-left:20px" />
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.getNotasEnviadas(12)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
+				<h:panelGroup id="painelDetalheNFSe" style="margin-top:20px;">
+					<h:panelGroup rendered="#{relatorioController.mesDetalheNFSe != null}">
+						<p:outputLabel value="Notas emitidas em #{relatorioController.nomeMesDetalheNFSe}:"
+							style="font-weight:bold; display:block; margin-bottom:8px;" />
+						<p:dataTable value="#{relatorioController.notasDetalheMes}" var="nota"
+							styleClass="tabela" style="max-width:900px;"
+							emptyMessage="Nenhuma nota autorizada nesse mês">
+							<p:column headerText="Aluno">
+								<h:outputText value="#{relatorioController.getNomeAlunoNota(nota)}" />
+							</p:column>
+							<p:column headerText="Número">
+								<h:outputText value="#{nota.numero}" />
+							</p:column>
+							<p:column headerText="Valor" style="text-align:right;">
+								<h:outputText value="#{nota.valor}">
+									<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Data autorização">
+								<h:outputText value="#{nota.dataAutorizacao}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Chave de acesso">
+								<h:outputText value="#{nota.chaveAcesso}" style="font-size:11px;" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGroup>
+				</h:panelGroup>
 
 			</h:panelGrid>
-			
-			<h:panelGrid columns="1">
-				<h:panelGrid columns="23" style="margin-top: 0px;">
-			
-				<p:commandLink value="Janeiro " style="font-size: 15px">
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(1)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Fevereiro" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(2)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Março" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(3)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Abril" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(4)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Maio" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(5)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Junho" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(6)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Julho" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(7)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Agosto" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(8)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Setembro" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(9)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Outubro" style="font-size: 15px" >
-					<p:ajax update="@form" event="click" listener="#{relatorioController.setMesSelecionado(10)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Novembro" style="font-size: 15px" >
-					<p:ajax update="@form" event="click" listener="#{relatorioController.setMesSelecionado(11)}" process="@this"/>
-				</p:commandLink>
-				<p:outputLabel value=" " />
-				<p:commandLink value="Dezembro" style="font-size: 15px" >
-					<p:ajax update="panelNFS" event="click" listener="#{relatorioController.setMesSelecionado(12)}" process="@this"/>
-				</p:commandLink>
-			</h:panelGrid>
-			
-				<h:panelGrid id="panelNFS" columns="1" style="margin-top: 5px; width:450px" >
-						<p:repeat value="#{relatorioController.getResponsaveisNotasEnviadas()}" var="responsavel">
-							<h:outputText value="#{responsavel}" />
-							<br/>
-						</p:repeat>
-				</h:panelGrid>
-		</h:panelGrid>
-			
-
-			
-		</h:panelGrid>
-			
-			<br/><br/><br/><br/>
-			<h:panelGrid columns="5" style="margin-top: -10px;" rendered="false">
-				<p:outputLabel value="Turma " />
-				<p:outputLabel value="Manha" />
-				<p:outputLabel value="Tarde" />
-				<p:outputLabel value="Integral" />
-				<p:outputLabel value="Total" />
-
-				<h:outputText value=" " style="margin-left:20px" />
-				<h:outputText value="" style="margin-left:20px" />
-				<h:outputText value="" style="margin-left:20px" />
-				<h:outputText value="" style="margin-left:20px" />
-				<h:outputText value="" style="margin-left:20px" />
-
-				<h:outputText value="Maternal" style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.maternal,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.maternal,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.maternal,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.maternal)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="Jardim_I " style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.jardimI,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.jardimI,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.jardimI,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.jardimI)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Jardim_II " style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.jardimII,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.jardimII,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.jardimII,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.jardimII)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="PRÉ " style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.pre,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.pre,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.pre,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.pre)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Primeiro " style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.primeiro,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.primeiro,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.primeiro,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.primeiro)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Segundo " style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.segundo,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.segundo,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.segundo,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.segundo)}"
-					style="margin-left:20px" />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Terceiro " style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.terceiro,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.terceiro,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.terceiro,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.terceiro)}"
-					style="margin-left:20px" />
-
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Quarto " style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.quarto,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.quarto,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.quarto,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.quarto)}"
-					style="margin-left:20px" />
-
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<h:outputText value="Quinto " style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.quinto,relatorioController.manha)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.quinto,relatorioController.tarde)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.quinto,relatorioController.integral)}"
-					style="margin-left:20px" />
-				<h:outputText
-					value="#{relatorioController.getTotalAlunos(relatorioController.quinto)}"
-					style="margin-left:20px" />
-
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-				<p:outputLabel value=" " />
-
-
-				<h:outputText value="Total " style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.totalAlunosManha}"
-					style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.totalAlunosTarde}"
-					style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.totalAlunosIntegral}"
-					style="margin-left:20px" />
-				<h:outputText value="#{relatorioController.totalAlunos}"
-					style="margin-left:20px" />
-
-
-			</h:panelGrid>
-
 		</h:form>
 	</ui:define>
 </ui:composition>

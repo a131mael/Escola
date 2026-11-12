@@ -80,6 +80,29 @@ public class NotaFiscalService extends Service {
 		return total;
 	}
 
+	/** Soma do valor das notas AUTORIZADAS no mes/ano (relatorio de total faturado). */
+	public double somarValorAutorizadoMesAno(int mes, int ano) {
+		List<NotaFiscal> notas = findByMesAno(mes, ano);
+		double total = 0;
+		for (NotaFiscal n : notas) {
+			if ("AUTORIZADA".equals(n.getStatus()) && n.getValor() != null) {
+				total += n.getValor();
+			}
+		}
+		return total;
+	}
+
+	/** So as notas AUTORIZADAS do mes/ano, mais recentes primeiro (pra lista detalhada do relatorio). */
+	public List<NotaFiscal> findAutorizadasMesAno(int mes, int ano) {
+		List<NotaFiscal> resultado = new ArrayList<>();
+		for (NotaFiscal n : findByMesAno(mes, ano)) {
+			if ("AUTORIZADA".equals(n.getStatus())) {
+				resultado.add(n);
+			}
+		}
+		return resultado;
+	}
+
 	public void atualizarAutorizada(NotaFiscal nota, String numero, String chaveAcesso, String xmlRetorno) {
 		nota.setStatus("AUTORIZADA");
 		nota.setNumero(numero);

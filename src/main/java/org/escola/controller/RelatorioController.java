@@ -81,6 +81,9 @@ public class RelatorioController implements Serializable{
 	@Inject
 	private SicoobBoletoService sicoobBoletoService;
 
+	@Inject
+	private org.escola.service.NotaFiscalService notaFiscalService;
+
 	private LazyDataModel<Aluno> lazyListDataModelQuantidade;
 	private LazyDataModel<Aluno> lazyListDataModelMes;
 	
@@ -134,8 +137,6 @@ public class RelatorioController implements Serializable{
 	private PerioddoEnum manha;
 	private PerioddoEnum tarde;
 	private PerioddoEnum integral;
-	
-	private int mesSelecionado = 1;
 
 	public void sincronizarBoletosComSicoobMes() {
 		Map<String, Object> filtros = new HashMap<>();
@@ -197,18 +198,89 @@ public class RelatorioController implements Serializable{
 		return sicoobBoletoService.consultarPixRecebidos(configuracao, mes, ano);
 	}
 
-	public double getNotasEnviadas(int mes){
-		return relatorioService.getTotalNotasEmitidas(mes,anoSelecionado);
+	public static class ResumoMesNFSe {
+		private final int mes;
+		private final String nomeMes;
+		private final long qtdNotas;
+		private final double valorTotal;
+
+		public ResumoMesNFSe(int mes, String nomeMes, long qtdNotas, double valorTotal) {
+			this.mes = mes;
+			this.nomeMes = nomeMes;
+			this.qtdNotas = qtdNotas;
+			this.valorTotal = valorTotal;
+		}
+
+		public int getMes() {
+			return mes;
+		}
+
+		public String getNomeMes() {
+			return nomeMes;
+		}
+
+		public long getQtdNotas() {
+			return qtdNotas;
+		}
+
+		public double getValorTotal() {
+			return valorTotal;
+		}
 	}
-	
-	public List<String> getResponsaveisNotasEnviadas(int mes){
-		return relatorioService.getResponsaveisNotasEnviadas(mes,anoSelecionado);
+
+	private static final String[] NOMES_MESES = { "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho",
+			"Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" };
+
+	private Integer mesDetalheNFSe;
+
+	/** Total de NFS-e autorizadas por mes do ano selecionado -- fonte unica de verdade
+	 * e a tabela NotaFiscal (nao mais o antigo boleto.nfsEnviada, que ficou obsoleto
+	 * desde a migracao pro Sistema Nacional de NFS-e). */
+	public List<ResumoMesNFSe> getResumoNFSePorMes() {
+		List<ResumoMesNFSe> resumo = new ArrayList<>();
+		for (int mes = 1; mes <= 12; mes++) {
+			long qtd = notaFiscalService.contarAutorizadasMesAno(mes, anoSelecionado);
+			double valor = notaFiscalService.somarValorAutorizadoMesAno(mes, anoSelecionado);
+			resumo.add(new ResumoMesNFSe(mes, NOMES_MESES[mes - 1], qtd, valor));
+		}
+		return resumo;
 	}
-	
-	public List<String> getResponsaveisNotasEnviadas(){
-		return relatorioService.getResponsaveisNotasEnviadas(mesSelecionado,anoSelecionado);
+
+	public double getTotalNFSeAnoSelecionado() {
+		double total = 0;
+		for (ResumoMesNFSe r : getResumoNFSePorMes()) {
+			total += r.getValorTotal();
+		}
+		return total;
 	}
-	
+
+	public void selecionarMesDetalheNFSe(int mes) {
+		this.mesDetalheNFSe = mes;
+	}
+
+	public Integer getMesDetalheNFSe() {
+		return mesDetalheNFSe;
+	}
+
+	public String getNomeMesDetalheNFSe() {
+		return mesDetalheNFSe == null ? "" : NOMES_MESES[mesDetalheNFSe - 1];
+	}
+
+	public List<org.escola.model.NotaFiscal> getNotasDetalheMes() {
+		if (mesDetalheNFSe == null) {
+			return new ArrayList<>();
+		}
+		return notaFiscalService.findAutorizadasMesAno(mesDetalheNFSe, anoSelecionado);
+	}
+
+	public String getNomeAlunoNota(org.escola.model.NotaFiscal nota) {
+		if (nota.getBoleto() == null || nota.getBoleto().getContrato() == null
+				|| nota.getBoleto().getContrato().getAluno() == null) {
+			return "";
+		}
+		return nota.getBoleto().getContrato().getAluno().getNomeAluno();
+	}
+
 	public String getTotalCriancasDevendo(int mesBusca) {
 		return String.valueOf(financeiroService.getQuantidadeBoletosAtrasadosPorMes(mesBusca,anoSelecionado));
 	}
@@ -449,16 +521,17 @@ public class RelatorioController implements Serializable{
 		this.integral = integral;
 	}
 
-	public int getMesSelecionado() {
-		return mesSelecionado;
-	}
-
-	public void setMesSelecionado(int mesSelecionado) {
-		this.mesSelecionado = mesSelecionado;
-	}
-
 	public Integer getAnoSelecionado() {
 		return anoSelecionado;
+	}
+
+	public List<Integer> getAnosDisponiveis() {
+		int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
+		List<Integer> anos = new ArrayList<>();
+		for (int ano = anoAtual + 1; ano >= anoAtual - 4; ano--) {
+			anos.add(ano);
+		}
+		return anos;
 	}
 
 	public void setAnoSelecionado(Integer anoSelecionado) {
