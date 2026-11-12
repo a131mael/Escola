@@ -93,6 +93,15 @@
 						</h:outputText>
 					</p:column>
 
+					<p:column style="width:9%; text-align:center;" headerText="NFS-e">
+						<h:outputText value="#{alunoController.getNFSeStatusHtml(professorTab)}" escape="false" /><br/>
+						<p:commandButton value="Emitir" icon="ui-icon-document" style="margin-top:4px;font-size:11px;"
+							action="#{alunoController.emitirNFSeNacional(professorTab)}"
+							update="tbboleto" ajax="true">
+							<p:confirm header="Emitir NFS-e" message="Emitir nota fiscal de servico para este boleto?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+
 					<p:column style="width:7%; text-align:center;" headerText="Download">
 						<p:commandButton id="cnab" icon="ui-icon-print" alt="Imprimir"  
 						ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"  

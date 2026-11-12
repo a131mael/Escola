@@ -55,6 +55,19 @@ public class NotaFiscalService extends Service {
 		}
 	}
 
+	public NotaFiscal findUltimaPorBoleto(Long boletoId) {
+		try {
+			Query query = em.createQuery(
+					"SELECT n FROM NotaFiscal n WHERE n.boleto.id = :boletoId ORDER BY n.id DESC");
+			query.setParameter("boletoId", boletoId);
+			query.setMaxResults(1);
+			List<NotaFiscal> result = query.getResultList();
+			return result.isEmpty() ? null : result.get(0);
+		} catch (NoResultException nre) {
+			return null;
+		}
+	}
+
 	/** Total de notas autorizadas no mes/ano (pro quadro "total por mes" pedido). */
 	public long contarAutorizadasMesAno(int mes, int ano) {
 		List<NotaFiscal> notas = findByMesAno(mes, ano);
@@ -77,8 +90,15 @@ public class NotaFiscalService extends Service {
 	}
 
 	public void atualizarRejeitada(NotaFiscal nota, String motivo) {
+		atualizarRejeitada(nota, motivo, null);
+	}
+
+	public void atualizarRejeitada(NotaFiscal nota, String motivo, String xmlRetorno) {
 		nota.setStatus("REJEITADA");
 		nota.setMotivoRejeicao(motivo);
+		if (xmlRetorno != null) {
+			nota.setXmlNfseRetorno(xmlRetorno);
+		}
 		save(nota);
 	}
 
