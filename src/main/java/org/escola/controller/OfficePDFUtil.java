@@ -28,6 +28,8 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Table;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 public class OfficePDFUtil {
@@ -514,8 +516,311 @@ public class OfficePDFUtil {
 			t.addCell(c1);
 		}
 		t.endHeaders();
-		
+
 		return t;
 	}
-	
+
+	private static final Font DANFSE_FONTE_MARCA = new Font(Font.HELVETICA, 16, Font.BOLD);
+	private static final Font DANFSE_FONTE_MARCA_SUB = new Font(Font.HELVETICA, 6, Font.NORMAL, Color.GRAY);
+	private static final Font DANFSE_FONTE_TITULO = new Font(Font.HELVETICA, 11, Font.BOLD);
+	private static final Font DANFSE_FONTE_TOPO = new Font(Font.HELVETICA, 8, Font.NORMAL);
+	private static final Font DANFSE_FONTE_SECAO = new Font(Font.HELVETICA, 8, Font.BOLD);
+	private static final Font DANFSE_FONTE_LABEL = new Font(Font.HELVETICA, 6, Font.NORMAL, Color.DARK_GRAY);
+	private static final Font DANFSE_FONTE_VALOR = new Font(Font.HELVETICA, 8, Font.NORMAL);
+	private static final Font DANFSE_FONTE_VALOR_GRANDE = new Font(Font.HELVETICA, 11, Font.BOLD);
+	private static final Color DANFSE_CINZA_SECAO = new Color(225, 225, 225);
+	private static final Color DANFSE_CINZA_LINHA = new Color(245, 245, 245);
+
+	/** Gera o DANFSe (Documento Auxiliar da NFS-e) em PDF a partir do XML da nota ja
+	 * autorizada, guardado em NotaFiscal.xmlNfseRetorno. Construido na mao porque a
+	 * API oficial do governo pra isso foi desativada em 03/08/2026 (NT 008/2026) --
+	 * so o download manual avulso no portal continua funcionando. Layout seguindo
+	 * de perto o DANFSe v2.0 oficial (mesmas secoes/campos, conferido contra uma
+	 * nota real baixada do portal nacional). */
+	public static byte[] gerarDanfse(String xmlNfse) throws Exception {
+		com.lowagie.text.Document document = new com.lowagie.text.Document(PageSize.A4, 24f, 24f, 24f, 24f);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfWriter.getInstance(document, baos);
+		document.open();
+
+		String chaveAcesso = extrairDanfse(xmlNfse, "infNFSe Id=\"NFS(\\d+)\"");
+		String numeroNFSe = extrairDanfse(xmlNfse, "<nNFSe>(\\d+)</nNFSe>");
+		String dhProc = extrairDanfseData(extrairDanfse(xmlNfse, "<dhProc>([^<]+)</dhProc>"));
+		String dCompetBruta = extrairDanfse(xmlNfse, "<dCompet>([^<]+)</dCompet>");
+		String competencia = formataDataSimples(dCompetBruta);
+		String xLocEmi = extrairDanfse(xmlNfse, "<xLocEmi>([^<]+)</xLocEmi>");
+		String xTribNac = extrairDanfse(xmlNfse, "<xTribNac>([^<]+)</xTribNac>");
+		String xNBSDesc = extrairDanfse(xmlNfse, "<xNBS>([^<]+)</xNBS>");
+		String vLiq = extrairDanfse(xmlNfse, "<vLiq>([\\d.]+)</vLiq>");
+		String ambGer = extrairDanfse(xmlNfse, "<ambGer>(\\d+)</ambGer>");
+
+		String idDps = extrairDanfse(xmlNfse, "infDPS Id=\"(DPS[^\"]+)\"");
+		String numDps = extrairDanfse(xmlNfse, "<nDPS>(\\d+)</nDPS>");
+		String serieDps = extrairDanfse(xmlNfse, "<serie>([^<]+)</serie>");
+		String dhEmiDps = extrairDanfseData(extrairDanfse(xmlNfse, "<dhEmi>([^<]+)</dhEmi>"));
+		String tpAmb = extrairDanfse(xmlNfse, "<tpAmb>(\\d+)</tpAmb>");
+
+		String emitCnpj = extrairDanfse(xmlNfse, "<emit><CNPJ>(\\d+)</CNPJ>");
+		String emitNome = extrairDanfse(xmlNfse, "<emit>.*?<xNome>([^<]+)</xNome>");
+		String emitLgr = extrairDanfse(xmlNfse, "<xLgr>([^<]+)</xLgr>");
+		String emitNro = extrairDanfse(xmlNfse, "<nro>([^<]+)</nro>");
+		String emitBairro = extrairDanfse(xmlNfse, "<xBairro>([^<]+)</xBairro>");
+		String emitCep = extrairDanfse(xmlNfse, "<CEP>(\\d+)</CEP>");
+		String emitFone = extrairDanfse(xmlNfse, "<emit>.*?<fone>([^<]+)</fone>");
+		String emitEmail = extrairDanfse(xmlNfse, "<emit>.*?<email>([^<]+)</email>");
+		String cMun = extrairDanfse(xmlNfse, "<cMun>(\\d+)</cMun>");
+		String emitUF = extrairDanfse(xmlNfse, "<enderNac>.*?<UF>([^<]+)</UF>");
+
+		String tomaCpf = extrairDanfse(xmlNfse, "<toma><CPF>(\\d+)</CPF>");
+		String tomaCnpj = tomaCpf.isEmpty() ? extrairDanfse(xmlNfse, "<toma><CNPJ>(\\d+)</CNPJ>") : "";
+		String tomaNome = extrairDanfse(xmlNfse, "<toma>.*?<xNome>([^<]+)</xNome>");
+
+		String descServ = extrairDanfse(xmlNfse, "<xDescServ>([^<]+)</xDescServ>");
+		String imPrest = extrairDanfse(xmlNfse, "<prest>.*?<IM>([^<]+)</IM>");
+		String opSimpNac = extrairDanfse(xmlNfse, "<opSimpNac>(\\d+)</opSimpNac>");
+		String cTribNac = extrairDanfse(xmlNfse, "<cTribNac>(\\d+)</cTribNac>");
+		String cNBS = extrairDanfse(xmlNfse, "<cNBS>(\\d+)</cNBS>");
+		String tribISSQN = extrairDanfse(xmlNfse, "<tribISSQN>(\\d+)</tribISSQN>");
+		String tpRetISSQN = extrairDanfse(xmlNfse, "<tpRetISSQN>(\\d+)</tpRetISSQN>");
+		String pTotTribSN = extrairDanfse(xmlNfse, "<pTotTribSN>([\\d.]+)</pTotTribSN>");
+
+		// ---- Cabecalho ----
+		PdfPTable cabecalho = new PdfPTable(new float[] { 2.3f, 3f, 2.3f });
+		cabecalho.setWidthPercentage(100);
+		PdfPCell celMarca = new PdfPCell();
+		celMarca.setBorder(com.lowagie.text.Rectangle.NO_BORDER);
+		Paragraph marca = new Paragraph("NFSe", DANFSE_FONTE_MARCA);
+		marca.add(new Phrase("\nNota Fiscal de\nServiço eletrônica", DANFSE_FONTE_MARCA_SUB));
+		celMarca.addElement(marca);
+		cabecalho.addCell(celMarca);
+
+		PdfPCell celTitulo = new PdfPCell();
+		celTitulo.setBorder(com.lowagie.text.Rectangle.NO_BORDER);
+		celTitulo.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+		Paragraph pTitulo = new Paragraph("DANFSe v2.0", DANFSE_FONTE_TITULO);
+		pTitulo.setAlignment(Paragraph.ALIGN_CENTER);
+		pTitulo.add(new Phrase("\nDocumento Auxiliar da NFS-e", new Font(Font.HELVETICA, 9, Font.NORMAL)));
+		celTitulo.addElement(pTitulo);
+		cabecalho.addCell(celTitulo);
+
+		PdfPCell celInfoTopo = new PdfPCell();
+		celInfoTopo.setBorder(com.lowagie.text.Rectangle.NO_BORDER);
+		celInfoTopo.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_RIGHT);
+		Paragraph pInfoTopo = new Paragraph("Município: " + (xLocEmi.isEmpty() ? "-" : xLocEmi), DANFSE_FONTE_TOPO);
+		pInfoTopo.setAlignment(Paragraph.ALIGN_RIGHT);
+		pInfoTopo.add(new Phrase("\nAmbiente Gerador: " + (ambGer.isEmpty() ? "-" : ambGer), DANFSE_FONTE_TOPO));
+		pInfoTopo.add(new Phrase("\nTipo de Ambiente: " + (tpAmb.isEmpty() ? "-" : tpAmb), DANFSE_FONTE_TOPO));
+		celInfoTopo.addElement(pInfoTopo);
+		cabecalho.addCell(celInfoTopo);
+		document.add(cabecalho);
+		document.add(linhaFina());
+
+		// ---- Chave de acesso + QR ----
+		PdfPTable linhaChave = new PdfPTable(new float[] { 4f, 1f });
+		linhaChave.setWidthPercentage(100);
+		linhaChave.setSpacingBefore(4f);
+		PdfPCell celChave = celulaSemBorda();
+		Paragraph pChaveLabel = new Paragraph("CHAVE DE ACESSO DA NFS-e", DANFSE_FONTE_SECAO);
+		celChave.addElement(pChaveLabel);
+		celChave.addElement(new Paragraph(chaveAcesso, DANFSE_FONTE_VALOR_GRANDE));
+		linhaChave.addCell(celChave);
+
+		PdfPCell celQr = celulaSemBorda();
+		celQr.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+		try {
+			// Formato confirmado decodificando o QR de uma NFS-e real baixada do portal
+			// nacional -- "tpc=1" parece ser o tipo de consulta (NFS-e).
+			String urlConsultaQr = "https://www.nfse.gov.br/ConsultaPublica?tpc=1&chave=" + chaveAcesso;
+			com.google.zxing.qrcode.QRCodeWriter qrWriter = new com.google.zxing.qrcode.QRCodeWriter();
+			com.google.zxing.common.BitMatrix matrix = qrWriter.encode(urlConsultaQr,
+					com.google.zxing.BarcodeFormat.QR_CODE, 110, 110);
+			ByteArrayOutputStream qrBaos = new ByteArrayOutputStream();
+			javax.imageio.ImageIO.write(com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(matrix),
+					"png", qrBaos);
+			Image qrImage = Image.getInstance(qrBaos.toByteArray());
+			qrImage.scaleToFit(70f, 70f);
+			celQr.addElement(qrImage);
+		} catch (Exception e) {
+			// sem QR code nao impede o resto do documento
+		}
+		linhaChave.addCell(celQr);
+		document.add(linhaChave);
+
+		Paragraph avisoAutenticidade = new Paragraph(
+				"A autenticidade desta NFS-e pode ser verificada pela leitura deste código QR ou pela consulta "
+						+ "da chave de acesso no portal nacional da NFS-e (www.nfse.gov.br/ConsultaPublica)",
+				DANFSE_FONTE_LABEL);
+		avisoAutenticidade.setSpacingAfter(4f);
+		document.add(avisoAutenticidade);
+		document.add(linhaFina());
+
+		// ---- Dados gerais da nota ----
+		document.add(tabelaCampos(3, new String[][] { { "NÚMERO DA NFS-e", numeroNFSe },
+				{ "COMPETÊNCIA DA NFS-e", competencia }, { "DATA E HORA DA EMISSÃO DA NFS-e", dhProc } }));
+		document.add(tabelaCampos(3, new String[][] { { "NÚMERO DA DPS", numDps },
+				{ "SÉRIE DA DPS", serieDps }, { "DATA E HORA DA EMISSÃO DA DPS", dhEmiDps } }));
+		document.add(tabelaCampos(3, new String[][] { { "EMITENTE DA NFS-e", "Prestador" },
+				{ "SITUAÇÃO DA NFS-e", "NFS-e Gerada" }, { "FINALIDADE", "-" } }));
+
+		// ---- Prestador ----
+		document.add(barraSecao("PRESTADOR / FORNECEDOR"));
+		String ibgeFormatado = cMun.length() == 7 ? cMun.substring(0, 2) + "." + cMun.substring(2) : cMun;
+		String cepFormatado = emitCep.length() == 8
+				? emitCep.substring(0, 2) + "." + emitCep.substring(2, 5) + "-" + emitCep.substring(5)
+				: emitCep;
+		document.add(tabelaCampos(3, new String[][] { { "CNPJ / CPF / NIF", Formatador.formataCnpj(emitCnpj) },
+				{ "Indicador Municipal (Inscrição)", imPrest.isEmpty() ? "-" : imPrest },
+				{ "Telefone", emitFone.isEmpty() ? "-" : emitFone } }));
+		document.add(tabelaCampos(3, new String[][] { { "Nome / Nome Empresarial", emitNome },
+				{ "Município / Sigla UF", xLocEmi + " / " + emitUF },
+				{ "Código IBGE / CEP", ibgeFormatado + " / " + cepFormatado } }));
+		String enderecoPrestador = emitLgr + (emitNro.isEmpty() ? "" : ", " + emitNro)
+				+ (emitBairro.isEmpty() ? "" : ", " + emitBairro);
+		document.add(tabelaCampos(2, new String[][] { { "Endereço", enderecoPrestador },
+				{ "E-mail", emitEmail.isEmpty() ? "-" : emitEmail } }));
+		String textoSimplesNacional = "3".equals(opSimpNac) ? "Optante - Microempresa ou Empresa de Pequeno Porte"
+				: "1".equals(opSimpNac) ? "Não Optante" : "2".equals(opSimpNac) ? "Optante - MEI" : "-";
+		document.add(tabelaCampos(2,
+				new String[][] { { "Simples Nacional na Data de Competência", textoSimplesNacional },
+						{ "Regime de Apuração Tributária pelo SN",
+								"Regime de apuração dos tributos federais e municipal pelo Simples Nacional" } }));
+
+		// ---- Tomador ----
+		document.add(barraSecao("TOMADOR / ADQUIRENTE"));
+		String docTomador = !tomaCpf.isEmpty() ? Formatador.formataCpf(tomaCpf)
+				: (!tomaCnpj.isEmpty() ? Formatador.formataCnpj(tomaCnpj) : "-");
+		document.add(tabelaCampos(3, new String[][] { { "CNPJ / CPF / NIF", docTomador },
+				{ "Indicador Municipal (Inscrição)", "-" }, { "Telefone", "-" } }));
+		document.add(tabelaCampos(2,
+				new String[][] { { "Nome / Nome Empresarial", tomaNome.isEmpty() ? "-" : tomaNome },
+						{ "Município / Sigla UF", "-" } }));
+
+		// ---- Servico ----
+		document.add(barraSecao("SERVIÇO PRESTADO"));
+		String codTribFormatado = cTribNac.length() == 6
+				? cTribNac.substring(0, 2) + "." + cTribNac.substring(2, 4) + "." + cTribNac.substring(4)
+				: cTribNac;
+		String codNbsFormatado = cNBS.length() == 9
+				? cNBS.substring(0, 1) + "." + cNBS.substring(1, 5) + "." + cNBS.substring(5, 7) + "."
+						+ cNBS.substring(7)
+				: cNBS;
+		document.add(tabelaCampos(3, new String[][] { { "Código de Tributação Nacional/Municipal", codTribFormatado },
+				{ "Código da NBS", codNbsFormatado }, { "Local da Prestação / UF", xLocEmi + " / " + emitUF } }));
+		document.add(paragrafoCampo(xTribNac.isEmpty() ? xNBSDesc : xTribNac));
+		document.add(tabelaCampos(1, new String[][] { { "Descrição do Serviço", descServ } }));
+
+		// ---- Tributacao ----
+		document.add(barraSecao("TRIBUTAÇÃO MUNICIPAL (ISSQN)"));
+		String textoTribISSQN = "1".equals(tribISSQN) ? "Operação Tributável"
+				: "2".equals(tribISSQN) ? "Imunidade" : "3".equals(tribISSQN) ? "Exportação de Serviço" : "-";
+		String textoRetISSQN = "1".equals(tpRetISSQN) ? "Não Retido"
+				: "2".equals(tpRetISSQN) ? "Retido pelo Tomador" : "-";
+		document.add(tabelaCampos(2, new String[][] { { "Tipo de Tributação do ISSQN", textoTribISSQN },
+				{ "Município / Sigla UF de Incidência do ISSQN", xLocEmi + " / " + emitUF } }));
+		document.add(tabelaCampos(2, new String[][] { { "Retenção do ISSQN", textoRetISSQN },
+				{ "ISSQN Apurado", "-" } }));
+
+		// ---- Valor total ----
+		document.add(barraSecao("VALOR TOTAL DA NFS-e"));
+		String valorFormatado = vLiq.isEmpty() ? "-" : "R$ " + vLiq.replace(".", ",");
+		document.add(tabelaCampos(2, new String[][] { { "Valor da Operação / Serviço", valorFormatado },
+				{ "Valor Líquido da NFS-e", valorFormatado } }));
+
+		// ---- Informacoes complementares ----
+		document.add(barraSecao("INFORMAÇÕES COMPLEMENTARES"));
+		String totaisAproximados = pTotTribSN.isEmpty() ? "Totais aproximados dos tributos não informados."
+				: "Percentual aproximado dos tributos (Lei nº 12.741/2012), conforme regime do Simples Nacional: "
+						+ pTotTribSN.replace(".", ",") + "%.";
+		document.add(paragrafoCampo(totaisAproximados));
+
+		Paragraph rodape = new Paragraph("Id. DPS: " + idDps, DANFSE_FONTE_LABEL);
+		rodape.setSpacingBefore(10f);
+		document.add(rodape);
+
+		document.close();
+		return baos.toByteArray();
+	}
+
+	private static PdfPCell celulaSemBorda() {
+		PdfPCell cel = new PdfPCell();
+		cel.setBorder(com.lowagie.text.Rectangle.NO_BORDER);
+		return cel;
+	}
+
+	private static com.lowagie.text.pdf.PdfPTable linhaFina() {
+		com.lowagie.text.pdf.PdfPTable t = new com.lowagie.text.pdf.PdfPTable(1);
+		t.setWidthPercentage(100);
+		PdfPCell c = new PdfPCell();
+		c.setBorder(com.lowagie.text.Rectangle.BOTTOM);
+		c.setBorderColor(Color.BLACK);
+		c.setFixedHeight(2f);
+		t.addCell(c);
+		return t;
+	}
+
+	private static com.lowagie.text.pdf.PdfPTable barraSecao(String titulo) {
+		com.lowagie.text.pdf.PdfPTable t = new com.lowagie.text.pdf.PdfPTable(1);
+		t.setWidthPercentage(100);
+		t.setSpacingBefore(4f);
+		PdfPCell c = new PdfPCell(new Phrase(titulo, DANFSE_FONTE_SECAO));
+		c.setBackgroundColor(DANFSE_CINZA_SECAO);
+		c.setPadding(3f);
+		c.setBorder(com.lowagie.text.Rectangle.BOX);
+		c.setBorderColor(Color.LIGHT_GRAY);
+		t.addCell(c);
+		return t;
+	}
+
+	/** Uma "linha" de campos lado a lado, cada um com label pequeno em cima e valor
+	 * embaixo -- igual ao padrao visual do DANFSe oficial. */
+	private static com.lowagie.text.pdf.PdfPTable tabelaCampos(int colunas, String[][] labelsEValores) {
+		com.lowagie.text.pdf.PdfPTable t = new com.lowagie.text.pdf.PdfPTable(colunas);
+		t.setWidthPercentage(100);
+		for (String[] par : labelsEValores) {
+			PdfPCell c = new PdfPCell();
+			c.setBorder(com.lowagie.text.Rectangle.BOX);
+			c.setBorderColor(Color.LIGHT_GRAY);
+			c.setBackgroundColor(DANFSE_CINZA_LINHA);
+			c.setPadding(3f);
+			Paragraph p = new Paragraph(par[0], DANFSE_FONTE_LABEL);
+			p.add(new Phrase("\n" + (par[1] == null || par[1].trim().isEmpty() ? "-" : par[1]), DANFSE_FONTE_VALOR));
+			c.addElement(p);
+			t.addCell(c);
+		}
+		return t;
+	}
+
+	private static Paragraph paragrafoCampo(String texto) {
+		Paragraph p = new Paragraph(texto == null || texto.isEmpty() ? "-" : texto, DANFSE_FONTE_VALOR);
+		p.setSpacingBefore(2f);
+		p.setSpacingAfter(2f);
+		return p;
+	}
+
+	private static String formataDataSimples(String dataIso) {
+		// formato esperado: 2026-11-12
+		if (dataIso == null || dataIso.length() < 10) {
+			return dataIso;
+		}
+		return dataIso.substring(8, 10) + "/" + dataIso.substring(5, 7) + "/" + dataIso.substring(0, 4);
+	}
+
+	private static String extrairDanfseData(String dataHoraIso) {
+		// formato esperado: 2026-11-12T09:24:06-03:00 -> 12/11/2026 09:24:06
+		if (dataHoraIso == null || dataHoraIso.length() < 19) {
+			return dataHoraIso;
+		}
+		String data = formataDataSimples(dataHoraIso.substring(0, 10));
+		String hora = dataHoraIso.substring(11, 19);
+		return data + " " + hora;
+	}
+
+	private static String extrairDanfse(String xml, String regex) {
+		java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex, java.util.regex.Pattern.DOTALL)
+				.matcher(xml);
+		return m.find() ? m.group(1) : "";
+	}
+
 }
+
+

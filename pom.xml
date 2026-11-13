@@ -305,6 +305,18 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!-- Geracao de QR Code pro DANFSe (PDF da NFS-e) -->
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.5.3</version>
+		</dependency>
+
 		<dependency>
 			<groupId>br.com.caelum.stella</groupId>
 			<artifactId>caelum-stella-boleto</artifactId>

@@ -22,7 +22,20 @@
 					<h:outputText value="#{relatorioController.totalNFSeAnoSelecionado}">
 						<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
 					</h:outputText>
+					<p:commandButton value="Importar histórico do Sistema Nacional" icon="ui-icon-refresh"
+						style="margin-left:30px;"
+						action="#{relatorioController.importarHistoricoNFSe()}"
+						update="formRelatorioNFSe" process="@this">
+						<p:confirm header="Importar histórico"
+							message="Buscar no Sistema Nacional de NFS-e todas as notas da empresa (manuais, do sistema antigo, etc.) e salvar as que ainda não estão aqui? Pode demorar alguns minutos."
+							icon="ui-icon-alert" />
+					</p:commandButton>
 				</h:panelGroup>
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
 
 				<p:dataTable value="#{relatorioController.resumoNFSePorMes}" var="mesResumo"
 					styleClass="tabela" style="max-width:500px;">

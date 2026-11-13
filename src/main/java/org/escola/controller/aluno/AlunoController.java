@@ -2835,6 +2835,7 @@ public class AlunoController implements Serializable {
 			double valor = boleto.getValorPago() != null ? boleto.getValorPago() : boleto.getValorNominal();
 			nota.setValor(valor);
 			nota.setAmbiente(configuracao.getNfseAmbiente());
+			nota.setOrigem("SISTEMA");
 			nota.setStatus("PENDENTE");
 			nota.setDataEnvio(new Date());
 			Long notaId = notaFiscalService.save(nota).getId();
@@ -2902,6 +2903,74 @@ public class AlunoController implements Serializable {
 				+ ";color:white;border-radius:3px;padding:1px 6px;font-size:11px;\" title=\""
 				+ (nota.getMotivoRejeicao() != null ? nota.getMotivoRejeicao().replace("\"", "'") : "") + "\">"
 				+ label + "</span>";
+	}
+
+	/** true se o aluno tem boleto pago no mes atual ainda sem NFS-e autorizada --
+	 * controla se o botao "Emitir Nota" fica habilitado na listagem de alunos. */
+	public boolean podeEmitirNFSeListagem(Aluno aluno) {
+		Calendar c = Calendar.getInstance();
+		return !notaFiscalService
+				.findBoletosPagosMesSemNota(aluno.getId(), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR))
+				.isEmpty();
+	}
+
+	/** NFS-e autorizada do mes atual do aluno, se ja foi emitida -- quando existe, a
+	 * listagem troca o botao "Emitir" por "Baixar PDF"/"Enviar por WhatsApp". */
+	public org.escola.model.NotaFiscal getNotaFiscalMesAtualListagem(Aluno aluno) {
+		Calendar c = Calendar.getInstance();
+		return notaFiscalService.findNotaAutorizadaMesAtual(aluno.getId(), c.get(Calendar.MONTH) + 1,
+				c.get(Calendar.YEAR));
+	}
+
+	public void emitirNFSeDaListagem(Aluno aluno) {
+		Calendar c = Calendar.getInstance();
+		List<org.escola.model.Boleto> boletos = notaFiscalService.findBoletosPagosMesSemNota(aluno.getId(),
+				c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR));
+		for (org.escola.model.Boleto b : boletos) {
+			emitirNFSeNacional(b);
+		}
+	}
+
+	public boolean temWhatsappCadastrado(Aluno aluno) {
+		return aluno.getNumeroWhatsapp() != null && !aluno.getNumeroWhatsapp().trim().isEmpty();
+	}
+
+	public void enviarNotaPorWhatsapp(Aluno aluno) {
+		org.escola.model.NotaFiscal nota = getNotaFiscalMesAtualListagem(aluno);
+		if (nota == null || !temWhatsappCadastrado(aluno)) {
+			return;
+		}
+		String texto = "Nota fiscal de servico emitida - " + aluno.getNomeAluno() + "\nNumero: " + nota.getNumero()
+				+ "\nChave de acesso: " + nota.getChaveAcesso()
+				+ "\nConsulte em: https://www.nfse.gov.br/consultapublica";
+		boolean enviado = evolutionApiService.enviarMensagem(aluno.getNumeroWhatsapp(), texto);
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(enviado ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR,
+						enviado ? "Nota enviada por WhatsApp" : "Erro ao enviar por WhatsApp", null));
+	}
+
+	/** PDF oficial (DANFSe) ainda depende da API do governo, que esta fora do ar --
+	 * por enquanto so avisa, nao baixa nada (ver memoria do projeto NFSe nacional). */
+	/** DANFSe (PDF) gerado por nos mesmos a partir do XML ja salvo em NotaFiscal --
+	 * a API oficial do governo pra isso foi desativada em 03/08/2026 (NT 008/2026),
+	 * so o download manual avulso direto no portal continua funcionando. */
+	public StreamedContent baixarNotaFiscalPdf(Aluno aluno) {
+		org.escola.model.NotaFiscal nota = getNotaFiscalMesAtualListagem(aluno);
+		if (nota == null || nota.getXmlNfseRetorno() == null) {
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Nota nao encontrada ou sem XML salvo", null));
+			return null;
+		}
+		try {
+			byte[] pdf = org.escola.controller.OfficePDFUtil.gerarDanfse(nota.getXmlNfseRetorno());
+			String nomeArquivo = "NFSe_" + (nota.getNumero() != null ? nota.getNumero() : nota.getId()) + ".pdf";
+			return FileDownload.getContentPdf(new java.io.ByteArrayInputStream(pdf), nomeArquivo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao gerar PDF: " + e.getMessage(), null));
+			return null;
+		}
 	}
 
 	public String getNomeResponsavelDevedor(Aluno al){

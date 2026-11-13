@@ -55,6 +55,70 @@ public class NotaFiscalService extends Service {
 		}
 	}
 
+	/** Boletos do aluno, pagos no mes/ano informado, que AINDA NAO tem NFS-e autorizada --
+	 * usado pra decidir se o botao "Emitir Nota" fica habilitado na listagem de alunos.
+	 * Query direta (sem rebuscar o aluno inteiro) pra nao pesar numa tabela paginada. */
+	@SuppressWarnings("unchecked")
+	public List<org.escola.model.Boleto> findBoletosPagosMesSemNota(Long alunoId, int mes, int ano) {
+		Calendar inicio = Calendar.getInstance();
+		inicio.set(ano, mes - 1, 1, 0, 0, 0);
+		inicio.set(Calendar.MILLISECOND, 0);
+
+		Calendar fim = Calendar.getInstance();
+		fim.set(ano, mes - 1, inicio.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+		fim.set(Calendar.MILLISECOND, 999);
+
+		try {
+			Query query = em.createQuery("SELECT b FROM Boleto b WHERE b.contrato.aluno.id = :alunoId "
+					+ "AND b.dataPagamento BETWEEN :inicio AND :fim "
+					+ "AND (b.cancelado IS NULL OR b.cancelado = false) "
+					+ "AND NOT EXISTS (SELECT n FROM NotaFiscal n WHERE n.boleto = b AND n.status = 'AUTORIZADA')");
+			query.setParameter("alunoId", alunoId);
+			query.setParameter("inicio", inicio.getTime());
+			query.setParameter("fim", fim.getTime());
+			return query.getResultList();
+		} catch (NoResultException nre) {
+			return new ArrayList<>();
+		}
+	}
+
+	/** NFS-e AUTORIZADA do aluno no mes/ano informado (se existir) -- pra mostrar os
+	 * botoes de download/envio em vez do botao "Emitir" na listagem de alunos. */
+	public NotaFiscal findNotaAutorizadaMesAtual(Long alunoId, int mes, int ano) {
+		Calendar inicio = Calendar.getInstance();
+		inicio.set(ano, mes - 1, 1, 0, 0, 0);
+		inicio.set(Calendar.MILLISECOND, 0);
+
+		Calendar fim = Calendar.getInstance();
+		fim.set(ano, mes - 1, inicio.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+		fim.set(Calendar.MILLISECOND, 999);
+
+		try {
+			Query query = em.createQuery("SELECT n FROM NotaFiscal n WHERE n.boleto.contrato.aluno.id = :alunoId "
+					+ "AND n.status = 'AUTORIZADA' AND n.dataAutorizacao BETWEEN :inicio AND :fim "
+					+ "ORDER BY n.dataAutorizacao DESC");
+			query.setParameter("alunoId", alunoId);
+			query.setParameter("inicio", inicio.getTime());
+			query.setParameter("fim", fim.getTime());
+			query.setMaxResults(1);
+			List<NotaFiscal> resultado = query.getResultList();
+			return resultado.isEmpty() ? null : resultado.get(0);
+		} catch (NoResultException nre) {
+			return null;
+		}
+	}
+
+	public boolean existeComChaveAcesso(String chaveAcesso) {
+		try {
+			Query query = em.createQuery("SELECT COUNT(n) FROM NotaFiscal n WHERE n.chaveAcesso = :chave");
+			query.setParameter("chave", chaveAcesso);
+			Long count = (Long) query.getSingleResult();
+			return count != null && count > 0;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public NotaFiscal findUltimaPorBoleto(Long boletoId) {
 		try {
 			Query query = em.createQuery(

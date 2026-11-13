@@ -84,6 +84,9 @@ public class RelatorioController implements Serializable{
 	@Inject
 	private org.escola.service.NotaFiscalService notaFiscalService;
 
+	@Inject
+	private org.escola.service.NFSeHistoricoService nfseHistoricoService;
+
 	private LazyDataModel<Aluno> lazyListDataModelQuantidade;
 	private LazyDataModel<Aluno> lazyListDataModelMes;
 	
@@ -274,11 +277,26 @@ public class RelatorioController implements Serializable{
 	}
 
 	public String getNomeAlunoNota(org.escola.model.NotaFiscal nota) {
-		if (nota.getBoleto() == null || nota.getBoleto().getContrato() == null
-				|| nota.getBoleto().getContrato().getAluno() == null) {
-			return "";
+		if (nota.getBoleto() != null && nota.getBoleto().getContrato() != null
+				&& nota.getBoleto().getContrato().getAluno() != null) {
+			return nota.getBoleto().getContrato().getAluno().getNomeAluno();
 		}
-		return nota.getBoleto().getContrato().getAluno().getNomeAluno();
+		return nota.getNomeTomador() != null ? nota.getNomeTomador() : "";
+	}
+
+	public void importarHistoricoNFSe() {
+		org.escola.service.NFSeHistoricoService.ResultadoImportacao resultado = nfseHistoricoService
+				.importarHistorico(configuracao);
+		if (resultado.erro != null) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Erro ao importar historico: " + resultado.erro, null));
+		} else {
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							resultado.novasImportadas + " nota(s) nova(s) importada(s), "
+									+ resultado.jaExistiam + " ja existia(m)",
+							null));
+		}
 	}
 
 	public String getTotalCriancasDevendo(int mesBusca) {
@@ -526,9 +544,8 @@ public class RelatorioController implements Serializable{
 	}
 
 	public List<Integer> getAnosDisponiveis() {
-		int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
 		List<Integer> anos = new ArrayList<>();
-		for (int ano = anoAtual + 1; ano >= anoAtual - 4; ano--) {
+		for (int ano = 2032; ano >= 2018; ano--) {
 			anos.add(ano);
 		}
 		return anos;
