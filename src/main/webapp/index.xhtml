@@ -36,11 +36,11 @@
             <p>Coloque seu usuario e senha.</p>
             <h:panelGrid columns="3" columnClasses="titleCell">
                 <h:outputLabel for="name" value="Usuário:" />
-                <h:inputText id="name" value="#{authUser.login}" />
+                <h:inputText id="name" value="#{authUser.login}" autocomplete="username" />
                 <h:message for="name" errorClass="invalid" />
 
                 <h:outputLabel for="email" value="Senha:" />
-                <h:inputSecret  id="email" value="#{authUser.senha}" />
+                <h:inputSecret  id="email" value="#{authUser.senha}" autocomplete="current-password" />
                 <h:message for="email" errorClass="invalid" />
                 
             </h:panelGrid>
