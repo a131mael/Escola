@@ -15,21 +15,21 @@
 		<p:column headerText="Confirmado" rendered="#{eventoArrecadacaoDetalheController.evento.temConfirmacao}">
 			<p:selectBooleanCheckbox value="#{participante.confirmado}">
 				<p:ajax listener="#{eventoArrecadacaoDetalheController.confirmar(participante)}"
-					update=":form:tabViewResumo" />
+					update="@form" />
 			</p:selectBooleanCheckbox>
 		</p:column>
 
 		<p:column headerText="Quantidade" rendered="#{eventoArrecadacaoDetalheController.evento.porQuantidade}">
 			<p:inputNumber value="#{participante.quantidadeConfirmada}" decimalPlaces="0" style="width:70px">
 				<p:ajax event="change" listener="#{eventoArrecadacaoDetalheController.confirmar(participante)}"
-					update=":form:tabViewResumo" />
+					update="@form" />
 			</p:inputNumber>
 		</p:column>
 
 		<p:column headerText="Nº parcelas" rendered="#{eventoArrecadacaoDetalheController.evento.parcelado}">
 			<p:inputNumber value="#{participante.numeroParcelas}" decimalPlaces="0" style="width:60px">
 				<p:ajax event="change" listener="#{eventoArrecadacaoDetalheController.atualizarNumeroParcelas(participante)}"
-					update=":form:tabViewResumo @parent:parcelas" />
+					update="@form" />
 			</p:inputNumber>
 		</p:column>
 
@@ -43,13 +43,13 @@
 				<p:commandButton value="Baixar" icon="ui-icon-check"
 					actionListener="#{eventoArrecadacaoDetalheController.baixarParcela(parcela)}"
 					disabled="#{eventoArrecadacaoDetalheController.isPago(parcela)}"
-					update=":form:tabViewResumo @parent:parcelas">
+					update="@form">
 					<p:confirm header="Confirmação" message="Confirma o pagamento dessa parcela?" icon="ui-icon-alert" />
 				</p:commandButton>
 				<p:commandButton value="Estornar" icon="ui-icon-close"
 					actionListener="#{eventoArrecadacaoDetalheController.estornarParcela(parcela)}"
 					rendered="#{eventoArrecadacaoDetalheController.isPago(parcela)}"
-					update=":form:tabViewResumo @parent:parcelas">
+					update="@form">
 					<p:confirm header="Confirmação" message="Desfazer essa baixa?" icon="ui-icon-alert" />
 				</p:commandButton>
 			</p:dataList>

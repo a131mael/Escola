@@ -1,14 +1,18 @@
 package org.escola.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.escola.enums.Serie;
 import org.escola.model.EventoArrecadacao;
 import org.escola.model.EventoParcela;
 import org.escola.model.EventoParticipante;
@@ -48,20 +52,37 @@ public class EventoParcelaService extends Service {
 		List<Turma> turmas;
 		if (evento.isTodasTurmas()) {
 			turmas = turmaService.findAll();
+			// Maternal/Jardim/Pre: so 1 linha por serie (ver EventoArrecadacaoDetalheController.carregar()).
+			Map<Serie, Turma> representantePorSerieBaixa = new LinkedHashMap<>();
+			List<Turma> semDuplicataBaixa = new ArrayList<>();
+			for (Turma t : turmas) {
+				if (t.getSerie().ordinal() <= Serie.PRE.ordinal()) {
+					Turma existente = representantePorSerieBaixa.get(t.getSerie());
+					if (existente == null || t.getId() < existente.getId()) {
+						representantePorSerieBaixa.put(t.getSerie(), t);
+					}
+				} else {
+					semDuplicataBaixa.add(t);
+				}
+			}
+			semDuplicataBaixa.addAll(representantePorSerieBaixa.values());
+			turmas = semDuplicataBaixa;
+			turmas.sort(Comparator.comparingInt((Turma t) -> t.getSerie().ordinal())
+					.thenComparing(Turma::getNome));
 		} else {
 			turmas = new ArrayList<>();
 			turmas.add(evento.getTurma());
 		}
 
 		for (Turma turma : turmas) {
-			List<EventoParticipante> participantes = participanteService.findByEventoETurma(evento.getId(),
-					turma.getId());
+			List<EventoParticipante> participantes = participanteService.findByEventoETurma(evento.getId(), turma);
 			if (participantes.isEmpty()) {
 				continue;
 			}
 
 			EventoResumoTurma resumo = new EventoResumoTurma();
-			resumo.setNomeTurma(turma.getNome());
+			resumo.setNomeTurma(turma.getSerie().ordinal() <= Serie.PRE.ordinal() ? turma.getSerie().getName()
+					: turma.getNome() + " (" + turma.getPeriodo().getName() + ")");
 			resumo.setTotalParticipantes(participantes.size());
 
 			int confirmados = 0;

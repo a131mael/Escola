@@ -12,10 +12,12 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.escola.enums.Serie;
 import org.escola.model.Aluno;
 import org.escola.model.EventoArrecadacao;
 import org.escola.model.EventoParcela;
 import org.escola.model.EventoParticipante;
+import org.escola.model.Turma;
 import org.escola.util.Service;
 
 @Stateless
@@ -27,11 +29,18 @@ public class EventoParticipanteService extends Service {
 	@Inject
 	private AlunoService alunoService;
 
+	@Inject
+	private ConfiguracaoService configuracaoService;
+
 	// Garante que todo aluno da turma tenha um EventoParticipante (com a 1a
 	// parcela) pro evento informado. Idempotente -- chamado toda vez que a
 	// aba da turma e aberta, cobre aluno matriculado depois do evento criado.
-	public List<EventoParticipante> findOuCriarParticipantes(EventoArrecadacao evento, Long idTurma) {
-		List<Aluno> alunosDaTurma = alunoService.findAlunoTurmaBytTurma(idTurma);
+	public List<EventoParticipante> findOuCriarParticipantes(EventoArrecadacao evento, Turma turma) {
+		// Maternal/Jardim/Pre nao sao vinculados por AlunoTurma -- usa o
+		// cadastro do aluno (so a serie, sem distinguir periodo) direto.
+		List<Aluno> alunosDaTurma = turma.getSerie().ordinal() <= Serie.PRE.ordinal()
+				? alunoService.findAlunoPorSerie(turma.getSerie())
+				: alunoService.findAlunoTurmaBytTurma(turma.getId());
 
 		for (Aluno aluno : alunosDaTurma) {
 			if (findByEventoEAluno(evento.getId(), aluno.getId()) == null) {
@@ -39,7 +48,7 @@ public class EventoParticipanteService extends Service {
 			}
 		}
 
-		List<EventoParticipante> participantes = findByEventoETurma(evento.getId(), idTurma);
+		List<EventoParticipante> participantes = findByEventoETurma(evento.getId(), turma);
 		Collections.sort(participantes, new Comparator<EventoParticipante>() {
 			public int compare(EventoParticipante a, EventoParticipante b) {
 				String nomeA = a.getAluno().getNomeAluno() == null ? "" : a.getAluno().getNomeAluno();
@@ -47,6 +56,9 @@ public class EventoParticipanteService extends Service {
 				return nomeA.compareToIgnoreCase(nomeB);
 			}
 		});
+		for (EventoParticipante p : participantes) {
+			p.getParcelas().size();
+		}
 		return participantes;
 	}
 
@@ -79,12 +91,25 @@ public class EventoParticipanteService extends Service {
 		}
 	}
 
+	// Maternal/Jardim/Pre nao sao vinculados por AlunoTurma -- usa a serie
+	// do cadastro do aluno direto (sem distinguir periodo). As demais filtram
+	// pela AlunoTurma do ano letivo atual (sem isso, aluno que passou por
+	// outra turma em anos anteriores aparecia duplicado em cada turma antiga).
 	@SuppressWarnings("unchecked")
-	public List<EventoParticipante> findByEventoETurma(Long idEvento, Long idTurma) {
-		Query query = em.createQuery("SELECT p FROM EventoParticipante p, AlunoTurma at "
-				+ "WHERE p.evento.id = :idEvento AND at.aluno.id = p.aluno.id AND at.turma.id = :idTurma");
+	public List<EventoParticipante> findByEventoETurma(Long idEvento, Turma turma) {
+		Query query;
+		if (turma.getSerie().ordinal() <= Serie.PRE.ordinal()) {
+			query = em.createQuery(
+					"SELECT p FROM EventoParticipante p WHERE p.evento.id = :idEvento AND p.aluno.serie = :serie");
+			query.setParameter("serie", turma.getSerie());
+		} else {
+			query = em.createQuery("SELECT p FROM EventoParticipante p, AlunoTurma at "
+					+ "WHERE p.evento.id = :idEvento AND at.aluno.id = p.aluno.id AND at.turma.id = :idTurma"
+					+ " AND at.anoLetivo = :anoLetivo");
+			query.setParameter("idTurma", turma.getId());
+			query.setParameter("anoLetivo", configuracaoService.getConfiguracao2().getAnoLetivo());
+		}
 		query.setParameter("idEvento", idEvento);
-		query.setParameter("idTurma", idTurma);
 		try {
 			return query.getResultList();
 		} catch (NoResultException nre) {

@@ -429,6 +429,20 @@ public class AlunoService extends Service {
 
 	}
 
+	// Maternal/Jardim/Pre nao sao vinculados por AlunoTurma -- o cadastro do
+	// aluno (serie) e quem manda pra essas series. Nao distingue periodo
+	// aqui (manha/tarde/integral viram uma aba so pra essas series).
+	@SuppressWarnings("unchecked")
+	public List<Aluno> findAlunoPorSerie(Serie serie) {
+		Query query = em.createQuery("SELECT a FROM Aluno a WHERE a.serie = :serie AND a.removido = false");
+		query.setParameter("serie", serie);
+		try {
+			return query.getResultList();
+		} catch (NoResultException noResultException) {
+			return new ArrayList<>();
+		}
+	}
+
 	public List<Aluno> findAlunoTurmaBytTurma(List<Turma> turmas) {
 		List<Aluno> alunos = new ArrayList<>();
 

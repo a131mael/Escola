@@ -6,7 +6,7 @@
 	template="/WEB-INF/templates/templateADM.xhtml">
 
 	<ui:define name="content">
-		<h:form id="form" style="width:100%; border:none"
+		<h:form id="form" style="width:100%; border:none; padding:15px 20px; box-sizing:border-box;"
 			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
 
 			<p:growl id="msgs" showDetail="true" />
@@ -17,48 +17,49 @@
 					oncomplete="PF('dlgNovoEvento').show();" update=":formNovo" />
 			</h:panelGrid>
 
-			<p:dataTable id="dtEventos" var="evento" style="width:100%"
+			<p:dataTable id="dtEventos" var="eventoArrec" style="width:100%"
 				value="#{eventoArrecadacaoListController.listaEventos}"
 				emptyMessage="Nenhum evento cadastrado">
 
 				<p:column headerText="Nome">
-					<h:outputText value="#{evento.nome}" />
+					<h:outputText value="#{eventoArrec.nome}" />
 				</p:column>
 
 				<p:column headerText="Ano">
-					<h:outputText value="#{evento.anoLetivo}" />
+					<h:outputText value="#{eventoArrec.anoLetivo}" />
 				</p:column>
 
 				<p:column headerText="Turma">
-					<h:outputText value="Todas" rendered="#{evento.todasTurmas}" />
-					<h:outputText value="#{evento.turma.nome}" rendered="#{not evento.todasTurmas}" />
+					<h:outputText value="Todas" rendered="#{eventoArrec.todasTurmas}" />
+					<h:outputText value="#{eventoArrec.turma.nome}" rendered="#{not eventoArrec.todasTurmas}" />
 				</p:column>
 
 				<p:column headerText="Parcelado">
-					<h:outputText value="Sim" rendered="#{evento.parcelado}" />
-					<h:outputText value="Não" rendered="#{not evento.parcelado}" />
+					<h:outputText value="Sim" rendered="#{eventoArrec.parcelado}" />
+					<h:outputText value="Não" rendered="#{not eventoArrec.parcelado}" />
 				</p:column>
 
 				<p:column headerText="Por quantidade">
-					<h:outputText value="Sim" rendered="#{evento.porQuantidade}" />
-					<h:outputText value="Não" rendered="#{not evento.porQuantidade}" />
+					<h:outputText value="Sim" rendered="#{eventoArrec.porQuantidade}" />
+					<h:outputText value="Não" rendered="#{not eventoArrec.porQuantidade}" />
 				</p:column>
 
 				<p:column headerText="Valor unitário">
-					<h:outputText value="#{evento.valorUnitario}">
+					<h:outputText value="#{eventoArrec.valorUnitario}">
 						<f:convertNumber type="currency" currencySymbol="R$ " />
 					</h:outputText>
 				</p:column>
 
-				<p:column headerText="Ações" style="width:140px">
-					<h:link outcome="eventoArrecadacaoDetalhe" value="Abrir">
-						<f:param name="id" value="#{evento.id}" />
-					</h:link>
-					&#160;|&#160;
-					<p:commandLink value="Remover" actionListener="#{eventoArrecadacaoListController.remover(evento)}"
+				<p:column headerText="Ações" style="width:230px; white-space:nowrap;">
+					<p:button outcome="eventoArrecadacaoDetalhe" value="Abrir" icon="ui-icon-folder-open"
+						style="font-size:11px;">
+						<f:param name="id" value="#{eventoArrec.id}" />
+					</p:button>
+					<p:commandButton value="Remover" icon="ui-icon-trash" style="font-size:11px; margin-left:4px;"
+						actionListener="#{eventoArrecadacaoListController.remover(eventoArrec)}"
 						update=":form:dtEventos">
 						<p:confirm header="Confirmação" message="Remover esse evento e todos os pagamentos ligados a ele?" icon="ui-icon-alert" />
-					</p:commandLink>
+					</p:commandButton>
 				</p:column>
 
 			</p:dataTable>

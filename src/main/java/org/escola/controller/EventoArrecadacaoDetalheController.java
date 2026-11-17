@@ -2,6 +2,7 @@ package org.escola.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +13,13 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.escola.enums.Serie;
 import org.escola.model.EventoArrecadacao;
 import org.escola.model.EventoParcela;
 import org.escola.model.EventoParticipante;
 import org.escola.model.EventoResumoTurma;
 import org.escola.model.Turma;
+import org.escola.service.AlunoService;
 import org.escola.service.EventoArrecadacaoService;
 import org.escola.service.EventoParcelaService;
 import org.escola.service.EventoParticipanteService;
@@ -40,6 +43,9 @@ public class EventoArrecadacaoDetalheController implements Serializable {
 
 	@Inject
 	private TurmaService turmaService;
+
+	@Inject
+	private AlunoService alunoService;
 
 	private Long id;
 
@@ -66,6 +72,29 @@ public class EventoArrecadacaoDetalheController implements Serializable {
 
 		if (evento.isTodasTurmas()) {
 			turmas = turmaService.findAll();
+			// Maternal/Jardim/Pre nao sao vinculados por AlunoTurma -- decide
+			// pelo cadastro do aluno (so a serie) direto nesses casos.
+			turmas.removeIf(t -> t.getSerie().ordinal() <= Serie.PRE.ordinal()
+					? alunoService.findAlunoPorSerie(t.getSerie()).isEmpty()
+					: t.getTotalAlunos() == 0);
+			// Maternal/Jardim/Pre: so 1 aba por serie (nao distingue periodo
+			// nem duplicatas de turma, tipo "Maternal" e "Maternal II").
+			java.util.Map<Serie, Turma> representantePorSerieBaixa = new java.util.LinkedHashMap<>();
+			List<Turma> semDuplicataBaixa = new ArrayList<>();
+			for (Turma t : turmas) {
+				if (t.getSerie().ordinal() <= Serie.PRE.ordinal()) {
+					Turma existente = representantePorSerieBaixa.get(t.getSerie());
+					if (existente == null || t.getId() < existente.getId()) {
+						representantePorSerieBaixa.put(t.getSerie(), t);
+					}
+				} else {
+					semDuplicataBaixa.add(t);
+				}
+			}
+			semDuplicataBaixa.addAll(representantePorSerieBaixa.values());
+			turmas = semDuplicataBaixa;
+			turmas.sort(Comparator.comparingInt((Turma t) -> t.getSerie().ordinal())
+					.thenComparing(Turma::getNome));
 		} else {
 			turmas = new ArrayList<>();
 			if (evento.getTurma() != null) {
@@ -74,6 +103,7 @@ public class EventoArrecadacaoDetalheController implements Serializable {
 		}
 
 		atualizarResumo();
+		gerarPix();
 	}
 
 	public List<EventoParticipante> getParticipantes(Turma turma) {
@@ -82,7 +112,7 @@ public class EventoArrecadacaoDetalheController implements Serializable {
 		}
 		List<EventoParticipante> participantes = participantesPorTurma.get(turma.getId());
 		if (participantes == null) {
-			participantes = participanteService.findOuCriarParticipantes(evento, turma.getId());
+			participantes = participanteService.findOuCriarParticipantes(evento, turma);
 			participantesPorTurma.put(turma.getId(), participantes);
 		}
 		return participantes;
@@ -118,6 +148,23 @@ public class EventoArrecadacaoDetalheController implements Serializable {
 	public void gerarPix() {
 		pixCopiaECola = PixBRCodeUtil.gerarBRCode(evento.getChavePix(), evento.getNomeRecebedor(),
 				evento.getCidadeRecebedor(), evento.getValorUnitario());
+	}
+
+	public String getPixQrCodeBase64() {
+		if (pixCopiaECola == null) {
+			return null;
+		}
+		try {
+			com.google.zxing.qrcode.QRCodeWriter writer = new com.google.zxing.qrcode.QRCodeWriter();
+			com.google.zxing.common.BitMatrix matrix = writer.encode(pixCopiaECola,
+					com.google.zxing.BarcodeFormat.QR_CODE, 180, 180);
+			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+			com.google.zxing.client.j2se.MatrixToImageWriter.writeToStream(matrix, "PNG", baos);
+			return java.util.Base64.getEncoder().encodeToString(baos.toByteArray());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public boolean isPago(EventoParcela parcela) {
@@ -158,6 +205,14 @@ public class EventoArrecadacaoDetalheController implements Serializable {
 
 	public String getPixCopiaECola() {
 		return pixCopiaECola;
+	}
+
+	// Maternal/Jardim/Pre: 1 aba por serie, sem mostrar periodo (ver carregar()).
+	public String getTituloTurma(Turma turma) {
+		if (turma.getSerie().ordinal() <= Serie.PRE.ordinal()) {
+			return turma.getSerie().getName();
+		}
+		return turma.getNome() + " (" + turma.getPeriodo().getName() + ")";
 	}
 
 }
