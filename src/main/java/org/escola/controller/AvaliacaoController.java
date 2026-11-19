@@ -242,7 +242,6 @@ public class AvaliacaoController extends AuthController implements Serializable{
 
 				}
 			};
-			lazyListDataModel.setRowCount((int) avaliacaoService.count(null));
 
 		}
 
