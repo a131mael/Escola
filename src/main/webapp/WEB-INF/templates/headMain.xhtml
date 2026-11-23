@@ -112,14 +112,6 @@
 					rendered="#{authController.hasPermission(authController.mestre)}" />
 
 
-				<p:menuitem value="Previsao e Pago"
-					url="../financeiro/previsaoEPago.jsf" icon="ui-icon-close"
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
-
-				<p:menuitem value="Devedores" url="../devedores/index.jsf"
-					icon="ui-icon-close"
-					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
-
 				<p:menuitem value="Protestar" url="../secretaria/protestos.jsf"
 					icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}" />
