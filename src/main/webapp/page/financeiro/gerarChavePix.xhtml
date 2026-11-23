@@ -70,17 +70,11 @@
 						actionListener="#{gerarChavePixController.selecionarParaQr(chave)}" />
 					<p:commandButton value="Remover" icon="ui-icon-trash" style="font-size:11px; margin-left:4px;"
 						actionListener="#{gerarChavePixController.remover(chave)}"
-						update="form">
-						<p:confirm header="Confirmação" message="Remover esse código Pix da lista?" icon="ui-icon-alert" />
-					</p:commandButton>
+						update="form"
+						onclick="if(!confirm('Remover esse código Pix da lista?')) return false;" />
 				</p:column>
 
 			</p:dataTable>
-
-			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-			</p:confirmDialog>
 
 		</h:form>
 
