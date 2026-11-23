@@ -61,6 +61,7 @@ public class EventoArrecadacaoService extends Service {
 		EventoArrecadacao evento = findById(id);
 		if (evento != null) {
 			em.remove(evento);
+			em.flush();
 		}
 	}
 

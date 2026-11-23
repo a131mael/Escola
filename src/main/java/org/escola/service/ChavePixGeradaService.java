@@ -45,6 +45,7 @@ public class ChavePixGeradaService extends Service {
 		ChavePixGerada chave = em.find(ChavePixGerada.class, id);
 		if (chave != null) {
 			em.remove(chave);
+			em.flush();
 		}
 	}
 
