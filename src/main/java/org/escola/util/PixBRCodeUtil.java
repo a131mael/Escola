@@ -35,6 +35,24 @@ public class PixBRCodeUtil {
 		return payload.toString() + crc;
 	}
 
+	// Renderiza o payload como PNG (base64) pra exibir num <img>, sem precisar de JS no cliente.
+	public static String gerarQrCodeBase64(String payload) {
+		if (payload == null) {
+			return null;
+		}
+		try {
+			com.google.zxing.qrcode.QRCodeWriter writer = new com.google.zxing.qrcode.QRCodeWriter();
+			com.google.zxing.common.BitMatrix matrix = writer.encode(payload,
+					com.google.zxing.BarcodeFormat.QR_CODE, 180, 180);
+			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+			com.google.zxing.client.j2se.MatrixToImageWriter.writeToStream(matrix, "PNG", baos);
+			return java.util.Base64.getEncoder().encodeToString(baos.toByteArray());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	private static String campo(String id, String valor) {
 		int tamanho = valor.getBytes(StandardCharsets.UTF_8).length;
 		return id + String.format("%02d", tamanho) + valor;

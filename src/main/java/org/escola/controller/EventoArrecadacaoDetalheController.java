@@ -151,20 +151,7 @@ public class EventoArrecadacaoDetalheController implements Serializable {
 	}
 
 	public String getPixQrCodeBase64() {
-		if (pixCopiaECola == null) {
-			return null;
-		}
-		try {
-			com.google.zxing.qrcode.QRCodeWriter writer = new com.google.zxing.qrcode.QRCodeWriter();
-			com.google.zxing.common.BitMatrix matrix = writer.encode(pixCopiaECola,
-					com.google.zxing.BarcodeFormat.QR_CODE, 180, 180);
-			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-			com.google.zxing.client.j2se.MatrixToImageWriter.writeToStream(matrix, "PNG", baos);
-			return java.util.Base64.getEncoder().encodeToString(baos.toByteArray());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return PixBRCodeUtil.gerarQrCodeBase64(pixCopiaECola);
 	}
 
 	public boolean isPago(EventoParcela parcela) {

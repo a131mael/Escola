@@ -12,6 +12,7 @@ import javax.inject.Named;
 
 import org.escola.model.EventoArrecadacao;
 import org.escola.model.Turma;
+import org.escola.service.ConfiguracaoService;
 import org.escola.service.EventoArrecadacaoService;
 import org.escola.service.TurmaService;
 
@@ -26,6 +27,9 @@ public class EventoArrecadacaoListController implements Serializable {
 
 	@Inject
 	private TurmaService turmaService;
+
+	@Inject
+	private ConfiguracaoService configuracaoService;
 
 	private List<EventoArrecadacao> listaEventos;
 
@@ -45,9 +49,9 @@ public class EventoArrecadacaoListController implements Serializable {
 	public void prepararNovoEvento() {
 		novoEvento = new EventoArrecadacao();
 		novoEvento.setTodasTurmas(true);
-		novoEvento.setChavePix("7d2f5c98-708b-4682-bf22-69ef6e1a013c");
-		novoEvento.setNomeRecebedor("Colegio Adonai");
-		novoEvento.setCidadeRecebedor("Palhoca");
+		novoEvento.setChavePix(configuracaoService.getConfiguracao().getChavePix());
+		novoEvento.setNomeRecebedor(configuracaoService.getConfiguracao().getNomeRecebedorPix());
+		novoEvento.setCidadeRecebedor(configuracaoService.getConfiguracao().getCidadeRecebedorPix());
 		turmaIdSelecionada = null;
 	}
 

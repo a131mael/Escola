@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/templateADM.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" style="width:100%; border:none; padding:15px 20px; box-sizing:border-box;"
+			rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}">
+
+			<p:growl id="msgs" showDetail="true" />
+
+			<p:fieldset legend="Gerar código Pix" style="margin-bottom:15px; max-width:500px;">
+				<h:panelGrid columns="2" cellpadding="6">
+
+					<h:outputText value="Valor:" />
+					<p:inputNumber value="#{gerarChavePixController.novo.valor}" symbol="R$ " decimalPlaces="2" />
+
+					<h:outputText value="Vencimento (opcional):" />
+					<p:calendar value="#{gerarChavePixController.novo.dataVencimento}" pattern="dd/MM/yyyy" />
+
+					<h:outputText value="Descrição (só pra você, ex: Dia das Mães):" />
+					<p:inputText value="#{gerarChavePixController.novo.descricao}" style="width:260px" />
+
+				</h:panelGrid>
+
+				<p:commandButton value="Gerar" icon="ui-icon-check" style="margin-top:10px;"
+					actionListener="#{gerarChavePixController.gerar()}"
+					update="form" />
+			</p:fieldset>
+
+			<p:dataTable id="dtChaves" var="chave" style="width:100%"
+				value="#{gerarChavePixController.listaGeradas}"
+				emptyMessage="Nenhum código Pix gerado ainda">
+
+				<p:column headerText="Valor" style="width:120px">
+					<h:outputText value="#{chave.valor}">
+						<f:convertNumber type="currency" currencySymbol="R$ " />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Descrição">
+					<h:outputText value="#{chave.descricao}" />
+				</p:column>
+
+				<p:column headerText="Vencimento" style="width:120px">
+					<h:outputText value="#{chave.dataVencimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Gerado em" style="width:140px">
+					<h:outputText value="#{chave.dataCriacao}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Código Pix (copia e cola)">
+					<h:inputText value="#{chave.payload}" readonly="true"
+						style="width:100%; font-size:11px;" onclick="this.select();" />
+				</p:column>
+
+				<p:column headerText="Ações" style="width:200px; white-space:nowrap;">
+					<p:commandButton type="button" value="Copiar" icon="ui-icon-clipboard" style="font-size:11px;"
+						onclick="navigator.clipboard.writeText('#{chave.payload}'); return false;" />
+					<p:commandButton value="QR" icon="ui-icon-image" style="font-size:11px; margin-left:4px;"
+						oncomplete="PF('dlgQr').show();" update=":dlgQrForm"
+						actionListener="#{gerarChavePixController.selecionarParaQr(chave)}" />
+					<p:commandButton value="Remover" icon="ui-icon-trash" style="font-size:11px; margin-left:4px;"
+						actionListener="#{gerarChavePixController.remover(chave)}"
+						update=":form:dtChaves">
+						<p:confirm header="Confirmação" message="Remover esse código Pix da lista?" icon="ui-icon-alert" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+		</h:form>
+
+		<p:dialog header="QR Code Pix" widgetVar="dlgQr" modal="true" width="240">
+			<h:panelGroup id="dlgQrForm" layout="block" style="text-align:center;">
+				<img src="data:image/png;base64,#{gerarChavePixController.qrCodeBase64Selecionada}"
+					width="180" height="180" alt="QR Code Pix"
+					rendered="#{gerarChavePixController.selecionadaParaQr != null}" />
+			</h:panelGroup>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

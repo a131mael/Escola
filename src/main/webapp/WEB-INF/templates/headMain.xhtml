@@ -136,6 +136,10 @@
 					icon="ui-icon-close"
 					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
 
+				<p:menuitem value="Gerar Chave Pix" url="../financeiro/gerarChavePix.jsf"
+					icon="ui-icon-close"
+					rendered="#{authController.hasPermission(authController.administrador,authController.secretaria,authController.financeiro)}" />
+
 			</p:submenu>
 			<p:submenu label="Secretaria"
 				rendered="#{authController.hasPermission(authController.administrador,authController.secretaria)}">
