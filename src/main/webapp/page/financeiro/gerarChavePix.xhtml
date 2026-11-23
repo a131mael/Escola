@@ -70,8 +70,7 @@
 						actionListener="#{gerarChavePixController.selecionarParaQr(chave)}" />
 					<p:commandButton value="Remover" icon="ui-icon-trash" style="font-size:11px; margin-left:4px;"
 						actionListener="#{gerarChavePixController.remover(chave)}"
-						update="form"
-						onclick="if(!confirm('Remover esse código Pix da lista?')) return false;" />
+						update="form" />
 				</p:column>
 
 			</p:dataTable>
