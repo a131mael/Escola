@@ -437,8 +437,9 @@ padding: .2em 1em;
     padding:8px 4px ;
     text-shadow: none;
     font-size: 11px !important;
-    color: #666666!important;    
+    color: #666666!important;
     font-family: 'RobotoCondensed',Arial,Helvetica,sans-serif !important;
+    border-right: 4px solid transparent;
 }
 
 .ui-tabs.ui-tabs-right > .ui-tabs-nav li:first-child{
@@ -486,7 +487,8 @@ padding: .2em 1em;
     padding:8px 8px 9px;
     text-shadow: none;
     font-size: 12px !important;
-    color: #666666!important;    
+    color: #666666!important;
+    border-right: 4px solid transparent;
 
 }
 
