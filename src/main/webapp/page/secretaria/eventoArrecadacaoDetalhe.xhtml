@@ -90,6 +90,17 @@
 				font-size: 11px;
 				padding: 6px 10px;
 			}
+			/* Evita as abas quebrarem linha quando a soma das larguras passa do
+			   container -- rola na horizontal em vez de quebrar feio. */
+			.tabsTurmaFontePequena .ui-tabs-nav {
+				white-space: nowrap;
+				overflow-x: auto;
+				overflow-y: hidden;
+			}
+			.tabsTurmaFontePequena .ui-tabs-nav li {
+				float: none;
+				display: inline-block;
+			}
 		</style>
 
 	</ui:define>

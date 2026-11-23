@@ -100,12 +100,13 @@ public class EventoParticipanteService extends Service {
 		Query query;
 		if (turma.getSerie().ordinal() <= Serie.PRE.ordinal()) {
 			query = em.createQuery(
-					"SELECT p FROM EventoParticipante p WHERE p.evento.id = :idEvento AND p.aluno.serie = :serie");
+					"SELECT p FROM EventoParticipante p WHERE p.evento.id = :idEvento AND p.aluno.serie = :serie"
+							+ " AND p.aluno.removido = false");
 			query.setParameter("serie", turma.getSerie());
 		} else {
 			query = em.createQuery("SELECT p FROM EventoParticipante p, AlunoTurma at "
 					+ "WHERE p.evento.id = :idEvento AND at.aluno.id = p.aluno.id AND at.turma.id = :idTurma"
-					+ " AND at.anoLetivo = :anoLetivo");
+					+ " AND at.anoLetivo = :anoLetivo AND p.aluno.removido = false");
 			query.setParameter("idTurma", turma.getId());
 			query.setParameter("anoLetivo", configuracaoService.getConfiguracao2().getAnoLetivo());
 		}

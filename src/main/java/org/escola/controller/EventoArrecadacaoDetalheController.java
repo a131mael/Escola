@@ -196,8 +196,14 @@ public class EventoArrecadacaoDetalheController implements Serializable {
 
 	// Maternal/Jardim/Pre: 1 aba por serie, sem mostrar periodo (ver carregar()).
 	public String getTituloTurma(Turma turma) {
-		if (turma.getSerie().ordinal() <= Serie.PRE.ordinal()) {
-			return turma.getSerie().getName();
+		Serie serie = turma.getSerie();
+		if (serie.ordinal() <= Serie.PRE.ordinal()) {
+			return serie.getName();
+		}
+		// Do 6o ano pra cima so existe 1 turma por serie, entao o periodo
+		// (Manha/Tarde) e redundante no titulo da aba -- so atrapalha o layout.
+		if (serie.ordinal() >= Serie.SEXTO_ANO.ordinal() && serie.ordinal() <= Serie.NONO_ANO.ordinal()) {
+			return turma.getNome();
 		}
 		return turma.getNome() + " (" + turma.getPeriodo().getName() + ")";
 	}
